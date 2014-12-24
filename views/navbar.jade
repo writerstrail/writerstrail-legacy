@@ -1,0 +1,16 @@
+﻿nav.navbar.navbar-default(role='navigation')
+    .container-fluid
+        .navbar-header
+            button.navbar-toggle.collapsed(data-toggle='collapse', data-target='#navbar')
+                span.sr-only Toggle Navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            a.navbar-brand(href='/', title='Go to home page') Writer's Charts
+        #navbar.collapse.navbar-collapse
+            ul.nav.navbar-nav
+                - navlist.forEach(function(link) {
+                    - var isActive = (link.key === section ? 'active' : '')
+                    li(class=isActive)
+                        a(href=link.href, title=link.title)= link.label
+                - })

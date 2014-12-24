@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
+var navlist = require('./routes/navlist.js');
 
 var app = express();
 
@@ -22,6 +23,9 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use('/bower_components',express.static(path.join(__dirname, 'bower_components')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Adding navlist
+app.locals.navlist = navlist;
 
 app.use('/', routes);
 
