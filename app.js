@@ -4,10 +4,10 @@ var express = require('express'),
 	logger = require('morgan'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
+	session = require('express-session'),
+	passport = require('passport'),
+	flash = require('connect-flash'),
 	i18n = require('i18n');
-
-var routes = require('./routes/index');
-var navlist = require('./routes/navlist.js');
 
 var app = express();
 
@@ -19,7 +19,10 @@ app.set('view engine', 'jade');
 i18n.configure({
 	locales: ['en', 'pt'],
 	directory: path.join(__dirname, 'locales')
-}); 
+});
+
+// passport configuration
+require('./config/passport')(passport);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -27,15 +30,24 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({ secret: (process.env.WRITERSTRAIL_SESSION_SECRET || 'changemeasimnotsecret') }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 app.use(i18n.init);
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use('/bower_components',express.static(path.join(__dirname, 'bower_components')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+var routes = require('./routes/index');
+var authRoutes = require('./routes/auth.js')(passport);
+var navlist = require('./routes/navlist.js');
+
 // Adding navlist
 app.locals.navlist = navlist;
 
 app.use('/', routes);
+app.use('/', authRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
