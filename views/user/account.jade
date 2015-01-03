@@ -30,7 +30,7 @@ block content
                     span.fa.fa-fw.fa-twitter
                     span Twiter
                 - if(user.twitterToken)
-                    p You are connected to Twitter as #{user.twitterUsername}.
+                    p You are connected to Twitter as @#{user.twitterUsername}.
                     a.btn.btn-info(href="/unlink/twitter") Unlink Twitter
                 - else
                     p You are not connected to Twitter.
@@ -46,3 +46,11 @@ block content
                 - else
                     p You are not connected to Google.
                     a.btn.btn-primary(href="/connect/google") Connect to Google
+    .row
+        .col-sm-12
+            .well
+                h3 Delete account
+                form(method="post", action='/account/delete')
+                    input(type="hidden", name="_csrf", value=csrf)
+                    .form-group
+                        button.btn.btn-danger(type="submit") Delete account

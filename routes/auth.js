@@ -1,6 +1,7 @@
 var express = require('express');
 var Router = express.Router;
 var i18n = require('i18n');
+var __ = i18n.__;
 
 module.exports = function (passport) {
 	var routes = Router();
@@ -46,6 +47,21 @@ module.exports = function (passport) {
 			});
 		}
 	});
+	
+	routes.post('/account/delete', isLogged, function (req, res) {
+		res.render('user/delete', {
+			title: 'Delete account',
+			user: req.user
+		});
+	});
+	
+	routes.post('/account/delete/confirm', isLogged, function (req, res) {
+		req.user.destroy().then(function () {
+			req.logout();
+			req.flash('success', __('Your account was successfully delete. We\'re sorry to have you gone :('));
+			res.redirect('/');
+		});
+	})
 	
 	routes.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
 	

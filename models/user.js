@@ -12,7 +12,6 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		facebookId: {
 			type: DataTypes.STRING,
-			unique: true
 		},
 		facebookToken: {
 			type: DataTypes.STRING
@@ -25,7 +24,6 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		twitterId: {
 			type: DataTypes.STRING,
-			unique: true
 		},
 		twitterToken: {
 			type: DataTypes.STRING					
@@ -38,7 +36,6 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		googleId: {
 			type: DataTypes.STRING,
-			unique: true
 		},
 		googleToken: {
 			type: DataTypes.STRING
