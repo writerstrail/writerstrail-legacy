@@ -30,7 +30,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({ secret: (process.env.WRITERSTRAIL_SESSION_SECRET || 'changemeasimnotsecret') }));
+app.use(session({
+	secret: (process.env.WRITERSTRAIL_SESSION_SECRET || 'changemeasimnotsecret'),
+	saveUninitialized: true,
+	resave: true
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
