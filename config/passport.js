@@ -1,6 +1,7 @@
 var models = require('../models');
 var config = require('./config.js')[process.env.NODE_ENV || "development"];
 var FacebookStrategy = require('passport-facebook');
+var TwitterStrategy = require('passport-twitter');
 
 module.exports = function passportConfig (passport) {
 	passport.serializeUser(function (user, done) {
@@ -32,6 +33,34 @@ module.exports = function passportConfig (passport) {
 				newUser.set("facebookName", profile.name.givenName + ' ' + profile.name.familyName);
 				newUser.set("name", profile.name.givenName + ' ' + profile.name.familyName);
 				newUser.set("facebookEmail", profile.emails[0].value);
+				
+				newUser.save().complete(function (err) {
+					if (err) return done(err);
+					return done(null, newUser);
+				});
+			}
+
+		});
+	}));
+
+	passport.use('twitter', new TwitterStrategy({
+		consumerKey: config.twitter.appid,
+		consumerSecret: config.twitter.secret,
+		callbackURL : config.twitter.callback
+	}, function (token, tokenSecret, profile, done) {
+		models.User.find({ where: { twitterId: profile.id } }).complete(function (err, user) {
+			if (err) return done(err);
+			
+			if (user) {
+				return done(null, user)
+			} else {
+				
+				var newUser = models.User.build();
+				newUser.set("twitterId", profile.id);
+				newUser.set("twitterToken", token);
+				newUser.set("twitterDisplayName", profile.displayName);
+				newUser.set("name", profile.displayName);
+				newUser.set("twitterUsername", profile.username);
 				
 				newUser.save().complete(function (err) {
 					if (err) return done(err);

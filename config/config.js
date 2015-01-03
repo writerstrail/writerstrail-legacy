@@ -10,6 +10,11 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET, 
       "callback": "http://localhost:8080/auth/facebook/callback"
+    },
+    "twitter": {
+      "appid": process.env.WRITERSTRAIL_TWITTER_ID,
+      "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
+      "callback": "http://localhost:8080/auth/twitter/callback"
     }
   },
   "test": {
@@ -21,6 +26,7 @@ module.exports =
     "facebook": {
       appid: process.env.WRITERSTRAIL_FACEBOOK_ID,
       secret: process.env.WRITERSTRAIL_FACEBOOK_SECRET,
+      "callback": "http://writerstrail-flikore.rhcloud.com/auth/facebook/callback"
     }
   },
   "production": {
@@ -34,5 +40,10 @@ module.exports =
       appid: process.env.WRITERSTRAIL_FACEBOOK_ID,
       secret: process.env.WRITERSTRAIL_FACEBOOK_SECRET,
     }
+  },
+  "twitter": {
+    "appid": process.env.WRITERSTRAIL_TWITTER_ID,
+    "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
+    "callback": "http://writerstrail-flikore.rhcloud.com//auth/twitter/callback"
   }
 };
