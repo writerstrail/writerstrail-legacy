@@ -9,7 +9,7 @@ block content
                     input(type="hidden", name="_csrf", value=csrf)
                     .form-group
                         label.control-label(for="name") Name
-                        input#name.form-control(value=user.name, name="name", placeholder="Name")
+                        input#name.form-control(value=user.name, name="name", placeholder="Name", autofocus="autofocus")
                     .form-group
                         button.btn.btn-primary(type="submit") Update
     .row

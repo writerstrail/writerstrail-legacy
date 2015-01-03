@@ -1,13 +1,12 @@
 {
-	"Welcome to %s": "Welcome to %s",
+	"Writer's Trail": "Writer's Trail",
 	"Go to home page": "Go to home page",
 	"Home": "Home",
-	"Writer's Charts": "Writer's Charts",
 	"Sign in to Writer's Trail": "Sign in to Writer's Trail",
 	"Sign in": "Sign in",
-	"Your profile page": "Your profile page",
-	"Profile": "Profile",
+	"Your account settings": "Your account settings",
+	"Account": "Account",
 	"Sign out from Writer's Trail": "Sign out from Writer's Trail",
 	"Sign out": "Sign out",
-	"Your account settings": "Your account settings"
+	"Welcome to %s": "Welcome to %s"
 }
