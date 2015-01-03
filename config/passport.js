@@ -1,7 +1,8 @@
 var models = require('../models');
 var config = require('./config.js')[process.env.NODE_ENV || "development"];
-var FacebookStrategy = require('passport-facebook');
-var TwitterStrategy = require('passport-twitter');
+var FacebookStrategy = require('passport-facebook').Strategy;
+var TwitterStrategy = require('passport-twitter').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 module.exports = function passportConfig (passport) {
 	passport.serializeUser(function (user, done) {
@@ -20,7 +21,7 @@ module.exports = function passportConfig (passport) {
 		clientSecret: config.facebook.secret,
 		callbackURL : config.facebook.callback
 	}, function (token, refreshToken, profile, done) {
-		models.User.find({ where: { facebookId: profile.id } }).complete(function (err, user) {
+		models.User.find({ where: { "facebookId": profile.id } }).complete(function (err, user) {
 			if (err) return done(err);
 			
 			if (user) {
@@ -48,7 +49,7 @@ module.exports = function passportConfig (passport) {
 		consumerSecret: config.twitter.secret,
 		callbackURL : config.twitter.callback
 	}, function (token, tokenSecret, profile, done) {
-		models.User.find({ where: { twitterId: profile.id } }).complete(function (err, user) {
+		models.User.find({ where: { "twitterId": profile.id } }).complete(function (err, user) {
 			if (err) return done(err);
 			
 			if (user) {
@@ -61,6 +62,34 @@ module.exports = function passportConfig (passport) {
 				newUser.set("twitterDisplayName", profile.displayName);
 				newUser.set("name", profile.displayName);
 				newUser.set("twitterUsername", profile.username);
+				
+				newUser.save().complete(function (err) {
+					if (err) return done(err);
+					return done(null, newUser);
+				});
+			}
+
+		});
+	}));
+
+	passport.use('google', new GoogleStrategy({
+		clientID    : config.google.appid,
+		clientSecret: config.google.secret,
+		callbackURL : config.google.callback
+	}, function (token, tokenSecret, profile, done) {
+		models.User.find({ where: { "googleId": profile.id } }).complete(function (err, user) {
+			if (err) return done(err);
+			
+			if (user) {
+				return done(null, user)
+			} else {
+				
+				var newUser = models.User.build();
+				newUser.set("googleId", profile.id);
+				newUser.set("googleToken", token);
+				newUser.set("googleName", profile.displayName);
+				newUser.set("name", profile.displayName);
+				newUser.set("googleEmail", profile.emails[0].value);
 				
 				newUser.save().complete(function (err) {
 					if (err) return done(err);

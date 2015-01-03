@@ -15,6 +15,11 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_TWITTER_ID,
       "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
       "callback": "http://localhost:8080/auth/twitter/callback"
+    },
+    "google": {
+      "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
+      "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
+      "callback": "http://localhost:8080/auth/google/callback"
     }
   },
   "test": {
@@ -44,6 +49,11 @@ module.exports =
   "twitter": {
     "appid": process.env.WRITERSTRAIL_TWITTER_ID,
     "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
-    "callback": "http://writerstrail-flikore.rhcloud.com//auth/twitter/callback"
+    "callback": "http://writerstrail-flikore.rhcloud.com/auth/twitter/callback"
+  },
+  "google": {
+    "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
+    "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
+    "callback": "http://writerstrail-flikore.rhcloud.com/auth/google/callback"
   }
 };
