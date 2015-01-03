@@ -2,3 +2,37 @@ extends ../layout
 
 block content
     h1 Welcome #{user.name}!
+    .row
+        .col-sm-4
+            .well
+                h3.text-primary
+                    span.fa.fa-fw.fa-facebook
+                    span Facebook
+                - if(user.facebookToken)
+                    p You are connected to Facebook as #{user.facebookName}.
+                    a.btn.btn-primary(href="/unlink/facebook") Unlink Facebook
+                - else
+                    p You are not connected to Facebook.
+                    a.btn.btn-primary(href="/connect/facebook") Connect to Facebook
+        .col-sm-4
+            .well
+                h3.text-info
+                    span.fa.fa-fw.fa-twitter
+                    span Twiter
+                - if(user.twitterToken)
+                    p You are connected to Twitter as #{user.twitterUsername}.
+                    a.btn.btn-info(href="/unlink/twitter") Unlink Twitter
+                - else
+                    p You are not connected to Twitter.
+                    a.btn.btn-info(href="/connect/twitter") Connect to Twitter
+        .col-sm-4
+            .well
+                h3.text-danger
+                    span.fa.fa-fw.fa-google-plus
+                    span Google
+                - if(user.googleToken)
+                    p You are connected to Google as #{user.googleName}.
+                    a.btn.btn-primary(href="/unlink/google") Unlink Google
+                - else
+                    p You are not connected to Google.
+                    a.btn.btn-primary(href="/connect/google") Connect to Google

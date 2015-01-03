@@ -62,5 +62,75 @@ module.exports = function (passport) {
 		failureRedirect : '/signin'
 	}));
 	
+	// facebook -------------------------------
+	
+	// send to facebook to do the authentication
+	routes.get('/connect/facebook', isLogged, passport.authorize('facebook', { scope : 'email' }));
+	
+	// handle the callback after facebook has authorized the user
+	routes.get('/connect/facebook/callback', isLogged,
+            passport.authorize('facebook', {
+		successRedirect : '/profile',
+		failureRedirect : '/signin'
+	}));
+	
+	// twitter --------------------------------
+	
+	// send to twitter to do the authentication
+	routes.get('/connect/twitter', isLogged, passport.authorize('twitter'));
+	
+	// handle the callback after twitter has authorized the user
+	routes.get('/connect/twitter/callback', isLogged,
+            passport.authorize('twitter', {
+		successRedirect : '/profile',
+		failureRedirect : '/signin'
+	}));
+	
+	
+	// google ---------------------------------
+	
+	// send to google to do the authentication
+	routes.get('/connect/google', isLogged, passport.authorize('google', { scope : ['profile', 'email'] }));
+	
+	// the callback after google has authorized the user
+	routes.get('/connect/google/callback', isLogged,
+            passport.authorize('google', {
+		successRedirect : '/profile',
+		failureRedirect : '/signin'
+	}));
+	
+	// =============================================================================
+	// UNLINK ACCOUNTS =============================================================
+	// =============================================================================
+	// used to unlink accounts. for social accounts, just remove the token
+	// user account will stay active in case they want to reconnect in the future
+	
+	// facebook -------------------------------
+	routes.get('/unlink/facebook', isLogged, function (req, res) {
+		var user = req.user;
+		user.facebookToken = null;
+		user.save().complete(function (err) {
+			res.redirect('/profile');
+		});
+	});
+	
+	// twitter --------------------------------
+	routes.get('/unlink/twitter', isLogged, function (req, res) {
+		var user = req.user;
+		user.twitterToken = null;
+		user.save().complete(function (err) {
+			res.redirect('/profile');
+		});
+	});
+	
+	// google ---------------------------------
+	routes.get('/unlink/google', isLogged, function (req, res) {
+		var user = req.user;
+		user.googleToken = null;
+		user.save().complete(function (err) {
+			res.redirect('/profile');
+		});
+	});
+	
 	return routes;
 }
