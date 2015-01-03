@@ -23,27 +23,39 @@ module.exports = function (passport) {
 		res.redirect('/');
 	});
 	
-	routes.get('/profile', isLogged, function (req, res) {
-		res.render('user/profile', {
-			title: 'Profile',
-			section: 'profile',
-			user: req.user
+	routes.get('/account', isLogged, function (req, res) {
+		res.render('user/account', {
+			title: 'Account',
+			section: 'account',
+			user: req.user,
+			successMessage: req.flash('success')
 		});
 	});
 	
+	routes.post('/account', isLogged, function (req, res, next) {
+		if (req.body.name) {
+			req.user.name = req.body.name;
+			req.user.save().complete(function (err, user) {
+				if (err) return next(err);
+				req.flash('success', 'Account sucessfully updated');
+				return res.redirect('/account');
+			});
+		}
+	});
+	
 	routes.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
-
+	
 	routes.get('/auth/facebook/callback',
         passport.authenticate('facebook', {
-		successRedirect : '/profile',
+		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
 	
 	routes.get('/auth/twitter', passport.authenticate('twitter'));
-
+	
 	routes.get('/auth/twitter/callback',
         passport.authenticate('twitter', {
-		successRedirect : '/profile',
+		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
 	
@@ -58,7 +70,7 @@ module.exports = function (passport) {
 	// the callback after google has authenticated the user
 	routes.get('/auth/google/callback',
             passport.authenticate('google', {
-		successRedirect : '/profile',
+		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
 	
@@ -70,7 +82,7 @@ module.exports = function (passport) {
 	// handle the callback after facebook has authorized the user
 	routes.get('/connect/facebook/callback', isLogged,
             passport.authorize('facebook', {
-		successRedirect : '/profile',
+		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
 	
@@ -82,7 +94,7 @@ module.exports = function (passport) {
 	// handle the callback after twitter has authorized the user
 	routes.get('/connect/twitter/callback', isLogged,
             passport.authorize('twitter', {
-		successRedirect : '/profile',
+		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
 	
@@ -95,7 +107,7 @@ module.exports = function (passport) {
 	// the callback after google has authorized the user
 	routes.get('/connect/google/callback', isLogged,
             passport.authorize('google', {
-		successRedirect : '/profile',
+		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
 	
@@ -110,7 +122,7 @@ module.exports = function (passport) {
 		var user = req.user;
 		user.facebookToken = null;
 		user.save().complete(function (err) {
-			res.redirect('/profile');
+			res.redirect('/account');
 		});
 	});
 	
@@ -119,7 +131,7 @@ module.exports = function (passport) {
 		var user = req.user;
 		user.twitterToken = null;
 		user.save().complete(function (err) {
-			res.redirect('/profile');
+			res.redirect('/account');
 		});
 	});
 	
@@ -128,7 +140,7 @@ module.exports = function (passport) {
 		var user = req.user;
 		user.googleToken = null;
 		user.save().complete(function (err) {
-			res.redirect('/profile');
+			res.redirect('/account');
 		});
 	});
 	

@@ -9,6 +9,8 @@ html
   body
     .container
         include navbar
+        - if(successMessage && successMessage.length > 0)
+            .alert.alert-success= successMessage
         block content
 
     script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')

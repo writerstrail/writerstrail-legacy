@@ -54,8 +54,9 @@ app.locals.navlist = navlist;
 
 // Adding csrf token
 
-app.use(function (req, res, next) { 
+app.use(function (req, res, next) {
 	res.locals.csrf = req.csrfToken();
+	next();
 });
 
 app.use('/', routes);
