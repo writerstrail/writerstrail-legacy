@@ -9,7 +9,13 @@ nav.navbar.navbar-default(role='navigation')
             a.navbar-brand(href='/', title=__('Go to home page'))= __("Writer's Trail")
         #navbar.collapse.navbar-collapse
             ul.nav.navbar-nav
-                - navlist.forEach(function(link) {
+                - navlist.left.forEach(function(link) {
+                    - var isActive = (link.key === section ? 'active' : '')
+                    li(class=isActive)
+                        a(href=link.href, title=__(link.title))= __(link.label)
+                - })
+             ul.nav.navbar-nav.navbar-right
+                - navlist.right.forEach(function(link) {
                     - var isActive = (link.key === section ? 'active' : '')
                     li(class=isActive)
                         a(href=link.href, title=__(link.title))= __(link.label)

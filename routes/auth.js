@@ -32,7 +32,6 @@ module.exports = function (passport) {
 		res.render('user/account', {
 			title: 'Account',
 			section: 'account',
-			user: req.user,
 			successMessage: req.flash('success')
 		});
 	});
@@ -50,8 +49,7 @@ module.exports = function (passport) {
 	
 	routes.post('/account/delete', isLogged, function (req, res) {
 		res.render('user/delete', {
-			title: 'Delete account',
-			user: req.user
+			title: 'Delete account'
 		});
 	});
 	

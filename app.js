@@ -49,13 +49,15 @@ var routes = require('./routes/index');
 var authRoutes = require('./routes/auth.js')(passport);
 var navlist = require('./routes/navlist.js');
 
-// Adding navlist
-app.locals.navlist = navlist;
-
-// Adding csrf token
-
+// Adding locals
 app.use(function (req, res, next) {
 	res.locals.csrf = req.csrfToken();
+	if (req.isAuthenticated()) {
+		res.locals.user = req.user;
+		res.locals.navlist = navlist(req).logged;
+	} else {
+		res.locals.navlist = navlist(req).unlogged;
+	}
 	next();
 });
 
