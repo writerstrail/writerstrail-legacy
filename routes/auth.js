@@ -26,9 +26,19 @@ module.exports = function (passport) {
 	routes.get('/profile', isLogged, function (req, res) {
 		res.render('user/profile', {
 			title: 'Profile',
-			section: 'profile'
+			section: 'profile',
+			user: req.user
 		});
 	});
+	
+	routes.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+	
+	// handle the callback after facebook has authenticated the user
+	routes.get('/auth/facebook/callback',
+        passport.authenticate('facebook', {
+		successRedirect : '/profile',
+		failureRedirect : '/signin'
+	}));
 	
 	return routes;
 }
