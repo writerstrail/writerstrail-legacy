@@ -12,10 +12,14 @@ module.exports = function (passport) {
 	};
 	
 	routes.get('/signin', function (req, res) {
-		res.render('auth/signin', {
-			title: 'Sign in',
-			section: 'signin'
-		})
+		if (req.isAuthenticated()) {
+			res.redirect('/account');
+		} else {
+			res.render('auth/signin', {
+				title: 'Sign in',
+				section: 'signin'
+			});
+		}
 	});
 	
 	routes.get('/signout', function (req, res) {
