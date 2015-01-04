@@ -17,7 +17,7 @@ block content
             .well
                 h3.text-primary
                     span.fa.fa-fw.fa-facebook
-                    span Facebook
+                    | Facebook
                 - if(user.facebookToken)
                     p You are connected to Facebook as #{user.facebookName}.
                     a.btn.btn-primary(href="/unlink/facebook") Unlink Facebook
@@ -28,7 +28,7 @@ block content
             .well
                 h3.text-info
                     span.fa.fa-fw.fa-twitter
-                    span Twiter
+                    | Twiter
                 - if(user.twitterToken)
                     p You are connected to Twitter as @#{user.twitterUsername}.
                     a.btn.btn-info(href="/unlink/twitter") Unlink Twitter
@@ -39,13 +39,13 @@ block content
             .well
                 h3.text-danger
                     span.fa.fa-fw.fa-google-plus
-                    span Google
+                    | Google
                 - if(user.googleToken)
                     p You are connected to Google as #{user.googleName}.
-                    a.btn.btn-primary(href="/unlink/google") Unlink Google
+                    a.btn.btn-danger(href="/unlink/google") Unlink Google
                 - else
                     p You are not connected to Google.
-                    a.btn.btn-primary(href="/connect/google") Connect to Google
+                    a.btn.btn-danger(href="/connect/google") Connect to Google
     .row
         .col-sm-12
             .well

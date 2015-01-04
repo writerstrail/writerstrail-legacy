@@ -5,7 +5,8 @@ block content
         h1 Delete account
         p Are you sure you want to delete your account, #{user.name}?
         p This operation cannot be undone
-        a.btn.btn-primary(href='/account') No, please, don't delete my account!
+        .form-group
+            a.btn.btn-primary(href='/account') No, please, don't delete my account!
         span &nbsp;
         form(action='/account/delete/confirm', method='post')
             .form-group

@@ -8,7 +8,8 @@ var express = require('express'),
 	passport = require('passport'),
 	flash = require('connect-flash'),
 	i18n = require('i18n'),
-	csrf = require('csurf');
+	csrf = require('csurf'),
+	_ = require('lodash');
 
 var app = express();
 
@@ -54,10 +55,10 @@ app.use(function (req, res, next) {
 	res.locals.csrf = req.csrfToken();
 	if (req.isAuthenticated()) {
 		res.locals.user = req.user;
-		res.locals.navlist = navlist(req).logged;
-	} else {
-		res.locals.navlist = navlist(req).unlogged;
 	}
+	res.locals.navlist = navlist(req);
+	
+	res.locals._ = _;
 	next();
 });
 
