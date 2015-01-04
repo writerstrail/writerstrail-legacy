@@ -1,0 +1,56 @@
+extends ../layout
+
+block content
+    h1 Account settings for #{user.name}.
+    .row
+        .col-sm-12
+            .well
+                form(method="post")
+                    input(type="hidden", name="_csrf", value=csrf)
+                    .form-group
+                        label.control-label(for="name") Name
+                        input#name.form-control(value=user.name, name="name", placeholder="Name", autofocus="autofocus")
+                    .form-group
+                        button.btn.btn-primary(type="submit") Update
+    .row
+        .col-sm-4
+            .well
+                h3.text-primary
+                    span.fa.fa-fw.fa-facebook
+                    | Facebook
+                - if(user.facebookToken)
+                    p You are connected to Facebook as #{user.facebookName}.
+                    a.btn.btn-primary(href="/unlink/facebook") Unlink Facebook
+                - else
+                    p You are not connected to Facebook.
+                    a.btn.btn-primary(href="/connect/facebook") Connect to Facebook
+        .col-sm-4
+            .well
+                h3.text-info
+                    span.fa.fa-fw.fa-twitter
+                    | Twiter
+                - if(user.twitterToken)
+                    p You are connected to Twitter as @#{user.twitterUsername}.
+                    a.btn.btn-info(href="/unlink/twitter") Unlink Twitter
+                - else
+                    p You are not connected to Twitter.
+                    a.btn.btn-info(href="/connect/twitter") Connect to Twitter
+        .col-sm-4
+            .well
+                h3.text-danger
+                    span.fa.fa-fw.fa-google-plus
+                    | Google
+                - if(user.googleToken)
+                    p You are connected to Google as #{user.googleName}.
+                    a.btn.btn-danger(href="/unlink/google") Unlink Google
+                - else
+                    p You are not connected to Google.
+                    a.btn.btn-danger(href="/connect/google") Connect to Google
+    .row
+        .col-sm-12
+            .well
+                h3 Delete account
+                form(method="post", action='/account/delete')
+                    input(type="hidden", name="_csrf", value=csrf)
+                    .form-group
+                        button.btn.btn-danger(type="submit") Delete account

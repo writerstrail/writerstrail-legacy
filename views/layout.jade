@@ -1,14 +1,19 @@
-﻿doctype html
+doctype html
 html
   head
-    title= title
-    link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap-theme.min.css')
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    title!= (title ? title + ' &raquo; ' : '') + __('Writer\'s Trail')
+    block styles
+        link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap-theme.min.css')
+        link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
   body
     .container
         include navbar
+        - if(successMessage && successMessage.length > 0)
+            .alert.alert-success= successMessage
         block content
 
-    script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
-    script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+    block scripts
+        script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
+        script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')

@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    .jumbotron
+        h1 Delete account
+        p Are you sure you want to delete your account, #{user.name}?
+        p This operation cannot be undone
+        .form-group
+            a.btn.btn-primary(href='/account') No, please, don't delete my account!
+        span &nbsp;
+        form(action='/account/delete/confirm', method='post')
+            .form-group
+                input(type='hidden', value=csrf, name='_csrf')
+                button.btn.btn-danger(type='submit') Yes, I'm sure. Go ahead and delete it.
