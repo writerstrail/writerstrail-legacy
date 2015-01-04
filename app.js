@@ -5,6 +5,7 @@ var express = require('express'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
 	session = require('express-session'),
+	MysqlStore = require('express-mysql-session'),
 	passport = require('passport'),
 	flash = require('connect-flash'),
 	i18n = require('i18n'),
@@ -12,6 +13,18 @@ var express = require('express'),
 	_ = require('lodash');
 
 var app = express();
+
+var env = process.env.NODE_ENV || "development";
+var config = require('./config/config.js')[env];
+
+// create session store
+var sessionStore = new MysqlStore({
+	host: config.host,
+	port: config.port || 3306,
+	user: config.username,
+	password: config.password,
+	database: config.database
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,6 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
 	secret: (process.env.WRITERSTRAIL_SESSION_SECRET || 'changemeasimnotsecret'),
+	store: sessionStore,
 	saveUninitialized: true,
 	resave: true
 }));
