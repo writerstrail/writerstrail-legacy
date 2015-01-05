@@ -23,25 +23,25 @@ module.exports =
     }
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
+    "username": "nwt",
+    "password": "123123",
+    "database": "nwt",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "facebook": {
-      appid: process.env.WRITERSTRAIL_FACEBOOK_ID,
-      secret: process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": "http://writerstrail-flikore.rhcloud.com/auth/facebook/callback"
+      "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
+      "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
+      "callback": "http://localhost:8080/auth/facebook/callback"
     },
     "twitter": {
       "appid": process.env.WRITERSTRAIL_TWITTER_ID,
       "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
-      "callback": "http://writerstrail-flikore.rhcloud.com/auth/twitter/callback"
+      "callback": "http://localhost:8080/auth/twitter/callback"
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
-      "callback": "http://writerstrail-flikore.rhcloud.com/auth/google/callback"
+      "callback": "http://localhost:8080/auth/google/callback"
     }
   },
   "production": {
@@ -54,17 +54,17 @@ module.exports =
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": "http://writerstrail-flikore.rhcloud.com/auth/facebook/callback"
+      "callback": "http://writerstrail.georgemarques.com.br/auth/facebook/callback"
     },
     "twitter": {
       "appid": process.env.WRITERSTRAIL_TWITTER_ID,
       "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
-      "callback": "http://writerstrail-flikore.rhcloud.com/auth/twitter/callback"
+      "callback": "http://writerstrail.georgemarques.com.br/auth/twitter/callback"
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
-      "callback": "http://writerstrail-flikore.rhcloud.com/auth/google/callback"
+      "callback": "http://writerstrail.georgemarques.com.br/auth/google/callback"
     }
   }
 };
