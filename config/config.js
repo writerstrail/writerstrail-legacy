@@ -47,7 +47,7 @@ module.exports =
   "production": {
     "username": process.env.OPENSHIFT_MYSQL_DB_USERNAME,
     "password": process.env.OPENSHIFT_MYSQL_DB_PASSWORD,
-    "database": process.env.OPENSHIFT_GEAR_NAME,
+    "database": process.env.OPENSHIFT_MYSQL_DB_DATABASENAME,
     "port": process.env.OPENSHIFT_MYSQL_DB_PORT,
     "host": process.env.OPENSHIFT_MYSQL_DB_HOST,
     "dialect": "mysql",
