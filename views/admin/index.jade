@@ -26,7 +26,8 @@ block content
                         span.fa.fa-frown-o
                 - else
                     .panel.panel-default
-                        .panel-body
+                        form.panel-body(method='post' action='/admin/deleteinvitation')
+                            input(type='hidden' name='_csrf' value=csrf)
                             table.table
                                 theader
                                     tr

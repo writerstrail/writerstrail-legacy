@@ -52,10 +52,28 @@ router.post('/invitation', function (req, res) {
 				res.redirect('/admin');
 			}
 		}
-}).catch(function (err) {
-	req.flash('error', 'There was an error saving the invitation');
-	res.redirect('/admin');
+	}).catch(function (err) {
+		req.flash('error', 'There was an error saving the invitation');
+		res.redirect('/admin');
+	});
 });
+
+router.post('/deleteinvitation', function (req, res) {
+	models.Invitation.find({
+		where: {
+			id: parseInt(req.body.invId)
+		}
+	}).complete(function (err, inv) {
+		if (err) {
+			req.flash('error', err.message);
+			res.redirect('/admin');
+		} else {
+			inv.destroy().then(function () {
+				req.flash('success', 'The invitation was successfully deleted');
+				res.redirect('/admin');
+			});
+		}
+	});
 });
 
 module.exports = router;
