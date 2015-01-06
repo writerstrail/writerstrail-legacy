@@ -8,7 +8,11 @@ module.exports = function (sequelize, DataTypes) {
 			primaryKey: true
 		},
 		code: {
-			type: DataTypes.STRING
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: {
+				len: [1, 255]
+			}
 		},
 		amount: {
 			type: DataTypes.INTEGER.UNSIGNED,
@@ -17,6 +21,6 @@ module.exports = function (sequelize, DataTypes) {
 	}, {
 		classMethods: {}
 	});
-
+	
 	return Invitation;
 };
