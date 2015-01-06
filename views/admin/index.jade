@@ -2,3 +2,31 @@ extends ../layout
 
 block content
     h1 Administration page
+    .row
+        .col-sm-6
+            .well
+                h3 New invitation code
+                form#invitations(method='post' action='/admin/invitation')
+                    .input-group
+                        label.control-label(for='invitation_code') Invitation code
+                        input#invitation_code.form-control(type='text' placeholder='Code' name='invCode' autofocus=true)
+                        input(type='hidden' name='_csrf' value=csrf)
+                    .input-group
+                        label.control-label(for='invitation_admount') Amount
+                        input#invitation_amount.form-control(type='number' placeholder='Amount' name='invAmount' value='1')
+                    br
+                    button#gen_code.btn.btn-default(type='button') Generate
+                    | &nbsp;
+                    button.btn.btn-primary(type='submit') Create code
+        .col-sm-6
+            .well
+                h3 Available invitation codes:
+                - if (!codes || codes.length == 0)
+                    p No code available &nbsp;
+                        span.fa.fa-frown-o
+                - else
+                    ul.list-group
+                        each code in codes
+                            li.list-group-item
+                                span.badge= code.amount
+                                = code.code

@@ -8,8 +8,11 @@ module.exports = function (sequelize, DataTypes) {
 			primaryKey: true
 		},
 		code: {
-			type: DataTypes.STRING,
-			unique: true
+			type: DataTypes.STRING
+		},
+		amount: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			defaultValue: 1
 		}
 	}, {
 		classMethods: {}
