@@ -16,7 +16,10 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		amount: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			defaultValue: 1
+			defaultValue: 1,
+			validate: {
+				min: 1
+			}
 		}
 	}, {
 		classMethods: {}

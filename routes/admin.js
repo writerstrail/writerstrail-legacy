@@ -30,17 +30,32 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/invitation', function (req, res) {
-	var inv = models.Invitation.build();
-	inv.set('code', req.body.invCode);
-	inv.set('amount', parseInt(req.body.invAmount) || 1);
-	inv.save().complete(function (err) {
-		if (err) {
-			req.flash('error', 'There was an error saving the invitation');
-		} else {
-			req.flash('success', 'The invitation was successfully saved');
+	models.Invitation.findOrCreate({
+		where: { code: req.body.invCode },
+		defaults: {
+			code: req.body.invCode,
+			amount: req.body.invAmount
 		}
-		res.redirect('/admin');
-	});
+	})
+	 .then(function (params) {
+		var inv = params[0];
+		var created = params[1];
+		if (!inv) { req.flash('error', 'There was an error saving the invitation'); }
+		else {
+			if (!created) {
+				inv.increment('amount', { by: req.body.invAmount }).then(function () {
+					req.flash('success', 'The invitation was successfully saved');
+					res.redirect('/admin');
+				});
+			} else {
+				req.flash('success', 'The invitation was successfully saved')
+				res.redirect('/admin');
+			}
+		}
+}).catch(function (err) {
+	req.flash('error', 'There was an error saving the invitation');
+	res.redirect('/admin');
+});
 });
 
 module.exports = router;
