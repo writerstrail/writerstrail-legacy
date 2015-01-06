@@ -25,11 +25,21 @@ block content
                     p No code available &nbsp;
                         span.fa.fa-frown-o
                 - else
-                    ul.list-group
-                        each code in codes
-                            li.list-group-item
-                                span.badge= code.amount
-                                = code.code
+                    .panel.panel-default
+                        .panel-body
+                            table.table
+                                theader
+                                    tr
+                                        th Delete
+                                        th Code
+                                tbody
+                                    each code in codes
+                                        tr
+                                            td
+                                                button.btn.btn-danger(type="submit" name="invId" value=code.id) Delete
+                                            td
+                                                != code.code + '&nbsp;'
+                                                span.badge= code.amount
 
 append scripts
     script(src='/scripts/admin.js' type='text/javascript')
