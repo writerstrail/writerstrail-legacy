@@ -2,19 +2,35 @@ extends ../layout
 
 block content
     h1 Account settings for #{user.name}.
+    - if (!user.activated)
+        .row
+            .col-sm-12
+                .well.well-sm
+                    h3 Activate account
+                    p. 
+                        To be able to use this beta application, you need to wait
+                        until it's publicly available. If you have an invitation code
+                        to the beta test, use it below to activate your account.
+                    form(method="post" action="/account/activate")
+                        input(type="hidden" name="_csrf" value=csrf)
+                        .form-group
+                            label.control-label(for="code") Invitation code
+                            input#code.form-control(name="code" placeholder="Code" autofocus=true)
+                        .form-group
+                            button.btn.btn-primary(type="submit") Activate
     .row
         .col-sm-12
-            .well
+            .well.well-sm
                 form(method="post")
                     input(type="hidden", name="_csrf", value=csrf)
                     .form-group
                         label.control-label(for="name") Name
-                        input#name.form-control(value=user.name, name="name", placeholder="Name", autofocus="autofocus")
+                        input#name.form-control(value=user.name, name="name", placeholder="Name", autofocus=user.activated)
                     .form-group
                         button.btn.btn-primary(type="submit") Update
     .row
         .col-sm-4
-            .well
+            .well.well-sm
                 h3.text-primary
                     span.fa.fa-fw.fa-facebook
                     | Facebook
@@ -25,7 +41,7 @@ block content
                     p You are not connected to Facebook.
                     a.btn.btn-primary(href="/connect/facebook") Connect to Facebook
         .col-sm-4
-            .well
+            .well.well-sm
                 h3.text-info
                     span.fa.fa-fw.fa-twitter
                     | Twiter
@@ -36,7 +52,7 @@ block content
                     p You are not connected to Twitter.
                     a.btn.btn-info(href="/connect/twitter") Connect to Twitter
         .col-sm-4
-            .well
+            .well.well-sm
                 h3.text-danger
                     span.fa.fa-fw.fa-google-plus
                     | Google
@@ -48,7 +64,7 @@ block content
                     a.btn.btn-danger(href="/connect/google") Connect to Google
     .row
         .col-sm-12
-            .well
+            .well.well-sm
                 h3 Delete account
                 form(method="post", action='/account/delete')
                     input(type="hidden", name="_csrf", value=csrf)
