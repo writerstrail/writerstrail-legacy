@@ -62,6 +62,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var routes = require('./routes/index');
 var authRoutes = require('./routes/auth.js')(passport);
+var adminRoutes = require('./routes/admin.js');
 var navlist = require('./routes/navlist.js');
 
 // Adding locals
@@ -78,6 +79,7 @@ app.use(function (req, res, next) {
 
 app.use('/', routes);
 app.use('/', authRoutes);
+app.use('/admin', adminRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

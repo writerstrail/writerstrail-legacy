@@ -12,6 +12,9 @@ module.exports = function (req) {
 					]
 				}
 			],
+		};
+		if (req.user.get('role') === 'superadmin') {
+			navlist.right.push({ 'href': '/admin', 'key': 'admin', 'label': 'Admin', 'title': 'Admin page' });
 		}
 	} else {
 		navlist = {
@@ -19,7 +22,7 @@ module.exports = function (req) {
 			'right': [
 				{ 'href': '/signin', 'key': 'signin', 'label': 'Sign in', 'title': 'Sign in to Writer\'s Trail' }
 			],
-		}
+		};
 	}	;
 	
 	return navlist;
