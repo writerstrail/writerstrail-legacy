@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+    h1 User administration
+    .panel.panel-default
+        .panel-heading
+            h3.panel-title Users
+        .panel-body
+            form(method='post' action='/admin/user/edit')
+                input(type='hidden' name='_csrf' value=csrf)
+                table.table.table-striped.table-condensed
+                    tr
+                        th 
+                        th 
+                        th Id
+                        th Name
+                        th Activated
+                        th Facebook
+                        th Twitter
+                        th Google
+                        th Last access
+                    each u in users
+                        tr
+                            td
+                                button.btn.btn-sm.btn-default(type='submit' name='activate' value=u.id)
+                                    = u.activated ? __('Deactivate') : __('Activate')
+                            td
+                                button.btn.btn-sm.btn-danger(type='submit' name='delete' value=u.id) Delete
+                            td= u.id
+                            td= u.name
+                            td= u.activated ? __('Yes') : __('No')
+                            td= u.facebookToken ? __('Yes') : __('No') 
+                            td= u.twitterToken ? __('Yes') : __('No')
+                            td= u.googleToken ? __('Yes') : __('No')
+                            td To do 

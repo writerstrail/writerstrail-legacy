@@ -14,7 +14,13 @@ module.exports = function (req) {
 			],
 		};
 		if (req.user.get('role') === 'superadmin') {
-			navlist.right.push({ 'href': '/admin', 'key': 'admin', 'label': 'Admin', 'title': 'Admin page' });
+			navlist.right.push({
+				'dropdown': true, 'label': 'Admin',
+				'list': [
+					{ 'href': '/admin', 'key': 'admin', 'label': 'Admin', 'title': 'Admin page' },
+					{ 'href': '/admin/users', 'key': 'adminusers', 'label': 'Users', 'title': 'User administration' }
+				]
+			});
 		}
 	} else {
 		navlist = {
