@@ -1,7 +1,6 @@
 var express = require('express');
 var Router = express.Router;
-var i18n = require('i18n');
-var __ = i18n.__;
+var models = require('../models');
 
 module.exports = function (passport) {
 	var routes = Router();
@@ -32,7 +31,8 @@ module.exports = function (passport) {
 		res.render('user/account', {
 			title: 'Account',
 			section: 'account',
-			successMessage: req.flash('success')
+			successMessage: req.flash('success'),
+			errorMessage: req.flash('error')
 		});
 	});
 	
@@ -41,7 +41,7 @@ module.exports = function (passport) {
 			req.user.name = req.body.name;
 			req.user.save().complete(function (err, user) {
 				if (err) return next(err);
-				req.flash('success', 'Account sucessfully updated');
+				req.flash('success', res.__('Account sucessfully updated'));
 				return res.redirect('/account');
 			});
 		}
@@ -56,10 +56,34 @@ module.exports = function (passport) {
 	routes.post('/account/delete/confirm', isLogged, function (req, res) {
 		req.user.destroy().then(function () {
 			req.logout();
-			req.flash('success', __('Your account was successfully delete. We\'re sorry to have you gone :('));
+			req.flash('success', 'Your account was successfully deleted. We\'re sorry to have you gone :(');
 			res.redirect('/');
 		});
 	})
+	
+	routes.post('/account/activate', isLogged, function (req, res) {
+		// Do not let activated users spend codes
+		if (req.user.activated) return res.redirect('/account');
+
+		models.Invitation.find({
+			where: {
+				code: req.body.code
+			}
+		}).then(function (inv) {
+			if (!inv || inv.amount < 1) {
+				req.flash('error', req.__('Invalid invitation code'));
+				res.redirect('/account');
+			} else {
+				inv.decrement('amount', { by: 1 }).then(function () {
+					req.user.activated = true;
+					req.user.save().then(function () {
+						req.flash('success', 'Your account was sucessfully activated!');
+						res.redirect('/account');
+					});
+				});
+			}
+		});
+	});
 	
 	routes.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
 	

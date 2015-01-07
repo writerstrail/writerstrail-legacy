@@ -9,5 +9,18 @@
 	"Sign out from Writer's Trail": "Sign out from Writer's Trail",
 	"Sign out": "Sign out",
 	"Welcome to %s": "Welcome to %s",
-	"Your account was successfully delete. We're sorry to have you gone :(": "Your account was successfully delete. We're sorry to have you gone :("
+	"Your account was successfully delete. We're sorry to have you gone :(": "Your account was successfully delete. We're sorry to have you gone :(",
+	"Admin page": "Admin page",
+	"Admin": "Admin",
+	"Invalid invitation code": "Invalid invitation code",
+	"Yes": "Yes",
+	"No": "No",
+	"Deactivate": "Deactivate",
+	"deactivated": "deactivated",
+	"User successfully %s": "User successfully %s",
+	"Activate": "Activate",
+	"User administration": "User administration",
+	"Users": "Users",
+	"activated": "activated",
+	"User successfully deleted": "User successfully deleted"
 }

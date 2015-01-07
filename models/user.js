@@ -26,7 +26,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING,
 		},
 		twitterToken: {
-			type: DataTypes.STRING					
+			type: DataTypes.STRING
 		},
 		twitterDisplayName: {
 			type: DataTypes.STRING
@@ -45,6 +45,16 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		googleName: {
 			type: DataTypes.STRING
+		},
+		activated: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		},
+		role: {
+			type: DataTypes.ENUM,
+			values: ['user', 'moderator', 'admin', 'superadmin'],
+			defaultValue: 'user',
+			allowNull: false
 		}
 	}, {
 		classMethods: {

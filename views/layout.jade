@@ -12,6 +12,8 @@ html
         include navbar
         - if(successMessage && successMessage.length > 0)
             .alert.alert-success= successMessage
+        - if(errorMessage && errorMessage.length > 0)
+            .alert.alert-danger= errorMessage
         block content
 
     block scripts
