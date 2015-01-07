@@ -56,15 +56,24 @@ module.exports = function passportConfig(passport) {
 			});
 		}
 		else {
-			var user = req.user;
-			user.set("facebookId", profile.id);
-			user.set("facebookToken", token);
-			user.set("facebookName", profile.name.givenName + ' ' + profile.name.familyName);
-			user.set("facebookEmail", profile.emails[0].value);
-			
-			user.save().complete(function (err) {
+			models.User.find({ where: { "facebookId": profile.id } }).complete(function (err, exuser) {
 				if (err) return done(err);
-				return done(null, user);
+				
+				if (!exuser) {
+					var user = req.user;
+					user.set("facebookId", profile.id);
+					user.set("facebookToken", token);
+					user.set("facebookName", profile.name.givenName + ' ' + profile.name.familyName);
+					user.set("facebookEmail", profile.emails[0].value);
+					
+					user.save().complete(function (err) {
+						if (err) return done(err);
+						return done(null, user);
+					});
+				} else {
+					req.flash('error', req.__('This Facebook account is associated with another user'));
+					done(null, req.user);
+				}
 			});
 		}
 	}));
@@ -109,15 +118,24 @@ module.exports = function passportConfig(passport) {
 
 			});
 		} else {
-			var user = req.user;
-			user.set("twitterId", profile.id);
-			user.set("twitterToken", token);
-			user.set("twitterDisplayName", profile.displayName);
-			user.set("twitterUsername", profile.username);
-			
-			user.save().complete(function (err) {
+			models.User.find({ where: { "twitterId": profile.id } }).complete(function (err, exuser) {
 				if (err) return done(err);
-				return done(null, user);
+				
+				if (!exuser) {
+					var user = req.user;
+					user.set("twitterId", profile.id);
+					user.set("twitterToken", token);
+					user.set("twitterDisplayName", profile.displayName);
+					user.set("twitterUsername", profile.username);
+					
+					user.save().complete(function (err) {
+						if (err) return done(err);
+						return done(null, user);
+					});
+				} else {
+					req.flash('error', req.__('This Twitter account is associated with another user'));
+					done(null, req.user);
+				}
 			});
 		}
 	}));
@@ -163,15 +181,24 @@ module.exports = function passportConfig(passport) {
 			});
 		}
 		else {
-			var user = req.user;
-			user.set("googleId", profile.id);
-			user.set("googleToken", token);
-			user.set("googleName", profile.displayName);
-			user.set("googleEmail", profile.emails[0].value);
-			
-			user.save().complete(function (err) {
+			models.User.find({ where: { "googleId": profile.id } }).complete(function (err, exuser) {
 				if (err) return done(err);
-				return done(null, user);
+				
+				if (!exuser) {
+					var user = req.user;
+					user.set("googleId", profile.id);
+					user.set("googleToken", token);
+					user.set("googleName", profile.displayName);
+					user.set("googleEmail", profile.emails[0].value);
+					
+					user.save().complete(function (err) {
+						if (err) return done(err);
+						return done(null, user);
+					});
+				} else {
+					req.flash('error', req.__('This Google account is associated with another user'));
+					done(null, req.user);
+				}
 			});
 		}
 	}));

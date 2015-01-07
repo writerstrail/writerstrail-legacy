@@ -22,5 +22,9 @@
 	"User administration": "User administration",
 	"Users": "Users",
 	"activated": "activated",
-	"User successfully deleted": "User successfully deleted"
+	"User successfully deleted": "User successfully deleted",
+	"This Facebook account is associated with anohter user": "This Facebook account is associated with anohter user",
+	"This Facebook account is associated with another user": "This Facebook account is associated with another user",
+	"This Google account is associated with another user": "This Google account is associated with another user",
+	"This Twitter account is associated with another user": "This Twitter account is associated with another user"
 }
