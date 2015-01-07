@@ -2,6 +2,24 @@ extends ../layout
 
 block content
     h1 User administration
+    - if(totalPages > 1)
+        nav
+            ul.pagination
+                - if(page > 1)
+                    li
+                        a(href='/admin/users' title='First') &#8810;
+                    li
+                        a(href=('/admin/users?page=' + (page - 1)), title='Previous') &lt;
+                - for(var i = 1; i <= totalPages; i++)
+                    - var active =( page == i ? 'active' : '')
+                    li(class=active)
+                        a(href='/admin/users?page=' + i)= i
+                - if(page < totalPages)
+                    li
+                        a(href=('/admin/users?page=' + (page + 1)), title='Next') &gt;
+                    li
+                        a(href=('/admin/users?page=' + totalPages), title='Last') &#8811;
+            
     .panel.panel-default
         .panel-heading
             h3.panel-title Users

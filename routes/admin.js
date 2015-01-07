@@ -111,7 +111,7 @@ router.post('/user/edit', function (req, res, next) {
 			if (err) return next(err);
 			if (!user) {
 				req.flash('error', req.__('No user with id %s', req.body.activate));
-				return res.redirect('/admin/users');
+				return res.redirect('back');
 			} else {
 				user.activated = !user.activated;
 				user.save().complete(function (err) {
@@ -120,10 +120,23 @@ router.post('/user/edit', function (req, res, next) {
 					} else {
 						req.flash('success', req.__('User successfully %s', user.activated ? req.__('activated') : req.__('deactivated')));
 					}
-					return res.redirect('/admin/users');
+					return res.redirect('back');
 				});
 			}
 		});
+	} else if (req.body.delete) {
+		models.User.destroy({
+			where: {
+				id: req.body.delete
+			}
+		}).complete(function (err) {
+			if (err) {
+				req.flash('error', req.__('There was an error deleting the user'));
+			} else {
+				req.flash('success', req.__('User successfully deleted'));
+			}
+			return res.redirect('/admin/users');
+		})
 	} else {
 		res.redirect('/admin/users');
 	}
