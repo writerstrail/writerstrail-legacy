@@ -7,7 +7,7 @@ block content
     - var orderDirLink = orderDir ? '&orderdir=' + orderDir : ''
     - var orderByReal = orderBy || 'createdAt'
     - var orderDirReal = orderDir || 'DESC'
-    - var orderDirClass = orderDir == 'ASC' ? 'fa fa-caret-down' : 'fa fa-caret-up'
+    - var orderDirClass = orderDir === 'ASC' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'
     - var orderHref = function(id) {
     -   if(id === orderByReal) {
     -       return '&orderby=' + id + '&orderdir=' + (orderDirReal == 'ASC' ? 'DESC' : 'ASC')

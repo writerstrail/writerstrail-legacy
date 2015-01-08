@@ -38,5 +38,14 @@
 	"Users successfully activated": "Users successfully activated",
 	"Users successfully %s": "Users successfully %s",
 	"Users successfully deleted": "Users successfully deleted",
-	"Users successfully restored": "Users successfully restored"
+	"Users successfully restored": "Users successfully restored",
+	"Invitation code": "Invitation code",
+	"Id": "Id",
+	"Name": "Name",
+	"Code": "Code",
+	"Amount": "Amount",
+	"Generate": "Generate",
+	"Create code": "Create code",
+	"Available invitation codes:": "Available invitation codes:",
+	"No code available": "No code available"
 }
