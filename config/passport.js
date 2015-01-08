@@ -4,6 +4,16 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
+function updateUserLastAccess(userId) {
+	models.User.update({
+		lastAccess: new Date()
+	}, {
+		where: {
+			id: userId
+		}
+	});
+}
+
 module.exports = function passportConfig(passport) {
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);
@@ -31,11 +41,13 @@ module.exports = function passportConfig(passport) {
 						user.set("facebookToken", token);
 						user.set("facebookName", profile.name.givenName + ' ' + profile.name.familyName);
 						user.set("facebookEmail", profile.emails[0].value);
+						user.set('lastAccess', new Date());
 						user.save().complete(function (err) {
 							if (err) return done(err);
 							return done(null, user);
 						});
 					} else {
+						updateUserLastAccess(user.id);
 						return done(null, user);
 					}
 				} else {
@@ -93,12 +105,14 @@ module.exports = function passportConfig(passport) {
 						user.set("twitterToken", token);
 						user.set("twitterDisplayName", profile.displayName);
 						user.set("twitterUsername", profile.username);
+						user.set('lastAccess', new Date());
 						
 						user.save().complete(function (err) {
 							if (err) return done(err);
 							return done(null, user);
 						});
 					} else {
+						updateUserLastAccess(user.id);
 						return done(null, user);
 					}
 				} else {
@@ -155,12 +169,14 @@ module.exports = function passportConfig(passport) {
 						user.set("googleToken", token);
 						user.set("googleName", profile.displayName);
 						user.set("googleEmail", profile.emails[0].value);
+						user.set('lastAccess', new Date());
 						
 						user.save().complete(function (err) {
 							if (err) return done(err);
 							return done(null, newUser);
 						});
 					} else {
+						updateUserLastAccess(user.id);
 						return done(null, user);
 					}
 				} else {

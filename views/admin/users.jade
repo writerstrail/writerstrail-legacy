@@ -38,6 +38,7 @@ block content
                         th Facebook
                         th Twitter
                         th Google
+                        th Member since
                         th Last access
                     each u in users
                         tr
@@ -56,7 +57,8 @@ block content
                             td= u.facebookToken ? __('Yes') : __('No') 
                             td= u.twitterToken ? __('Yes') : __('No')
                             td= u.googleToken ? __('Yes') : __('No')
-                            td To do
+                            td= moment(u.createdAt).format('YYYY/MM/DD')
+                            td= moment(u.lastAccess).format('YYYY/MM/DD HH:mm')
                 .well.well-sm
                     .btn-toolbar(role='toolbar')
                         .btn-group(role='group')

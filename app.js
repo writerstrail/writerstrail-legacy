@@ -10,6 +10,7 @@ var express = require('express'),
 	flash = require('connect-flash'),
 	i18n = require('i18n'),
 	csrf = require('csurf'),
+	moment = require('moment'),
 	_ = require('lodash');
 
 var app = express();
@@ -74,6 +75,7 @@ app.use(function (req, res, next) {
 	res.locals.navlist = navlist(req);
 	
 	res.locals._ = _;
+	res.locals.moment = moment;
 	next();
 });
 

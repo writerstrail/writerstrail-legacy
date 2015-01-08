@@ -55,6 +55,11 @@ module.exports = function (sequelize, DataTypes) {
 			values: ['user', 'moderator', 'admin', 'superadmin'],
 			defaultValue: 'user',
 			allowNull: false
+		},
+		lastAccess: {
+			type: DataTypes.DATE,
+			defaultValue: DataTypes.NOW,
+			allowNull: false
 		}
 	}, {
 		classMethods: {
