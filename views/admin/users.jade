@@ -72,7 +72,7 @@ block content
                             = u.activated ? __('Deactivate') : __('Activate')
                     td
                         - var deleteSubmit = u.deletedAt ? 'undelete' : 'delete';
-                        button.btn.btn-sm.btn-danger(type='submit' name=deleteSubmit value=u.id)
+                        button.btn.btn-sm.btn-danger(type='submit' name=deleteSubmit value=u.id disabled=(u.id === user.id))
                             = u.deletedAt ? __('Restore') : __('Delete')
                     td= u.id
                     td= u.name

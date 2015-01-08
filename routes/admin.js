@@ -146,6 +146,10 @@ router.post('/user/edit', function (req, res, next) {
 			}
 		});
 	} else if (req.body.delete) {
+		if (req.user.id == req.body.delete) {
+			req.flash('error', req.__('You can\'t delete yourself'));
+			return res.redirect('back');
+		}
 		models.User.destroy({
 			where: {
 				id: req.body.delete
@@ -195,6 +199,9 @@ router.post('/user/edit', function (req, res, next) {
 			req.flash('warning', req.__('No selected users'));
 			return res.redirect('back');
 		}
+		_.remove(req.body.selected, function (value) { 
+			return req.user.id == value;
+		});
 		models.User.destroy({
 			where: {
 				id: req.body.selected
