@@ -32,6 +32,7 @@ router.get('/', function (req, res, next) {
 router.get('/users', function (req, res, next) {
 	var regex = /^\d+$/
 	var pageSize = 20;
+	var deleted = req.query.deleted === 'true';
 	if (regex.test(req.query.page)) {
 		var currentPage = Math.max(1, parseInt(req.query.page));
 	} else {
@@ -41,14 +42,22 @@ router.get('/users', function (req, res, next) {
 	models.User.findAndCount({
 		limit: pageSize,
 		offset: (currentPage - 1) * pageSize,
-		order: '`createdAt` DESC'
+		order: '`createdAt` DESC',
+		paranoid: !deleted
 	}).success(function (result) {
+		var totalPages = Math.ceil(result.count / pageSize);
+		
+		if (currentPage > totalPages) {
+			return res.redirect('/admin/users?page=' + totalPages + (deleted ? '&deleted=true' : ''));
+		}
+		
 		res.render('admin/users', {
 			title: 'User administration',
 			section: 'adminusers',
 			page: currentPage,
-			totalPages: Math.ceil(result.count / pageSize),
+			totalPages: totalPages,
 			users: result.rows,
+			deleted: deleted,
 			successMessage: req.flash('success'),
 			errorMessage: req.flash('error')
 		})
@@ -135,10 +144,23 @@ router.post('/user/edit', function (req, res, next) {
 			} else {
 				req.flash('success', req.__('User successfully deleted'));
 			}
-			return res.redirect('/admin/users');
+			return res.redirect('back');
 		})
+	} else if (req.body.undelete) {
+		models.User.restore({
+			where: {
+				id: parseInt(req.body.undelete)
+			}
+		}).complete(function (err) {
+			if (err) {
+				req.flash('error', req.__('There was an error restoring the user'));
+			} else {
+				req.flash('success', req.__('User successfully restored'));
+			}
+			res.redirect('back');
+		});
 	} else {
-		res.redirect('/admin/users');
+		res.redirect('back');
 	}
 });
 

@@ -26,5 +26,13 @@
 	"This Facebook account is associated with anohter user": "This Facebook account is associated with anohter user",
 	"This Facebook account is associated with another user": "This Facebook account is associated with another user",
 	"This Google account is associated with another user": "This Google account is associated with another user",
-	"This Twitter account is associated with another user": "This Twitter account is associated with another user"
+	"This Twitter account is associated with another user": "This Twitter account is associated with another user",
+	"Account sucessfully updated": "Account sucessfully updated",
+	"Delete": "Delete",
+	"Undelete": "Undelete",
+	"Show deleted": "Show deleted",
+	"Hide deleted": "Hide deleted",
+	"User successfully restored": "User successfully restored",
+	"Restore": "Restore",
+	"No user with id %s": "No user with id %s"
 }
