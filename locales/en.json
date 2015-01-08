@@ -34,5 +34,7 @@
 	"Hide deleted": "Hide deleted",
 	"User successfully restored": "User successfully restored",
 	"Restore": "Restore",
-	"No user with id %s": "No user with id %s"
+	"No user with id %s": "No user with id %s",
+	"Users successfully activated": "Users successfully activated",
+	"Users successfully %s": "Users successfully %s"
 }

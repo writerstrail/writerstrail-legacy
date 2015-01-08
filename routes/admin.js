@@ -114,7 +114,6 @@ router.post('/deleteinvitation', function (req, res) {
 });
 
 router.post('/user/edit', function (req, res, next) {
-	console.log('-------------------------ok');
 	if (req.body.activate) {
 		models.User.find(parseInt(req.body.activate)).complete(function (err, user) {
 			if (err) return next(err);
@@ -156,6 +155,21 @@ router.post('/user/edit', function (req, res, next) {
 				req.flash('error', req.__('There was an error restoring the user'));
 			} else {
 				req.flash('success', req.__('User successfully restored'));
+			}
+			res.redirect('back');
+		});
+	} else if (req.body.bulkActivate === 'true' || req.body.bulkDeactivate === 'true') {
+		models.User.update({
+				activated: (req.body.bulkActivate === 'true') || false
+		}, {
+			where: {
+				id: req.body.selected
+			}
+		}).complete(function (err) {
+			if (err) {
+				req.flash('error', req.__('There was an error %s the users', (req.body.bulkActivate ? req.__('activating') : req.__('deactivating'))));
+			} else {
+				req.flash('success', req.__('Users successfully %s', (req.body.bulkActivate ? req.__('activated') : req.__('deactivated'))));
 			}
 			res.redirect('back');
 		});

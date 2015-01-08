@@ -28,6 +28,8 @@ block content
                 input(type='hidden' name='_csrf' value=csrf)
                 table.table.table-striped.table-condensed
                     tr
+                        th
+                            input#select_all(type='checkbox')
                         th 
                         th 
                         th Id
@@ -39,6 +41,8 @@ block content
                         th Last access
                     each u in users
                         tr
+                            td
+                                input(type='checkbox' name='selected[]' value=u.id)
                             td
                                 button.btn.btn-sm.btn-default(type='submit' name='activate' value=u.id)
                                     = u.activated ? __('Deactivate') : __('Activate')
@@ -52,10 +56,15 @@ block content
                             td= u.facebookToken ? __('Yes') : __('No') 
                             td= u.twitterToken ? __('Yes') : __('No')
                             td= u.googleToken ? __('Yes') : __('No')
-                            td To do 
-            .well.well-sm
-                a.btn.btn-default(href='?page=' + page + '&deleted=' + (!deleted))
-                    - if(deleted)
-                        = __('Hide deleted')
-                    - else
-                        = __('Show deleted')
+                            td To do
+                .well.well-sm
+                    .btn-toolbar
+                        .btn-group(role='group')
+                            a.btn.btn-default(href='?page=' + page + '&deleted=' + (!deleted) role='button')
+                                - if(deleted)
+                                    = __('Hide deleted')
+                                - else
+                                    = __('Show deleted')
+                        .btn-group(role='group')
+                            button.btn.btn-default(type='submit' name='bulkActivate' value='true') Activate selected
+                            button.btn.btn-default(type='submit' name='bulkDeactivate' value='true') Dectivate selected
