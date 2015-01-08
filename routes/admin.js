@@ -143,7 +143,12 @@ router.post('/deleteinvitation', function (req, res) {
 
 router.post('/user/edit', function (req, res, next) {
 	if (req.body.activate) {
-		models.User.find(parseInt(req.body.activate)).complete(function (err, user) {
+		models.User.findOne({
+			where: {
+				id: parseInt(req.body.activate)
+			},
+			paranoid: false
+		}).complete(function (err, user) {
 			if (err) return next(err);
 			if (!user) {
 				req.flash('error', req.__('No user with id %s', req.body.activate));
