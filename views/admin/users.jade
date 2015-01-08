@@ -58,13 +58,23 @@ block content
                             td= u.googleToken ? __('Yes') : __('No')
                             td To do
                 .well.well-sm
-                    .btn-toolbar
+                    .btn-toolbar(role='toolbar')
                         .btn-group(role='group')
-                            a.btn.btn-default(href='?page=' + page + '&deleted=' + (!deleted) role='button')
+                            - var hideButtonTitle = deleted ? __('Hide deleted') : __('Show deleted')
+                            a.btn.btn-info(href='?page=' + page + '&deleted=' + (!deleted) role='button' title=hideButtonTitle)
                                 - if(deleted)
-                                    = __('Hide deleted')
+                                    span.fa.fa-lg.fa-toggle-on
                                 - else
-                                    = __('Show deleted')
+                                    span.fa.fa-lg.fa-toggle-off
+                                | &nbsp;
+                                span.fa.fa-lg.fa-trash
                         .btn-group(role='group')
-                            button.btn.btn-default(type='submit' name='bulkActivate' value='true') Activate selected
-                            button.btn.btn-default(type='submit' name='bulkDeactivate' value='true') Dectivate selected
+                            button.btn.btn-primary(type='submit' name='bulkActivate' value='true' title='Activate selected')
+                                span.fa.fa-lg.fa-check
+                            button.btn.btn-warning(type='submit' name='bulkDeactivate' value='true' title='Dectivate selected')
+                                span.fa.fa-lg.fa-close
+                        .btn-group(role='group')
+                            button.btn.btn-danger(type='submit' name='bulkDelete' value='true' title='Delete selected')
+                                span.fa.fa-lg.fa-trash
+                            button.btn.btn-success(type='submit' name='bulkRestore' value='true' title='Restore selected')
+                                span.fa.fa-lg.fa-floppy-o

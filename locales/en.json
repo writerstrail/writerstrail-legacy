@@ -36,5 +36,7 @@
 	"Restore": "Restore",
 	"No user with id %s": "No user with id %s",
 	"Users successfully activated": "Users successfully activated",
-	"Users successfully %s": "Users successfully %s"
+	"Users successfully %s": "Users successfully %s",
+	"Users successfully deleted": "Users successfully deleted",
+	"Users successfully restored": "Users successfully restored"
 }

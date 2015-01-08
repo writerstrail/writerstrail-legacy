@@ -160,7 +160,7 @@ router.post('/user/edit', function (req, res, next) {
 		});
 	} else if (req.body.bulkActivate === 'true' || req.body.bulkDeactivate === 'true') {
 		models.User.update({
-				activated: (req.body.bulkActivate === 'true') || false
+			activated: (req.body.bulkActivate === 'true') || false
 		}, {
 			where: {
 				id: req.body.selected
@@ -173,6 +173,32 @@ router.post('/user/edit', function (req, res, next) {
 			}
 			res.redirect('back');
 		});
+	} else if (req.body.bulkDelete === 'true') {
+		models.User.destroy({
+			where: {
+				id: req.body.selected
+			}
+		}).complete(function (err) {
+			if (err) {
+				req.flash('error', req.__('There was an error deleting the users'));
+			} else {
+				req.flash('success', req.__('Users successfully deleted'));
+			}
+			return res.redirect('back');
+		})
+	} else if (req.body.bulkRestore === 'true') {
+		models.User.restore({
+			where: {
+				id: req.body.selected
+			}
+		}).complete(function (err) {
+			if (err) {
+				req.flash('error', req.__('There was an error restoring the users'));
+			} else {
+				req.flash('success', req.__('Users successfully restored'));
+			}
+			return res.redirect('back');
+		})
 	} else {
 		res.redirect('back');
 	}
