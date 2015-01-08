@@ -68,7 +68,7 @@ block content
                     each u in users
                         tr
                             td
-                                input(type='checkbox' name='selected[]' value=u.id)
+                                input.selection(type='checkbox' name='selected[]' value=u.id)
                             td
                                 button.btn.btn-sm.btn-default(type='submit' name='activate' value=u.id)
                                     = u.activated ? __('Deactivate') : __('Activate')
@@ -105,3 +105,6 @@ block content
                                 span.fa.fa-2x.fa-trash
                             button.btn.btn-success(type='submit' name='bulkRestore' value='true' title='Restore selected')
                                 span.fa.fa-2x.fa-undo
+
+append scripts
+    script(src='/scripts/users.js' type='text/javascript')

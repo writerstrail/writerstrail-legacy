@@ -71,7 +71,8 @@ router.get('/users', function (req, res, next) {
 			orderBy: orderBy === 'createdAt' ? null : orderBy,
 			orderDir: orderDir === 'DESC' ? null : orderDir,
 			successMessage: req.flash('success'),
-			errorMessage: req.flash('error')
+			errorMessage: req.flash('error'),
+			warningMessage: req.flash('warning')
 		})
 	}).error(function (err) {
 		next(err);
@@ -171,6 +172,10 @@ router.post('/user/edit', function (req, res, next) {
 			res.redirect('back');
 		});
 	} else if (req.body.bulkActivate === 'true' || req.body.bulkDeactivate === 'true') {
+		if (!req.body.selected || req.body.selected.length == 0) {
+			req.flash('warning', req.__('No selected users'));
+			return res.redirect('back');
+		}
 		models.User.update({
 			activated: (req.body.bulkActivate === 'true') || false
 		}, {
@@ -186,6 +191,10 @@ router.post('/user/edit', function (req, res, next) {
 			res.redirect('back');
 		});
 	} else if (req.body.bulkDelete === 'true') {
+		if (!req.body.selected || req.body.selected.length == 0) {
+			req.flash('warning', req.__('No selected users'));
+			return res.redirect('back');
+		}
 		models.User.destroy({
 			where: {
 				id: req.body.selected
@@ -199,6 +208,10 @@ router.post('/user/edit', function (req, res, next) {
 			return res.redirect('back');
 		})
 	} else if (req.body.bulkRestore === 'true') {
+		if (!req.body.selected || req.body.selected.length == 0) {
+			req.flash('warning', req.__('No selected users'));
+			return res.redirect('back');
+		}
 		models.User.restore({
 			where: {
 				id: req.body.selected

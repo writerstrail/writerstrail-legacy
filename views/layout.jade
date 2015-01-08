@@ -13,6 +13,8 @@ html
             .alert.alert-success= successMessage
         - if(errorMessage && errorMessage.length > 0)
             .alert.alert-danger= errorMessage
+        - if(warningMessage && warningMessage.length > 0)
+            .alert.alert-warning= warningMessage
         block content
 
     block scripts
