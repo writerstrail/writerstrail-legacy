@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
+var _ = require('lodash');
 
 function isAdmin(req, res, next) {
 	if (req.user && req.user.role === 'superadmin') {
@@ -33,16 +34,25 @@ router.get('/users', function (req, res, next) {
 	var regex = /^\d+$/
 	var pageSize = 20;
 	var deleted = req.query.deleted === 'true';
+	var orderBy = req.query.orderby;
+	var orderDir = req.query.orderdir;
 	if (regex.test(req.query.page)) {
 		var currentPage = Math.max(1, parseInt(req.query.page));
 	} else {
 		var currentPage = 1;
 	}
 	
+	if (!_.contains(['id', 'name', 'createdAt', 'lastAccess'], orderBy)) {
+		orderBy = 'createdAt';
+	}
+	if (!_.contains(['ASC', 'DESC'], orderDir)) {
+		orderDir = 'DESC';
+	}
+	
 	models.User.findAndCount({
 		limit: pageSize,
 		offset: (currentPage - 1) * pageSize,
-		order: '`createdAt` DESC',
+		order: [[orderBy, orderDir]],
 		paranoid: !deleted
 	}).success(function (result) {
 		var totalPages = Math.ceil(result.count / pageSize);
@@ -58,6 +68,8 @@ router.get('/users', function (req, res, next) {
 			totalPages: totalPages,
 			users: result.rows,
 			deleted: deleted,
+			orderBy: orderBy === 'createdAt' ? null : orderBy,
+			orderDir: orderDir === 'DESC' ? null : orderDir,
 			successMessage: req.flash('success'),
 			errorMessage: req.flash('error')
 		})

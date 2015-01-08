@@ -1,24 +1,45 @@
 extends ../layout
 
 block content
+    - var pageLink = '?page=' + page
+    - var deletedLink = deleted ? '&deleted=true' : ''
+    - var orderByLink = orderBy ? '&orderby=' + orderBy : ''
+    - var orderDirLink = orderDir ? '&orderdir=' + orderDir : ''
+    - var orderByReal = orderBy || 'createdAt'
+    - var orderDirReal = orderDir || 'DESC'
+    - var orderDirClass = orderDir == 'ASC' ? 'fa fa-caret-down' : 'fa fa-caret-up'
+    - var orderHref = function(id) {
+    -   if(id === orderByReal) {
+    -       return '&orderby=' + id + '&orderdir=' + (orderDirReal == 'ASC' ? 'DESC' : 'ASC')
+    -   } else {
+    -       return '&orderby=' + id + '&orderdir=ASC'
+    -   }
+    - }
+
+    mixin orderLink(id, name)
+        a(href=pageLink + deletedLink + orderHref(id), title='Order by "' + name + '"', role='link')
+            != name + '&nbsp;'
+            - if(orderByReal === id)
+                span(class=orderDirClass)
+
     h1 User administration
     - if(totalPages > 1)
         nav
             ul.pagination
                 - if(page > 1)
                     li
-                        a(href='/admin/users' title='First') &#8810;
+                        a(href=('/admin/users?page=1' + deletedLink + orderByLink + orderDirLink) title='First') &#8810;
                     li
-                        a(href=('/admin/users?page=' + (page - 1)), title='Previous') &lt;
+                        a(href=('/admin/users?page=' + (page - 1) + deletedLink + orderByLink + orderDirLink), title='Previous') &lt;
                 - for(var i = 1; i <= totalPages; i++)
-                    - var active =( page == i ? 'active' : '')
+                    - var active = (page == i ? 'active' : '')
                     li(class=active)
-                        a(href='/admin/users?page=' + i + (deleted ? '&deleted=true' : ''))= i
+                        a(href='/admin/users?page=' + i + deletedLink + orderByLink + orderDirLink)= i
                 - if(page < totalPages)
                     li
-                        a(href=('/admin/users?page=' + (page + 1)), title='Next') &gt;
+                        a(href=('/admin/users?page=' + (page + 1) + deletedLink + orderByLink + orderDirLink), title='Next') &gt;
                     li
-                        a(href=('/admin/users?page=' + totalPages), title='Last') &#8811;
+                        a(href=('/admin/users?page=' + totalPages + deletedLink + orderByLink + orderDirLink), title='Last') &#8811;
             
     .panel.panel-default
         .panel-heading
@@ -32,14 +53,18 @@ block content
                             input#select_all(type='checkbox')
                         th 
                         th 
-                        th Id
-                        th Name
+                        th
+                            +orderLink('id', 'Id')
+                        th
+                            +orderLink('name', 'Name')
                         th Activated
                         th Facebook
                         th Twitter
                         th Google
-                        th Member since
-                        th Last access
+                        th
+                            +orderLink('createdAt', 'Member since')
+                        th 
+                            +orderLink('lastAccess', 'Last access')
                     each u in users
                         tr
                             td
@@ -57,26 +82,26 @@ block content
                             td= u.facebookToken ? __('Yes') : __('No') 
                             td= u.twitterToken ? __('Yes') : __('No')
                             td= u.googleToken ? __('Yes') : __('No')
-                            td= moment(u.createdAt).format('YYYY/MM/DD')
+                            td= moment(u.createdAt).format('YYYY/MM/DD HH:mm')
                             td= moment(u.lastAccess).format('YYYY/MM/DD HH:mm')
                 .well.well-sm
                     .btn-toolbar(role='toolbar')
                         .btn-group(role='group')
                             - var hideButtonTitle = deleted ? __('Hide deleted') : __('Show deleted')
-                            a.btn.btn-info(href='?page=' + page + '&deleted=' + (!deleted) role='button' title=hideButtonTitle)
+                            a.btn.btn-info(href=pageLink + orderByLink + orderDirLink + (deleted ? '' : '&deleted=true') role='button' title=hideButtonTitle)
                                 - if(deleted)
-                                    span.fa.fa-lg.fa-toggle-on
+                                    span.fa.fa-2x.fa-toggle-on
                                 - else
-                                    span.fa.fa-lg.fa-toggle-off
+                                    span.fa.fa-2x.fa-toggle-off
                                 | &nbsp;
-                                span.fa.fa-lg.fa-trash
+                                span.fa.fa-2x.fa-trash
                         .btn-group(role='group')
                             button.btn.btn-primary(type='submit' name='bulkActivate' value='true' title='Activate selected')
-                                span.fa.fa-lg.fa-check
+                                span.fa.fa-2x.fa-check
                             button.btn.btn-warning(type='submit' name='bulkDeactivate' value='true' title='Dectivate selected')
-                                span.fa.fa-lg.fa-close
+                                span.fa.fa-2x.fa-close
                         .btn-group(role='group')
                             button.btn.btn-danger(type='submit' name='bulkDelete' value='true' title='Delete selected')
-                                span.fa.fa-lg.fa-trash
+                                span.fa.fa-2x.fa-trash
                             button.btn.btn-success(type='submit' name='bulkRestore' value='true' title='Restore selected')
-                                span.fa.fa-lg.fa-floppy-o
+                                span.fa.fa-2x.fa-undo
