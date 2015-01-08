@@ -49,5 +49,8 @@
 	"Available invitation codes:": "Available invitation codes:",
 	"No code available": "No code available",
 	"No selected users": "No selected users",
-	"You can't delete yourself": "You can't delete yourself"
+	"You can't delete yourself": "You can't delete yourself",
+	"Role": "Role",
+	"User": "User",
+	"God-like being": "God-like being"
 }

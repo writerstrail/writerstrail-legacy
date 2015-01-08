@@ -61,6 +61,21 @@ router.get('/users', function (req, res, next) {
 			return res.redirect('/admin/users?page=' + totalPages + (deleted ? '&deleted=true' : ''));
 		}
 		
+		res.locals.roleName = function (role) {
+			switch (role) {
+				case 'user':
+					return req.__('User')
+				case 'moderator':
+					return req.__('Moderator')
+				case 'admin':
+					return req.__('Administrator')
+				case 'superadmin':
+					return req.__('God-like being')
+				default:
+					return req.__('Unknown entity')
+			}
+		}
+		
 		res.render('admin/users', {
 			title: 'User administration',
 			section: 'adminusers',
@@ -199,7 +214,7 @@ router.post('/user/edit', function (req, res, next) {
 			req.flash('warning', req.__('No selected users'));
 			return res.redirect('back');
 		}
-		_.remove(req.body.selected, function (value) { 
+		_.remove(req.body.selected, function (value) {
 			return req.user.id == value;
 		});
 		models.User.destroy({
