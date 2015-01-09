@@ -78,6 +78,11 @@ router.get('/users', function (req, res, next) {
 			}
 		}
 		
+		if (req.session.actusers) {
+			var actlist = req.session.actusers;
+			delete req.session.actusers;
+		}
+		
 		res.render('admin/users', {
 			title: 'User administration',
 			section: 'adminusers',
@@ -87,6 +92,7 @@ router.get('/users', function (req, res, next) {
 			deleted: deleted,
 			orderBy: orderBy === 'createdAt' ? null : orderBy,
 			orderDir: orderDir === 'DESC' ? null : orderDir,
+			actlist: actlist || null,
 			successMessage: req.flash('success'),
 			errorMessage: req.flash('error'),
 			warningMessage: req.flash('warning')
@@ -94,6 +100,36 @@ router.get('/users', function (req, res, next) {
 	}).error(function (err) {
 		next(err);
 	});
+});
+
+router.post('/users/callnext', function (req, res, next) {
+	if (req.body.activatenext) {
+		models.User.findAll({
+			where: {
+				activated: false,
+			},
+			order: [['createdAt', 'DESC']],
+			limit: Math.max(1, parseInt(req.body.amount))
+		}).complete(function (err, rows) {
+			if (err) {
+				req.flash('error', req.__('There was an error searching the users'));
+			} else if (rows.length == 0) {
+				req.flash('warning', req.__('No user found to activate'));
+			} else {
+				req.session.actusers = rows;
+				
+				var updated = _.each(rows, function (row) {
+					row.set('activated', true);
+					row.save();
+				});
+
+				req.flash('success', req.__('Users activated. Don\'t forget to warn them by email'));
+			}
+			res.redirect('back');
+		});
+	} else {
+		res.redirect('back');
+	}
 });
 
 router.get(/\/user\/(\d+)/, function (req, res) {

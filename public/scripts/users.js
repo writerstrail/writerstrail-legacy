@@ -43,4 +43,9 @@
 			$(':checkbox', this).trigger('click');
 		}
 	});
+
+	$('#actlist').click(function () {
+		this.focus();
+		this.select();
+	});
 })(jQuery);

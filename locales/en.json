@@ -102,5 +102,10 @@
 	"You are connected to Google as %s.": "You are connected to Google as %s.",
 	"Unlink Google": "Unlink Google",
 	"You are not connected to Facebook.": "You are not connected to Facebook.",
-	"Connect to Facebook": "Connect to Facebook"
+	"Connect to Facebook": "Connect to Facebook",
+	"Activate the next n users": "Activate the next n users",
+	"List of activated users": "List of activated users",
+	"Users activated. Don't forget to warn them by email": "Users activated. Don't forget to warn them by email",
+	"No user found": "No user found",
+	"No user found to activate": "No user found to activate"
 }

@@ -111,6 +111,26 @@ block content
                         span.fa.fa-2x.fa-trash
                     button.btn.btn-success(type='submit' name='bulkRestore' value='true' title='Restore selected')
                         span.fa.fa-2x.fa-undo
-
+    .well.well-sm
+        h3= __('Activate the next n users')
+        form.form-inline(method='post', action='/admin/users/callnext')
+            input(type='hidden' name='_csrf' value=csrf)
+            .form-group
+                label.sr-only(for='amount')
+                input#amount.form-control(placeholder=__('Amount') type='number' name='amount' value='5')
+            .form-group
+                | &nbsp;
+                button.btn.btn-info(type='submit' name='activatenext' value='true')= __('Activate')
+        | &nbsp;
+        - if(actlist)
+            - var concat = _.map(actlist, function(p) { return p.name + ' <' + p.email + '>' })
+            textarea#actlist.form-control(rows='1')
+                = concat.join()
+            | &nbsp;
+            h4= __('List of activated users')
+            ul.list-group
+                each person in actlist
+                    li.list-group-item= person.name + ' <' + person.email + '>'
+        
 append scripts
     script(src='/scripts/users.js' type='text/javascript')
