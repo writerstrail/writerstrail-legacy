@@ -52,14 +52,14 @@ app.use(session({
 	saveUninitialized: true,
 	resave: true
 }));
+app.use(require('stylus').middleware(path.join(__dirname, 'public')));
+app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use(i18n.init);
 app.use(csrf());
-app.use(require('stylus').middleware(path.join(__dirname, 'public')));
-app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
-app.use(express.static(path.join(__dirname, 'public')));
 
 var routes = require('./routes/index');
 var authRoutes = require('./routes/auth.js')(passport);
