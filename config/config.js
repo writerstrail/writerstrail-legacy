@@ -15,6 +15,11 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
       "callback": "http://localhost:8080/auth/google/callback"
+    },
+    "linkedin": {
+      "appid": process.env.WRITERSTRAIL_LINKEDIN_ID,
+      "secret": process.env.WRITERSTRAIL_LINKEDIN_SECRET,
+      "callback": "http://localhost:8080/auth/linkedin/callback"
     }
   },
   "test": {
@@ -32,6 +37,11 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
       "callback": "http://localhost:8080/auth/google/callback"
+    },
+    "linkedin": {
+      "appid": process.env.WRITERSTRAIL_LINKEDIN_ID,
+      "secret": process.env.WRITERSTRAIL_LINKEDIN_SECRET,
+      "callback": "http://localhost:8080/auth/linkedin/callback"
     }
   },
   "production": {
@@ -50,6 +60,11 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
       "callback": "http://writerstrail.georgemarques.com.br/auth/google/callback"
+    },
+    "linkedin": {
+      "appid": process.env.WRITERSTRAIL_LINKEDIN_ID,
+      "secret": process.env.WRITERSTRAIL_LINKEDIN_SECRET,
+      "callback": "http://writerstrail.georgemarques.com.br/auth/linkedin/callback"
     }
   }
 };

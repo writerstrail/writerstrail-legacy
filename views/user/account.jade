@@ -24,7 +24,7 @@ block content
         .row
             .col-sm-12
                 .well.well-sm
-                    h3 Activate account
+                    h3= __('Activate account')
                     p= __('Your account is already activated.')
     .row
         .col-sm-12
@@ -38,42 +38,74 @@ block content
                     .form-group
                         label.col-sm-1.control-label(for="name")= __('Name')
                         .col-sm-11
-                            input#name.form-control(value=user.name, name="name", placeholder="Name", autofocus=user.activated)
+                            input#name.form-control(value=user.name, name="name", placeholder=__("Name"), autofocus=user.activated)
                     .form-group
                         label.col-sm-1.control-label(for="email")= __('Email')
                         .col-sm-11
                             p#email.form-control-static= user.email
                     .form-group
                         .col-sm-11.col-sm-offset-1
-                            button.btn.btn-primary(type="submit") Update
+                            button.btn.btn-primary(type="submit")= __('Update')
     .row
-        .col-sm-6
+        .col-sm-4
             .well.well-sm
                 h3.text-primary
                     span.fa.fa-fw.fa-facebook
-                    | Facebook
+                    = __('Facebook')
                 - if(user.facebookToken)
-                    p You are connected to Facebook as #{user.facebookName}.
-                    a.btn.btn-primary(href="/unlink/facebook") Unlink Facebook
+                    p= __('You are connected to Facebook as %s.', user.facebookName)
+                    a.btn.btn-facebook(href="/unlink/facebook")
+                        span.fa.fa-facebook
+                        | &nbsp;
+                        = __('Unlink Facebook')
                 - else
-                    p You are not connected to Facebook.
-                    a.btn.btn-primary(href="/connect/facebook") Connect to Facebook
-        .col-sm-6
+                    p= __('You are not connected to Facebook.')
+                    a.btn.btn-facebook(href="/connect/facebook")
+                        span.fa.fa-facebook
+                        | &nbsp;
+                        = __('Connect to Facebook')
+        .col-sm-4
             .well.well-sm
                 h3.text-danger
                     span.fa.fa-fw.fa-google-plus
-                    | Google
+                    = __('Google')
                 - if(user.googleToken)
-                    p You are connected to Google as #{user.googleName}.
-                    a.btn.btn-danger(href="/unlink/google") Unlink Google
+                    p= __('You are connected to Google as %s.', user.googleName)
+                    a.btn.btn-google-plus(href="/unlink/google")
+                        span.fa.fa-google-plus
+                        | &nbsp;
+                        = __('Unlink Google')
                 - else
-                    p You are not connected to Google.
-                    a.btn.btn-danger(href="/connect/google") Connect to Google
+                    p= ('You are not connected to Google.')
+                    a.btn.btn-google-plus(href="/connect/google")
+                        span.fa.fa-google-plus
+                        | &nbsp;
+                        = __('Connect to Google')
+        .col-sm-4
+            .well.well-sm
+                h3.text-info
+                    span.fa.fa-fw.fa-linkedin
+                    = __('LinkedIn')
+                - if(user.linkedinToken)
+                    p= __('You are connected to LinkedIn as %s.', user.linkedinName)
+                    a.btn.btn-linkedin(href="/unlink/linkedin")
+                        span.fa.fa-linkedin
+                        | &nbsp;
+                        = __('Unlink LinkedIn')
+                - else
+                    p= __('You are not connected to LinkedIn.')
+                    a.btn.btn-linkedin(href="/connect/linkedin")
+                        span.fa.fa-linkedin
+                        | &nbsp;
+                        = __('Connect to LinkedIn')
     .row
         .col-sm-12
             .well.well-sm
-                h3 Delete account
+                h3= __('Delete account')
                 form(method="post", action='/account/delete')
                     input(type="hidden", name="_csrf", value=csrf)
                     .form-group
-                        button.btn.btn-danger(type="submit") Delete account
+                        button.btn.btn-danger(type="submit")= __('Delete account')
+
+append styles
+    link(rel='stylesheet', href='/stylesheets/social-buttons.css')

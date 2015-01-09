@@ -108,6 +108,16 @@ module.exports = function (passport) {
 		failureRedirect : '/signin'
 	}));
 	
+	
+	routes.get('/auth/linkedin', passport.authenticate('linkedin', { scope: ['r_basicprofile', 'r_emailaddress'] }));
+	
+	// the callback after linkedin has authenticated the user
+	routes.get('/auth/linkedin/callback',
+            passport.authenticate('linkedin', {
+		successRedirect : '/account',
+		failureRedirect : '/signin'
+	}));
+
 	// facebook -------------------------------
 	
 	// send to facebook to do the authentication
@@ -129,6 +139,18 @@ module.exports = function (passport) {
 	// the callback after google has authorized the user
 	routes.get('/connect/google/callback', isLogged,
             passport.authorize('google', {
+		successRedirect : '/account',
+		failureRedirect : '/signin'
+	}));
+	
+	// linkedin ---------------------------------
+	
+	// send to linkedin to do the authentication
+	routes.get('/connect/linkedin', isLogged, passport.authorize('linkedin', { scope: ['r_basicprofile', 'r_emailaddress'] }));
+	
+	// the callback after google has authorized the user
+	routes.get('/connect/linkedin/callback', isLogged,
+            passport.authorize('linkedin', {
 		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
@@ -156,6 +178,16 @@ module.exports = function (passport) {
 			res.redirect('/account');
 		});
 	});
+	
+	// linkedin ---------------------------------
+	routes.get('/unlink/linkedin', isLogged, function (req, res) {
+		var user = req.user;
+		user.linkedinToken = null;
+		user.save().complete(function (err) {
+			res.redirect('/account');
+		});
+	});
+	
 	
 	return routes;
 }

@@ -3,6 +3,7 @@ var config = require('./config.js')[process.env.NODE_ENV || "development"];
 var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var LinkedinStrategy = require('passport-linkedin').Strategy;
 
 function updateUserLastAccess(userId) {
 	models.User.update({
@@ -82,7 +83,7 @@ module.exports = function passportConfig(passport) {
 			}).complete(function (err, exuser) {
 				if (err) return done(err);
 				
-				if (!exuser) {
+				if (!exuser || (exuser.email == req.user.email)) {
 					var user = req.user;
 					user.set("facebookId", profile.id);
 					user.set("facebookToken", token);
@@ -158,7 +159,7 @@ module.exports = function passportConfig(passport) {
 			}).complete(function (err, exuser) {
 				if (err) return done(err);
 				
-				if (!exuser) {
+				if (!exuser || (exuser.email == req.user.email)) {
 					var user = req.user;
 					user.set("googleId", profile.id);
 					user.set("googleToken", token);
@@ -171,6 +172,83 @@ module.exports = function passportConfig(passport) {
 					});
 				} else {
 					req.flash('error', req.__('This Google account is associated with another user'));
+					done(null, req.user);
+				}
+			});
+		}
+	}));
+	
+	passport.use('linkedin', new LinkedinStrategy({
+		consumerKey    : config.linkedin.appid,
+		consumerSecret: config.linkedin.secret,
+		callbackURL : config.linkedin.callback,
+		profileFields: ['id', 'first-name', 'last-name', 'email-address'],
+		passReqToCallback: true
+	}, function (req, token, tokenSecret, profile, done) {
+		if (!req.user) {
+			models.User.find({
+				where: models.Sequelize.or(
+					{ "linkedinId": profile.id }, 
+					{ "email": { like: profile.emails[0].value } }
+				)
+			}).complete(function (err, user) {
+				if (err) return done(err);
+				
+				if (user) {
+					if (!user.linkedinToken) {
+						user.set("linkedinToken", token);
+						user.set("linkedinName", profile.name.givenName + ' ' + profile.name.familyName);
+						user.set("linkedinEmail", profile.emails[0].value);
+						user.set('lastAccess', new Date());
+						
+						user.save().complete(function (err) {
+							if (err) return done(err);
+							return done(null, user);
+						});
+					} else {
+						updateUserLastAccess(user.id);
+						return done(null, user);
+					}
+				} else {
+					
+					var newUser = models.User.build();
+					newUser.set("linkedinId", profile.id);
+					newUser.set("linkedinToken", token);
+					newUser.set("linkedinName", profile.name.givenName + ' ' + profile.name.familyName);
+					newUser.set("name", profile.name.givenName + ' ' + profile.name.familyName);
+					newUser.set("email", profile.emails[0].value);
+					newUser.set("linkedinEmail", profile.emails[0].value);
+					
+					newUser.save().complete(function (err) {
+						if (err) return done(err);
+						return done(null, newUser);
+					});
+				}
+
+			});
+		}
+		else {
+			models.User.find({
+				where: models.Sequelize.or(
+					{ "linkedinId": profile.id }, 
+					{ "email": { like: profile.emails[0].value } }
+				)
+			}).complete(function (err, exuser) {
+				if (err) return done(err);
+				
+				if (!exuser || (exuser.email == req.user.email)) {
+					var user = req.user;
+					user.set("linkedinId", profile.id);
+					user.set("linkedinToken", token);
+					user.set("linkedinName", profile.name.givenName + ' ' + profile.name.familyName);
+					user.set("linkedinEmail", profile.emails[0].value);
+					
+					user.save().complete(function (err) {
+						if (err) return done(err);
+						return done(null, user);
+					});
+				} else {
+					req.flash('error', req.__('This LinkedIn account is associated with another user'));
 					done(null, req.user);
 				}
 			});

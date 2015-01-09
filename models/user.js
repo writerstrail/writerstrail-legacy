@@ -43,18 +43,6 @@ module.exports = function (sequelize, DataTypes) {
 		facebookName: {
 			type: DataTypes.STRING
 		},
-		twitterId: {
-			type: DataTypes.STRING,
-		},
-		twitterToken: {
-			type: DataTypes.STRING
-		},
-		twitterDisplayName: {
-			type: DataTypes.STRING
-		},
-		twitterUsername: {
-			type: DataTypes.STRING
-		},
 		googleId: {
 			type: DataTypes.STRING,
 		},
@@ -65,6 +53,18 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING
 		},
 		googleName: {
+			type: DataTypes.STRING
+		},
+		linkedinId: {
+			type: DataTypes.STRING,
+		},
+		linkedinToken: {
+			type: DataTypes.STRING
+		},
+		linkedinEmail: {
+			type: DataTypes.STRING
+		},
+		linkedinName: {
 			type: DataTypes.STRING
 		}
 	}, {
