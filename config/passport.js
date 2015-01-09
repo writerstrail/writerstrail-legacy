@@ -37,7 +37,9 @@ module.exports = function passportConfig(passport) {
 			models.User.find({
 				where: models.Sequelize.or(
 					{ "facebookId": profile.id }, 
-					{ "email": { like: profile.emails[0].value } }
+					{ "email": { like: profile.emails[0].value } },
+					{ "googleEmail": { like: profile.emails[0].value } },
+					{ "linkedinEmail": { like: profile.emails[0].value } }
 				)
 			}).complete(function (err, user) {
 				if (err) return done(err);
@@ -78,7 +80,9 @@ module.exports = function passportConfig(passport) {
 			models.User.find({
 				where: models.Sequelize.or(
 					{ "facebookId": profile.id }, 
-					{ "email": { like: profile.emails[0].value } }
+					{ "email": { like: profile.emails[0].value } },
+					{ "googleEmail": { like: profile.emails[0].value } },
+					{ "linkedinEmail": { like: profile.emails[0].value } }
 				)
 			}).complete(function (err, exuser) {
 				if (err) return done(err);
@@ -112,7 +116,9 @@ module.exports = function passportConfig(passport) {
 			models.User.find({
 				where: models.Sequelize.or(
 					{ "googleId": profile.id }, 
-					{ "email": { like: profile.emails[0].value } }
+					{ "email": { like: profile.emails[0].value } },
+					{ "facebookEmail": { like: profile.emails[0].value } },
+					{ "linkedinEmail": { like: profile.emails[0].value } }
 				)
 			}).complete(function (err, user) {
 				if (err) return done(err);
@@ -154,7 +160,9 @@ module.exports = function passportConfig(passport) {
 			models.User.find({
 				where: models.Sequelize.or(
 					{ "googleId": profile.id }, 
-					{ "email": { like: profile.emails[0].value } }
+					{ "email": { like: profile.emails[0].value } },
+					{ "facebookEmail": { like: profile.emails[0].value } },
+					{ "linkedinEmail": { like: profile.emails[0].value } }
 				)
 			}).complete(function (err, exuser) {
 				if (err) return done(err);
@@ -189,7 +197,9 @@ module.exports = function passportConfig(passport) {
 			models.User.find({
 				where: models.Sequelize.or(
 					{ "linkedinId": profile.id }, 
-					{ "email": { like: profile.emails[0].value } }
+					{ "email": { like: profile.emails[0].value } },
+					{ "facebookEmail": { like: profile.emails[0].value } },
+					{ "googleEmail": { like: profile.emails[0].value } }
 				)
 			}).complete(function (err, user) {
 				if (err) return done(err);
@@ -231,7 +241,9 @@ module.exports = function passportConfig(passport) {
 			models.User.find({
 				where: models.Sequelize.or(
 					{ "linkedinId": profile.id }, 
-					{ "email": { like: profile.emails[0].value } }
+					{ "email": { like: profile.emails[0].value } },
+					{ "facebookEmail": { like: profile.emails[0].value } },
+					{ "googleEmail": { like: profile.emails[0].value } }
 				)
 			}).complete(function (err, exuser) {
 				if (err) return done(err);
