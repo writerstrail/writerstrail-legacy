@@ -1,6 +1,7 @@
 var express = require('express');
 var Router = express.Router;
 var models = require('../models');
+var _ = require('lodash');
 
 module.exports = function (passport) {
 	var routes = Router();
@@ -31,6 +32,12 @@ module.exports = function (passport) {
 		res.render('user/account', {
 			title: 'Account',
 			section: 'account',
+			emails: _.uniq([
+				req.user.email,
+				req.user.facebookEmail,
+				req.user.googleEmail,
+				req.user.linkedinEmail
+			]),
 			successMessage: req.flash('success'),
 			errorMessage: req.flash('error')
 		});
@@ -39,6 +46,15 @@ module.exports = function (passport) {
 	routes.post('/account', isLogged, function (req, res, next) {
 		if (req.body.name) {
 			req.user.name = req.body.name;
+			var validemails = _.uniq([
+				req.user.email,
+				req.user.facebookEmail,
+				req.user.googleEmail,
+				req.user.linkedinEmail
+			]);
+			if (_.contains(validemails, req.body.email)) {
+				req.user.email = req.body.email;
+			}
 			req.user.save().complete(function (err, user) {
 				if (err) return next(err);
 				req.flash('success', res.__('Account sucessfully updated'));
@@ -64,7 +80,7 @@ module.exports = function (passport) {
 	routes.post('/account/activate', isLogged, function (req, res) {
 		// Do not let activated users spend codes
 		if (req.user.activated) return res.redirect('/account');
-
+		
 		models.Invitation.find({
 			where: {
 				code: req.body.code
@@ -88,7 +104,7 @@ module.exports = function (passport) {
 	routes.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
 	
 	routes.get('/auth/facebook/callback',
-        passport.authenticate('facebook', {
+passport.authenticate('facebook', {
 		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
@@ -103,7 +119,7 @@ module.exports = function (passport) {
 	
 	// the callback after google has authenticated the user
 	routes.get('/auth/google/callback',
-            passport.authenticate('google', {
+passport.authenticate('google', {
 		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
@@ -113,11 +129,11 @@ module.exports = function (passport) {
 	
 	// the callback after linkedin has authenticated the user
 	routes.get('/auth/linkedin/callback',
-            passport.authenticate('linkedin', {
+passport.authenticate('linkedin', {
 		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
-
+	
 	// facebook -------------------------------
 	
 	// send to facebook to do the authentication
@@ -125,7 +141,7 @@ module.exports = function (passport) {
 	
 	// handle the callback after facebook has authorized the user
 	routes.get('/connect/facebook/callback', isLogged,
-            passport.authorize('facebook', {
+passport.authorize('facebook', {
 		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
@@ -138,7 +154,7 @@ module.exports = function (passport) {
 	
 	// the callback after google has authorized the user
 	routes.get('/connect/google/callback', isLogged,
-            passport.authorize('google', {
+passport.authorize('google', {
 		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));
@@ -150,7 +166,7 @@ module.exports = function (passport) {
 	
 	// the callback after google has authorized the user
 	routes.get('/connect/linkedin/callback', isLogged,
-            passport.authorize('linkedin', {
+passport.authorize('linkedin', {
 		successRedirect : '/account',
 		failureRedirect : '/signin'
 	}));

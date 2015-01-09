@@ -39,10 +39,18 @@ block content
                         label.col-sm-1.control-label(for="name")= __('Name')
                         .col-sm-11
                             input#name.form-control(value=user.name, name="name", placeholder=__("Name"), autofocus=user.activated)
-                    .form-group
-                        label.col-sm-1.control-label(for="email")= __('Email')
-                        .col-sm-11
-                            p#email.form-control-static= user.email
+                    - if(emails.length == 1)
+                        .form-group
+                            label.col-sm-1.control-label(for="email")= __('Email')
+                            .col-sm-11
+                                p#email.form-control-static= user.email
+                    - else
+                        .form-group
+                            label.col-sm-1.control-label(for="email")= __('Email')
+                            .col-sm-11
+                                select#email.form-control(name='email')
+                                    each m in emails
+                                        option(value=m)= m
                     .form-group
                         .col-sm-11.col-sm-offset-1
                             button.btn.btn-primary(type="submit")= __('Update')

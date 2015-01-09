@@ -163,10 +163,10 @@ router.post(/\/user\/(\d+)/, function (req, res) {
 		googleToken: req.body.googleToken || null,
 		googleName: req.body.googleName || null,
 		googleEmail: req.body.googleEmail || null,
-		twitterId: req.body.twitterId || null,
-		twitterToken: req.body.twitterToken || null,
-		twitterDisplayName: req.body.twitterDisplayName || null,
-		twitterUsername: req.body.twitterUsername || null
+		linkedinId: req.body.linkedinId || null,
+		linkedinToken: req.body.linkedinToken || null,
+		linkedinName: req.body.linkedinName || null,
+		linkedinEmail: req.body.linkedinEmail || null
 	};
 	
 	// change role only if other user
