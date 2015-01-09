@@ -2,17 +2,23 @@ extends ../layout
 
 block content
     .jumbotron.text-center
-        h1 Sign in to Writer's Trail
-        p Login or register with:
-        a.btn.btn-primary(href="/auth/facebook")
+        h1= __('Sign in to Writer\'s Trail')
+        p= __('Login or register with:')
+        a.btn.btn-xlarge.btn-facebook(href="/auth/facebook")
             span.fa.fa-facebook.fa-fw
-            span Facebook
+            span= __('Facebook')
         span &nbsp;
-        a.btn.btn-info(href="/auth/twitter")
-            span.fa.fa-twitter.fa-fw
-            span Twitter
-        span &nbsp;
-        a.btn.btn-danger(href="/auth/google")
+        a.btn.btn-xlarge.btn-google-plus(href="/auth/google")
             span.fa.fa-google-plus.fa-fw
-            span Google
+            span= __('Google')
+        span &nbsp;
+        a.btn.btn-xlarge.btn-linkedin(href="/auth/linkedin")
+            span.fa.fa-linkedin.fa-fw
+            span= __('LinkedIn')
+        span &nbsp;
+        a.btn.btn-xlarge.btn-twitter(href="/auth/wordpress")
+            span.fa.fa-wordpress.fa-fw
+            span= __('Wordpress')
 
+append styles
+    link(rel='stylesheet', href='/stylesheets/social-buttons.css')

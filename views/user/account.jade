@@ -11,62 +11,126 @@ block content
                         To be able to use this beta application, you need to wait
                         until it's publicly available. If you have an invitation code
                         to the beta test, use it below to activate your account.
-                    form(method="post" action="/account/activate")
+                    form.form-horizontal(method="post" action="/account/activate")
                         input(type="hidden" name="_csrf" value=csrf)
                         .form-group
-                            label.control-label(for="code") Invitation code
-                            input#code.form-control(name="code" placeholder="Code" autofocus=true)
+                            label.col-sm-2.control-label(for="code")= __('Invitation code')
+                            .col-sm-10
+                                input#code.form-control(name="code" placeholder="Code" autofocus=true)
                         .form-group
-                            button.btn.btn-primary(type="submit") Activate
+                            .col-sm-10.col-sm-offset-2
+                                button.btn.btn-success(type="submit") Activate
+    - else
+        .row
+            .col-sm-12
+                .well.well-sm
+                    h3= __('Activate account')
+                    p= __('Your account is already activated.')
     .row
         .col-sm-12
             .well.well-sm
-                form(method="post")
+                form.form-horizontal(method="post")
                     input(type="hidden", name="_csrf", value=csrf)
                     .form-group
-                        label.control-label(for="name") Name
-                        input#name.form-control(value=user.name, name="name", placeholder="Name", autofocus=user.activated)
+                        label.col-sm-1.control-label(for="id")= __('Id')
+                        .col-sm-11
+                            p#id.form-control-static= user.id
                     .form-group
-                        button.btn.btn-primary(type="submit") Update
+                        label.col-sm-1.control-label(for="name")= __('Name')
+                        .col-sm-11
+                            input#name.form-control(value=user.name, name="name", placeholder=__("Name"), autofocus=user.activated)
+                    - if(emails.length == 1)
+                        .form-group
+                            label.col-sm-1.control-label(for="email")= __('Email')
+                            .col-sm-11
+                                p#email.form-control-static= user.email
+                    - else
+                        .form-group
+                            label.col-sm-1.control-label(for="email")= __('Email')
+                            .col-sm-11
+                                select#email.form-control(name='email')
+                                    each m in emails
+                                        option(value=m)= m
+                    .form-group
+                        .col-sm-11.col-sm-offset-1
+                            button.btn.btn-primary(type="submit")= __('Update')
     .row
-        .col-sm-4
+        .col-sm-3
             .well.well-sm
                 h3.text-primary
                     span.fa.fa-fw.fa-facebook
-                    | Facebook
+                    = __('Facebook')
                 - if(user.facebookToken)
-                    p You are connected to Facebook as #{user.facebookName}.
-                    a.btn.btn-primary(href="/unlink/facebook") Unlink Facebook
+                    p= __('You are connected to Facebook as %s.', user.facebookName)
+                    a.btn.btn-facebook(href="/unlink/facebook")
+                        span.fa.fa-facebook
+                        | &nbsp;
+                        = __('Unlink Facebook')
                 - else
-                    p You are not connected to Facebook.
-                    a.btn.btn-primary(href="/connect/facebook") Connect to Facebook
-        .col-sm-4
-            .well.well-sm
-                h3.text-info
-                    span.fa.fa-fw.fa-twitter
-                    | Twiter
-                - if(user.twitterToken)
-                    p You are connected to Twitter as @#{user.twitterUsername}.
-                    a.btn.btn-info(href="/unlink/twitter") Unlink Twitter
-                - else
-                    p You are not connected to Twitter.
-                    a.btn.btn-info(href="/connect/twitter") Connect to Twitter
-        .col-sm-4
+                    p= __('You are not connected to Facebook.')
+                    a.btn.btn-facebook(href="/connect/facebook")
+                        span.fa.fa-facebook
+                        | &nbsp;
+                        = __('Connect to Facebook')
+        .col-sm-3
             .well.well-sm
                 h3.text-danger
                     span.fa.fa-fw.fa-google-plus
-                    | Google
+                    = __('Google')
                 - if(user.googleToken)
-                    p You are connected to Google as #{user.googleName}.
-                    a.btn.btn-danger(href="/unlink/google") Unlink Google
+                    p= __('You are connected to Google as %s.', user.googleName)
+                    a.btn.btn-google-plus(href="/unlink/google")
+                        span.fa.fa-google-plus
+                        | &nbsp;
+                        = __('Unlink Google')
                 - else
-                    p You are not connected to Google.
-                    a.btn.btn-danger(href="/connect/google") Connect to Google
+                    p= ('You are not connected to Google.')
+                    a.btn.btn-google-plus(href="/connect/google")
+                        span.fa.fa-google-plus
+                        | &nbsp;
+                        = __('Connect to Google')
+        .col-sm-3
+            .well.well-sm
+                h3.text-info
+                    span.fa.fa-fw.fa-linkedin
+                    = __('LinkedIn')
+                - if(user.linkedinToken)
+                    p= __('You are connected to LinkedIn as %s.', user.linkedinName)
+                    a.btn.btn-linkedin(href="/unlink/linkedin")
+                        span.fa.fa-linkedin
+                        | &nbsp;
+                        = __('Unlink LinkedIn')
+                - else
+                    p= __('You are not connected to LinkedIn.')
+                    a.btn.btn-linkedin(href="/connect/linkedin")
+                        span.fa.fa-linkedin
+                        | &nbsp;
+                        = __('Connect to LinkedIn')
+        .col-sm-3
+            .well.well-sm
+                h3.text-info
+                    span.fa.fa-fw.fa-wordpress
+                    = __('Wordpress')
+                - if(user.wordpressToken)
+                    p= __('You are connected to Wordpress as %s.', user.wordpressName)
+                    a.btn.btn-twitter(href="/unlink/wordpress")
+                        span.fa.fa-wordpress
+                        | &nbsp;
+                        = __('Unlink Wordpress')
+                - else
+                    p= __('You are not connected to Wordpress.')
+                    a.btn.btn-twitter(href="/connect/wordpress")
+                        span.fa.fa-wordpress
+                        | &nbsp;
+                        = __('Connect to Wordpress')
     .row
         .col-sm-12
             .well.well-sm
-                h3 Delete account
+                h3= __('Delete account')
                 form(method="post", action='/account/delete')
                     input(type="hidden", name="_csrf", value=csrf)
                     .form-group
-                        button.btn.btn-danger(type="submit") Delete account
+                        button.btn.btn-danger(type="submit")= __('Delete account')
+
+append styles
+    link(rel='stylesheet', href='/stylesheets/social-buttons.css')

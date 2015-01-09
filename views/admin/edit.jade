@@ -1,0 +1,79 @@
+extends ../layout
+
+block content
+    mixin socialInputs(name, label)
+        .form-group
+            label.col-sm-2.control-label(for=name)= label
+            .col-sm-10
+                input.form-control(type='text' placeholder=label value=u[name] name=name id=name)
+
+    h1= __('User edit')
+    - if(!u)
+        p= __('No such user')
+    - else
+        form.form-horizontal(method='post')
+            input(type='hidden' name='_csrf' value=csrf)
+            .form-group
+                label.col-sm-2.control-label= __('Id')
+                .col-sm-10
+                    p.form-control-static= u.id
+            .form-group
+                label.col-sm-2.control-label(for='name')= __('Name')
+                .col-sm-10
+                    input#name.form-control(type='text' placeholder=__('Name') value=u.name name='name' autofocus=true required=true)
+            .form-group
+                label.col-sm-2.control-label(for='email')= __('Email')
+                .col-sm-10
+                    input#email.form-control(type='text' placeholder=__('Email') value=u.email name='email')
+            .form-group
+                .col-sm-10.col-sm-offset-2
+                    .checkbox
+                        label
+                            input(type='checkbox' name='activated' checked=u.activated)
+                            | Activated
+            .form-group
+                label.col-sm-2.control-label(for='role')= __('Role')
+                .col-sm-10
+                    select.form-control(name='role' size='1')
+                        option(selected=('user' === u.role) value='user')= __('User')
+                        option(selected=('moderator' === u.role) value='moderator')= __('Moderator')
+                        option(selected=('admin' === u.role) value='admin')= __('Administrator')
+                        option(selected=('superadmin' === u.role) value='superadmin')= __('God-like being')
+            .form-group
+                label.col-sm-2.control-label= __('Member since')
+                .col-sm-10
+                    p.form-control-static= moment(u.createdAt).format('YYYY/MM/DD HH:mm')
+                        input(type='hidden' value=+moment(u.createdAt) name='createdAt')
+            .form-group
+                label.col-sm-2.control-label= __('Last access')
+                .col-sm-10
+                    p.form-control-static= moment(u.lastAccess).format('YYYY/MM/DD HH:mm')
+            .form-group
+                label.col-sm-2.control-label= __('Last update')
+                .col-sm-10
+                    p.form-control-static= moment(u.updatedAt).format('YYYY/MM/DD HH:mm')
+            .form-group
+                label.col-sm-2.control-label= __('Deleted at')
+                .col-sm-10
+                    p.form-control-static= u.deletedAt ? moment(u.deletedAt).format('YYYY/MM/DD HH:mm') : __('Never')
+            +socialInputs('facebookId', __('Facebook Id'))
+            +socialInputs('facebookName', __('Facebook Name'))
+            +socialInputs('facebookEmail', __('Facebook Email'))
+            +socialInputs('facebookToken', __('Facebook Token'))
+            +socialInputs('googleId', __('Google Id'))
+            +socialInputs('googleName', __('Google Name'))
+            +socialInputs('googleEmail', __('Google Email'))
+            +socialInputs('googleToken', __('Google Token'))
+            +socialInputs('linkedinId', __('LinkedIn Id'))
+            +socialInputs('linkedinName', __('LinkedIn Name'))
+            +socialInputs('linkedinEmail', __('LinkedIn Email'))
+            +socialInputs('linkedinToken', __('LinkedIn Token'))
+            +socialInputs('wordpressId', __('Wordpress Id'))
+            +socialInputs('wordpressName', __('Wordpress Name'))
+            +socialInputs('wordpressEmail', __('Wordpress Email'))
+            +socialInputs('wordpressToken', __('Wordpress Token'))
+            .form-group
+                .col-sm-10.col-sm-offset-2
+                    button.btn.btn-primary(type='submit')= __('Save')
+                    | &nbsp;
+                    a.btn.btn-default(href='javascript:history.back()')= __('Cancel')

@@ -10,6 +10,27 @@ module.exports = function (sequelize, DataTypes) {
 		name: {
 			type: DataTypes.STRING
 		},
+		email: {
+			type: DataTypes.STRING,
+			validate: {
+				isEmail: true
+			}
+		},
+		activated: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		},
+		role: {
+			type: DataTypes.ENUM,
+			values: ['user', 'moderator', 'admin', 'superadmin'],
+			defaultValue: 'user',
+			allowNull: false
+		},
+		lastAccess: {
+			type: DataTypes.DATE,
+			defaultValue: DataTypes.NOW,
+			allowNull: false
+		},
 		facebookId: {
 			type: DataTypes.STRING,
 		},
@@ -20,18 +41,6 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING
 		},
 		facebookName: {
-			type: DataTypes.STRING
-		},
-		twitterId: {
-			type: DataTypes.STRING,
-		},
-		twitterToken: {
-			type: DataTypes.STRING
-		},
-		twitterDisplayName: {
-			type: DataTypes.STRING
-		},
-		twitterUsername: {
 			type: DataTypes.STRING
 		},
 		googleId: {
@@ -46,20 +55,47 @@ module.exports = function (sequelize, DataTypes) {
 		googleName: {
 			type: DataTypes.STRING
 		},
-		activated: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false
+		linkedinId: {
+			type: DataTypes.STRING,
 		},
-		role: {
-			type: DataTypes.ENUM,
-			values: ['user', 'moderator', 'admin', 'superadmin'],
-			defaultValue: 'user',
-			allowNull: false
+		linkedinToken: {
+			type: DataTypes.STRING
+		},
+		linkedinEmail: {
+			type: DataTypes.STRING
+		},
+		linkedinName: {
+			type: DataTypes.STRING
+		},
+		wordpressId: {
+			type: DataTypes.STRING,
+		},
+		wordpressToken: {
+			type: DataTypes.STRING
+		},
+		wordpressEmail: {
+			type: DataTypes.STRING
+		},
+		wordpressName: {
+			type: DataTypes.STRING
 		}
 	}, {
 		classMethods: {
 		},
 		paranoid: true,
+		indexes: [
+			{
+				name: 'name',
+				unique: false,
+				fields: ['name']
+			},
+			{
+				name: 'email',
+				unique: false,
+				fields: ['email']
+
+			}
+		]
 	});
 	
 	return User;

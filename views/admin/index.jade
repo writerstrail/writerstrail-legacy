@@ -6,23 +6,27 @@ block content
         .col-sm-6
             .well
                 h3 New invitation code
-                form#invitations(method='post' action='/admin/invitation')
-                    .input-group
-                        label.control-label(for='invitation_code') Invitation code
-                        input#invitation_code.form-control(type='text' placeholder='Code' name='invCode' autofocus=true)
+                form#invitations.form-horizontal(method='post' action='/admin/invitation')
+                    .form-group
+                        label.col-sm-2.control-label(for='invitation_code')= __('Invitation code')
+                        .col-sm-10
+                            input#invitation_code.form-control(type='text' placeholder=__('Code') name='invCode' autofocus=true)
                         input(type='hidden' name='_csrf' value=csrf)
-                    .input-group
-                        label.control-label(for='invitation_admount') Amount
-                        input#invitation_amount.form-control(type='number' placeholder='Amount' name='invAmount' value='1')
-                    br
-                    button#gen_code.btn.btn-default(type='button') Generate
-                    | &nbsp;
-                    button.btn.btn-primary(type='submit') Create code
+                    .form-group
+                        label.col-sm-2.control-label(for='invitation_admount')= __('Amount')
+                        .col-sm-10
+                            input#invitation_amount.form-control(type='number' placeholder=__('Amount') name='invAmount' value='1')
+                    .form-group
+                        .col-sm-12
+                            button#gen_code.btn.btn-default(type='button')= __('Generate')
+                            | &nbsp;
+                            button.btn.btn-primary(type='submit')= __('Create code')
         .col-sm-6
             .well
-                h3 Available invitation codes:
+                h3= __('Available invitation codes:')
                 - if (!codes || codes.length == 0)
-                    p No code available &nbsp;
+                    p= __('No code available')
+                        | &nbsp;
                         span.fa.fa-frown-o
                 - else
                     .panel.panel-default
@@ -31,13 +35,13 @@ block content
                             table.table
                                 theader
                                     tr
-                                        th Delete
-                                        th Code
+                                        th= __('Delete')
+                                        th= __('Code')
                                 tbody
                                     each code in codes
                                         tr
                                             td
-                                                button.btn.btn-danger(type="submit" name="invId" value=code.id) Delete
+                                                button.btn.btn-danger(type="submit" name="invId" value=code.id)= __('Delete')
                                             td
                                                 != code.code + '&nbsp;'
                                                 span.badge= code.amount

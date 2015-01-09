@@ -10,6 +10,7 @@ var express = require('express'),
 	flash = require('connect-flash'),
 	i18n = require('i18n'),
 	csrf = require('csurf'),
+	moment = require('moment'),
 	_ = require('lodash');
 
 var app = express();
@@ -43,7 +44,7 @@ require('./config/passport')(passport);
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({
 	secret: (process.env.WRITERSTRAIL_SESSION_SECRET || 'changemeasimnotsecret'),
@@ -51,14 +52,14 @@ app.use(session({
 	saveUninitialized: true,
 	resave: true
 }));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
-app.use(i18n.init);
-app.use(csrf());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash());
+app.use(i18n.init);
+app.use(csrf());
+app.use(passport.initialize());
+app.use(passport.session());
 
 var routes = require('./routes/index');
 var authRoutes = require('./routes/auth.js')(passport);
@@ -74,6 +75,7 @@ app.use(function (req, res, next) {
 	res.locals.navlist = navlist(req);
 	
 	res.locals._ = _;
+	res.locals.moment = moment;
 	next();
 });
 

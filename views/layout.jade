@@ -4,9 +4,7 @@ html
     title!= (title ? title + ' &raquo; ' : '') + __('Writer\'s Trail')
     block styles
         link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
-        link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap-theme.min.css')
         link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
-        link(rel='stylesheet', href='/stylesheets/style.css')
   body
     .container
         include navbar
@@ -14,6 +12,8 @@ html
             .alert.alert-success= successMessage
         - if(errorMessage && errorMessage.length > 0)
             .alert.alert-danger= errorMessage
+        - if(warningMessage && warningMessage.length > 0)
+            .alert.alert-warning= warningMessage
         block content
 
     block scripts
