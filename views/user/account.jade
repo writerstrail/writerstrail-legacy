@@ -20,6 +20,12 @@ block content
                         .form-group
                             .col-sm-10.col-sm-offset-2
                                 button.btn.btn-success(type="submit") Activate
+    - else
+        .row
+            .col-sm-12
+                .well.well-sm
+                    h3 Activate account
+                    p= __('Your account is already activated.')
     .row
         .col-sm-12
             .well.well-sm
@@ -34,10 +40,14 @@ block content
                         .col-sm-11
                             input#name.form-control(value=user.name, name="name", placeholder="Name", autofocus=user.activated)
                     .form-group
+                        label.col-sm-1.control-label(for="email")= __('Email')
+                        .col-sm-11
+                            p#email.form-control-static= user.email
+                    .form-group
                         .col-sm-11.col-sm-offset-1
                             button.btn.btn-primary(type="submit") Update
     .row
-        .col-sm-4
+        .col-sm-6
             .well.well-sm
                 h3.text-primary
                     span.fa.fa-fw.fa-facebook
@@ -48,18 +58,7 @@ block content
                 - else
                     p You are not connected to Facebook.
                     a.btn.btn-primary(href="/connect/facebook") Connect to Facebook
-        .col-sm-4
-            .well.well-sm
-                h3.text-info
-                    span.fa.fa-fw.fa-twitter
-                    | Twiter
-                - if(user.twitterToken)
-                    p You are connected to Twitter as @#{user.twitterUsername}.
-                    a.btn.btn-info(href="/unlink/twitter") Unlink Twitter
-                - else
-                    p You are not connected to Twitter.
-                    a.btn.btn-info(href="/connect/twitter") Connect to Twitter
-        .col-sm-4
+        .col-sm-6
             .well.well-sm
                 h3.text-danger
                     span.fa.fa-fw.fa-google-plus

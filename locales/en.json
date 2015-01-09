@@ -81,5 +81,8 @@
 	"Refresh": "Refresh",
 	"Deleted at": "Deleted at",
 	"Never": "Never",
-	"No such user": "No such user"
+	"No such user": "No such user",
+	"Email": "Email",
+	"Your account is already activated": "Your account is already activated",
+	"Your account is already activated.": "Your account is already activated."
 }

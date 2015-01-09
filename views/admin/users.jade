@@ -59,7 +59,6 @@ block content
                 th Activated
                 th= __('Role')
                 th Facebook
-                th Twitter
                 th Google
                 th
                     +orderLink('createdAt', 'Member since')
@@ -82,8 +81,7 @@ block content
                     td= u.name
                     td= u.activated ? __('Yes') : __('No')
                     td= roleName(u.role)
-                    td= u.facebookToken ? __('Yes') : __('No') 
-                    td= u.twitterToken ? __('Yes') : __('No')
+                    td= u.facebookToken ? __('Yes') : __('No')
                     td= u.googleToken ? __('Yes') : __('No')
                     td= moment(u.createdAt).format('YYYY/MM/DD HH:mm')
                     td= moment(u.lastAccess).format('YYYY/MM/DD HH:mm')

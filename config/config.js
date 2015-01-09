@@ -11,11 +11,6 @@ module.exports =
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
       "callback": "http://localhost:8080/auth/facebook/callback"
     },
-    "twitter": {
-      "appid": process.env.WRITERSTRAIL_TWITTER_ID,
-      "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
-      "callback": "http://localhost:8080/auth/twitter/callback"
-    },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
@@ -32,11 +27,6 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
       "callback": "http://localhost:8080/auth/facebook/callback"
-    },
-    "twitter": {
-      "appid": process.env.WRITERSTRAIL_TWITTER_ID,
-      "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
-      "callback": "http://localhost:8080/auth/twitter/callback"
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
@@ -55,11 +45,6 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
       "callback": "http://writerstrail.georgemarques.com.br/auth/facebook/callback"
-    },
-    "twitter": {
-      "appid": process.env.WRITERSTRAIL_TWITTER_ID,
-      "secret": process.env.WRITERSTRAIL_TWITTER_SECRET,
-      "callback": "http://writerstrail.georgemarques.com.br/auth/twitter/callback"
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,

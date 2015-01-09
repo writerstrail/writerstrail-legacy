@@ -10,6 +10,27 @@ module.exports = function (sequelize, DataTypes) {
 		name: {
 			type: DataTypes.STRING
 		},
+		email: {
+			type: DataTypes.STRING,
+			validate: {
+				isEmail: true
+			}
+		},
+		activated: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		},
+		role: {
+			type: DataTypes.ENUM,
+			values: ['user', 'moderator', 'admin', 'superadmin'],
+			defaultValue: 'user',
+			allowNull: false
+		},
+		lastAccess: {
+			type: DataTypes.DATE,
+			defaultValue: DataTypes.NOW,
+			allowNull: false
+		},
 		facebookId: {
 			type: DataTypes.STRING,
 		},
@@ -45,26 +66,24 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		googleName: {
 			type: DataTypes.STRING
-		},
-		activated: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false
-		},
-		role: {
-			type: DataTypes.ENUM,
-			values: ['user', 'moderator', 'admin', 'superadmin'],
-			defaultValue: 'user',
-			allowNull: false
-		},
-		lastAccess: {
-			type: DataTypes.DATE,
-			defaultValue: DataTypes.NOW,
-			allowNull: false
 		}
 	}, {
 		classMethods: {
 		},
 		paranoid: true,
+		indexes: [
+			{
+				name: 'name',
+				unique: false,
+				fields: ['name']
+			},
+			{
+				name: 'email',
+				unique: false,
+				fields: ['email']
+
+			}
+		]
 	});
 	
 	return User;

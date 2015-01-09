@@ -93,14 +93,6 @@ module.exports = function (passport) {
 		failureRedirect : '/signin'
 	}));
 	
-	routes.get('/auth/twitter', passport.authenticate('twitter'));
-	
-	routes.get('/auth/twitter/callback',
-        passport.authenticate('twitter', {
-		successRedirect : '/account',
-		failureRedirect : '/signin'
-	}));
-	
 	// =====================================
 	// GOOGLE ROUTES =======================
 	// =====================================
@@ -128,18 +120,6 @@ module.exports = function (passport) {
 		failureRedirect : '/signin'
 	}));
 	
-	// twitter --------------------------------
-	
-	// send to twitter to do the authentication
-	routes.get('/connect/twitter', isLogged, passport.authorize('twitter'));
-	
-	// handle the callback after twitter has authorized the user
-	routes.get('/connect/twitter/callback', isLogged,
-            passport.authorize('twitter', {
-		successRedirect : '/account',
-		failureRedirect : '/signin'
-	}));
-	
 	
 	// google ---------------------------------
 	
@@ -163,15 +143,6 @@ module.exports = function (passport) {
 	routes.get('/unlink/facebook', isLogged, function (req, res) {
 		var user = req.user;
 		user.facebookToken = null;
-		user.save().complete(function (err) {
-			res.redirect('/account');
-		});
-	});
-	
-	// twitter --------------------------------
-	routes.get('/unlink/twitter', isLogged, function (req, res) {
-		var user = req.user;
-		user.twitterToken = null;
 		user.save().complete(function (err) {
 			res.redirect('/account');
 		});
