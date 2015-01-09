@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models');
 var _ = require('lodash');
+var moment = require('moment');
 
 function isAdmin(req, res, next) {
 	if (req.user && req.user.role === 'superadmin') {
@@ -25,7 +26,8 @@ router.get('/', function (req, res, next) {
 			section: 'admin',
 			codes: codes,
 			errorMessage: req.flash('error'),
-			successMessage: req.flash('success')
+			successMessage: req.flash('success'),
+			warningMessage: req.flash('warning')
 		});
 	});
 });
@@ -92,6 +94,65 @@ router.get('/users', function (req, res, next) {
 	}).error(function (err) {
 		next(err);
 	});
+});
+
+router.get(/\/user\/(\d+)/, function (req, res) {
+	models.User.findOne({
+		where: {
+			id: req.params[0]
+		},
+		paranoid: false
+	}).complete(function (err, user) {
+		res.render('admin/edit', {
+			title: req.__('Edit user'),
+			section: 'adminuseredit',
+			u: user,
+			errorMessage: req.flash('error'),
+			successMessage: req.flash('success'),
+			warningMessage: req.flash('warning')
+		});
+	});
+});
+
+router.post(/\/user\/(\d+)/, function (req, res) {
+	var userid = parseInt(req.params[0]);
+	var update = {
+		name: req.body.name,
+		activated: !!req.body.activated,
+		facebookId: req.body.facebookId || null,
+		facebookToken: req.body.facebookToken || null,
+		facebookName: req.body.facebookName || null,
+		facebookEmail: req.body.facebookEmail || null,
+		googleId: req.body.googleId || null,
+		googleToken: req.body.googleToken || null,
+		googleName: req.body.googleName || null,
+		googleEmail: req.body.googleEmail || null,
+		twitterId: req.body.twitterId || null,
+		twitterToken: req.body.twitterToken || null,
+		twitterDisplayName: req.body.twitterDisplayName || null,
+		twitterUsername: req.body.twitterUsername || null
+	};
+	
+	// change role only if other user
+	if (req.user.id !== userid) {
+		update.role = req.body.role;
+	}
+	
+	models.User.update(update, {
+		where: {
+			id: userid,
+			createdAt: new Date(parseInt(req.body.createdAt))
+		},
+		paranoid: false
+	}).complete(function (err) {
+		if (err) {
+			req.flash('error', req.__('There was an error saving the user'));
+		} else {
+			req.flash('success', req.__('User successfully updated'));
+		}
+		res.redirect('back');
+	});
+
 });
 
 router.post('/invitation', function (req, res) {

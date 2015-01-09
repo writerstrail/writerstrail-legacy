@@ -50,6 +50,7 @@ block content
                 th
                     input#select_all(type='checkbox')
                 th 
+                th
                 th 
                 th
                     +orderLink('id', 'Id')
@@ -69,6 +70,8 @@ block content
                     td
                         input.selection(type='checkbox' name='selected[]' value=u.id)
                     td
+                        a.btn.btn-sm.btn-primary(href='/admin/user/' + u.id role='button')= __('Edit')
+                    td
                         button.btn.btn-sm.btn-default(type='submit' name='activate' value=u.id)
                             = u.activated ? __('Deactivate') : __('Activate')
                     td
@@ -86,6 +89,9 @@ block content
                     td= moment(u.lastAccess).format('YYYY/MM/DD HH:mm')
         .well.well-sm
             .btn-toolbar(role='toolbar')
+                .btn-group(role='group')
+                    a.btn.btn-default(title=__('Refresh') href=pageLink + orderByLink + orderDirLink + deletedLink)
+                        span.fa.fa-2x.fa-refresh
                 .btn-group(role='group')
                     - var hideButtonTitle = deleted ? __('Hide deleted') : __('Show deleted')
                     a.btn.btn-info(href=pageLink + orderByLink + orderDirLink + (deleted ? '' : '&deleted=true') role='button' title=hideButtonTitle)
