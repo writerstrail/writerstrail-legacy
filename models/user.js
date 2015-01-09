@@ -66,6 +66,18 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		linkedinName: {
 			type: DataTypes.STRING
+		},
+		wordpressId: {
+			type: DataTypes.STRING,
+		},
+		wordpressToken: {
+			type: DataTypes.STRING
+		},
+		wordpressEmail: {
+			type: DataTypes.STRING
+		},
+		wordpressName: {
+			type: DataTypes.STRING
 		}
 	}, {
 		classMethods: {

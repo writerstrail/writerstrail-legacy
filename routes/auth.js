@@ -32,12 +32,13 @@ module.exports = function (passport) {
 		res.render('user/account', {
 			title: 'Account',
 			section: 'account',
-			emails: _.uniq([
+			emails: _.uniq(_.compact([
 				req.user.email,
 				req.user.facebookEmail,
 				req.user.googleEmail,
-				req.user.linkedinEmail
-			]),
+				req.user.linkedinEmail,
+				req.user.wordpressEmail
+			])),
 			successMessage: req.flash('success'),
 			errorMessage: req.flash('error')
 		});
@@ -46,12 +47,13 @@ module.exports = function (passport) {
 	routes.post('/account', isLogged, function (req, res, next) {
 		if (req.body.name) {
 			req.user.name = req.body.name;
-			var validemails = _.uniq([
+			var validemails = _.uniq(_.compact([
 				req.user.email,
 				req.user.facebookEmail,
 				req.user.googleEmail,
-				req.user.linkedinEmail
-			]);
+				req.user.linkedinEmail,
+				req.user.wordpressEmail
+			]));
 			if (_.contains(validemails, req.body.email)) {
 				req.user.email = req.body.email;
 			}
@@ -134,6 +136,15 @@ passport.authenticate('linkedin', {
 		failureRedirect : '/signin'
 	}));
 	
+	routes.get('/auth/wordpress', passport.authenticate('wordpress', { scope: ['auth'] }));
+	
+	// the callback after wordpress has authenticated the user
+	routes.get('/auth/wordpress/callback',
+passport.authenticate('wordpress', {
+		successRedirect : '/account',
+		failureRedirect : '/signin'
+	}));
+	
 	// facebook -------------------------------
 	
 	// send to facebook to do the authentication
@@ -171,6 +182,19 @@ passport.authorize('linkedin', {
 		failureRedirect : '/signin'
 	}));
 	
+	
+	// wordpress ---------------------------------
+	
+	// send to wordpress to do the authentication
+	routes.get('/connect/wordpress', isLogged, passport.authorize('wordpress', { scope : ['auth'] }));
+	
+	// handle the callback after facebook has authorized the user
+	routes.get('/connect/wordpress/callback', isLogged,
+passport.authorize('wordpress', {
+		successRedirect : '/account',
+		failureRedirect : '/signin'
+	}));
+	
 	// =============================================================================
 	// UNLINK ACCOUNTS =============================================================
 	// =============================================================================
@@ -204,6 +228,14 @@ passport.authorize('linkedin', {
 		});
 	});
 	
+	// wordpress ---------------------------------
+	routes.get('/unlink/wordpress', isLogged, function (req, res) {
+		var user = req.user;
+		user.wordpressToken = null;
+		user.save().complete(function (err) {
+			res.redirect('/account');
+		});
+	});
 	
 	return routes;
 }

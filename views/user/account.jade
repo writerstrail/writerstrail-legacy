@@ -55,7 +55,7 @@ block content
                         .col-sm-11.col-sm-offset-1
                             button.btn.btn-primary(type="submit")= __('Update')
     .row
-        .col-sm-4
+        .col-sm-3
             .well.well-sm
                 h3.text-primary
                     span.fa.fa-fw.fa-facebook
@@ -72,7 +72,7 @@ block content
                         span.fa.fa-facebook
                         | &nbsp;
                         = __('Connect to Facebook')
-        .col-sm-4
+        .col-sm-3
             .well.well-sm
                 h3.text-danger
                     span.fa.fa-fw.fa-google-plus
@@ -89,7 +89,7 @@ block content
                         span.fa.fa-google-plus
                         | &nbsp;
                         = __('Connect to Google')
-        .col-sm-4
+        .col-sm-3
             .well.well-sm
                 h3.text-info
                     span.fa.fa-fw.fa-linkedin
@@ -106,6 +106,23 @@ block content
                         span.fa.fa-linkedin
                         | &nbsp;
                         = __('Connect to LinkedIn')
+        .col-sm-3
+            .well.well-sm
+                h3.text-info
+                    span.fa.fa-fw.fa-wordpress
+                    = __('Wordpress')
+                - if(user.wordpressToken)
+                    p= __('You are connected to Wordpress as %s.', user.wordpressName)
+                    a.btn.btn-twitter(href="/unlink/wordpress")
+                        span.fa.fa-wordpress
+                        | &nbsp;
+                        = __('Unlink Wordpress')
+                - else
+                    p= __('You are not connected to Wordpress.')
+                    a.btn.btn-twitter(href="/connect/wordpress")
+                        span.fa.fa-wordpress
+                        | &nbsp;
+                        = __('Connect to Wordpress')
     .row
         .col-sm-12
             .well.well-sm

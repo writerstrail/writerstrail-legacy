@@ -166,7 +166,11 @@ router.post(/\/user\/(\d+)/, function (req, res) {
 		linkedinId: req.body.linkedinId || null,
 		linkedinToken: req.body.linkedinToken || null,
 		linkedinName: req.body.linkedinName || null,
-		linkedinEmail: req.body.linkedinEmail || null
+		linkedinEmail: req.body.linkedinEmail || null,
+		wordpressId: req.body.wordpressId || null,
+		wordpressToken: req.body.wordpressToken || null,
+		wordpressName: req.body.wordpressName || null,
+		wordpressEmail: req.body.wordpressEmail || null
 	};
 	
 	// change role only if other user

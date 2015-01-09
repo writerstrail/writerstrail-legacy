@@ -112,5 +112,14 @@
 	"LinkedIn Id": "LinkedIn Id",
 	"LinkedIn Name": "LinkedIn Name",
 	"LinkedIn Email": "LinkedIn Email",
-	"LinkedIn Token": "LinkedIn Token"
+	"LinkedIn Token": "LinkedIn Token",
+	"Wordpress": "Wordpress",
+	"You are not connected to Wordpress.": "You are not connected to Wordpress.",
+	"Connect to Wordpress": "Connect to Wordpress",
+	"You are connected to Wordpress as %s.": "You are connected to Wordpress as %s.",
+	"Unlink Wordpress": "Unlink Wordpress",
+	"Wordpress Id": "Wordpress Id",
+	"Wordpress Name": "Wordpress Name",
+	"Wordpress Email": "Wordpress Email",
+	"Wordpress Token": "Wordpress Token"
 }
