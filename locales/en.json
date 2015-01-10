@@ -121,5 +121,11 @@
 	"Wordpress Id": "Wordpress Id",
 	"Wordpress Name": "Wordpress Name",
 	"Wordpress Email": "Wordpress Email",
-	"Wordpress Token": "Wordpress Token"
+	"Wordpress Token": "Wordpress Token",
+	"Page not found - 404": "Page not found - 404",
+	"Page not found": "Page not found",
+	"This page is either a draft thrown away or a procrastination yet to be put aside. Try another address or go to the %shome page%s.": "This page is either a draft thrown away or a procrastination yet to be put aside. Try another address or go to the %shome page%s.",
+	"Server error - 500": "Server error - 500",
+	"Server error": "Server error",
+	"The server is a very lazy writer sometimes. Try again later or go to the %shome page%s.": "The server is a very lazy writer sometimes. Try again later or go to the %shome page%s."
 }
