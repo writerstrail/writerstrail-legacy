@@ -122,7 +122,7 @@ router.post('/users/callnext', function (req, res, next) {
 					row.set('activated', true);
 					row.save();
 				});
-
+				
 				req.flash('success', req.__('Users activated. Don\'t forget to warn them by email'));
 			}
 			res.redirect('back');
@@ -155,6 +155,7 @@ router.post(/\/user\/(\d+)/, function (req, res) {
 	var update = {
 		name: req.body.name,
 		activated: !!req.body.activated,
+		email: req.body.email,
 		facebookId: req.body.facebookId || null,
 		facebookToken: req.body.facebookToken || null,
 		facebookName: req.body.facebookName || null,

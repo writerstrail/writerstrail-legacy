@@ -48,6 +48,7 @@ module.exports = function passportConfig(passport) {
 				
 				if (user) {
 					if (!user.facebookToken) {
+						user.set("facebookId", profile.id);
 						user.set("facebookToken", token);
 						user.set("facebookName", profile.name.givenName + ' ' + profile.name.familyName);
 						user.set("facebookEmail", profile.emails[0].value);
@@ -129,6 +130,7 @@ module.exports = function passportConfig(passport) {
 				
 				if (user) {
 					if (!user.googleToken) {
+						user.set("googleId", profile.id);
 						user.set("googleToken", token);
 						user.set("googleName", profile.displayName);
 						user.set("googleEmail", profile.emails[0].value);
@@ -212,6 +214,7 @@ module.exports = function passportConfig(passport) {
 				
 				if (user) {
 					if (!user.linkedinToken) {
+						user.set("linkedinId", profile.id);
 						user.set("linkedinToken", token);
 						user.set("linkedinName", profile.name.givenName + ' ' + profile.name.familyName);
 						user.set("linkedinEmail", profile.emails[0].value);
@@ -295,6 +298,7 @@ module.exports = function passportConfig(passport) {
 				
 				if (user) {
 					if (!user.linkedinToken) {
+						user.set("wordpressId", profile._json.ID);
 						user.set("wordpressToken", token);
 						user.set("wordpressName", profile._json.display_name);
 						user.set("wordpressEmail", profile._json.email);
