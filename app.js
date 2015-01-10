@@ -104,13 +104,33 @@ if (app.get('env') === 'development') {
 	});
 }
 
+// 404 error handler
+app.use(function (err, req, res, next) {
+	if (!(404 === err.status)) return next(err);
+	
+	res.render('error/404', {
+		title: req.__('Page not found - 404'),
+		section: '404'
+	});
+});
+
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
-	res.render('error', {
-		message: err.message,
-		error: {}
+	
+	res.locals.csrf = req.csrfToken();
+	if (req.isAuthenticated()) {
+		res.locals.user = req.user;
+	}
+	res.locals.navlist = navlist(req);
+	
+	res.locals._ = _;
+	res.locals.moment = moment;
+	
+	res.render('error/500', {
+		title: req.__('Server error - 500'),
+		section: '505'
 	});
 });
 
