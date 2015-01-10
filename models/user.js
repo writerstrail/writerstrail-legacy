@@ -32,7 +32,7 @@ module.exports = function (sequelize, DataTypes) {
 			allowNull: false
 		},
 		facebookId: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING
 		},
 		facebookToken: {
 			type: DataTypes.STRING
@@ -44,7 +44,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING
 		},
 		googleId: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING
 		},
 		googleToken: {
 			type: DataTypes.STRING
@@ -56,7 +56,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING
 		},
 		linkedinId: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING
 		},
 		linkedinToken: {
 			type: DataTypes.STRING
@@ -68,7 +68,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING
 		},
 		wordpressId: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING
 		},
 		wordpressToken: {
 			type: DataTypes.STRING
@@ -80,6 +80,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING
 		}
 	}, {
+		tableName: 'users',
 		classMethods: {
 		},
 		paranoid: true,
