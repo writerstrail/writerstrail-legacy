@@ -76,6 +76,17 @@ module.exports = {
 			},
 			wordpressName: {
 				type: DataTypes.STRING
+			},
+			createdAt: {
+				type: DataTypes.DATE,
+				allowNull: false,
+			},
+			updatedAt: {
+				type: DataTypes.DATE,
+				allowNull: false,
+			},
+			deletedAt: {
+				type: DataTypes.DATE
 			}
 		}, {
 			charset: 'utf8'
@@ -97,6 +108,14 @@ module.exports = {
 				amount: {
 					type: DataTypes.INTEGER.UNSIGNED,
 					defaultValue: 1
+				},
+				createdAt: {
+					type: DataTypes.DATE,
+					allowNull: false,
+				},
+				updatedAt: {
+					type: DataTypes.DATE,
+					allowNull: false,
 				}
 			},
 			{
@@ -108,7 +127,7 @@ module.exports = {
 	},
 	
 	down: function (migration, DataTypes, done) {
-		migration.dropTable('invitations').then(function () { 
+		migration.dropTable('invitations').then(function () {
 			return migration.dropTable('users');
 		}).then(done);
 	}
