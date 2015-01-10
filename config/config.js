@@ -9,22 +9,22 @@ module.exports =
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": "http://localhost:8080/auth/facebook/callback"
+      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
-      "callback": "http://localhost:8080/auth/google/callback"
+      "callback": process.env.WRITERSTRAIL_GOOGLE_CALLBACK
     },
     "linkedin": {
       "appid": process.env.WRITERSTRAIL_LINKEDIN_ID,
       "secret": process.env.WRITERSTRAIL_LINKEDIN_SECRET,
-      "callback": "http://localhost:8080/auth/linkedin/callback"
+      "callback": process.env.WRITERSTRAIL_LINKEDIN_CALLBACK
     },
     "wordpress": {
       "appid": process.env.WRITERSTRAIL_WORDPRESS_ID,
       "secret": process.env.WRITERSTRAIL_WORDPRESS_SECRET,
-      "callback": "http://localhost:8080/auth/wordpress/callback"
+      "callback": process.env.WRITERSTRAIL_WORDPRESS_CALLBACK
     }
   },
   "test": {
@@ -36,22 +36,22 @@ module.exports =
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": "http://localhost:8080/auth/facebook/callback"
+      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
-      "callback": "http://localhost:8080/auth/google/callback"
+      "callback": process.env.WRITERSTRAIL_GOOGLE_CALLBACK
     },
     "linkedin": {
       "appid": process.env.WRITERSTRAIL_LINKEDIN_ID,
       "secret": process.env.WRITERSTRAIL_LINKEDIN_SECRET,
-      "callback": "http://localhost:8080/auth/linkedin/callback"
+      "callback": process.env.WRITERSTRAIL_LINKEDIN_CALLBACK
     },
     "wordpress": {
       "appid": process.env.WRITERSTRAIL_WORDPRESS_ID,
       "secret": process.env.WRITERSTRAIL_WORDPRESS_SECRET,
-      "callback": "http://localhost:8080/auth/wordpress/callback"
+      "callback": process.env.WRITERSTRAIL_WORDPRESS_CALLBACK
     }
   },
   "production": {
@@ -64,22 +64,22 @@ module.exports =
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": "http://writerstrail.georgemarques.com.br/auth/facebook/callback"
+      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
       "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
-      "callback": "http://writerstrail.georgemarques.com.br/auth/google/callback"
+      "callback": process.env.WRITERSTRAIL_GOOGLE_CALLBACK
     },
     "linkedin": {
       "appid": process.env.WRITERSTRAIL_LINKEDIN_ID,
       "secret": process.env.WRITERSTRAIL_LINKEDIN_SECRET,
-      "callback": "http://writerstrail.georgemarques.com.br/auth/linkedin/callback"
+      "callback": process.env.WRITERSTRAIL_LINKEDIN_CALLBACK
     },
     "wordpress": {
       "appid": process.env.WRITERSTRAIL_WORDPRESS_ID,
       "secret": process.env.WRITERSTRAIL_WORDPRESS_SECRET,
-      "callback": "http://writerstrail.georgemarques.com.br/auth/wordpress/callback"
+      "callback": process.env.WRITERSTRAIL_WORDPRESS_CALLBACK
     }
   }
 };
