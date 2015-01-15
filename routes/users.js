@@ -1,9 +1,9 @@
 var router = require('express').Router(),
 	_ = require('lodash'),
 	models = require('../models'),
-	islogged = require('../utils/middlewares/islogged');
+	isactivated = require('../utils/middlewares/isactivated');
 
-router.use(islogged);
+router.use(isactivated);
 
 router.get('/genres', function (req, res) {
 	res.render('user/genres', {

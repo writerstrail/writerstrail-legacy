@@ -1,5 +1,7 @@
 "use strict";
 
+var _ = require('lodash');
+
 module.exports = function (sequelize, DataTypes) {
 	var User = sequelize.define("User", {
 		id: {
@@ -98,7 +100,22 @@ module.exports = function (sequelize, DataTypes) {
 				User.hasMany(models.Genre, {
 					as: 'Genres',
 					foreignKey: 'owner_id'
-				})
+				});
+				User.afterCreate(function (user) {
+					var genres = [
+						{
+							name: 'Fantasy',
+							description: 'Mages, Maidens, Heroes and Dragons.',
+							owner_id: user.id
+						},
+						{
+							name: 'Science Fiction',
+							description: 'Machines, Scientists, Time travel and Space exploration.',
+							owner_id: user.id
+						}
+					];
+					models.Genre.bulkCreate(genres);
+				});
 			}
 		},
 		paranoid: true,

@@ -132,5 +132,6 @@
 	"Verified": "Verified",
 	"The name of the genre must have between 3 and 255 characters": "The name of the genre must have between 3 and 255 characters",
 	"Genres": "Genres",
-	"Your defined genres": "Your defined genres"
+	"Your defined genres": "Your defined genres",
+	"Sorry, your account is still not activated.": "Sorry, your account is still not activated."
 }
