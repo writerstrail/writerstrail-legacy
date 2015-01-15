@@ -156,6 +156,7 @@ router.post(/\/user\/(\d+)/, function (req, res) {
 		name: req.body.name,
 		activated: !!req.body.activated,
 		email: req.body.email,
+		invitationCode: req.body.invitationCode || null,
 		facebookId: req.body.facebookId || null,
 		facebookToken: req.body.facebookToken || null,
 		facebookName: req.body.facebookName || null,
