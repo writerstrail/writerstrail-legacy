@@ -62,9 +62,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 var routes = require('./routes/index');
-var authRoutes = require('./routes/auth.js')(passport);
-var adminRoutes = require('./routes/admin.js');
-var navlist = require('./routes/navlist.js');
+var authRoutes = require('./routes/auth')(passport);
+var adminRoutes = require('./routes/admin');
+var userRoutes = require('./routes/users');
+var navlist = require('./routes/navlist');
 
 // Adding locals
 app.use(function (req, res, next) {
@@ -82,6 +83,7 @@ app.use(function (req, res, next) {
 app.use('/', routes);
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/', userRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
