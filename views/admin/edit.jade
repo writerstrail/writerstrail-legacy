@@ -26,11 +26,21 @@ block content
                 .col-sm-10
                     input#email.form-control(type='email' placeholder=__('Email') value=u.email name='email')
             .form-group
+                label.col-sm-2.control-label(for='invitationCode')= __('Invitation code')
+                .col-sm-10
+                    input#invitationCode.form-control(type='text' placeholder=__('Invitation code') value=u.invitationCode name='invitationCode')
+            .form-group
                 .col-sm-10.col-sm-offset-2
                     .checkbox
                         label
                             input(type='checkbox' name='activated' checked=u.activated)
-                            | Activated
+                            = __('Activated')
+            .form-group
+                .col-sm-10.col-sm-offset-2
+                    .checkbox
+                        label
+                            input(type='checkbox' name='verified' checked=u.verified)
+                            = __('Verified')
             .form-group
                 label.col-sm-2.control-label(for='role')= __('Role')
                 .col-sm-10
