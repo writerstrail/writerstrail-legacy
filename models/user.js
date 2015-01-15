@@ -31,6 +31,12 @@ module.exports = function (sequelize, DataTypes) {
 			defaultValue: DataTypes.NOW,
 			allowNull: false
 		},
+		invitationCode: {
+			type: DataTypes.STRING,
+			validate: {
+				min: 1
+			}
+		},
 		facebookId: {
 			type: DataTypes.STRING
 		},

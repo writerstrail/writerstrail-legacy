@@ -29,6 +29,9 @@ module.exports = {
 				defaultValue: DataTypes.NOW,
 				allowNull: false
 			},
+			invitationCode: {
+				type: DataTypes.STRING
+			},
 			facebookId: {
 				type: DataTypes.STRING
 			},
