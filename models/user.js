@@ -94,6 +94,12 @@ module.exports = function (sequelize, DataTypes) {
 	}, {
 		tableName: 'users',
 		classMethods: {
+			associate: function (models) {
+				User.hasMany(models.Genre, {
+					as: 'Genres',
+					foreignKey: 'owner_id'
+				})
+			}
 		},
 		paranoid: true,
 		indexes: [
