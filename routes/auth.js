@@ -85,15 +85,19 @@ module.exports = function (passport) {
 		
 		models.Invitation.find({
 			where: {
-				code: req.body.code
+				code: req.body.code,
+				amount: {
+					gt: 0
+				}
 			}
 		}).then(function (inv) {
-			if (!inv || inv.amount < 1) {
+			if (!inv) {
 				req.flash('error', req.__('Invalid invitation code'));
 				res.redirect('/account');
 			} else {
 				inv.decrement('amount', { by: 1 }).then(function () {
 					req.user.activated = true;
+					req.user.invitationCode = inv.code;
 					req.user.save().then(function () {
 						req.flash('success', 'Your account was sucessfully activated!');
 						res.redirect('/account');

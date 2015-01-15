@@ -18,7 +18,13 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		activated: {
 			type: DataTypes.BOOLEAN,
-			defaultValue: false
+			defaultValue: false,
+			allowNull: false
+		},
+		verified: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+			allowNull: false
 		},
 		role: {
 			type: DataTypes.ENUM,
@@ -30,6 +36,12 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.DATE,
 			defaultValue: DataTypes.NOW,
 			allowNull: false
+		},
+		invitationCode: {
+			type: DataTypes.STRING,
+			validate: {
+				min: 1
+			}
 		},
 		facebookId: {
 			type: DataTypes.STRING

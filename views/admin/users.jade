@@ -56,7 +56,8 @@ block content
                     +orderLink('id', 'Id')
                 th
                     +orderLink('name', 'Name')
-                th Activated
+                th= __('Activated')
+                th= __('Verified')
                 th= __('Role')
                 th Facebook
                 th Google
@@ -82,6 +83,7 @@ block content
                     td= u.id
                     td= u.name
                     td= u.activated ? __('Yes') : __('No')
+                    td= u.verified ? __('Yes') : __('No')
                     td= roleName(u.role)
                     td= u.facebookToken ? __('Yes') : __('No')
                     td= u.googleToken ? __('Yes') : __('No')

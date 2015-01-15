@@ -16,7 +16,13 @@ module.exports = {
 			},
 			activated: {
 				type: DataTypes.BOOLEAN,
-				defaultValue: false
+				defaultValue: false,
+				allowNull: false
+			},
+			activated: {
+				type: DataTypes.BOOLEAN,
+				defaultValue: false,
+				allowNull: false
 			},
 			role: {
 				type: DataTypes.ENUM,
@@ -28,6 +34,9 @@ module.exports = {
 				type: DataTypes.DATE,
 				defaultValue: DataTypes.NOW,
 				allowNull: false
+			},
+			invitationCode: {
+				type: DataTypes.STRING
 			},
 			facebookId: {
 				type: DataTypes.STRING
