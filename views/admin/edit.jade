@@ -34,7 +34,13 @@ block content
                     .checkbox
                         label
                             input(type='checkbox' name='activated' checked=u.activated)
-                            | Activated
+                            = __('Activated')
+            .form-group
+                .col-sm-10.col-sm-offset-2
+                    .checkbox
+                        label
+                            input(type='checkbox' name='verified' checked=u.verified)
+                            = __('Verified')
             .form-group
                 label.col-sm-2.control-label(for='role')= __('Role')
                 .col-sm-10

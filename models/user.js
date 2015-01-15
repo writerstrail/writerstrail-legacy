@@ -18,7 +18,13 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		activated: {
 			type: DataTypes.BOOLEAN,
-			defaultValue: false
+			defaultValue: false,
+			allowNull: false
+		},
+		verified: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+			allowNull: false
 		},
 		role: {
 			type: DataTypes.ENUM,

@@ -16,7 +16,13 @@ module.exports = {
 			},
 			activated: {
 				type: DataTypes.BOOLEAN,
-				defaultValue: false
+				defaultValue: false,
+				allowNull: false
+			},
+			activated: {
+				type: DataTypes.BOOLEAN,
+				defaultValue: false,
+				allowNull: false
 			},
 			role: {
 				type: DataTypes.ENUM,

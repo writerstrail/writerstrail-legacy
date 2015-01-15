@@ -155,6 +155,7 @@ router.post(/\/user\/(\d+)/, function (req, res) {
 	var update = {
 		name: req.body.name,
 		activated: !!req.body.activated,
+		verified: !!req.body.verified,
 		email: req.body.email,
 		invitationCode: req.body.invitationCode || null,
 		facebookId: req.body.facebookId || null,
