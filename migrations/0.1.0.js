@@ -19,7 +19,7 @@ module.exports = {
 				defaultValue: false,
 				allowNull: false
 			},
-			activated: {
+			verified: {
 				type: DataTypes.BOOLEAN,
 				defaultValue: false,
 				allowNull: false

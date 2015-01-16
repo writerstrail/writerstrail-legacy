@@ -1,0 +1,37 @@
+extends ../../layout
+
+block content
+  h1= edit ? __('Edit genre') : __('New genre')
+
+  form.form-horizontal(method='post' action=formAction)
+    input(type='hidden' name='_csrf', value=csrf)
+    - var nameErr = _.find(validate, { path: 'name' }) || ''
+    .form-group(class=(nameErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='name')= __('Name')
+      .col-sm-10
+        input#name.form-control(type='text' name='name' placeholder=__('Name') value=genre.name aria-describedby='namehelp')
+        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
+    .form-group
+      label.col-sm-2.control-label(for='Description')= __('Description')
+      .col-sm-10
+        textarea#name.form-control(rows='3' name='description' placeholder=__('Description'))= genre.description
+    .form-group
+      .btn-group(role='group')
+        - if (edit)
+          button.btn.btn-primary(type='submit' name='save', value='true')
+            span.fa.fa-floppy-o
+            | &nbsp;
+            = __('Save')
+          button.btn.btn-danger(type='submit' name='delete', value='true')
+            span.fa.fa-remove
+            | &nbsp;
+            = __('Delete')
+        - else
+          button.btn.btn-primary(type='submit' name='create', value='true')
+            span.fa.fa-pencil-o
+            | &nbsp;
+            = __('Create')
+          button.btn.btn-default(type='submit' name='createadd', value='true')
+            span.fa.fa-plus
+            | &nbsp;
+            = __('Create and add another')

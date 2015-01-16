@@ -6,8 +6,9 @@ module.exports = function (req) {
 			'right': [
 				{
 					'dropdown': true, 'label': req.user.name, 'list': [
-						{ 'href': '/account', 'key': 'account', 'label': 'Account', 'title': 'Your account settings' },
+						{ 'href': '/genres', 'key': 'genres', 'label': req.__('Genres'), 'title': req.__('Your defined genres') },
 						{ 'key': 'divider' },
+						{ 'href': '/account', 'key': 'account', 'label': 'Account', 'title': 'Your account settings' },
 						{ 'href': '/signout', 'key': 'signout', 'label': 'Sign out', 'title': 'Sign out from Writer\'s Trail' }
 					]
 				}

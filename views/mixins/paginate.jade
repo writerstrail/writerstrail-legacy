@@ -1,0 +1,22 @@
+mixin paginate(paginate, pageCount, currentPage)
+  if paginate.hasPreviousPages || paginate.hasNextPages(pageCount)
+    - var first = !paginate.hasPreviousPages
+    - var last = !paginate.hasNextPages(pageCount)
+    ul.pagination
+      li(class=first ? 'disabled' : '')
+        a(href=paginate.href({ page: 1 }) title=__('First'))
+          span(aria-hidden='true') &#8810;
+      li(class=first ? 'disabled' : '')
+        a(href=paginate.href(true) title=__('Previous'))
+          span(aria-hidden='true') &lt;
+      - var i = 1
+      while i <= pageCount
+        li(class=i===currentPage ? 'active' : '')
+          a(href=paginate.href({ page: i }) title=__('Page %s', i))
+            span= i++
+      li(class=last ? 'disabled' : '')
+        a(href=paginate.href() title=__('Next'))
+          span(aria-hidden='true') &gt;
+      li(class=last ? 'disabled' : '')
+        a(href=paginate.href({ page: pageCount }) title=__('Last'))
+          span(aria-hidden='true') &#8811;

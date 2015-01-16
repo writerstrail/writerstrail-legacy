@@ -1,0 +1,16 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  h1= __('Genres')
+
+  p
+    a(href='/genre/new') New genre
+
+  ul.list-group
+    each genre in genres
+      li.list-group-item
+        span.fa.fa-fw.fa-folder-open-o
+        | &nbsp;
+        a(href=("/genre/" + genre.id) title=genre.description)= genre.name
+  +paginate(paginate, pageCount, currentPage)
