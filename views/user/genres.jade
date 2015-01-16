@@ -2,3 +2,10 @@ extends ../layout
 
 block content
     h1= __('Genres')
+
+    ul.list-group
+        each genre in genres
+            li.list-group-item
+                span.fa.fa-fw.fa-folder-open-o
+                | &nbsp;
+                a(href="#" title=genre.description)= genre.name

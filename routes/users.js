@@ -5,12 +5,20 @@ var router = require('express').Router(),
 
 router.use(isactivated);
 
-router.get('/genres', function (req, res) {
-	res.render('user/genres', {
-		title: req.__('Genres'),
-		section: 'genres'
+router.get('/genres', function (req, res, next) {
+	models.Genre.findAll({
+		where: {
+			owner_id: req.user.id
+		},
+		order: [['name', 'ASC']]
+	}).complete(function (err, genres) {
+		if (err) return next(err);
+		res.render('user/genres', {
+			title: req.__('Genres'),
+			section: 'genres',
+			genres: genres
+		});
 	});
 })
-
 
 module.exports = router;
