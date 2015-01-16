@@ -18,20 +18,25 @@ router.param('id', function (req, res, next, id) {
 });
 
 router.get('/genres', sendflash, function (req, res, next) {
-  models.Genre.findAll({
+  models.Genre.findAndCountAll({
     where: {
       owner_id: req.user.id
     },
     order: [['name', 'ASC']],
     limit: req.query.limit,
     offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
-  }).complete(function (err, genres) {
-    if (err) { return next(err); }
+  }).then(function (result) {
+    var genres = result.rows,
+      count = result.count;
     res.render('user/genres/list', {
       title: req.__('Genres'),
       section: 'genres',
-      genres: genres
+      genres: genres,
+      pageCount: Math.ceil(count / parseInt(req.query.limit, 10)),
+      currentPage: req.query.page
     });
+  }).catch(function (err) {
+    return next(err);
   });
 });
 

@@ -144,5 +144,10 @@
 	"": "",
 	"name must be unique": "name must be unique",
 	"Genre %s successfully saved.": "Genre %s successfully saved.",
-	"Genre %s successfully deleted.": "Genre %s successfully deleted."
+	"Genre %s successfully deleted.": "Genre %s successfully deleted.",
+	"First": "First",
+	"Previous": "Previous",
+	"Page %s": "Page %s",
+	"Next": "Next",
+	"Last": "Last"
 }
