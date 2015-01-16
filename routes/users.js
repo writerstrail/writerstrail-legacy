@@ -1,7 +1,8 @@
 var router = require('express').Router(),
   _ = require('lodash'),
   models = require('../models'),
-  isactivated = require('../utils/middlewares/isactivated');
+  isactivated = require('../utils/middlewares/isactivated'),
+  sendflash = require('../utils/middlewares/sendflash');
 
 router.use(isactivated);
 
@@ -16,7 +17,7 @@ router.param('id', function (req, res, next, id) {
   }
 });
 
-router.get('/genres', function (req, res, next) {
+router.get('/genres', sendflash, function (req, res, next) {
   models.Genre.findAll({
     where: {
       owner_id: req.user.id
@@ -34,7 +35,7 @@ router.get('/genres', function (req, res, next) {
   });
 });
 
-router.get('/genre/new', function (req, res) {
+router.get('/genre/new', sendflash, function (req, res) {
   res.render('user/genres/single', {
     title: req.__('New genre'),
     section: 'genrenew',
@@ -44,17 +45,30 @@ router.get('/genre/new', function (req, res) {
   });
 });
 
-router.post('/genre/new', function (req, res, next) {
-  var genre = models.Genre.build();
-  genre.set('name', req.body.name);
-  genre.set('description', req.body.description);
-  genre.set('owner_id', req.user.id);
-  genre.save().complete(function (err) {
-    if (err) { 
-      console.log('---err', err);
-      return next(err); }
+router.post('/genre/new', function (req, res) {
+  models.Genre.create({
+    name: req.body.name,
+    description: req.body.description,
+    owner_id: req.user.id
+  }).then(function () {
+    req.flash('success', req.__('Genre "%s" successfully created', req.body.name));
     if (req.body.create) { return res.redirect('/genres'); }
     res.redirect('/genre/new');
+  }).catch (function (err) {
+    console.log('---err', err);
+    res.render('user/genres/single', {
+      title: req.__('New genre'),
+      section: 'genrenew',
+      edit: false,
+      action: '/genre/new',
+      genre: {
+        name: req.body.name,
+        description: req.body.description
+      },
+      validate: err.errors,
+      errorMessage: req.__('There are invalid values')
+    });
+
   });
 });
 

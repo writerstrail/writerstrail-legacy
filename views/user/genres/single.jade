@@ -5,10 +5,12 @@ block content
 
   form.form-horizontal(method='post' action=formAction)
     input(type='hidden' name='_csrf', value=csrf)
-    .form-group
+    - var nameErr = _.find(validate, { path: 'name' }) || ''
+    .form-group(class=(nameErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='name')= __('Name')
       .col-sm-10
-        input#name.form-control(type='text' name='name' placeholder=__('Name') value=genre.name)
+        input#name.form-control(type='text' name='name' placeholder=__('Name') value=genre.name aria-describedby='namehelp')
+        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
     .form-group
       label.col-sm-2.control-label(for='Description')= __('Description')
       .col-sm-10

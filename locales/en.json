@@ -138,5 +138,9 @@
 	"Description": "Description",
 	"New genre": "New genre",
 	"Create": "Create",
-	"Create and add another": "Create and add another"
+	"Create and add another": "Create and add another",
+	"There are invalid values": "There are invalid values",
+	"Genre \"%s\" successfully created": "Genre \"%s\" successfully created",
+	"": "",
+	"name must be unique": "name must be unique"
 }
