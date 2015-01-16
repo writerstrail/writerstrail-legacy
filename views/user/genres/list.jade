@@ -1,11 +1,14 @@
-extends ../layout
+extends ../../layout
 
 block content
     h1= __('Genres')
+
+    p
+      a(href='/genre/new') New genre
 
     ul.list-group
         each genre in genres
             li.list-group-item
                 span.fa.fa-fw.fa-folder-open-o
                 | &nbsp;
-                a(href="#" title=genre.description)= genre.name
+                a(href=("/genre/" + genre.id) title=genre.description)= genre.name
