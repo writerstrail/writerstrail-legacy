@@ -17,11 +17,21 @@ block content
         textarea#name.form-control(rows='3' name='description' placeholder=__('Description'))= genre.description
     .form-group
       .btn-group(role='group')
-        button.btn.btn-primary(type='submit' name='create', value='true')
-          span.fa.fa-pencil-o
-          | &nbsp;
-          = __('Create')
-        button.btn.btn-default(type='submit' name='createadd', value='true')
-          span.fa.fa-plus
-          | &nbsp;
-          = __('Create and add another')
+        - if (edit)
+          button.btn.btn-primary(type='submit' name='save', value='true')
+            span.fa.fa-floppy-o
+            | &nbsp;
+            = __('Save')
+          button.btn.btn-danger(type='submit' name='delete', value='true')
+            span.fa.fa-remove
+            | &nbsp;
+            = __('Delete')
+        - else
+          button.btn.btn-primary(type='submit' name='create', value='true')
+            span.fa.fa-pencil-o
+            | &nbsp;
+            = __('Create')
+          button.btn.btn-default(type='submit' name='createadd', value='true')
+            span.fa.fa-plus
+            | &nbsp;
+            = __('Create and add another')
