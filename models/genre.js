@@ -19,7 +19,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.TEXT
 		}
 	}, {
-		tablename: 'genres',
+		tableName: 'genres',
 		classMethods: {
 			associate: function (models) {
 				Genre.belongsTo(models.User, {
