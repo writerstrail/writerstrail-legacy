@@ -19,6 +19,7 @@
     "debug": "~2.0.0",
     "express": "~4.9.0",
     "express-mysql-session": "^0.3.1",
+    "express-paginate": "0.0.5",
     "express-session": "^1.9.3",
     "i18n": "^0.5.0",
     "jade": "~1.6.0",
