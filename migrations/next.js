@@ -23,7 +23,7 @@ module.exports = {
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				references: 'users',
-				referenceKey: 'id',
+				referencesKey: 'id',
 				onUpdate: 'CASCADE',
 				onDelete: 'CASCADE'
 			},
@@ -38,7 +38,7 @@ module.exports = {
 		}, {
 			charset: 'utf8'
 		}).then(function () {
-			return migration.addIndex('genres', ['name', 'owner_id'], { indexName: 'name' });
+			return migration.addIndex('genres', ['name', 'owner_id'], { indexName: 'name', unique: true });
 		}).then(done);
 	},
 	
