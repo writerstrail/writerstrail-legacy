@@ -111,11 +111,80 @@ module.exports = {
       }, {
         charset: 'utf8'
       });
+    }).then(function () {
+      return migration.createTable('writing_sessions', {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+        },
+        summary: {
+          type: DataTypes.STRING,
+          allowNull: true,
+          validate: {
+            len: {
+              args: [0, 255],
+              msg: 'The summary must have at most 255 characters'
+            }
+          }
+        },
+        start: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        duration: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+          comment: 'Duration of session in seconds'
+        },
+        pausedTime: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+          defaultValue: 0,
+          comment: 'Paused time of session in seconds'
+        },
+        wordcount: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false
+        },
+        isCountdown: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+          allowNull: false
+        },
+        notes: {
+          type: DataTypes.TEXT
+        },
+        owner_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        }
+      }, {
+        charset: 'utf8'
+      });
+    }).then(function () {
+      return migration.addIndex('writing_sessions', ['start'], {
+        indexName: 'start'
+      });
     }).then(done);
   },
 
   down: function (migration, DataTypes, done) {
-    migration.dropTable('projects_genres').then(function () {
+    migration.dropTable('writing_sessions').then(function () {
+      return migration.dropTable('projects_genres');
+    }).then(function () {
       return migration.dropTable('projects');
     }).then(function () {
       return migration.dropTable('genres');
