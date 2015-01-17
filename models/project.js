@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
-  var Genre = sequelize.define("Genre", {
+  var Project = sequelize.define("Project", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -13,7 +13,7 @@ module.exports = function (sequelize, DataTypes) {
       validate: {
         len: {
           args: [3, 255],
-          msg: 'The name of the genre must have between 3 and 255 characters'
+          msg: 'The name of the project must have between 3 and 255 characters'
         }
       }
     },
@@ -21,20 +21,21 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.TEXT
     }
   }, {
-    tableName: 'genres',
+    tableName: 'projects',
     classMethods: {
       associate: function (models) {
-        Genre.belongsTo(models.User, {
+        Project.belongsTo(models.User, {
           as: 'Owner',
-          foreignKey: 'id'
+          foreignKey: 'owner_id',
+          onDelete: 'CASCADE'
         });
-        Genre.belongsToMany(models.Project, {
+        Project.belongsToMany(models.Genre, {
           as: {
-            singular: 'Genre',
-            plural: 'Genre'
+            singular: 'Project',
+            plural: 'Projects'
           },
           through: 'projects_genres',
-          foreignKey: 'genre_id'
+          foreignKey: 'project_id'
         });
       }
     },
@@ -44,8 +45,9 @@ module.exports = function (sequelize, DataTypes) {
         unique: true,
         fields: ['name', 'owner_id']
       }
-    ]
+    ],
+    paranoid: true
   });
 
-  return Genre;
+  return Project;
 };
