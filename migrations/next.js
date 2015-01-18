@@ -86,8 +86,7 @@ module.exports = {
       });
     }).then(function () {
       return migration.addIndex('projects', ['name', 'owner_id'], {
-        indexName: 'name',
-        indicesType: 'UNIQUE'
+        indexName: 'name'
       });
     }).then(function () {
       return migration.createTable('projects_genres', {

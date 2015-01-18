@@ -5,7 +5,7 @@ block content
 
   form.form-horizontal(method='post' action=formAction)
     input(type='hidden' name='_csrf', value=csrf)
-    - var nameErr = _.find(validate, { path: 'name' }) || ''
+    - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
     .form-group(class=(nameErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='name')= __('Name')
       .col-sm-10

@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
         len: {
           args: [3, 255],
           msg: 'The name of the project must have between 3 and 255 characters'
-        }
+        },
       }
     },
     description: {
@@ -57,14 +57,25 @@ module.exports = function (sequelize, DataTypes) {
         });
       }
     },
-    indexes: [
-      {
-        name: 'name',
-        unique: true,
-        fields: ['name', 'owner_id']
+    paranoid: true,
+    validate: {
+      uniqueName: function (next) {
+        Project.findOne({
+          where: {
+            owner_id: this.owner_id,
+            name: this.name
+          }
+        }).then(function (p) {
+          if (p) {
+            next(new Error('The project name must be unique'));
+          } else {
+            next();
+          }
+        }).catch(function (err) {
+          next(err);
+        });
       }
-    ],
-    paranoid: true
+    }
   });
 
   return Project;
