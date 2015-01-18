@@ -160,5 +160,13 @@
 	"Project %s successfully saved.": "Project %s successfully saved.",
 	"Project %s successfully deleted.": "Project %s successfully deleted.",
 	"The project name must be unique": "The project name must be unique",
-	"Object [object SequelizeModel] has no method 'getDataValue'": "Object [object SequelizeModel] has no method 'getDataValue'"
+	"Object [object SequelizeModel] has no method 'getDataValue'": "Object [object SequelizeModel] has no method 'getDataValue'",
+	"Word count": "Word count",
+	"Starting word count": "Starting word count",
+	"The starting wordcount must be a positive integer": "The starting wordcount must be a positive integer",
+	"Target word count": "Target word count",
+	"The starting wordcount must be a non-negative integer": "The starting wordcount must be a non-negative integer",
+	"The target wordcount must be a non-negative integer": "The target wordcount must be a non-negative integer",
+	"I'm not judging, but can't believe you want to write over a billion words": "I'm not judging, but can't believe you want to write over a billion words",
+	"I'm not judging, but can't believe you wrote over a billion words": "I'm not judging, but can't believe you wrote over a billion words"
 }

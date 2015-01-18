@@ -51,6 +51,16 @@ module.exports = {
         description: {
           type: DataTypes.TEXT
         },
+        wordcount: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+          defaultValue: 0
+        },
+        targetwc: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+          defaultValue: 0
+        },
         active: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

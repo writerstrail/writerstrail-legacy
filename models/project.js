@@ -20,6 +20,42 @@ module.exports = function (sequelize, DataTypes) {
     description: {
       type: DataTypes.TEXT
     },
+    wordcount: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: {
+          args: 0,
+          msg: 'The starting wordcount must be a non-negative integer'
+        },
+        isInt: {
+          msg: 'The starting wordcount must be a non-negative integer'
+        },
+        max: {
+          args: 1000000000,
+          msg: 'I\'m not judging, but can\'t believe you wrote over a billion words'
+        }
+      }
+    },
+    targetwc: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: {
+          args: 0,
+          msg: 'The target wordcount must be a non-negative integer'
+        },
+        isInt: {
+          msg: 'The target wordcount must be a non-negative integer'
+        },
+        max: {
+          args: 1000000000,
+          msg: 'I\'m not judging, but can\'t believe you want to write over a billion words'
+        }
+      }
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

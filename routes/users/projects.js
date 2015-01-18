@@ -64,7 +64,9 @@ module.exports = function projectsRoutes(router) {
         edit: false,
         action: '/project/new',
         project: {
-          active: true
+          active: true,
+          wordcount: 0,
+          targetwc: 50000
         },
         genres: chunk(genres, 3)
       });
@@ -75,6 +77,8 @@ module.exports = function projectsRoutes(router) {
     models.Project.create({
       name: req.body.name,
       description: req.body.description,
+      wordcount: req.body.wordcount,
+      targetwc: req.body.targetwc,
       active: !!req.body.active,
       finished: !!req.body.finished,
       owner_id: req.user.id
@@ -112,6 +116,8 @@ module.exports = function projectsRoutes(router) {
           project: {
             name: req.body.name,
             description: req.body.description,
+            wordcount: req.body.wordcount,
+            targetwc: req.body.targetwc,
             active: !!req.body.active,
             finished: !!req.body.finished,
             Genres: filterGenres(genres, req.body.genres)
@@ -177,6 +183,8 @@ module.exports = function projectsRoutes(router) {
       if (!req.body.delete) {
         project.set('name', req.body.name);
         project.set('description', req.body.description);
+        project.set('wordcount', req.body.wordcount);
+        project.set('targetwc', req.body.targetwc);
         project.set('active', !!req.body.active);
         project.set('finished', !!req.body.finished);
         return project.save().then(function () {
@@ -219,6 +227,8 @@ module.exports = function projectsRoutes(router) {
           project: {
             name: req.body.name,
             description: req.body.description,
+            wordcount: req.body.wordcount,
+            targetwc: req.body.targetwc,
             active: !!req.body.active,
             finished: !!req.body.finished,
             Genres: filterGenres(genres, req.body.genres)
