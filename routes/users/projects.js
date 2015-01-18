@@ -1,25 +1,11 @@
 var _ = require('lodash'),
- models = require('../../models'),
-  isactivated = require('../../utils/middlewares/isactivated'),
-  sendflash = require('../../utils/middlewares/sendflash');
-
-// Chunks the array in parts of len length
-function chunk(arr, len) {
-  var result = [],
-    i = 0,
-    n = arr.length;
-
-  while (i < n) {
-    result.push(arr.slice(i, i + len));
-    i += len;
-  }
-
-  return result;
-}
+  models = require('../../models'),
+  sendflash = require('../../utils/middlewares/sendflash'),
+  chunk = require('../../utils/functions/chunk');
 
 function filterGenres(all, include) {
-  return _.filter(all, function(g) { 
-    return _.contains(_.map(include, function(v){
+  return _.filter(all, function (g) { 
+    return _.contains(_.map(include, function (v){
       return parseInt(v, 10);
     }), g.id);
   });
@@ -162,7 +148,7 @@ module.exports = function projectsRoutes(router) {
           genres: chunk(genres, 3),
           edit: true
         });
-      }).catch(function(err) {
+      }).catch(function (err) {
         next(err);
       });
     });
