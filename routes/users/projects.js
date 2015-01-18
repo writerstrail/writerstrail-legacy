@@ -17,6 +17,14 @@ function chunk(arr, len) {
   return result;
 }
 
+function filterGenres(all, include) {
+  return _.filter(all, function(g) { 
+    return _.contains(_.map(include, function(v){
+      return parseInt(v, 10);
+    }), g.id);
+  });
+}
+
 module.exports = function projectsRoutes(router) {
   router.get('/projects', sendflash, function (req, res, next) {
     models.Project.findAndCountAll({
@@ -42,14 +50,24 @@ module.exports = function projectsRoutes(router) {
   });
   
   router.get('/project/new', sendflash, function (req, res) {
-    res.render('user/projects/single', {
-      title: req.__('New project'),
-      section: 'projectnew',
-      edit: false,
-      action: '/project/new',
-      project: {
-        active: true
-      }
+    models.Genre.findAll({
+      where: {
+        owner_id: req.user.id
+      },
+      order: [
+        ['name', 'ASC']
+      ]
+    }).then(function (genres) {
+      res.render('user/projects/single', {
+        title: req.__('New project'),
+        section: 'projectnew',
+        edit: false,
+        action: '/project/new',
+        project: {
+          active: true
+        },
+        genres: chunk(genres, 3)
+      });
     });
   });
   
@@ -60,25 +78,48 @@ module.exports = function projectsRoutes(router) {
       active: !!req.body.active,
       finished: !!req.body.finished,
       owner_id: req.user.id
-    }).then(function () {
+    }).then(function (project) {
+      return models.Genre.findAll({
+        where: {
+          owner_id: req.user.id,
+          id: {
+            in: req.body.genres
+          }
+        }
+      }).then(function (genres) {
+        return project.setGenres(genres);
+      });
+    }).then(function () {      
       req.flash('success', req.__('Project "%s" successfully created', req.body.name));
       if (req.body.create) { return res.redirect('/projects'); }
       res.redirect('/project/new');
     }).catch(function (err) {
       if (err.message !== 'Validation error') { return next(err); }
-      res.render('user/projects/single', {
-        title: req.__('New project'),
-        section: 'projectnew',
-        edit: false,
-        action: '/project/new',
-        project: {
-          name: req.body.name,
-          description: req.body.description,
-          active: !!req.body.active,
-          finished: !!req.body.finished
+      models.Genre.findAll({
+        where: {
+          owner_id: req.user.id
         },
-        validate: err.errors,
-        errorMessage: req.__('There are invalid values')
+        order: [
+          ['name', 'ASC']
+        ]
+      }).then(function (genres) {
+        console.log('-------------------------------g', req.body.genres);
+        res.render('user/projects/single', {
+          title: req.__('New project'),
+          section: 'projectnew',
+          edit: false,
+          action: '/project/new',
+          project: {
+            name: req.body.name,
+            description: req.body.description,
+            active: !!req.body.active,
+            finished: !!req.body.finished,
+            Genres: filterGenres(genres, req.body.genres)
+          },
+          genres: chunk(genres, 3),
+          validate: err.errors,
+          errorMessage: req.__('There are invalid values')
+        });
       });
     });
   });
@@ -179,7 +220,8 @@ module.exports = function projectsRoutes(router) {
             name: req.body.name,
             description: req.body.description,
             active: !!req.body.active,
-            finished: !!req.body.finished
+            finished: !!req.body.finished,
+            Genres: filterGenres(genres, req.body.genres)
           },
           genres: chunk(genres, 3),
           validate: err.errors,
