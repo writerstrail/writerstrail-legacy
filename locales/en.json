@@ -149,5 +149,14 @@
 	"Previous": "Previous",
 	"Page %s": "Page %s",
 	"Next": "Next",
-	"Last": "Last"
+	"Last": "Last",
+	"Projects": "Projects",
+	"Your writing projects": "Your writing projects",
+	"New project": "New project",
+	"Project \"%s\" successfully created": "Project \"%s\" successfully created",
+	"The name of the project must have between 3 and 255 characters": "The name of the project must have between 3 and 255 characters",
+	"Project edit": "Project edit",
+	"Edit project": "Edit project",
+	"Project %s successfully saved.": "Project %s successfully saved.",
+	"Project %s successfully deleted.": "Project %s successfully deleted."
 }

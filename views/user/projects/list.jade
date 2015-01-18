@@ -1,0 +1,16 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  h1= __('Projects')
+
+  p
+    a(href='/project/new') New project
+
+  ul.list-group
+    each project in projects
+      li.list-group-item
+        span.fa.fa-fw.fa-folder-open-o
+        | &nbsp;
+        a(href=("/project/" + project.id) title=project.description)= project.name
+  +paginate(paginate, pageCount, currentPage)

@@ -2,6 +2,7 @@ var router = require('express').Router(),
   _ = require('lodash'),
   models = require('../models'),
   genres = require('./users/genres'),
+  projects = require('./users/projects'),
   isactivated = require('../utils/middlewares/isactivated'),
   sendflash = require('../utils/middlewares/sendflash');
 
@@ -19,5 +20,6 @@ router.param('id', function (req, res, next, id) {
 });
 
 genres(router);
+projects(router);
 
 module.exports = router;
