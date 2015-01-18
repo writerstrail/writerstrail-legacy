@@ -31,7 +31,7 @@ module.exports = function (sequelize, DataTypes) {
         Genre.belongsToMany(models.Project, {
           as: {
             singular: 'Genre',
-            plural: 'Genre'
+            plural: 'Genres'
           },
           through: 'projects_genres',
           foreignKey: 'genre_id'

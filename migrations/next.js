@@ -120,13 +120,7 @@ module.exports = {
         },
         summary: {
           type: DataTypes.STRING,
-          allowNull: true,
-          validate: {
-            len: {
-              args: [0, 255],
-              msg: 'The summary must have at most 255 characters'
-            }
-          }
+          allowNull: true
         },
         start: {
           type: DataTypes.DATE,
@@ -178,11 +172,96 @@ module.exports = {
       return migration.addIndex('writing_sessions', ['start'], {
         indexName: 'start'
       });
+    }).then(function () {
+      return migration.createTable('targets', {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+        },
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        notes: {
+          type: DataTypes.TEXT
+        },
+        start: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        end: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        wordcount: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false
+        },
+        owner_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        }
+      }, {
+        charset: 'utf8'
+      });
+    }).then(function () {
+      return migration.addIndex('targets', ['name', 'owner_id'], {
+        indexName: 'name_owner',
+        indicesType: 'UNIQUE'
+      });
+    }).then(function () {
+      return migration.createTable('projects_targets', {
+        project_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'projects',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
+          primaryKey: 'PRIMARY'
+        },
+        target_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'targets',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
+          primaryKey: 'PRIMARY'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        }
+      }, {
+        charset: 'utf8'
+      });
     }).then(done);
   },
 
   down: function (migration, DataTypes, done) {
-    migration.dropTable('writing_sessions').then(function () {
+    migration.dropTable('projects_targets').then(function () {
+      return migration.dropTable('targets');
+    }).then(function () {
+      return migration.dropTable('writing_sessions');
+    }).then(function () {
       return migration.dropTable('projects_genres');
     }).then(function () {
       return migration.dropTable('projects');

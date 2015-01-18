@@ -37,6 +37,14 @@ module.exports = function (sequelize, DataTypes) {
           through: 'projects_genres',
           foreignKey: 'project_id'
         });
+        Project.belongsToMany(models.Target, {
+          as: {
+            singular: 'Project',
+            plural: 'Projects'
+          },
+          through: 'projects_targets',
+          foreignKey: 'project_id'
+        });
       }
     },
     indexes: [
