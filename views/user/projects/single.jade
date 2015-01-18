@@ -25,7 +25,7 @@ block content
         input#wordcount.form-control(type='text' name='wordcount' placeholder=__('Starting word count') value=project.wordcount aria-describedby='wchelp')
         span#wchelp.help-block= __(wcErr ? wcErr.message : '')
         
-    - var twcErr = _.find(validate, { path: 'targetwc'}) || ''
+    - var twcErr = _.find(validate, function(err) { return err.path === 'targetwc' || err.path === 'targetOverStart'; }) || ''
     
     .form-group(class=(twcErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='targetwc')= __('Target word count')

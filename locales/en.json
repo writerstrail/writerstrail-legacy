@@ -168,5 +168,6 @@
 	"The starting wordcount must be a non-negative integer": "The starting wordcount must be a non-negative integer",
 	"The target wordcount must be a non-negative integer": "The target wordcount must be a non-negative integer",
 	"I'm not judging, but can't believe you want to write over a billion words": "I'm not judging, but can't believe you want to write over a billion words",
-	"I'm not judging, but can't believe you wrote over a billion words": "I'm not judging, but can't believe you wrote over a billion words"
+	"I'm not judging, but can't believe you wrote over a billion words": "I'm not judging, but can't believe you wrote over a billion words",
+	"The target can't be less than the starting wordcount": "The target can't be less than the starting wordcount"
 }
