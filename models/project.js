@@ -19,6 +19,16 @@ module.exports = function (sequelize, DataTypes) {
     },
     description: {
       type: DataTypes.TEXT
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    },
+    finished: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'projects',

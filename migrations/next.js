@@ -1,5 +1,4 @@
 "use strict";
-
 module.exports = {
   up: function (migration, DataTypes, done) {
     migration.createTable('genres', {
@@ -25,17 +24,17 @@ module.exports = {
       },
       createdAt: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: false
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: false
       }
     }, {
       charset: 'utf8'
     }).then(function () {
       return migration.addIndex('genres', ['name', 'owner_id'], {
-        indexName: 'name_owner',
+        indexName: 'name',
         indicesType: 'UNIQUE'
       });
     }).then(function () {
@@ -52,6 +51,16 @@ module.exports = {
         description: {
           type: DataTypes.TEXT
         },
+        active: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: true
+        },
+        finished: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false
+        },
         owner_id: {
           type: DataTypes.INTEGER,
           allowNull: false,
@@ -62,22 +71,22 @@ module.exports = {
         },
         createdAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         },
         updatedAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         },
         deletedAt: {
           type: DataTypes.DATE,
-          allowNull: true,
+          allowNull: true
         }
       }, {
         charset: 'utf8'
       });
     }).then(function () {
       return migration.addIndex('projects', ['name', 'owner_id'], {
-        indexName: 'name_owner',
+        indexName: 'name',
         indicesType: 'UNIQUE'
       });
     }).then(function () {
@@ -102,11 +111,11 @@ module.exports = {
         },
         createdAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         },
         updatedAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         }
       }, {
         charset: 'utf8'
@@ -159,11 +168,11 @@ module.exports = {
         },
         createdAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         },
         updatedAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         }
       }, {
         charset: 'utf8'
@@ -208,18 +217,18 @@ module.exports = {
         },
         createdAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         },
         updatedAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         }
       }, {
         charset: 'utf8'
       });
     }).then(function () {
       return migration.addIndex('targets', ['name', 'owner_id'], {
-        indexName: 'name_owner',
+        indexName: 'name',
         indicesType: 'UNIQUE'
       });
     }).then(function () {
@@ -244,11 +253,11 @@ module.exports = {
         },
         createdAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         },
         updatedAt: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: false
         }
       }, {
         charset: 'utf8'
