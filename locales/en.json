@@ -159,5 +159,6 @@
 	"Edit project": "Edit project",
 	"Project %s successfully saved.": "Project %s successfully saved.",
 	"Project %s successfully deleted.": "Project %s successfully deleted.",
-	"The project name must be unique": "The project name must be unique"
+	"The project name must be unique": "The project name must be unique",
+	"Object [object SequelizeModel] has no method 'getDataValue'": "Object [object SequelizeModel] has no method 'getDataValue'"
 }

@@ -1,6 +1,9 @@
 extends ../../layout
 
 block content
+  - var checkGenre = function (id) {
+  -   return !!(_.find(project.Genres, function (g) { return g.id == id; } )) ? 'checked' : false;
+  - }
   h1= edit ? __('Edit project') : __('New project')
 
   form.form-horizontal(method='post' action=formAction)
@@ -27,4 +30,25 @@ block content
           label
             input#active(type='checkbox' name='finished' checked=project.finished)
             | Finished
+    for chunk, i in genres
+      .form-group
+        if i === 0
+          label.col-sm-2.control-label Genres
+        .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
+          .checkbox
+            label
+              input(type='checkbox', name='genres[]' value=chunk[0].id checked=checkGenre(chunk[0].id))
+              = chunk[0].name
+        if chunk[1]
+          .col-sm-3
+            .checkbox
+              label
+                input(type='checkbox', name='genres[]' value=chunk[1].id checked=checkGenre(chunk[1].id))
+                = chunk[1].name
+        if chunk[2]
+          .col-sm-3
+            .checkbox
+              label
+                input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
+                = chunk[2].name
     include ../../mixins/single-form-buttons

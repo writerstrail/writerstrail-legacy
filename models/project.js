@@ -40,18 +40,12 @@ module.exports = function (sequelize, DataTypes) {
           onDelete: 'CASCADE'
         });
         Project.belongsToMany(models.Genre, {
-          as: {
-            singular: 'Project',
-            plural: 'Projects'
-          },
+          as: 'Genres',
           through: 'projects_genres',
           foreignKey: 'project_id'
         });
         Project.belongsToMany(models.Target, {
-          as: {
-            singular: 'Project',
-            plural: 'Projects'
-          },
+          as: 'Targets',
           through: 'projects_targets',
           foreignKey: 'project_id'
         });
@@ -60,18 +54,19 @@ module.exports = function (sequelize, DataTypes) {
     paranoid: true,
     validate: {
       uniqueName: function (next) {
+        var self = this;
         Project.findOne({
           where: {
             owner_id: this.owner_id,
             name: this.name
           }
         }).then(function (p) {
-          if (p) {
+          if (p && p.id !== this.id) {
             next(new Error('The project name must be unique'));
           } else {
             next();
           }
-        }).catch(function (err) {
+        }.bind(self)).catch(function (err) {
           next(err);
         });
       }

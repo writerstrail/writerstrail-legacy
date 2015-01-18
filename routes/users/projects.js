@@ -65,7 +65,6 @@ module.exports = function projectsRoutes(router) {
       if (req.body.create) { return res.redirect('/projects'); }
       res.redirect('/project/new');
     }).catch(function (err) {
-      console.log('------err', err);
       if (err.message !== 'Validation error') { return next(err); }
       res.render('user/projects/single', {
         title: req.__('New project'),
@@ -85,46 +84,74 @@ module.exports = function projectsRoutes(router) {
   });
   
   router.get('/project/:id', sendflash, function (req, res, next) {
-    req.user.getProjects({
+    models.Project.findOne({
       where: {
-        id: req.params.id
-      }
-    }).complete(function (err, projects) {
+        id: req.params.id,
+        owner_id: req.user.id
+      },
+      include: [{
+        model: models.Genre,
+        as: 'Genres'
+      }]
+    }).complete(function (err, project) {
       if (err) { return next(err); }
-      if (projects.length !== 1) {
+      if (!project) {
         var error = new Error('Not found');
         error.status = 404;
         return next(error);
       }
-      res.render('user/projects/single', {
-        title: req.__('Project edit'),
-        section: 'projectedit',
-        project: projects[0],
-        edit: true
+      models.Genre.findAll({
+        where: {
+          owner_id: req.user.id
+        },
+        order: [
+          ['name', 'ASC']
+        ]
+      }).then(function (genres) {
+        res.render('user/projects/single', {
+          title: req.__('Project edit'),
+          section: 'projectedit',
+          project: project,
+          genres: chunk(genres, 3),
+          edit: true
+        });
+      }).catch(function(err) {
+        next(err);
       });
-
     });
   });
 
   router.post('/project/:id', function (req, res, next) {
-    req.user.getProjects({
+    models.Project.findOne({
       where: {
-        id: req.params.id
+        id: req.params.id,
+        owner_id: req.user.id
       }
-    }).then(function (projects) {
-      if (projects.length !== 1) {
+    }).then(function (project) {
+      if (!project) {
         var error = new Error('Not found');
         error.status = 404;
         return next(error);
       }
       if (!req.body.delete) {
-        projects[0].set('name', req.body.name);
-        projects[0].set('description', req.body.description);
-        projects[0].set('active', !!req.body.active);
-        projects[0].set('finished', !!req.body.finished);
-        return projects[0].save();
+        project.set('name', req.body.name);
+        project.set('description', req.body.description);
+        project.set('active', !!req.body.active);
+        project.set('finished', !!req.body.finished);
+        return project.save().then(function () {
+          return models.Genre.findAll({
+            where: {
+              owner_id: req.user.id,
+              id: {
+                in: req.body.genres
+              }
+            }
+          }).then(function (genres){
+            return project.setGenres(genres);
+          });
+        });
       }
-      return projects[0].destroy();
+      return project.destroy();
     }).then(function () {
       var msg = (!!req.body.save) ? req.__('Project %s successfully saved.') : req.__('Project %s successfully deleted.');
       req.flash('success', req.__(msg, req.body.name));
@@ -135,19 +162,29 @@ module.exports = function projectsRoutes(router) {
       }
     }).catch(function (err) {
       if (err.message !== 'Validation error') { return next(err); }
-      res.render('user/projects/single', {
-        title: req.__('Edit project'),
-        section: 'projectedit',
-        edit: true,
-        action: '/project/new',
-        project: {
-          name: req.body.name,
-          description: req.body.description,
-          active: !!req.body.active,
-          finished: !!req.body.finished
+      models.Genre.findAll({
+        where: {
+          owner_id: req.user.id
         },
-        validate: err.errors,
-        errorMessage: req.__('There are invalid values')
+        order: [
+          ['name', 'ASC']
+        ]
+      }).then(function (genres) {
+        res.render('user/projects/single', {
+          title: req.__('Edit project'),
+          section: 'projectedit',
+          edit: true,
+          action: '/project/new',
+          project: {
+            name: req.body.name,
+            description: req.body.description,
+            active: !!req.body.active,
+            finished: !!req.body.finished
+          },
+          genres: chunk(genres, 3),
+          validate: err.errors,
+          errorMessage: req.__('There are invalid values')
+        });
       });
     });
   });
