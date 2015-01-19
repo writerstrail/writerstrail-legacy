@@ -34,7 +34,20 @@ module.exports = function (sequelize, DataTypes) {
     },
     wordcount: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        min: {
+          args: 1,
+          msg: 'The written wordcount must be a positive integer'
+        },
+        isInt: {
+          msg: 'The written wordcount must be a positive integer'
+        },
+        max: {
+          args: 1000000000,
+          msg: 'I\'m not judging, but can\'t believe you wrote over a billion words'
+        }
+      }
     },
     isCountdown: {
       type: DataTypes.BOOLEAN,
@@ -50,7 +63,8 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Session.belongsTo(models.Project, {
           as: 'Project',
-          foreignKey: 'project_id'
+          foreignKey: 'project_id',
+          onDelete: 'CASCADE'
         });
       }
     },

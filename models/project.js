@@ -75,6 +75,11 @@ module.exports = function (sequelize, DataTypes) {
           foreignKey: 'owner_id',
           onDelete: 'CASCADE'
         });
+        Project.hasMany(models.Session, {
+          as: 'Sessions',
+          foreignKey: 'project_id',
+          onDelete: 'CASCADE'
+        });
         Project.belongsToMany(models.Genre, {
           as: 'Genres',
           through: 'projects_genres',
