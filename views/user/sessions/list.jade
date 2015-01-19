@@ -1,0 +1,22 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  h1= __('Sessions')
+
+  p
+    a(href='/sessions/new') New session
+
+  ul.list-group
+    each session in sessions
+      li.list-group-item
+        span.fa.fa-fw.fa-clock-o
+        | &nbsp;
+        a(href=("/sessions/" + session.id) title=session.summary)
+          strong= session['Project.name']
+          | &nbsp;
+          if session.summary
+            = '[' + session.summary + ']'
+            | &nbsp;
+          = '(' + moment(session.start).format('YYYY-MM-DD HH:mm') + ')'
+  +paginate(paginate, pageCount, currentPage)

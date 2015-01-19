@@ -1,0 +1,102 @@
+extends ../../layout
+
+block content
+  include ../../mixins/date
+  - var checkProject = function (id) {
+  -   return !!(_.find(target.Projects, function (g) { return g.id == id; } )) ? 'checked' : false;
+  - }
+  h1= edit ? __('Edit target') : __('New target')
+
+  form.form-horizontal(method='post')
+    input(type='hidden' name='_csrf', value=csrf)
+    
+    - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
+    
+    .form-group(class=(nameErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='name')= __('Name')
+      .col-sm-10
+        input#name.form-control(type='text' name='name' placeholder=__('Name') value=target.name aria-describedby='namehelp')
+        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
+        
+    - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
+
+    .form-group(class=(wcErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='wordcount')= __('Target word count')
+      .col-sm-10
+        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp')
+        span#wchelp.help-block= __(wcErr ? wcErr.message : '')
+        
+    - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
+    
+    .form-group(class=(startErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='start')= __('Start date')
+      .col-sm-10
+        .input-group.date#startpicker
+          span.input-group-addon
+            span.fa.fa-fw.fa-calendar
+          input#start.form-control(type='text' name='start' placeholder=__('Start date') value=target.start aria-describedby='starthelp' data-date-format='YYYY-MM-DD')
+        span#starthelp.help-block= __(startErr ? startErr.message : '')
+          
+    - var endErr = _.find(validate, function(err) { return err.path === 'end' || err.path === 'startBeforeEnd'; }) || ''
+    
+    .form-group(class=(endErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='end')= __('End date')
+      .col-sm-10
+        .input-group.date#endpicker
+          span.input-group-addon
+              span.fa.fa-fw.fa-calendar
+          input#end.form-control(type='text' name='end' placeholder=__('End date') value=target.end aria-describedby='endhelp' data-date-format='YYYY-MM-DD')
+        span#endhelp.help-block= __(endErr ? endErr.message : '')
+        
+    .form-group
+      label.col-sm-2.control-label(for='notes')= __('Notes')
+      .col-sm-10
+        textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes'))= target.notes
+        
+    for chunk, i in projects
+      .form-group
+        if i === 0
+          label.col-sm-2.control-label Projects
+        .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
+          .checkbox
+            label
+              input(type='checkbox', name='projects[]' value=chunk[0].id checked=checkProject(chunk[0].id))
+              = chunk[0].name
+        if chunk[1]
+          .col-sm-3
+            .checkbox
+              label
+                input(type='checkbox', name='projects[]' value=chunk[1].id checked=checkProject(chunk[1].id))
+                = chunk[1].name
+        if chunk[2]
+          .col-sm-3
+            .checkbox
+              label
+                input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
+                = chunk[2].name
+    include ../../mixins/single-form-buttons
+    
+append scripts
+  script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
+  script(type='text/javascript', src='/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
+  script.
+    $(document).ready(function () {
+      console.log("!{target.start}");
+      $('#startpicker').datetimepicker({
+        pickTime: false,
+        maxDate: moment('!{target.end}', 'YYYY-MM-DD').subtract(1, 'day')
+      });
+      $('#endpicker').datetimepicker({
+        pickTime: false,
+        minDate: moment('!{target.start}', 'YYYY-MM-DD').add(1, 'day')
+      });
+      $('#startpicker').on('dp.change', function (e) {
+        $('#endpicker').data("DateTimePicker").setMinDate(moment(e.date).add('1', 'day'));
+      });
+      $('#endpicker').on('dp.change', function (e) {
+        $('#startpicker').data("DateTimePicker").setMaxDate(moment(e.date).subtract('1', 'day'));
+      });
+    })
+    
+append styles
+  link(rel='stylesheet', href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')

@@ -104,6 +104,20 @@ module.exports = function (sequelize, DataTypes) {
           },
           foreignKey: 'owner_id'
         });
+        User.hasMany(models.Project, {
+          as: {
+            singular: 'Project',
+            plural: 'Projects',
+          },
+          foreignKey: 'owner_id'
+        });
+        User.hasMany(models.Target, {
+          as: {
+            singular: 'Target',
+            plural: 'Targets',
+          },
+          foreignKey: 'owner_id'
+        });
         User.afterCreate(function (user) {
           var genres = [
             {

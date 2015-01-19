@@ -26,7 +26,15 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Genre.belongsTo(models.User, {
           as: 'Owner',
-          foreignKey: 'id'
+          foreignKey: 'owner_id'
+        });
+        Genre.belongsToMany(models.Project, {
+          as: {
+            singular: 'Project',
+            plural: 'Projects'
+          },
+          through: 'projects_genres',
+          foreignKey: 'genre_id'
         });
       }
     },

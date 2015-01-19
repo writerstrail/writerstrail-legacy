@@ -1,0 +1,21 @@
+.form-group
+  .col-sm-10.col-sm-offset-2
+    .btn-group(role='group')
+      - if (edit)
+        button.btn.btn-primary(type='submit' name='save', value='true')
+          span.fa.fa-floppy-o
+          | &nbsp;
+          = __('Save')
+        button.btn.btn-danger(type='submit' name='delete', value='true')
+          span.fa.fa-remove
+          | &nbsp;
+          = __('Delete')
+      - else
+        button.btn.btn-primary(type='submit' name='create', value='true')
+          span.fa.fa-pencil-o
+          | &nbsp;
+          = __('Create')
+        button.btn.btn-default(type='submit' name='createadd', value='true')
+          span.fa.fa-plus
+          | &nbsp;
+          = __('Create and add another')

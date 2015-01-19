@@ -2,15 +2,15 @@ extends ../../layout
 
 block content
   include ../../mixins/paginate
-  h1= __('Genres')
+  h1= __('Projects')
 
   p
-    a(href='/genres/new') New genre
+    a(href='/projects/new') New project
 
   ul.list-group
-    each genre in genres
+    each project in projects
       li.list-group-item
         span.fa.fa-fw.fa-folder-open-o
         | &nbsp;
-        a(href=("/genres/" + genre.id) title=genre.description)= genre.name
+        a(href=("/projects/" + project.id) title=project.description)= project.name
   +paginate(paginate, pageCount, currentPage)
