@@ -12,7 +12,7 @@ block content
       li.list-group-item
         span.fa.fa-fw.fa-clock-o
         | &nbsp;
-        a(href=("/sessions/" + session.id) title=session.summary)
+        a(href=("/sessions/" + session.id + '/edit') title=session.summary)
           strong= session['Project.name']
           | &nbsp;
           if session.summary

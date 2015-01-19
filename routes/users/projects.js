@@ -105,7 +105,7 @@ router.post('/projects/new', function (req, res, next) {
   });
 });
 
-router.get('/projects/:id', sendflash, function (req, res, next) {
+router.get('/projects/:id/edit', sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -143,7 +143,7 @@ router.get('/projects/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/projects/:id', function (req, res, next) {
+router.post('/projects/:id/edit', function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,

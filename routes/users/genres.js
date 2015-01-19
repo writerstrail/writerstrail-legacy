@@ -60,7 +60,7 @@ router.post('/genres/new', function (req, res, next) {
   });
 });
 
-router.get('/genres/:id', sendflash, function (req, res, next) {
+router.get('/genres/:id/edit', sendflash, function (req, res, next) {
   req.user.getGenres({
     where: {
       id: req.params.id
@@ -82,7 +82,7 @@ router.get('/genres/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/genres/:id', function (req, res, next) {
+router.post('/genres/:id/edit', function (req, res, next) {
   req.user.getGenres({
     where: {
       id: req.params.id

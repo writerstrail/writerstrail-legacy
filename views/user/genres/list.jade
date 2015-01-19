@@ -12,5 +12,5 @@ block content
       li.list-group-item
         span.fa.fa-fw.fa-folder-open-o
         | &nbsp;
-        a(href=("/genres/" + genre.id) title=genre.description)= genre.name
+        a(href=("/genres/" + genre.id + '/edit') title=genre.description)= genre.name
   +paginate(paginate, pageCount, currentPage)
