@@ -36,7 +36,7 @@ router.get('/new', sendflash, function (req, res) {
       ['name', 'ASC']
     ]
   }).then(function (genres) {
-    res.render('user/projects/single', {
+    res.render('user/projects/edit', {
       title: req.__('New project'),
       section: 'projectnew',
       edit: false,
@@ -84,7 +84,7 @@ router.post('/new', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/single', {
+      res.render('user/projects/edit', {
         title: req.__('New project'),
         section: 'projectnew',
         edit: false,
@@ -130,7 +130,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/single', {
+      res.render('user/projects/edit', {
         title: req.__('Project edit'),
         section: 'projectedit',
         project: project,
@@ -194,7 +194,7 @@ router.post('/:id/edit', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/single', {
+      res.render('user/projects/edit', {
         title: req.__('Edit project'),
         section: 'projectedit',
         edit: true,
@@ -215,7 +215,7 @@ router.post('/:id/edit', function (req, res, next) {
   });
 });
 
-router.get('/active', function (req, res) {
+router.get('/active', sendflash, function (req, res, next) {
   models.Project.findAll({
     where: {
       owner_id: req.user.id,
@@ -240,6 +240,39 @@ router.get('/active', function (req, res) {
       section: 'projectsactive',
       projects: projects
     });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id', sendflash, function (req, res, next) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      owner_id: req.user.id
+    },
+    include: [{
+        model: models.Genre,
+        as: 'Genres',
+        order: [['name', 'ASC']]
+    }]
+  }, {
+    raw: true
+  }).then(function (project) {
+    if (!project) {
+      var error = new Error('Not found');
+      error.status = 404;
+      return next(error);
+    }
+    
+    res.render('user/projects/single', {
+      title: 'Project ' + project.name,
+      section: 'projectsingle',
+      project: project
+    });
+    
+  }).catch(function (err) {
+    next(err);
   });
 });
 

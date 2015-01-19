@@ -1,74 +1,57 @@
 extends ../../layout
 
 block content
-  - var checkGenre = function (id) {
-  -   return !!(_.find(project.Genres, function (g) { return g.id == id; } )) ? 'checked' : false;
-  - }
-  h1= edit ? __('Edit project') : __('New project')
+  h1= title
+    | &nbsp;
+    a(href='/projects/' + project.id + '/edit' title='Edit')
+      span.fa.fa-edit
+  
+  if project.targetwc > 0
+    .row
+      .col-sm-12
+        - var percentage = Math.min(100, Math.max(0, Math.floor((project.currentWordcount / project.targetwc) * 100)))
+        .progress(title=project.currentWordcount + '/' + project.targetwc)
+          - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
+          .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%;' class='progress-bar-' + barClass)
+            = percentage + '%'
 
-  form.form-horizontal(method='post')
-    input(type='hidden' name='_csrf', value=csrf)
-    
-    - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
-    
-    .form-group(class=(nameErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='name')= __('Name')
-      .col-sm-10
-        input#name.form-control(type='text' name='name' placeholder=__('Name') value=project.name aria-describedby='namehelp')
-        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
-        
-    - var wcErr = _.find(validate, { path: 'wordcount'}) || ''
-
-    .form-group(class=(wcErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='wordcount')= __('Starting word count')
-      .col-sm-10
-        input#wordcount.form-control(type='text' name='wordcount' placeholder=__('Starting word count') value=project.wordcount aria-describedby='wchelp')
-        span#wchelp.help-block= __(wcErr ? wcErr.message : '')
-        
-    - var twcErr = _.find(validate, function(err) { return err.path === 'targetwc' || err.path === 'targetOverStart'; }) || ''
-    
-    .form-group(class=(twcErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='targetwc')= __('Target word count')
-      .col-sm-10
-        input#targetwc.form-control(type='text' name='targetwc' placeholder=__('Target word count') value=project.targetwc aria-describedby='twchelp')
-        span#twchelp.help-block= __(twcErr ? twcErr.message : '')
-        
-    .form-group
-      label.col-sm-2.control-label(for='Description')= __('Description')
-      .col-sm-10
-        textarea#name.form-control(rows='3' name='description' placeholder=__('Description'))= project.description
-        
-    .form-group
-      .col-sm-10.col-sm-offset-2
-        .checkbox
-          label
-            input#active(type='checkbox' name='active' checked=project.active)
-            | Active
-    .form-group
-      .col-sm-10.col-sm-offset-2
-        .checkbox
-          label
-            input#active(type='checkbox' name='finished' checked=project.finished)
-            | Finished
-    for chunk, i in genres
-      .form-group
-        if i === 0
-          label.col-sm-2.control-label Genres
-        .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
-          .checkbox
-            label
-              input(type='checkbox', name='genres[]' value=chunk[0].id checked=checkGenre(chunk[0].id))
-              = chunk[0].name
-        if chunk[1]
-          .col-sm-3
-            .checkbox
-              label
-                input(type='checkbox', name='genres[]' value=chunk[1].id checked=checkGenre(chunk[1].id))
-                = chunk[1].name
-        if chunk[2]
-          .col-sm-3
-            .checkbox
-              label
-                input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
-                = chunk[2].name
-    include ../../mixins/single-form-buttons
+  .row
+    .col-sm-2.text-right
+      strong Name:
+    .col-sm-10
+      = project.name
+  .row
+    .col-sm-2.text-right
+      strong Description:
+    .col-sm-10
+      - var descPieces = project.description.split(/(?:\r\n|\r|\n)/g)
+      for desc, i in descPieces
+        if i > 0
+          br
+        = desc
+  .row
+    .col-sm-2.text-right
+      strong Wordcount/Target:
+    .col-sm-10
+      = project.currentWordcount + '/' + project.targetwc
+  .row
+    .col-sm-2.text-right
+      strong Starting wordcount:
+    .col-sm-10
+      = project.wordcount
+  .row
+    .col-sm-2.text-right
+      strong Is active:
+    .col-sm-10
+      = project.active ? 'Yes' : 'No'
+      
+  .row
+    .col-sm-2.text-right
+      strong Is finished:
+    .col-sm-10
+      = project.finished ? 'Yes' : 'No'
+  .row
+    .col-sm-2.text-right
+      strong Created at:
+    .col-sm-10
+      = moment(project.createdAt).format('YYYY-MM-DD HH:mm:ss')
