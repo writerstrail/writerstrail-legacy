@@ -36,7 +36,14 @@ module.exports = function (sequelize, DataTypes) {
       validate: {
         min: {
           args: 1,
-          msg: 'The target word count must be greater than zero'
+          msg: 'The target wordcount must be a positive integer'
+        },
+        isInt: {
+          msg: 'The target wordcount must be a positive integer'
+        },
+        max: {
+          args: 1000000000,
+          msg: 'I\'m not judging, but can\'t believe you want to write over a billion words'
         }
       }
     }
@@ -50,8 +57,8 @@ module.exports = function (sequelize, DataTypes) {
         });
         Target.belongsToMany(models.Project, {
           as: {
-            singular: 'Target',
-            plural: 'Targets'
+            singular: 'Project',
+            plural: 'Projects'
           },
           through: 'projects_targets',
           foreignKey: 'target_id'
@@ -67,8 +74,10 @@ module.exports = function (sequelize, DataTypes) {
     ],
     validate: {
       startBeforeEnd: function () {
+        console.log('---start', this.start);
+        console.log('---end', this.end);
         if (!(moment(this.start).isBefore(this.end))) {
-          throw new Error('The start date must be before the end date');
+          throw new Error('The start date must be before the end date and both must be valid');
         }
       }
     }

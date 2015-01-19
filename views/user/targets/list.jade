@@ -1,0 +1,16 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  h1= __('Targets')
+
+  p
+    a(href='/targets/new') New Target
+
+  ul.list-group
+    each target in targets
+      li.list-group-item
+        span.fa.fa-fw.fa-bullseye
+        | &nbsp;
+        a(href=("/target/" + target.id) title=target.notes)= target.name
+  +paginate(paginate, pageCount, currentPage)

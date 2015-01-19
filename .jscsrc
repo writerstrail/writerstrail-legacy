@@ -13,6 +13,5 @@
     "catch"
   ],
   "disallowSpaceAfterObjectKeys": true,
-  "requireSpaceBeforeObjectValues": true,
-  "requireSpacesInForStatement": true
+  "requireSpaceBeforeObjectValues": true
 }

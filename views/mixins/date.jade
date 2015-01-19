@@ -1,0 +1,21 @@
+mixin monthsOptions
+  option(value="1")= __('January')
+  option(value="2")= __('February')
+  option(value="3")= __('March')
+  option(value="4")= __('April')
+  option(value="5")= __('May')
+  option(value="6")= __('June')
+  option(value="7")= __('July')
+  option(value="8")= __('August')
+  option(value="9")= __('September')
+  option(value="10")= __('October')
+  option(value="11")= __('November')
+  option(value="12")= __('December')
+  
+mixin daysOptions
+  for d in _.range(1,31)
+    option(value=d)= d
+    
+mixin yearsOptions
+  for y in _.range(1950, (new Date()).getFullYear() + 2)
+    option(value=y)= y

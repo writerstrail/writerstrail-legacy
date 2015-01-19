@@ -1,15 +1,7 @@
-var _ = require('lodash'),
-  models = require('../../models'),
+var models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
-  chunk = require('../../utils/functions/chunk');
-
-function filterGenres(all, include) {
-  return _.filter(all, function (g) { 
-    return _.contains(_.map(include, function (v){
-      return parseInt(v, 10);
-    }), g.id);
-  });
-}
+  chunk = require('../../utils/functions/chunk'),
+  filterIds = require('../../utils/functions/filterids');
 
 module.exports = function projectsRoutes(router) {
   router.get('/projects', sendflash, function (req, res, next) {
@@ -93,7 +85,6 @@ module.exports = function projectsRoutes(router) {
           ['name', 'ASC']
         ]
       }).then(function (genres) {
-        console.log('-------------------------------g', req.body.genres);
         res.render('user/projects/single', {
           title: req.__('New project'),
           section: 'projectnew',
@@ -106,7 +97,7 @@ module.exports = function projectsRoutes(router) {
             targetwc: req.body.targetwc,
             active: !!req.body.active,
             finished: !!req.body.finished,
-            Genres: filterGenres(genres, req.body.genres)
+            Genres: filterIds(genres, req.body.genres)
           },
           genres: chunk(genres, 3),
           validate: err.errors,
@@ -217,7 +208,7 @@ module.exports = function projectsRoutes(router) {
             targetwc: req.body.targetwc,
             active: !!req.body.active,
             finished: !!req.body.finished,
-            Genres: filterGenres(genres, req.body.genres)
+            Genres: filterIds(genres, req.body.genres)
           },
           genres: chunk(genres, 3),
           validate: err.errors,

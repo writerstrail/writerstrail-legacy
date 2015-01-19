@@ -1,6 +1,5 @@
 var _ = require('lodash'),
   models = require('../../models'),
-  isactivated = require('../../utils/middlewares/isactivated'),
   sendflash = require('../../utils/middlewares/sendflash');
 
 module.exports = function genreRoutes(router) {

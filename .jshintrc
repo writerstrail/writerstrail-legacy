@@ -1,5 +1,7 @@
 {
   "node" : true,
   "camelcase": false,
-  "indent": 2
+  "indent": 2,
+  "unused": true,
+  "undef": true
 }

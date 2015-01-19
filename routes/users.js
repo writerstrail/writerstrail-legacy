@@ -3,6 +3,7 @@ var router = require('express').Router(),
   models = require('../models'),
   genres = require('./users/genres'),
   projects = require('./users/projects'),
+  targets = require('./users/targets'),
   isactivated = require('../utils/middlewares/isactivated'),
   sendflash = require('../utils/middlewares/sendflash');
 
@@ -21,5 +22,6 @@ router.param('id', function (req, res, next, id) {
 
 genres(router);
 projects(router);
+targets(router);
 
 module.exports = router;
