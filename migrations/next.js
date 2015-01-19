@@ -167,10 +167,10 @@ module.exports = {
         notes: {
           type: DataTypes.TEXT
         },
-        owner_id: {
+        project_id: {
           type: DataTypes.INTEGER,
           allowNull: false,
-          references: 'users',
+          references: 'projects',
           referencesKey: 'id',
           onUpdate: 'CASCADE',
           onDelete: 'CASCADE'
