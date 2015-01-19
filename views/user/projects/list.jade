@@ -10,7 +10,10 @@ block content
   ul.list-group
     each project in projects
       li.list-group-item
+        a.btn.btn-default(href='/projects/' + project.id + '/edit' title='Edit')
+          span.fa.fa-fw.fa-edit.fa-lg
+        | &nbsp; 
         span.fa.fa-fw.fa-folder-open-o
         | &nbsp;
-        a(href=("/projects/" + project.id + '/edit') title=project.description)= project.name
+        a(href=("/projects/" + project.id) title=project.description)= project.name
   +paginate(paginate, pageCount, currentPage)
