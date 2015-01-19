@@ -71,6 +71,11 @@ module.exports = {
           allowNull: false,
           defaultValue: false
         },
+        current_wordcount: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+          defaultValue: 0
+        },
         owner_id: {
           type: DataTypes.INTEGER,
           allowNull: false,

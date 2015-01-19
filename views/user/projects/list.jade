@@ -3,6 +3,9 @@ extends ../../layout
 block content
   include ../../mixins/paginate
   h1= __('Projects')
+  
+  p
+    a(href='/projects/active') Active projects
 
   p
     a(href='/projects/new') New project

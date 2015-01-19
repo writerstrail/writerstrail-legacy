@@ -4,7 +4,7 @@ var router = require('express').Router(),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids');
 
-router.get('/projects', sendflash, function (req, res, next) {
+router.get('/', sendflash, function (req, res, next) {
   models.Project.findAndCountAll({
     where: {
       owner_id: req.user.id
@@ -27,7 +27,7 @@ router.get('/projects', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/projects/new', sendflash, function (req, res) {
+router.get('/new', sendflash, function (req, res) {
   models.Genre.findAll({
     where: {
       owner_id: req.user.id
@@ -50,7 +50,7 @@ router.get('/projects/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/projects/new', function (req, res, next) {
+router.post('/new', function (req, res, next) {
   models.Project.create({
     name: req.body.name,
     description: req.body.description,
@@ -105,7 +105,7 @@ router.post('/projects/new', function (req, res, next) {
   });
 });
 
-router.get('/projects/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -143,7 +143,7 @@ router.get('/projects/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/projects/:id/edit', function (req, res, next) {
+router.post('/:id/edit', function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -211,6 +211,34 @@ router.post('/projects/:id/edit', function (req, res, next) {
         validate: err.errors,
         errorMessage: req.__('There are invalid values')
       });
+    });
+  });
+});
+
+router.get('/active', function (req, res) {
+  models.Project.findAll({
+    where: {
+      owner_id: req.user.id,
+      active: true
+    },
+    attributes: [
+      models.Sequelize.literal('*'),
+      [models.Sequelize.literal(
+        'LEAST(100, GREATEST(0, FLOOR((`currentWordcount` / `targetwc`) * 100)))'
+      ), 'percentage']
+    ],
+    order: [
+      [models.Sequelize.literal('`percentage`'), 'DESC'],
+      ['name', 'ASC']
+    ]
+  }, {
+    raw: true
+  }).then(function (projects) {
+    //console.log('---ppp', projects);
+    res.render('user/projects/active', {
+      title: 'Active projects',
+      section: 'projectsactive',
+      projects: projects
     });
   });
 });

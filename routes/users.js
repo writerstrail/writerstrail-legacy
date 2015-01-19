@@ -19,7 +19,7 @@ router.param('id', function (req, res, next, id) {
 });
 
 router.use(genres);
-router.use(projects);
+router.use('/projects', projects);
 router.use(targets);
 router.use(sessions);
 
