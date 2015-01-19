@@ -1,5 +1,4 @@
-var _ = require('lodash'),
-  models = require('../../models'),
+var models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash');
 
 module.exports = function genreRoutes(router) {
@@ -26,17 +25,16 @@ module.exports = function genreRoutes(router) {
     });
   });
 
-  router.get('/genre/new', sendflash, function (req, res) {
+  router.get('/genres/new', sendflash, function (req, res) {
     res.render('user/genres/single', {
       title: req.__('New genre'),
       section: 'genrenew',
       edit: false,
-      action: '/genre/new',
       genre: {}
     });
   });
 
-  router.post('/genre/new', function (req, res, next) {
+  router.post('/genres/new', function (req, res, next) {
     models.Genre.create({
       name: req.body.name,
       description: req.body.description,
@@ -44,14 +42,13 @@ module.exports = function genreRoutes(router) {
     }).then(function () {
       req.flash('success', req.__('Genre "%s" successfully created', req.body.name));
       if (req.body.create) { return res.redirect('/genres'); }
-      res.redirect('/genre/new');
+      res.redirect('/genres/new');
     }).catch(function (err) {
       if (err.message !== 'Validation error') { return next(err); }
       res.render('user/genres/single', {
         title: req.__('New genre'),
         section: 'genrenew',
         edit: false,
-        action: '/genre/new',
         genre: {
           name: req.body.name,
           description: req.body.description
@@ -63,7 +60,7 @@ module.exports = function genreRoutes(router) {
     });
   });
 
-  router.get('/genre/:id', sendflash, function (req, res, next) {
+  router.get('/genres/:id', sendflash, function (req, res, next) {
     req.user.getGenres({
       where: {
         id: req.params.id
@@ -85,7 +82,7 @@ module.exports = function genreRoutes(router) {
     });
   });
 
-  router.post('/genre/:id', function (req, res, next) {
+  router.post('/genres/:id', function (req, res, next) {
     req.user.getGenres({
       where: {
         id: req.params.id
@@ -116,7 +113,6 @@ module.exports = function genreRoutes(router) {
         title: req.__('Edit genre'),
         section: 'genreedit',
         edit: true,
-        action: '/genre/new',
         genre: {
           name: req.body.name,
           description: req.body.description

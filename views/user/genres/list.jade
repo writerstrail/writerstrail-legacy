@@ -5,12 +5,12 @@ block content
   h1= __('Genres')
 
   p
-    a(href='/genre/new') New genre
+    a(href='/genres/new') New genre
 
   ul.list-group
     each genre in genres
       li.list-group-item
         span.fa.fa-fw.fa-folder-open-o
         | &nbsp;
-        a(href=("/genre/" + genre.id) title=genre.description)= genre.name
+        a(href=("/genres/" + genre.id) title=genre.description)= genre.name
   +paginate(paginate, pageCount, currentPage)

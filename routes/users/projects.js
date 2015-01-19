@@ -27,7 +27,7 @@ module.exports = function projectsRoutes(router) {
     });
   });
   
-  router.get('/project/new', sendflash, function (req, res) {
+  router.get('/projects/new', sendflash, function (req, res) {
     models.Genre.findAll({
       where: {
         owner_id: req.user.id
@@ -40,7 +40,6 @@ module.exports = function projectsRoutes(router) {
         title: req.__('New project'),
         section: 'projectnew',
         edit: false,
-        action: '/project/new',
         project: {
           active: true,
           wordcount: 0,
@@ -51,7 +50,7 @@ module.exports = function projectsRoutes(router) {
     });
   });
   
-  router.post('/project/new', function (req, res, next) {
+  router.post('/projects/new', function (req, res, next) {
     models.Project.create({
       name: req.body.name,
       description: req.body.description,
@@ -74,7 +73,7 @@ module.exports = function projectsRoutes(router) {
     }).then(function () {      
       req.flash('success', req.__('Project "%s" successfully created', req.body.name));
       if (req.body.create) { return res.redirect('/projects'); }
-      res.redirect('/project/new');
+      res.redirect('/projects/new');
     }).catch(function (err) {
       if (err.message !== 'Validation error') { return next(err); }
       models.Genre.findAll({
@@ -89,7 +88,6 @@ module.exports = function projectsRoutes(router) {
           title: req.__('New project'),
           section: 'projectnew',
           edit: false,
-          action: '/project/new',
           project: {
             name: req.body.name,
             description: req.body.description,
@@ -107,7 +105,7 @@ module.exports = function projectsRoutes(router) {
     });
   });
   
-  router.get('/project/:id', sendflash, function (req, res, next) {
+  router.get('/projects/:id', sendflash, function (req, res, next) {
     models.Project.findOne({
       where: {
         id: req.params.id,
@@ -145,7 +143,7 @@ module.exports = function projectsRoutes(router) {
     });
   });
 
-  router.post('/project/:id', function (req, res, next) {
+  router.post('/projects/:id', function (req, res, next) {
     models.Project.findOne({
       where: {
         id: req.params.id,
@@ -200,7 +198,6 @@ module.exports = function projectsRoutes(router) {
           title: req.__('Edit project'),
           section: 'projectedit',
           edit: true,
-          action: '/project/new',
           project: {
             name: req.body.name,
             description: req.body.description,

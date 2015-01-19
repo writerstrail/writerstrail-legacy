@@ -7,7 +7,7 @@ block content
   - }
   h1= edit ? __('Edit target') : __('New target')
 
-  form.form-horizontal(method='post' action=formAction)
+  form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
     
     - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
