@@ -41,7 +41,6 @@ router.get('/targets/new', sendflash, function (req, res, next) {
     res.render('user/targets/single', {
       title: req.__('New target'),
       edit: false,
-      action: '/targets/new',
       target: {
         wordcount: 50000,
         start: moment().add(1, 'day').format('YYYY-MM-DD'),
@@ -96,7 +95,6 @@ router.post('/targets/new', function (req, res, next) {
       res.render('user/targets/single', {
         title: req.__('New target'),
         edit: false,
-        action: '/targets/new',
         target: {
           name: req.body.name,
           start: req.body.start,
@@ -113,7 +111,7 @@ router.post('/targets/new', function (req, res, next) {
   });
 });
 
-router.get('/targets/:id', sendflash, function (req, res, next) {
+router.get('/targets/:id/edit', sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -154,7 +152,7 @@ router.get('/targets/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/targets/:id', function (req, res, next) {
+router.post('/targets/:id/edit', function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -209,7 +207,6 @@ router.post('/targets/:id', function (req, res, next) {
         title: req.__('Edit target'),
         section: 'targetedit',
         edit: true,
-        action: '/targets/new',
         target: {
           name: req.body.name,
           notes: req.body.notes,

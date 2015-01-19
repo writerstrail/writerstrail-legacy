@@ -119,7 +119,7 @@ router.post('/sessions/new', function (req, res, next) {
   });
 });
 
-router.get('/sessions/:id', sendflash, function (req, res, next) {
+router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
   models.Session.findOne({
     where: {
       id: req.params.id,
@@ -164,7 +164,7 @@ router.get('/sessions/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/sessions/:id', function (req, res, next) {
+router.post('/sessions/:id/edit', function (req, res, next) {
   models.Session.findOne({
     where: {
       id: req.params.id

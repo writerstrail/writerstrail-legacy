@@ -10,6 +10,9 @@ block content
   ul.list-group
     each target in targets
       li.list-group-item
+        a.btn.btn-default(href='/targets/' + target.id + '/edit' title='Edit')
+          span.fa.fa-fw.fa-edit.fa-lg
+        | &nbsp; 
         span.fa.fa-fw.fa-bullseye
         | &nbsp;
         a(href=("/targets/" + target.id) title=target.notes)= target.name
