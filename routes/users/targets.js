@@ -112,4 +112,117 @@ module.exports = function targets(router) {
       });
     });
   });
+  
+  router.get('/targets/:id', sendflash, function (req, res, next) {
+    models.Target.findOne({
+      where: {
+        id: req.params.id,
+        owner_id: req.user.id
+      },
+      include: [{
+        model: models.Project,
+        as: 'Projects'
+      }]
+    }).then(function (target) {
+      if (!target) {
+        var error = new Error('Not found');
+        error.status = 404;
+        return next(error);
+      }
+      return models.Project.findAll({
+        where: {
+          owner_id: req.user.id,
+          active: true
+        },
+        order: [
+          ['name', 'ASC']
+        ]
+      }).then(function (projects) {
+        var data = target.dataValues;
+        data.start = moment(data.start).format('YYYY-MM-DD');
+        data.end = moment(data.end).format('YYYY-MM-DD');
+        res.render('user/targets/single', {
+          title: req.__('Target edit'),
+          section: 'targetedit',
+          target: target,
+          projects: chunk(projects, 3),
+          edit: true
+        });
+      });
+    }).catch(function (err) {
+      next(err);
+    });
+  });
+  
+  router.post('/targets/:id', function (req, res, next) {
+    models.Target.findOne({
+      where: {
+        id: req.params.id,
+        owner_id: req.user.id
+      }
+    }).then(function (target) {
+      if (!target) {
+        var error = new Error('Not found');
+        error.status = 404;
+        return next(error);
+      }
+      if (!req.body.delete) {
+        target.set('name', req.body.name);
+        target.set('notes', req.body.notes);
+        target.set('wordcount', req.body.wordcount);
+        target.set('start', moment(req.body.start, 'YYYY-MM-DD'));
+        target.set('end', moment(req.body.end, 'YYYY-MM-DD'));
+        return target.save().then(function () {
+          return models.Project.findAll({
+            where: {
+              owner_id: req.user.id,
+              id: {
+                in: req.body.projects
+              }
+            }
+          }).then(function (projects){
+            return target.setProjects(projects);
+          });
+        });
+      }
+      return target.destroy();
+    }).then(function () {
+      var msg = (!!req.body.save) ? req.__('Target "%s" successfully saved.') : req.__('Target "%s" successfully deleted.');
+      req.flash('success', req.__(msg, req.body.name));
+      if (!!req.body.save) {
+        res.redirect('back');
+      } else {
+        res.redirect('/targets');
+      }
+    }).catch(function (err) {
+      if (err.message !== 'Validation error') { return next(err); }
+      models.Project.findAll({
+        where: {
+          owner_id: req.user.id,
+          active: true
+        },
+        order: [
+          ['name', 'ASC']
+        ]
+      }).then(function (projects) {
+        res.render('user/targets/single', {
+          title: req.__('Edit target'),
+          section: 'targetedit',
+          edit: true,
+          action: '/targets/new',
+          target: {
+            name: req.body.name,
+            notes: req.body.notes,
+            wordcount: req.body.wordcount,
+            start: req.body.start,
+            end: !!req.body.end,
+            Projects: filterIds(projects, req.body.projects)
+          },
+          projects: chunk(projects, 3),
+          validate: err.errors,
+          errorMessage: req.__('There are invalid values')
+        });
+      });
+    });
+  });
 };
