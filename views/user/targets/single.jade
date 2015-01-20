@@ -3,7 +3,7 @@ extends ../../layout
 block content
   include ../../mixins/date
   - var checkProject = function (id) {
-  -   return !!(_.find(target.Projects, function (g) { return g.id == id; } )) ? 'checked' : false;
+  -   return !!(_.find(target.projects, function (g) { return g.id == id; } )) ? 'checked' : false;
   - }
   h1= edit ? __('Edit target') : __('New target')
 

@@ -19,7 +19,7 @@ block content
       .col-sm-10
         select#project.form-control(name='project')
           for proj in projects
-            option(value=proj.id selected=proj.id == session['Project.id'])= proj.name
+            option(value=proj.id selected=proj.id == session['project.id'])= proj.name
 
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     

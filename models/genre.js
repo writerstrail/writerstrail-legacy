@@ -25,13 +25,13 @@ module.exports = function (sequelize, DataTypes) {
     classMethods: {
       associate: function (models) {
         Genre.belongsTo(models.User, {
-          as: 'Owner',
-          foreignKey: 'owner_id'
+          as: 'owner',
+          foreignKey: 'ownerId'
         });
         Genre.belongsToMany(models.Project, {
-          as: 'Projects',
-          through: 'projects_genres',
-          foreignKey: 'genre_id'
+          as: 'projects',
+          through: 'projectsGenres',
+          foreignKey: 'genreId'
         });
       }
     },
@@ -39,7 +39,7 @@ module.exports = function (sequelize, DataTypes) {
       {
         name: 'name',
         unique: true,
-        fields: ['name', 'owner_id']
+        fields: ['name', 'ownerId']
       }
     ]
   });

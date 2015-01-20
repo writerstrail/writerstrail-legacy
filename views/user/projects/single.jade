@@ -58,7 +58,7 @@ block content
     .col-sm-2.text-right
       strong Genres:
     .col-sm-10
-      for genre, i in project.Genres
+      for genre, i in project.genres
         if i > 0
           | ,&nbsp;
         a(href='/genres/' + genre.id title=genre.name)= genre.name
@@ -67,7 +67,7 @@ block content
     .col-sm-2.text-right
       strong Included in targets:
     .col-sm-10
-      for target, i in project.Targets
+      for target, i in project.targets
         if i > 0
           | ,&nbsp;
         a(href='/targets/' + target.id title=target.name)= target.name

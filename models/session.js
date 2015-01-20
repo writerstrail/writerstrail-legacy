@@ -58,17 +58,17 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.TEXT
     }
   }, {
-    tableName: 'writing_sessions',
+    tableName: 'writingSessions',
     classMethods: {
       associate: function (models) {
         Session.belongsTo(models.Project, {
-          as: 'Project',
-          foreignKey: 'project_id',
+          as: 'project',
+          foreignKey: 'projectId',
           onDelete: 'CASCADE'
         });
         
         Session.afterCreate(function (session){
-          return models.Project.findOne(session.project_id).then(function (project) {
+          return models.Project.findOne(session.projectId).then(function (project) {
             return project.increment({
               currentWordcount: session.wordcount
             });
@@ -76,7 +76,7 @@ module.exports = function (sequelize, DataTypes) {
         });
         
         Session.afterDestroy(function (session){
-          return models.Project.findOne(session.project_id).then(function (project) {
+          return models.Project.findOne(session.projectId).then(function (project) {
             return project.decrement({
               currentWordcount: session.wordcount
             });

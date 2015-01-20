@@ -7,7 +7,7 @@ var router = require('express').Router(),
 router.get('/', sendflash, function (req, res, next) {
   models.Project.findAndCountAll({
     where: {
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     order: [['name', 'ASC']],
     limit: req.query.limit,
@@ -30,7 +30,7 @@ router.get('/', sendflash, function (req, res, next) {
 router.get('/new', sendflash, function (req, res) {
   models.Genre.findAll({
     where: {
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     order: [
       ['name', 'ASC']
@@ -58,11 +58,11 @@ router.post('/new', function (req, res, next) {
     targetwc: req.body.targetwc,
     active: !!req.body.active,
     finished: !!req.body.finished,
-    owner_id: req.user.id
+    ownerId: req.user.id
   }).then(function (project) {
     return models.Genre.findAll({
       where: {
-        owner_id: req.user.id,
+        ownerId: req.user.id,
         id: {
           in: req.body.genres
         }
@@ -78,7 +78,7 @@ router.post('/new', function (req, res, next) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Genre.findAll({
       where: {
-        owner_id: req.user.id
+        ownerId: req.user.id
       },
       order: [
         ['name', 'ASC']
@@ -95,7 +95,7 @@ router.post('/new', function (req, res, next) {
           targetwc: req.body.targetwc,
           active: !!req.body.active,
           finished: !!req.body.finished,
-          Genres: filterIds(genres, req.body.genres)
+          genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
         validate: err.errors,
@@ -109,11 +109,11 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     include: [{
       model: models.Genre,
-      as: 'Genres'
+      as: 'genres'
     }]
   }).complete(function (err, project) {
     if (err) { return next(err); }
@@ -124,7 +124,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
     }
     models.Genre.findAll({
       where: {
-        owner_id: req.user.id
+        ownerId: req.user.id
       },
       order: [
         ['name', 'ASC']
@@ -147,7 +147,7 @@ router.post('/:id/edit', function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
-      owner_id: req.user.id
+      ownerId: req.user.id
     }
   }).then(function (project) {
     if (!project) {
@@ -165,7 +165,7 @@ router.post('/:id/edit', function (req, res, next) {
       return project.save().then(function () {
         return models.Genre.findAll({
           where: {
-            owner_id: req.user.id,
+            ownerId: req.user.id,
             id: {
               in: req.body.genres
             }
@@ -188,7 +188,7 @@ router.post('/:id/edit', function (req, res, next) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Genre.findAll({
       where: {
-        owner_id: req.user.id
+        ownerId: req.user.id
       },
       order: [
         ['name', 'ASC']
@@ -205,7 +205,7 @@ router.post('/:id/edit', function (req, res, next) {
           targetwc: req.body.targetwc,
           active: !!req.body.active,
           finished: !!req.body.finished,
-          Genres: filterIds(genres, req.body.genres)
+          genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
         validate: err.errors,
@@ -218,7 +218,7 @@ router.post('/:id/edit', function (req, res, next) {
 router.get('/active', sendflash, function (req, res, next) {
   models.Project.findAll({
     where: {
-      owner_id: req.user.id,
+      ownerId: req.user.id,
       active: true
     },
     attributes: [
@@ -248,17 +248,17 @@ router.get('/:id', sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     include: [
       {
         model: models.Genre,
-        as: 'Genres',
+        as: 'genres',
         order: [['name', 'ASC']]
       },
       {
         model: models.Target,
-        as: 'Targets',
+        as: 'targets',
         order: [['name', 'ASC']]
       }
     ]

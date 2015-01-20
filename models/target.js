@@ -52,13 +52,13 @@ module.exports = function (sequelize, DataTypes) {
     classMethods: {
       associate: function (models) {
         Target.belongsTo(models.User, {
-          as: 'Owner',
-          foreignKey: 'owner_id'
+          as: 'owner',
+          foreignKey: 'ownerId'
         });
         Target.belongsToMany(models.Project, {
-          as: 'Projects',
-          through: 'projects_targets',
-          foreignKey: 'TargetId'
+          as: 'projects',
+          through: 'projectsTargets',
+          foreignKey: 'targetId'
         });
       }
     },
@@ -66,13 +66,11 @@ module.exports = function (sequelize, DataTypes) {
       {
         name: 'name',
         unique: true,
-        fields: ['name', 'owner_id']
+        fields: ['name', 'ownerId']
       }
     ],
     validate: {
       startBeforeEnd: function () {
-        console.log('---start', this.start);
-        console.log('---end', this.end);
         if (!(moment(this.start).isBefore(this.end))) {
           throw new Error('The start date must be before the end date and both must be valid');
         }

@@ -2,7 +2,7 @@ extends ../../layout
 
 block content
   - var checkGenre = function (id) {
-  -   return !!(_.find(project.Genres, function (g) { return g.id == id; } )) ? 'checked' : false;
+  -   return !!(_.find(project.genres, function (g) { return g.id == id; } )) ? 'checked' : false;
   - }
   if edit
     h1= __('Edit project')

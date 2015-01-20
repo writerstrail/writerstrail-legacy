@@ -8,7 +8,7 @@ var router = require('express').Router(),
 router.get('/targets', sendflash, function (req, res, next) {
   models.Target.findAndCountAll({
     where: {
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     order: [['name', 'ASC']],
     limit: req.query.limit,
@@ -31,7 +31,7 @@ router.get('/targets', sendflash, function (req, res, next) {
 router.get('/targets/new', sendflash, function (req, res, next) {
   models.Project.findAll({
     where: {
-      owner_id: req.user.id,
+      ownerId: req.user.id,
       active: true
     },
     order: [
@@ -66,11 +66,11 @@ router.post('/targets/new', function (req, res, next) {
     end: end,
     wordcount: req.body.wordcount,
     notes: req.body.notes,
-    owner_id: req.user.id
+    ownerId: req.user.id
   }).then(function (target) {
     return models.Project.findAll({
       where: {
-        owner_id: req.user.id,
+        ownerId: req.user.id,
         id: req.body.projects
       }
     }).then(function (projects) {
@@ -85,7 +85,7 @@ router.post('/targets/new', function (req, res, next) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Project.findAll({
       where: {
-        owner_id: req.user.id,
+        ownerId: req.user.id,
         active: true
       },
       order: [
@@ -115,11 +115,11 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     include: [{
       model: models.Project,
-      as: 'Projects'
+      as: 'projects'
     }]
   }).then(function (target) {
     if (!target) {
@@ -129,7 +129,7 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
     }
     return models.Project.findAll({
       where: {
-        owner_id: req.user.id,
+        ownerId: req.user.id,
         active: true
       },
       order: [
@@ -156,7 +156,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
-      owner_id: req.user.id
+      ownerId: req.user.id
     }
   }).then(function (target) {
     if (!target) {
@@ -173,7 +173,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
       return target.save().then(function () {
         return models.Project.findAll({
           where: {
-            owner_id: req.user.id,
+            ownerId: req.user.id,
             id: {
               in: req.body.projects
             }
@@ -196,7 +196,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Project.findAll({
       where: {
-        owner_id: req.user.id,
+        ownerId: req.user.id,
         active: true
       },
       order: [

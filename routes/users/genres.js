@@ -5,7 +5,7 @@ var router = require('express').Router(),
 router.get('/genres', sendflash, function (req, res, next) {
   models.Genre.findAndCountAll({
     where: {
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     order: [['name', 'ASC']],
     limit: req.query.limit,
@@ -38,7 +38,7 @@ router.post('/genres/new', function (req, res, next) {
   models.Genre.create({
     name: req.body.name,
     description: req.body.description,
-    owner_id: req.user.id
+    ownerId: req.user.id
   }).then(function () {
     req.flash('success', req.__('Genre "%s" successfully created', req.body.name));
     if (req.body.create) { return res.redirect('/genres'); }

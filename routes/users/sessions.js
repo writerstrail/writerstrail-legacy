@@ -18,15 +18,15 @@ function durationFormatter(dur) {
 }
 
 router.get('/sessions', sendflash, function (req, res, next) {
-  var whereOpt = { owner_id: req.user.id };
-  if(req.query.projectid) {
-    whereOpt.id = req.query.projectid
+  var whereOpt = { ownerId: req.user.id };
+  if (req.query.projectid) {
+    whereOpt.id = req.query.projectid;
   }
   models.Session.findAndCountAll({
     include: [
       {
         model: models.Project,
-        as: 'Project',
+        as: 'project',
         where: whereOpt
       }
     ],
@@ -53,7 +53,7 @@ router.get('/sessions', sendflash, function (req, res, next) {
 router.get('/sessions/new', sendflash, function (req, res) {
   models.Project.findAll({
     where: {
-      owner_id: req.user.id
+      ownerId: req.user.id
     },
     order: [['name', 'ASC']]
   }).then(function (projects) {
@@ -66,7 +66,7 @@ router.get('/sessions/new', sendflash, function (req, res) {
         wordcount: 0,
         duration: '15:00',
         pausedTime: '0:00',
-        'Project.id': req.query.projectid || 0
+        'project.id': req.query.projectid || 0
       },
       projects: projects
     });
@@ -82,7 +82,7 @@ router.post('/sessions/new', function (req, res, next) {
     duration: durationParser(req.body.duration),
     pausedTime: durationParser(req.body.pausedTime),
     isCountdown: !!req.body.isCountdown,
-    project_id: req.body.project
+    projectId: req.body.project
   }).then(function () {      
     req.flash('success', req.__('Session "%s" successfully created',
                                 req.body.summary.length > 0 ? req.body.summary : req.body.start));
@@ -92,7 +92,7 @@ router.post('/sessions/new', function (req, res, next) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Project.findAll({
       where: {
-        owner_id: req.user.id,
+        ownerId: req.user.id,
         active: true
       },
       order: [
@@ -113,7 +113,7 @@ router.post('/sessions/new', function (req, res, next) {
           pausedTime: req.body.pausedTime,
           duration: req.body.duration,
           isCountdown: !!req.body.isCountdown,
-          'Project.id': req.body.project
+          'project.id': req.body.project
         },
         projects: projects,
         validate: err.errors,
@@ -130,8 +130,8 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
     },
     include: [{
       model: models.Project,
-      as: 'Project',
-      where: { owner_id: req.user.id }
+      as: 'project',
+      where: { ownerId: req.user.id }
     }]
   }, {
     raw: true
@@ -143,7 +143,7 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
     }
     models.Project.findAll({
       where: {
-        owner_id: req.user.id,
+        ownerId: req.user.id,
         active: true
       },
       order: [
@@ -176,9 +176,9 @@ router.post('/sessions/:id/edit', function (req, res, next) {
     include: [
       {
         model: models.Project,
-        as: 'Project',
+        as: 'project',
         where: {
-          owner_id: req.user.id
+          ownerId: req.user.id
         }
       }
     ]
@@ -196,7 +196,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
       session.set('duration', durationParser(req.body.duration));
       session.set('pausedTime', durationParser(req.body.pausedTime));
       session.set('isCountdown', !!req.body.isCountdown);
-      session.set('project_id', parseInt(req.body.project, 10));
+      session.set('projectId', parseInt(req.body.project, 10));
       return session.save();
     }
     return session.destroy();
@@ -212,7 +212,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Project.findAll({
       where: {
-        owner_id: req.user.id
+        ownerId: req.user.id
       },
       order: [
         ['name', 'ASC']
@@ -232,7 +232,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
           duration: req.body.duration,
           pausedTime: req.body.pausedTime,
           isCountdown: !!req.body.isCountdown,
-          'Project.id': req.body.project
+          'project.id': req.body.project
         },
         projects: projects,
         validate: err.errors,

@@ -76,24 +76,24 @@ module.exports = function (sequelize, DataTypes) {
     classMethods: {
       associate: function (models) {
         Project.belongsTo(models.User, {
-          as: 'Owner',
-          foreignKey: 'owner_id',
+          as: 'owner',
+          foreignKey: 'ownerId',
           onDelete: 'CASCADE'
         });
         Project.hasMany(models.Session, {
-          as: 'Sessions',
-          foreignKey: 'project_id',
+          as: 'sessions',
+          foreignKey: 'projectId',
           onDelete: 'CASCADE'
         });
         Project.belongsToMany(models.Genre, {
-          as: 'Genres',
-          through: 'projects_genres',
-          foreignKey: 'project_id'
+          as: 'genres',
+          through: 'projectsGenres',
+          foreignKey: 'projectId'
         });
         Project.belongsToMany(models.Target, {
-          as: 'Targets',
-          through: 'projects_targets',
-          foreignKey: 'project_id'
+          as: 'targets',
+          through: 'projectsTargets',
+          foreignKey: 'projectId'
         });
         Project.beforeCreate(function (project) {
           project.currentWordcount = project.wordcount;
@@ -112,7 +112,7 @@ module.exports = function (sequelize, DataTypes) {
         var self = this;
         Project.findOne({
           where: {
-            owner_id: this.owner_id,
+            ownerId: this.ownerId,
             name: this.name
           }
         }).then(function (p) {

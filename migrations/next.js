@@ -14,7 +14,7 @@ module.exports = {
       description: {
         type: DataTypes.TEXT
       },
-      owner_id: {
+      ownerId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: 'users',
@@ -33,7 +33,7 @@ module.exports = {
     }, {
       charset: 'utf8'
     }).then(function () {
-      return migration.addIndex('genres', ['name', 'owner_id'], {
+      return migration.addIndex('genres', ['name', 'ownerId'], {
         indexName: 'name',
         indicesType: 'UNIQUE'
       });
@@ -71,12 +71,12 @@ module.exports = {
           allowNull: false,
           defaultValue: false
         },
-        current_wordcount: {
+        currentWordcount: {
           type: DataTypes.INTEGER.UNSIGNED,
           allowNull: false,
           defaultValue: 0
         },
-        owner_id: {
+        ownerId: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: 'users',
@@ -100,12 +100,12 @@ module.exports = {
         charset: 'utf8'
       });
     }).then(function () {
-      return migration.addIndex('projects', ['name', 'owner_id'], {
+      return migration.addIndex('projects', ['name', 'ownerId'], {
         indexName: 'name'
       });
     }).then(function () {
-      return migration.createTable('projects_genres', {
-        project_id: {
+      return migration.createTable('projectsGenres', {
+        projectId: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: 'projects',
@@ -114,7 +114,7 @@ module.exports = {
           onDelete: 'CASCADE',
           primaryKey: 'PRIMARY'
         },
-        genre_id: {
+        genreId: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: 'genres',
@@ -135,7 +135,7 @@ module.exports = {
         charset: 'utf8'
       });
     }).then(function () {
-      return migration.createTable('writing_sessions', {
+      return migration.createTable('writingSessions', {
         id: {
           type: DataTypes.INTEGER,
           autoIncrement: true,
@@ -172,7 +172,7 @@ module.exports = {
         notes: {
           type: DataTypes.TEXT
         },
-        project_id: {
+        projectId: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: 'projects',
@@ -192,7 +192,7 @@ module.exports = {
         charset: 'utf8'
       });
     }).then(function () {
-      return migration.addIndex('writing_sessions', ['start'], {
+      return migration.addIndex('writingSessions', ['start'], {
         indexName: 'start'
       });
     }).then(function () {
@@ -221,7 +221,7 @@ module.exports = {
           type: DataTypes.INTEGER.UNSIGNED,
           allowNull: false
         },
-        owner_id: {
+        ownerId: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: 'users',
@@ -241,13 +241,13 @@ module.exports = {
         charset: 'utf8'
       });
     }).then(function () {
-      return migration.addIndex('targets', ['name', 'owner_id'], {
+      return migration.addIndex('targets', ['name', 'ownerId'], {
         indexName: 'name',
         indicesType: 'UNIQUE'
       });
     }).then(function () {
-      return migration.createTable('projects_targets', {
-        project_id: {
+      return migration.createTable('projectsTargets', {
+        projectId: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: 'projects',
@@ -256,7 +256,7 @@ module.exports = {
           onDelete: 'CASCADE',
           primaryKey: 'PRIMARY'
         },
-        target_id: {
+        targetId: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: 'targets',
@@ -280,12 +280,12 @@ module.exports = {
   },
 
   down: function (migration, DataTypes, done) {
-    migration.dropTable('projects_targets').then(function () {
+    migration.dropTable('projectsTargets').then(function () {
       return migration.dropTable('targets');
     }).then(function () {
-      return migration.dropTable('writing_sessions');
+      return migration.dropTable('writingSessions');
     }).then(function () {
-      return migration.dropTable('projects_genres');
+      return migration.dropTable('projectsGenres');
     }).then(function () {
       return migration.dropTable('projects');
     }).then(function () {
