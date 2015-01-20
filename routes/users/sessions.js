@@ -17,6 +17,13 @@ function durationFormatter(dur) {
   return (min.toString() +  ':' + (sec < 10 ? '0' + sec : sec));
 }
 
+function durationFormatterAlt(dur) {
+  var min = Math.floor(dur / 60),
+    sec = dur - min * 60;
+  
+  return (min.toString() +  'm' + (sec < 10 ? '0' + sec : sec)) + 's';
+}
+
 router.get('/sessions', sendflash, function (req, res, next) {
   var whereOpt = { ownerId: req.user.id };
   if (req.query.projectid) {
@@ -57,7 +64,7 @@ router.get('/sessions/new', sendflash, function (req, res) {
     },
     order: [['name', 'ASC']]
   }).then(function (projects) {
-    res.render('user/sessions/single', {
+    res.render('user/sessions/edit', {
       title: req.__('New session'),
       section: 'sessionnew',
       edit: false,
@@ -101,7 +108,7 @@ router.post('/sessions/new', function (req, res, next) {
     }, {
       raw: true
     }).then(function (projects) {
-      res.render('user/sessions/single', {
+      res.render('user/sessions/edit', {
         title: req.__('New sessions'),
         section: 'sessionnew',
         edit: false,
@@ -155,7 +162,7 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
       session.start = moment(session.start).format('YYYY-MM-DD HH:mm');
       session.duration = durationFormatter(session.duration);
       session.pausedTime = durationFormatter(session.pausedTime);
-      res.render('user/sessions/single', {
+      res.render('user/sessions/edit', {
         title: req.__('Session edit'),
         section: 'sessionedit',
         session: session,
@@ -220,7 +227,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
     }, {
       raw: true
     }).then(function (projects) {
-      res.render('user/sessions/single', {
+      res.render('user/sessions/edit', {
         title: req.__('Edit session'),
         section: 'projectedit',
         edit: true,
@@ -242,6 +249,45 @@ router.post('/sessions/:id/edit', function (req, res, next) {
   });
 });
 
-module.exports = router;
+router.get('/sessions/:id', sendflash, function (req, res, next) {
+  models.Session.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: [
+      {
+        model: models.Project,
+        as: 'project',
+        where: {
+          ownerId: req.user.id
+        },
+        include: [
+          {
+            model: models.Target,
+            as: 'targets',
+            where: {        
+              start: {
+                lte: models.Sequelize.literal('`Session`.`start`'),
+              },
+              end: {
+                gte: models.Sequelize.literal('(`Session`.`start` + INTERVAL `Session`.`duration` SECOND)'),
+              }
+            },
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function (session) {
+    res.render('user/sessions/single', {
+      title: 'View session',
+      section: 'sessionsingle',
+      session: session,
+      durFormat: durationFormatterAlt
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
 
 module.exports = router;
