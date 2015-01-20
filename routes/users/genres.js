@@ -26,7 +26,7 @@ router.get('/genres', sendflash, function (req, res, next) {
 });
 
 router.get('/genres/new', sendflash, function (req, res) {
-  res.render('user/genres/single', {
+  res.render('user/genres/edit', {
     title: req.__('New genre'),
     section: 'genrenew',
     edit: false,
@@ -45,7 +45,7 @@ router.post('/genres/new', function (req, res, next) {
     res.redirect('/genres/new');
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
-    res.render('user/genres/single', {
+    res.render('user/genres/edit', {
       title: req.__('New genre'),
       section: 'genrenew',
       edit: false,
@@ -65,20 +65,20 @@ router.get('/genres/:id/edit', sendflash, function (req, res, next) {
     where: {
       id: req.params.id
     }
-  }).complete(function (err, genres) {
-    if (err) { return next(err); }
+  }).then(function (genres) {
     if (genres.length !== 1) {
       var error = new Error('Not found');
       error.status = 404;
       return next(error);
     }
-    res.render('user/genres/single', {
+    res.render('user/genres/edit', {
       title: 'Genre edit',
       section: 'genreedit',
       genre: genres[0],
       edit: true
     });
-
+  }).catch(function (err) {
+    next(err);
   });
 });
 
@@ -109,7 +109,7 @@ router.post('/genres/:id/edit', function (req, res, next) {
     }
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
-    res.render('user/genres/single', {
+    res.render('user/genres/edit', {
       title: req.__('Edit genre'),
       section: 'genreedit',
       edit: true,
@@ -120,6 +120,32 @@ router.post('/genres/:id/edit', function (req, res, next) {
       validate: err.errors,
       errorMessage: req.__('There are invalid values')
     });
+  });
+});
+
+router.get('/genres/:id', sendflash, function (req, res, next) {
+  models.Genre.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    },
+    include: [{
+      model: models.Project,
+      as: 'projects'
+    }]
+  }).then(function (genre) {
+    if (!genre) {
+      var error = new Error('Not found');
+      error.status = 404;
+      return next(error);
+    }
+    res.render('user/genres/single', {
+      title: 'Genre ' + genre.name,
+      section: 'genresingle',
+      genre: genre
+    });
+  }).catch(function (err) {
+    next(err);
   });
 });
 
