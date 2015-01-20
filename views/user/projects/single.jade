@@ -5,6 +5,9 @@ block content
     | &nbsp;
     a(href='/projects/' + project.id + '/edit' title='Edit')
       span.fa.fa-edit
+    | &nbsp;
+    a(href='/sessions/new?projectid=' + project.id title='New session')
+      span.fa.fa-clock-o
   
   if project.targetwc > 0
     .row

@@ -62,7 +62,7 @@ router.get('/sessions/new', sendflash, function (req, res) {
         wordcount: 0,
         duration: '15:00',
         pausedTime: '0:00',
-        'Project.id': 0
+        'Project.id': req.query.projectid || 0
       },
       projects: projects
     });
