@@ -98,6 +98,12 @@ module.exports = function (sequelize, DataTypes) {
         Project.beforeCreate(function (project) {
           project.currentWordcount = project.wordcount;
         });
+        
+        Project.beforeUpdate(function (project) {          
+          var diff = project.dataValues.wordcount - project._previousDataValues.wordcount;
+          
+          project.currentWordcount = project.currentWordcount + diff;
+        });
       }
     },
     paranoid: true,
