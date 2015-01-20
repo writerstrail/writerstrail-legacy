@@ -36,6 +36,12 @@ module.exports = function (sequelize, DataTypes) {
           args: 1000000000,
           msg: 'I\'m not judging, but can\'t believe you wrote over a billion words'
         }
+      },
+      set: function (v) {
+        var old = this.getDataValue('wordcount');
+        var diff = v - old;
+        this.setDataValue('currentWordcount', this.getDataValue('currentWordcount') + diff);
+        this.setDataValue('wordcount', v);
       }
     },
     targetwc: {
@@ -98,12 +104,6 @@ module.exports = function (sequelize, DataTypes) {
         Project.beforeCreate(function (project) {
           project.currentWordcount = project.wordcount;
         });
-        
-        Project.beforeUpdate(function (project) {          
-          var diff = project.dataValues.wordcount - project._previousDataValues.wordcount;
-          
-          project.currentWordcount = project.currentWordcount + diff;
-        });
       }
     },
     paranoid: true,
@@ -126,7 +126,7 @@ module.exports = function (sequelize, DataTypes) {
         });
       },
       targetOverStart: function (next) {
-        if (this.targetwc < this.wordcount) {
+        if (parseInt(this.targetwc, 10) < parseInt(this.wordcount, 10)){
           return next(new Error('The target can\'t be less than the starting wordcount'));
         }
         next();
