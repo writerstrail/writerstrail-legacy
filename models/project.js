@@ -65,6 +65,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    currentWordcount: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     tableName: 'projects',
@@ -89,6 +94,15 @@ module.exports = function (sequelize, DataTypes) {
           as: 'Targets',
           through: 'projects_targets',
           foreignKey: 'project_id'
+        });
+        Project.beforeCreate(function (project) {
+          project.currentWordcount = project.wordcount;
+        });
+        
+        Project.beforeUpdate(function (project) {          
+          var diff = project.dataValues.wordcount - project._previousDataValues.wordcount;
+          
+          project.currentWordcount = project.currentWordcount + diff;
         });
       }
     },

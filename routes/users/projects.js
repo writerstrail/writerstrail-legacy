@@ -4,7 +4,7 @@ var router = require('express').Router(),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids');
 
-router.get('/projects', sendflash, function (req, res, next) {
+router.get('/', sendflash, function (req, res, next) {
   models.Project.findAndCountAll({
     where: {
       owner_id: req.user.id
@@ -27,7 +27,7 @@ router.get('/projects', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/projects/new', sendflash, function (req, res) {
+router.get('/new', sendflash, function (req, res) {
   models.Genre.findAll({
     where: {
       owner_id: req.user.id
@@ -36,7 +36,7 @@ router.get('/projects/new', sendflash, function (req, res) {
       ['name', 'ASC']
     ]
   }).then(function (genres) {
-    res.render('user/projects/single', {
+    res.render('user/projects/edit', {
       title: req.__('New project'),
       section: 'projectnew',
       edit: false,
@@ -50,7 +50,7 @@ router.get('/projects/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/projects/new', function (req, res, next) {
+router.post('/new', function (req, res, next) {
   models.Project.create({
     name: req.body.name,
     description: req.body.description,
@@ -84,7 +84,7 @@ router.post('/projects/new', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/single', {
+      res.render('user/projects/edit', {
         title: req.__('New project'),
         section: 'projectnew',
         edit: false,
@@ -105,7 +105,7 @@ router.post('/projects/new', function (req, res, next) {
   });
 });
 
-router.get('/projects/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -130,7 +130,7 @@ router.get('/projects/:id/edit', sendflash, function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/single', {
+      res.render('user/projects/edit', {
         title: req.__('Project edit'),
         section: 'projectedit',
         project: project,
@@ -143,7 +143,7 @@ router.get('/projects/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/projects/:id/edit', function (req, res, next) {
+router.post('/:id/edit', function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -194,7 +194,7 @@ router.post('/projects/:id/edit', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/single', {
+      res.render('user/projects/edit', {
         title: req.__('Edit project'),
         section: 'projectedit',
         edit: true,
@@ -212,6 +212,71 @@ router.post('/projects/:id/edit', function (req, res, next) {
         errorMessage: req.__('There are invalid values')
       });
     });
+  });
+});
+
+router.get('/active', sendflash, function (req, res, next) {
+  models.Project.findAll({
+    where: {
+      owner_id: req.user.id,
+      active: true
+    },
+    attributes: [
+      models.Sequelize.literal('*'),
+      [models.Sequelize.literal(
+        'LEAST(100, GREATEST(0, FLOOR((`currentWordcount` / `targetwc`) * 100)))'
+      ), 'percentage']
+    ],
+    order: [
+      [models.Sequelize.literal('`percentage`'), 'DESC'],
+      ['name', 'ASC']
+    ]
+  }, {
+    raw: true
+  }).then(function (projects) {
+    res.render('user/projects/active', {
+      title: 'Active projects',
+      section: 'projectsactive',
+      projects: projects
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id', sendflash, function (req, res, next) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      owner_id: req.user.id
+    },
+    include: [
+      {
+        model: models.Genre,
+        as: 'Genres',
+        order: [['name', 'ASC']]
+      },
+      {
+        model: models.Target,
+        as: 'Targets',
+        order: [['name', 'ASC']]
+      }
+    ]
+  }).then(function (project) {
+    if (!project) {
+      var error = new Error('Not found');
+      error.status = 404;
+      return next(error);
+    }
+    
+    res.render('user/projects/single', {
+      title: 'Project ' + project.name,
+      section: 'projectsingle',
+      project: project
+    });
+    
+  }).catch(function (err) {
+    next(err);
   });
 });
 

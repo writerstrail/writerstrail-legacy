@@ -56,12 +56,9 @@ module.exports = function (sequelize, DataTypes) {
           foreignKey: 'owner_id'
         });
         Target.belongsToMany(models.Project, {
-          as: {
-            singular: 'Project',
-            plural: 'Projects'
-          },
+          as: 'Projects',
           through: 'projects_targets',
-          foreignKey: 'target_id'
+          foreignKey: 'TargetId'
         });
       }
     },

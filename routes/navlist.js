@@ -6,7 +6,7 @@ module.exports = function (req) {
       'right': [
         {
           'dropdown': true, 'label': req.user.name, 'list': [
-            { 'href': '/projects', 'key': 'projects', 'label': req.__('Projects'), 'title': req.__('Your writing projects') },
+            { 'href': '/projects/active', 'key': 'projects', 'label': req.__('Projects'), 'title': req.__('Your active writing projects') },
             { 'href': '/sessions', 'key': 'sessions', 'label': req.__('Sessions'), 'title': req.__('Your writing sessions') },
             { 'href': '/targets', 'key': 'targets', 'label': req.__('Targets'), 'title': req.__('Your writing targets to achieve') },
             { 'href': '/genres', 'key': 'genres', 'label': req.__('Genres'), 'title': req.__('Your defined genres') },

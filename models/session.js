@@ -66,6 +66,22 @@ module.exports = function (sequelize, DataTypes) {
           foreignKey: 'project_id',
           onDelete: 'CASCADE'
         });
+        
+        Session.afterCreate(function (session){
+          return models.Project.findOne(session.project_id).then(function (project) {
+            return project.increment({
+              currentWordcount: session.wordcount
+            });
+          });
+        });
+        
+        Session.afterDestroy(function (session){
+          return models.Project.findOne(session.project_id).then(function (project) {
+            return project.decrement({
+              currentWordcount: session.wordcount
+            });
+          });
+        });
       }
     },
     indexes: [
