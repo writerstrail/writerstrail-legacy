@@ -3,15 +3,16 @@ extends ../../layout
 block content
   h1= edit ? __('Edit session') : __('New session')
   
-  .btn-group(role='toolbar')
-    a.btn.btn-lg.btn-default(href='/sessions' title='List of sessions' role='button')
-      span.fa.fa-list.fa-lg
-    a.btn.btn-lg.btn-default(href='/sessions/' + session.id title='View this session' role='button')
-      span.fa.fa-eye.fa-lg
-    a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + session['project.id'] title='New session with same project' role='button')
-      span.fa.fa-clock-o.fa-lg
-    a.btn.btn-lg.btn-default(href='/sessions?projectid=' + session['project.id'] title='All sessions for the same project' role='button')
-      span.fa.fa-list-alt.fa-lg
+  if edit
+    .btn-group(role='toolbar')
+      a.btn.btn-lg.btn-default(href='/sessions' title='List of sessions' role='button')
+        span.fa.fa-list.fa-lg
+      a.btn.btn-lg.btn-default(href='/sessions/' + session.id title='View this session' role='button')
+        span.fa.fa-eye.fa-lg
+      a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + session['project.id'] title='New session with same project' role='button')
+        span.fa.fa-clock-o.fa-lg
+      a.btn.btn-lg.btn-default(href='/sessions?projectid=' + session['project.id'] title='All sessions for the same project' role='button')
+        span.fa.fa-list-alt.fa-lg
       
   p &nbsp;
 
