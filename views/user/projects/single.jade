@@ -8,7 +8,11 @@ block content
     
       
   .btn-group(role='toolbar')
-    a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit' role='button')
+    a.btn.btn-lg.btn-default(href='/projects/active' title='List of active projects' role='button')
+      span.fa.fa-dashboard.fa-lg
+    a.btn.btn-lg.btn-default(href='/projects' title='List of all projects' role='button')
+      span.fa.fa-files-o.fa-lg
+    a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit this project' role='button')
       span.fa.fa-edit.fa-lg
     a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + project.id title='New session' role='button')
       span.fa.fa-clock-o.fa-lg

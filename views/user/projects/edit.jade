@@ -6,11 +6,22 @@ block content
   - }
   if edit
     h1= __('Edit project')
-      | &nbsp;
-      a(href='/projects/' + project.id title='View')
-        span.fa.fa-eye
   else 
     h1= __('New project')
+    
+  if edit
+    .btn-group(role='toolbar')
+      a.btn.btn-lg.btn-default(href='/projects/active' title='List of active projects' role='button')
+        span.fa.fa-dashboard.fa-lg
+      a.btn.btn-lg.btn-default(href='/projects' title='List of all projects' role='button')
+        span.fa.fa-files-o.fa-lg
+      a.btn.btn-lg.btn-default(href='/projects/' + project.id title='View this project' role='button')
+        span.fa.fa-eye.fa-lg
+      a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + project.id title='New session' role='button')
+        span.fa.fa-clock-o.fa-lg
+      a.btn.btn-lg.btn-default(href='/sessions?projectid=' + project.id title='All sessions for this project' role='button')
+        span.fa.fa-list-alt.fa-lg
+    p &nbsp;
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
