@@ -216,5 +216,6 @@
 	"Session \"%s\" successfully saved.": "Session \"%s\" successfully saved.",
 	"Session \"%s\" successfully deleted.": "Session \"%s\" successfully deleted.",
 	"Time not writing (min or min:sec)": "Time not writing (min or min:sec)",
-	"Time not writing": "Time not writing"
+	"Time not writing": "Time not writing",
+	"Your active writing projects": "Your active writing projects"
 }
