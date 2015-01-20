@@ -49,6 +49,25 @@ block content
       strong Starting wordcount:
     .col-sm-10
       = project.wordcount
+  
+  .row
+    .col-sm-2.text-right
+      strong Genres:
+    .col-sm-10
+      for genre, i in project.Genres
+        if i > 0
+          | ,&nbsp;
+        a(href='/genres/' + genre.id title=genre.name)= genre.name
+      
+  .row
+    .col-sm-2.text-right
+      strong Included in targets:
+    .col-sm-10
+      for target, i in project.Targets
+        if i > 0
+          | ,&nbsp;
+        a(href='/targets/' + target.id title=target.name)= target.name
+  
   .row
     .col-sm-2.text-right
       strong Is active:

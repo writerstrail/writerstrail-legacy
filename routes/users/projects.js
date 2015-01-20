@@ -234,7 +234,6 @@ router.get('/active', sendflash, function (req, res, next) {
   }, {
     raw: true
   }).then(function (projects) {
-    //console.log('---ppp', projects);
     res.render('user/projects/active', {
       title: 'Active projects',
       section: 'projectsactive',
@@ -251,13 +250,18 @@ router.get('/:id', sendflash, function (req, res, next) {
       id: req.params.id,
       owner_id: req.user.id
     },
-    include: [{
+    include: [
+      {
         model: models.Genre,
         as: 'Genres',
         order: [['name', 'ASC']]
-    }]
-  }, {
-    raw: true
+      },
+      {
+        model: models.Target,
+        as: 'Targets',
+        order: [['name', 'ASC']]
+      }
+    ]
   }).then(function (project) {
     if (!project) {
       var error = new Error('Not found');

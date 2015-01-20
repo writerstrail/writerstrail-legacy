@@ -17,7 +17,7 @@ block content
         li.list-group-item
           .row
             .col-sm-2.text-right
-              a(href='/projects/' + project.id)= project.name
+              a(href='/projects/' + project.id title=project.description)= project.name
               | &nbsp;
               a(href='/projects/' + project.id + '/edit' title='Edit')
                 span.fa.fa-edit
