@@ -279,6 +279,11 @@ router.get('/sessions/:id', sendflash, function (req, res, next) {
       }
     ]
   }).then(function (session) {
+    if (!session) {
+      var error = new Error('Not found');
+      error.status = 404;
+      return next(error);
+    }
     res.render('user/sessions/single', {
       title: 'View session',
       section: 'sessionsingle',
