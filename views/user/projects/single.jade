@@ -3,11 +3,18 @@ extends ../../layout
 block content
   h1= title
     | &nbsp;
-    a(href='/projects/' + project.id + '/edit' title='Edit')
-      span.fa.fa-edit
+    
     | &nbsp;
-    a(href='/sessions/new?projectid=' + project.id title='New session')
-      span.fa.fa-clock-o
+    
+      
+  .btn-group(role='toolbar')
+    a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit' role='button')
+      span.fa.fa-edit.fa-lg
+    a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + project.id title='New session' role='button')
+      span.fa.fa-clock-o.fa-lg
+    a.btn.btn-lg.btn-default(href='/sessions?projectid=' + project.id title='All sessions for this project' role='button')
+      span.fa.fa-list-alt.fa-lg
+  p &nbsp;
   
   if project.targetwc > 0
     .row

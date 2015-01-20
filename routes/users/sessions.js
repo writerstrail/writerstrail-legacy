@@ -18,12 +18,16 @@ function durationFormatter(dur) {
 }
 
 router.get('/sessions', sendflash, function (req, res, next) {
+  var whereOpt = { owner_id: req.user.id };
+  if(req.query.projectid) {
+    whereOpt.id = req.query.projectid
+  }
   models.Session.findAndCountAll({
     include: [
       {
         model: models.Project,
         as: 'Project',
-        where: { owner_id: req.user.id }
+        where: whereOpt
       }
     ],
     order: [['start', 'DESC']],
