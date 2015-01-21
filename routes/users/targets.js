@@ -39,7 +39,7 @@ router.get('/targets/new', sendflash, function (req, res, next) {
       ['name', 'ASC']
     ]
   }).then(function (projects) {
-    res.render('user/targets/edit', {
+    res.render('user/targets/form', {
       title: req.__('New target'),
       edit: false,
       target: {
@@ -93,7 +93,7 @@ router.post('/targets/new', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (projects) {
-      res.render('user/targets/edit', {
+      res.render('user/targets/form', {
         title: req.__('New target'),
         edit: false,
         target: {
@@ -140,7 +140,7 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
       var data = target.dataValues;
       data.start = moment(data.start).format('YYYY-MM-DD');
       data.end = moment(data.end).format('YYYY-MM-DD');
-      res.render('user/targets/edit', {
+      res.render('user/targets/form', {
         title: req.__('Target edit'),
         section: 'targetedit',
         target: target,
@@ -204,7 +204,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (projects) {
-      res.render('user/targets/edit', {
+      res.render('user/targets/form', {
         title: req.__('Edit target'),
         section: 'targetedit',
         edit: true,

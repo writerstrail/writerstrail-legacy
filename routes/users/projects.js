@@ -50,7 +50,7 @@ router.get('/new', sendflash, function (req, res) {
       ['name', 'ASC']
     ]
   }).then(function (genres) {
-    res.render('user/projects/edit', {
+    res.render('user/projects/form', {
       title: req.__('New project'),
       section: 'projectnew',
       edit: false,
@@ -99,7 +99,7 @@ router.post('/new', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/edit', {
+      res.render('user/projects/form', {
         title: req.__('New project'),
         section: 'projectnew',
         edit: false,
@@ -145,7 +145,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/edit', {
+      res.render('user/projects/form', {
         title: req.__('Project edit'),
         section: 'projectedit',
         project: project,
@@ -209,7 +209,7 @@ router.post('/:id/edit', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (genres) {
-      res.render('user/projects/edit', {
+      res.render('user/projects/form', {
         title: req.__('Edit project'),
         section: 'projectedit',
         edit: true,

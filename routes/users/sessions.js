@@ -64,7 +64,7 @@ router.get('/sessions/new', sendflash, function (req, res) {
     },
     order: [['name', 'ASC']]
   }).then(function (projects) {
-    res.render('user/sessions/edit', {
+    res.render('user/sessions/form', {
       title: req.__('New session'),
       section: 'sessionnew',
       edit: false,
@@ -108,7 +108,7 @@ router.post('/sessions/new', function (req, res, next) {
     }, {
       raw: true
     }).then(function (projects) {
-      res.render('user/sessions/edit', {
+      res.render('user/sessions/form', {
         title: req.__('New sessions'),
         section: 'sessionnew',
         edit: false,
@@ -162,7 +162,7 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
       session.start = moment(session.start).format('YYYY-MM-DD HH:mm');
       session.duration = durationFormatter(session.duration);
       session.pausedTime = durationFormatter(session.pausedTime);
-      res.render('user/sessions/edit', {
+      res.render('user/sessions/form', {
         title: req.__('Session edit'),
         section: 'sessionedit',
         session: session,
@@ -227,7 +227,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
     }, {
       raw: true
     }).then(function (projects) {
-      res.render('user/sessions/edit', {
+      res.render('user/sessions/form', {
         title: req.__('Edit session'),
         section: 'projectedit',
         edit: true,

@@ -26,7 +26,7 @@ router.get('/genres', sendflash, function (req, res, next) {
 });
 
 router.get('/genres/new', sendflash, function (req, res) {
-  res.render('user/genres/edit', {
+  res.render('user/genres/form', {
     title: req.__('New genre'),
     section: 'genrenew',
     edit: false,
@@ -45,7 +45,7 @@ router.post('/genres/new', function (req, res, next) {
     res.redirect('/genres/new');
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
-    res.render('user/genres/edit', {
+    res.render('user/genres/form', {
       title: req.__('New genre'),
       section: 'genrenew',
       edit: false,
@@ -71,7 +71,7 @@ router.get('/genres/:id/edit', sendflash, function (req, res, next) {
       error.status = 404;
       return next(error);
     }
-    res.render('user/genres/edit', {
+    res.render('user/genres/form', {
       title: 'Genre edit',
       section: 'genreedit',
       genre: genres[0],
@@ -109,7 +109,7 @@ router.post('/genres/:id/edit', function (req, res, next) {
     }
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
-    res.render('user/genres/edit', {
+    res.render('user/genres/form', {
       title: req.__('Edit genre'),
       section: 'genreedit',
       edit: true,
