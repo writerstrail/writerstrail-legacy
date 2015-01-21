@@ -8,20 +8,23 @@ function buildChart(targetId, $, c3, d3) {
         x: 'date',
         types: {
           wordcount: 'bar',
-          daily: 'bar'
+          daily: 'bar',
+          remaining: 'area'
         },
         names: {
           date: 'Date',
           wordcount: 'Word count',
           target: 'Target',
           daily: 'Daily writing',
-          dailytarget: 'Daily target'
+          dailytarget: 'Daily target',
+          ponddailytarget: 'Pondered daily target',
+          remaining: 'Remaining wordcount'
         },
         colors: {
           wordcount: '#674732',
           target: '#9e9e9e'
         },
-        hide: ['daily', 'dailytarget']
+        hide: ['daily', 'dailytarget', 'ponddailytarget', 'remaining']
       },
       axis: {
         x: {

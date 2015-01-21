@@ -1,7 +1,16 @@
 extends ../../layout
 
 block content
+  - var now = moment('2015-02-20', 'YYYY-MM-DD')
   - var totalDays = Math.floor(moment(target.end).diff(moment(target.start), 'days', true)) + 1
+  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment(target.start), 'days', true))))
+  - var daysRem = totalDays - daysPast
+  - var allSessions = []
+  - var totalWordcount = 0
+  - _.forEach(target.projects, function(proj) { allSessions = allSessions.concat(proj.sessions) })
+  for sessions, day in _.groupBy(allSessions, function(sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD') })
+    - totalWordcount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues.wordcount }, 0)
+  - var remainingWordcount = Math.max(0, target.wordcount - totalWordcount)
 
   h1= title
   
@@ -11,6 +20,29 @@ block content
     a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target' role='button')
       span.fa.fa-edit.fa-lg
   p
+  
+  .row
+    .col-sm-12
+      - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
+      .progress(title=totalWordcount + '/' + target.wordcount)
+        - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
+        .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%;' class='progress-bar-' + barClass)
+          = percentage + '%'
+  
+  if daysRem == 0        
+    .row
+      .col-sm-2: strong This target is already overdue.
+      .col-sm-10(class=(totalWordcount >= target.wordcount ? 'bg-success' : (totalWordcount > 0 ? 'bg-warning' : 'bg-danger')))
+        if totalWordcount >= target.wordcount
+          p Congratulations, you achieved it! Take a donut and relax!
+            span.fa.fa-smile 
+        else if totalWordcount > 0
+          p Oops, it wasn't this time. But be glad that you wrote #{totalWordcount} words!
+            span.fa.fa-meh
+        else
+          p You didn't write a single word. Make a new target and this time get over the blank page!
+            span.fa.fa-frown
+    p
   
   .row: .col-sm-12: .panel.panel-primary
     .panel-heading: h2.panel-title Target progress
@@ -39,6 +71,10 @@ block content
       = moment(target.end).format('YYYY-MM-DD')
       
   .row
+    .col-sm-2.text-right: strong Total days:
+    .col-sm-10= totalDays
+      | &nbsp;days
+  .row
     .col-sm-2.text-right
       strong Target wordcount:
     .col-sm-10
@@ -53,15 +89,12 @@ block content
         if i > 0
           br
         = line
-  
-  - var allSessions = []
   .row
     .col-sm-2.text-right
       strong Projects:
     .col-sm-10
       ul
         for project in target.projects
-          - allSessions = allSessions.concat(project.sessions)
           li
             a(href='/projects/' + project.id title='View project ' + project.name)= project.name
             | &nbsp;(
@@ -81,17 +114,43 @@ block content
     .col-sm-2.text-right: strong Target count per day:
     .col-sm-10= Math.ceil(target.wordcount / totalDays)
       | &nbsp;words
-        
+    
   .row
-    .col-sm-2.text-right: strong Words per day #{totalDays}
-    .col-sm-10: ul
-      for sessions, day in _.groupBy(allSessions, function(sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD') })
-        - console.log(day, session)
-        li
-          strong= day
-          | :&nbsp;
-          = _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues.wordcount }, 0)
-          
+    .col-sm-2.text-right: strong Words written:
+    .col-sm-10= totalWordcount
+      | &nbsp;words
+      
+  if daysRem > 0
+    .row
+      .col-sm-2.text-right: strong Days past:
+      .col-sm-10= daysPast
+        | &nbsp;days
+
+    .row
+      .col-sm-2.text-right: strong Words remaining:
+      .col-sm-10= remainingWordcount
+        | &nbsp;words
+
+    .row
+      .col-sm-2.text-right: strong Days remaining:
+      .col-sm-10= daysRem
+        | &nbsp;days
+
+    .row
+      .col-sm-2.text-right: strong Average words per day:
+      .col-sm-10= Math.round(totalWordcount / daysPast)
+        | &nbsp;words
+
+    .row
+      .col-sm-2.text-right: strong Predicted finish by this rate:
+      .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / daysPast)), 'days').format('YYYY-MM-DD')
+
+    .row
+      .col-sm-2.text-right: strong Daily target to finish on time:
+      .col-sm-10= Math.ceil((remainingWordcount) / daysRem)
+        | &nbsp;words
+      
+  p &nbsp;
 
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')

@@ -213,8 +213,8 @@ router.post('/targets/:id/edit', function (req, res, next) {
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
-          end: !!req.body.end,
-          Projects: filterIds(projects, req.body.projects)
+          end: req.body.end,
+          projects: filterIds(projects, req.body.projects)
         },
         projects: chunk(projects, 3),
         validate: err.errors,
@@ -301,6 +301,8 @@ router.get('/targets/:id/data.json', function (req, res) {
     var wordcount = [], accWc = 0;
     var targetAcc = [], accTgt = 0;
     var dailytarget = [];
+    var pondDailyTarget = [];
+    var remaining = [];
     
     var allSessions = _.reduce(target.projects, function (acc, project) { 
       _.forEach(project.sessions, function (sess) {
@@ -311,10 +313,12 @@ router.get('/targets/:id/data.json', function (req, res) {
     
     var a = _.groupBy(allSessions, function(sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD'); });
     
-  //console.log(a);
-    
     for (var i = 1; i <= totalDays; i++) {
-      var today = moment(target.start).add(i, 'days').format('YYYY-MM-DD');
+      var today = moment(target.start).add(i - 1, 'days').format('YYYY-MM-DD');
+      var diffWc = target.wordcount - accWc;
+      var diffDays = totalDays - i + 1;
+      var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
+      pondDailyTarget.push(Math.max(0, pondTarget));
       daysRange.push(today);
       if (a[today]) {
         var todayWc = _.reduce(a[today], function(wc, sess) { return wc + sess.dataValues.wordcount; }, 0);
@@ -328,6 +332,7 @@ router.get('/targets/:id/data.json', function (req, res) {
       dailytarget.push(incTarget);
       accTgt += incTarget;
       targetAcc.push(accTgt);
+      remaining.push(Math.max(0, target.wordcount - accWc));
     }
     
     var result = {
@@ -335,7 +340,9 @@ router.get('/targets/:id/data.json', function (req, res) {
       wordcount: wordcount,
       target: targetAcc,
       daily: daily,
-      dailytarget: dailytarget
+      dailytarget: dailytarget,
+      ponddailytarget: pondDailyTarget,
+      remaining: remaining
     };
     res.send(result).end();
   });
