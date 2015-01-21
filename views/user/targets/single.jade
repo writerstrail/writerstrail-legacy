@@ -5,6 +5,13 @@ block content
 
   h1= title
   
+  .btn-group(role='toolbar')
+    a.btn.btn-lg.btn-default(href='/targets' title='List of all targets' role='button')
+      span.fa.fa-list-ul.fa-lg
+    a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target' role='button')
+      span.fa.fa-edit.fa-lg
+  p
+  
   .row: .col-sm-12: .panel.panel-primary
     .panel-heading: h2.panel-title Target progress
     .panel-body

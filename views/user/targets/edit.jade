@@ -6,6 +6,14 @@ block content
   -   return !!(_.find(target.projects, function (g) { return g.id == id; } )) ? 'checked' : false;
   - }
   h1= edit ? __('Edit target') : __('New target')
+  
+  if edit
+    .btn-group(role='toolbar')
+      a.btn.btn-lg.btn-default(href='/targets' title='List of all targets' role='button')
+        span.fa.fa-list-ul.fa-lg
+      a.btn.btn-lg.btn-default(href='/targets/' + target.id title='View this target' role='button')
+        span.fa.fa-eye.fa-lg
+    p
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
