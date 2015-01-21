@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  _ = require('lodash'),
   moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
@@ -261,6 +262,82 @@ router.get('/targets/:id', sendflash, function (req, res, next) {
     });
   }).catch(function (err) {
     next(err);
+  });
+});
+
+router.get('/targets/:id/data.json', function (req, res) {
+  models.Target.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    },
+    include: [{
+      model: models.Project,
+      as: 'projects',
+      order: [['name', 'ASC']],
+      include: [{
+        model: models.Session,
+        as: 'sessions',
+        required: false,
+        where: {
+          start: {
+            between: [
+             models.Sequelize.literal('`Target`.`start`'),
+             models.Sequelize.literal('`Target`.`end`')
+            ]
+          }
+        },
+        order: [['start', 'DESC']]
+      }]
+    }]
+  }).then(function (target) {
+    res.type('application/json');
+    if (!target) {
+      return res.status(404).send('{"Error":"Not found"}').end();
+    }
+    var totalDays = Math.floor(moment(target.end).diff(moment(target.start), 'days', true)) + 1;
+    var daysRange = [];
+    var daily = [];
+    var wordcount = [], accWc = 0;
+    var targetAcc = [], accTgt = 0;
+    var dailytarget = [];
+    
+    var allSessions = _.reduce(target.projects, function (acc, project) { 
+      _.forEach(project.sessions, function (sess) {
+        acc.push(sess);
+      });
+      return acc;
+    }, []);
+    
+    var a = _.groupBy(allSessions, function(sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD'); });
+    
+  //console.log(a);
+    
+    for (var i = 1; i <= totalDays; i++) {
+      var today = moment(target.start).add(i, 'days').format('YYYY-MM-DD');
+      daysRange.push(today);
+      if (a[today]) {
+        var todayWc = _.reduce(a[today], function(wc, sess) { return wc + sess.dataValues.wordcount; }, 0);
+        accWc += todayWc;
+        daily.push(todayWc);
+      } else {
+        daily.push(0);
+      }
+      wordcount.push(accWc);
+      var incTarget = Math.floor(target.wordcount / totalDays) + (target.wordcount % totalDays < i ? 0 : 1);
+      dailytarget.push(incTarget);
+      accTgt += incTarget;
+      targetAcc.push(accTgt);
+    }
+    
+    var result = {
+      date: daysRange,
+      wordcount: wordcount,
+      target: targetAcc,
+      daily: daily,
+      dailytarget: dailytarget
+    };
+    res.send(result).end();
   });
 });
 
