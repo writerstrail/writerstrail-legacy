@@ -48,6 +48,11 @@ function buildChart(targetId, $, c3, d3) {
         }
       },
       grid: {
+        x: {
+          lines: [
+            { value: new Date(), text: 'Today' }
+          ]
+        },
         y: {
           show: true
         }

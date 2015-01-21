@@ -55,6 +55,11 @@ block content
               span.fa.fa-fw.fa-calendar
           input#end.form-control(type='text' name='end' placeholder=__('End date') value=target.end aria-describedby='endhelp' data-date-format='YYYY-MM-DD')
         span#endhelp.help-block= __(endErr ? endErr.message : '')
+    
+    .form-group
+      label.col-sm-2.control-label Total days
+      .col-sm-10
+        p#totaldays.control-static= moment(target.end).diff(target.start, 'days') + 1
         
     .form-group
       label.col-sm-2.control-label(for='notes')= __('Notes')
@@ -89,7 +94,6 @@ append scripts
   script(type='text/javascript', src='/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
   script.
     $(document).ready(function () {
-      console.log("!{target.start}");
       $('#startpicker').datetimepicker({
         pickTime: false,
         maxDate: moment('!{target.end}', 'YYYY-MM-DD').subtract(1, 'day')
@@ -99,10 +103,14 @@ append scripts
         minDate: moment('!{target.start}', 'YYYY-MM-DD').add(1, 'day')
       });
       $('#startpicker').on('dp.change', function (e) {
-        $('#endpicker').data("DateTimePicker").setMinDate(moment(e.date).add('1', 'day'));
+        var endPicker = $('#endpicker').data("DateTimePicker");
+        endPicker.setMinDate(moment(e.date).add('1', 'day'));
+        $('#totaldays').html((moment(endPicker.getDate()).diff(moment(e.date), 'days') + 1).toString());
       });
       $('#endpicker').on('dp.change', function (e) {
-        $('#startpicker').data("DateTimePicker").setMaxDate(moment(e.date).subtract('1', 'day'));
+        var startPicker = $('#startpicker').data("DateTimePicker");
+        startPicker.setMaxDate(moment(e.date).subtract('1', 'day'));
+        $('#totaldays').html((moment(e.date).diff(moment(startPicker.getDate()), 'days') + 1).toString());
       });
     })
     

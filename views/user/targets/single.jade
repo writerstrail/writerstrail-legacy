@@ -1,7 +1,7 @@
 extends ../../layout
 
 block content
-  - var now = moment('2015-02-20', 'YYYY-MM-DD')
+  - var now = moment()
   - var totalDays = Math.floor(moment(target.end).diff(moment(target.start), 'days', true)) + 1
   - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment(target.start), 'days', true))))
   - var daysRem = totalDays - daysPast
@@ -32,16 +32,25 @@ block content
   if daysRem == 0        
     .row
       .col-sm-2: strong This target is already overdue.
-      .col-sm-10(class=(totalWordcount >= target.wordcount ? 'bg-success' : (totalWordcount > 0 ? 'bg-warning' : 'bg-danger')))
+      .col-sm-10(class=(totalWordcount >= target.wordcount ? 'alert-success' : (totalWordcount > 0 ? 'alert-warning' : 'alert-danger')))
         if totalWordcount >= target.wordcount
-          p Congratulations, you achieved it! Take a donut and relax!
-            span.fa.fa-smile 
+          p 
+            span.fa.fa-smile-o &nbsp;
+            | Congratulations, you achieved it! Take a donut and relax! Or maybe you want to keep the momentum and 
+            a.alert-link(href='/targets/new' title='New target'): strong start a new target
+            | ! 
         else if totalWordcount > 0
-          p Oops, it wasn't this time. But be glad that you wrote #{totalWordcount} words!
-            span.fa.fa-meh
+          p
+            span.fa.fa-meh-o &nbsp;
+            | Oops, it wasn't this time. But be glad that you wrote #{totalWordcount} words! What do you think about  
+            a.alert-link(href='/targets/new' title='New target'): strong starting a new target
+            | ?
         else
-          p You didn't write a single word. Make a new target and this time get over the blank page!
-            span.fa.fa-frown
+          p
+            span.fa.fa-frown-o &nbsp;
+            | You didn't write a single word. Make a 
+            a.alert-link(href='/targets/new' title='New target'): strong new target 
+            | and this time get over the blank page!
     p
   
   .row: .col-sm-12: .panel.panel-primary
