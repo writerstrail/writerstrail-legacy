@@ -42,7 +42,7 @@ block content
         .input-group.date#startpicker
           span.input-group-addon
             span.fa.fa-fw.fa-clock-o
-          input#start.form-control(type='text' name='start' placeholder=__('Start time') value=session.start aria-describedby='starthelp' data-date-format='YYYY-MM-DD HH:mm')
+          input#start.form-control(type='text' name='start' placeholder=__('Start time') value=session.start aria-describedby='starthelp' data-date-format='YYYY-MM-DD HH:mm:ss')
         span#starthelp.help-block= __(startErr ? startErr.message : '')
         
     - var durErr = _.find(validate, { path: 'duration' }) || ''
