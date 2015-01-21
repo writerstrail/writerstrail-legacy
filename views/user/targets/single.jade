@@ -1,102 +1,173 @@
 extends ../../layout
 
 block content
-  include ../../mixins/date
-  - var checkProject = function (id) {
-  -   return !!(_.find(target.projects, function (g) { return g.id == id; } )) ? 'checked' : false;
-  - }
-  h1= edit ? __('Edit target') : __('New target')
+  - var now = moment()
+  - var totalDays = Math.floor(moment(target.end).diff(moment(target.start), 'days', true)) + 1
+  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment(target.start), 'days', true))))
+  - var daysRem = totalDays - daysPast
+  - var allSessions = []
+  - var totalWordcount = 0
+  - _.forEach(target.projects, function(proj) { allSessions = allSessions.concat(proj.sessions) })
+  for sessions, day in _.groupBy(allSessions, function(sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD') })
+    - totalWordcount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues.wordcount }, 0)
+  - var remainingWordcount = Math.max(0, target.wordcount - totalWordcount)
 
-  form.form-horizontal(method='post')
-    input(type='hidden' name='_csrf', value=csrf)
+  h1= title
+  
+  .btn-group(role='toolbar')
+    a.btn.btn-lg.btn-default(href='/targets' title='List of all targets' role='button')
+      span.fa.fa-list-ul.fa-lg
+    a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target' role='button')
+      span.fa.fa-edit.fa-lg
+  p
+  
+  .row
+    .col-sm-12
+      - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
+      .progress(title=totalWordcount + '/' + target.wordcount)
+        - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
+        .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%;' class='progress-bar-' + barClass)
+          = percentage + '%'
+  
+  if daysRem == 0        
+    .row
+      .col-sm-2: strong This target is already overdue.
+      .col-sm-10(class=(totalWordcount >= target.wordcount ? 'alert-success' : (totalWordcount > 0 ? 'alert-warning' : 'alert-danger')))
+        if totalWordcount >= target.wordcount
+          p 
+            span.fa.fa-smile-o &nbsp;
+            | Congratulations, you achieved it! Take a donut and relax! Or maybe you want to keep the momentum and 
+            a.alert-link(href='/targets/new' title='New target'): strong start a new target
+            | ! 
+        else if totalWordcount > 0
+          p
+            span.fa.fa-meh-o &nbsp;
+            | Oops, it wasn't this time. But be glad that you wrote #{totalWordcount} words! What do you think about  
+            a.alert-link(href='/targets/new' title='New target'): strong starting a new target
+            | ?
+        else
+          p
+            span.fa.fa-frown-o &nbsp;
+            | You didn't write a single word. Make a 
+            a.alert-link(href='/targets/new' title='New target'): strong new target 
+            | and this time get over the blank page!
+    p
+  
+  .row: .col-sm-12: .panel.panel-primary
+    .panel-heading: h2.panel-title Target progress
+    .panel-body
+      h3.text-center= target.name
+      #chart
+      .text-center
+        button#target-change.btn.btn-default(type='button') Show as daily writing
+  
+  .row
+    .col-sm-2.text-right
+      strong Name:
+    .col-sm-10
+      = target.name
+      
+  .row
+    .col-sm-2.text-right
+      strong Start:
+    .col-sm-10
+      = moment(target.start).format('YYYY-MM-DD')
+ 
+  .row
+    .col-sm-2.text-right
+      strong End:
+    .col-sm-10
+      = moment(target.end).format('YYYY-MM-DD')
+      
+  .row
+    .col-sm-2.text-right: strong Total days:
+    .col-sm-10= totalDays
+      | &nbsp;days
+  .row
+    .col-sm-2.text-right
+      strong Target wordcount:
+    .col-sm-10
+      = target.wordcount
+      
+  .row
+    .col-sm-2.text-right
+      strong Notes:
+    .col-sm-10
+      - var notePieces = target.notes.split(/(?:\r\n|\r|\n)/g)
+      for line, i in notePieces
+        if i > 0
+          br
+        = line
+  .row
+    .col-sm-2.text-right
+      strong Projects:
+    .col-sm-10
+      ul
+        for project in target.projects
+          li
+            a(href='/projects/' + project.id title='View project ' + project.name)= project.name
+            | &nbsp;(
+            if project.sessions.length == 0
+              | No session in this project within this target's period
+            else
+              for session,i in project.sessions.slice(0, 3)
+                if i > 0
+                  | ,&nbsp;
+                - var sessionName = (session.summary) || (moment(session.start).format('YYYY-MM-DD HH:mm:ss'))
+                a(href='/sessions/' + session.id title='View session ' + sessionName)= sessionName
+            | ,&nbsp;
+            a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
+            | )
+  
+  .row
+    .col-sm-2.text-right: strong Target count per day:
+    .col-sm-10= Math.ceil(target.wordcount / totalDays)
+      | &nbsp;words
     
-    - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
-    
-    .form-group(class=(nameErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='name')= __('Name')
-      .col-sm-10
-        input#name.form-control(type='text' name='name' placeholder=__('Name') value=target.name aria-describedby='namehelp')
-        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
-        
-    - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
+  .row
+    .col-sm-2.text-right: strong Words written:
+    .col-sm-10= totalWordcount
+      | &nbsp;words
+      
+  if daysRem > 0
+    .row
+      .col-sm-2.text-right: strong Days past:
+      .col-sm-10= daysPast
+        | &nbsp;days
 
-    .form-group(class=(wcErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='wordcount')= __('Target word count')
-      .col-sm-10
-        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp')
-        span#wchelp.help-block= __(wcErr ? wcErr.message : '')
-        
-    - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
-    
-    .form-group(class=(startErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='start')= __('Start date')
-      .col-sm-10
-        .input-group.date#startpicker
-          span.input-group-addon
-            span.fa.fa-fw.fa-calendar
-          input#start.form-control(type='text' name='start' placeholder=__('Start date') value=target.start aria-describedby='starthelp' data-date-format='YYYY-MM-DD')
-        span#starthelp.help-block= __(startErr ? startErr.message : '')
-          
-    - var endErr = _.find(validate, function(err) { return err.path === 'end' || err.path === 'startBeforeEnd'; }) || ''
-    
-    .form-group(class=(endErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='end')= __('End date')
-      .col-sm-10
-        .input-group.date#endpicker
-          span.input-group-addon
-              span.fa.fa-fw.fa-calendar
-          input#end.form-control(type='text' name='end' placeholder=__('End date') value=target.end aria-describedby='endhelp' data-date-format='YYYY-MM-DD')
-        span#endhelp.help-block= __(endErr ? endErr.message : '')
-        
-    .form-group
-      label.col-sm-2.control-label(for='notes')= __('Notes')
-      .col-sm-10
-        textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes'))= target.notes
-        
-    for chunk, i in projects
-      .form-group
-        if i === 0
-          label.col-sm-2.control-label Projects
-        .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
-          .checkbox
-            label
-              input(type='checkbox', name='projects[]' value=chunk[0].id checked=checkProject(chunk[0].id))
-              = chunk[0].name
-        if chunk[1]
-          .col-sm-3
-            .checkbox
-              label
-                input(type='checkbox', name='projects[]' value=chunk[1].id checked=checkProject(chunk[1].id))
-                = chunk[1].name
-        if chunk[2]
-          .col-sm-3
-            .checkbox
-              label
-                input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
-                = chunk[2].name
-    include ../../mixins/single-form-buttons
-    
-append scripts
-  script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
-  script(type='text/javascript', src='/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
-  script.
-    $(document).ready(function () {
-      console.log("!{target.start}");
-      $('#startpicker').datetimepicker({
-        pickTime: false,
-        maxDate: moment('!{target.end}', 'YYYY-MM-DD').subtract(1, 'day')
-      });
-      $('#endpicker').datetimepicker({
-        pickTime: false,
-        minDate: moment('!{target.start}', 'YYYY-MM-DD').add(1, 'day')
-      });
-      $('#startpicker').on('dp.change', function (e) {
-        $('#endpicker').data("DateTimePicker").setMinDate(moment(e.date).add('1', 'day'));
-      });
-      $('#endpicker').on('dp.change', function (e) {
-        $('#startpicker').data("DateTimePicker").setMaxDate(moment(e.date).subtract('1', 'day'));
-      });
-    })
-    
+    .row
+      .col-sm-2.text-right: strong Words remaining:
+      .col-sm-10= remainingWordcount
+        | &nbsp;words
+
+    .row
+      .col-sm-2.text-right: strong Days remaining:
+      .col-sm-10= daysRem
+        | &nbsp;days
+
+    .row
+      .col-sm-2.text-right: strong Average words per day:
+      .col-sm-10= Math.round(totalWordcount / daysPast)
+        | &nbsp;words
+
+    .row
+      .col-sm-2.text-right: strong Predicted finish by this rate:
+      .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / daysPast)), 'days').format('YYYY-MM-DD')
+
+    .row
+      .col-sm-2.text-right: strong Daily target to finish on time:
+      .col-sm-10= Math.ceil((remainingWordcount) / daysRem)
+        | &nbsp;words
+      
+  p &nbsp;
+
 append styles
-  link(rel='stylesheet', href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/stylesheets/chart.css')
+
+append scripts  
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/scripts/chart.js')    
+  script(type='text/javascript').
+    buildChart(!{target.id}, jQuery, c3, d3);
