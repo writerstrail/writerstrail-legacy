@@ -5,14 +5,28 @@ var router = require('express').Router(),
   filterIds = require('../../utils/functions/filterids');
 
 router.get('/', sendflash, function (req, res, next) {
-  models.Project.findAndCountAll({
+  var searchOpts = {
     where: {
       ownerId: req.user.id
     },
     order: [['name', 'ASC']],
     limit: req.query.limit,
     offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
-  }).then(function (result) {
+  };
+  
+  if (req.query.genreid) {
+    searchOpts.include = [
+      {
+        model: models.Genre,
+        as: 'genres',
+        where: {
+          id: req.query.genreid
+        }
+      }
+    ];
+  }
+  
+  models.Project.findAndCountAll(searchOpts).then(function (result) {
     var projects = result.rows,
       count = result.count;
     res.render('user/projects/list', {
@@ -43,7 +57,8 @@ router.get('/new', sendflash, function (req, res) {
       project: {
         active: true,
         wordcount: 0,
-        targetwc: 50000
+        targetwc: 50000,
+        genres: req.query.genreid ? [{id: req.query.genreid}] : []
       },
       genres: chunk(genres, 3)
     });
