@@ -38,7 +38,7 @@ router.get('/targets/new', sendflash, function (req, res, next) {
       ['name', 'ASC']
     ]
   }).then(function (projects) {
-    res.render('user/targets/single', {
+    res.render('user/targets/edit', {
       title: req.__('New target'),
       edit: false,
       target: {
@@ -92,7 +92,7 @@ router.post('/targets/new', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (projects) {
-      res.render('user/targets/single', {
+      res.render('user/targets/edit', {
         title: req.__('New target'),
         edit: false,
         target: {
@@ -139,7 +139,7 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
       var data = target.dataValues;
       data.start = moment(data.start).format('YYYY-MM-DD');
       data.end = moment(data.end).format('YYYY-MM-DD');
-      res.render('user/targets/single', {
+      res.render('user/targets/edit', {
         title: req.__('Target edit'),
         section: 'targetedit',
         target: target,
@@ -203,7 +203,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
         ['name', 'ASC']
       ]
     }).then(function (projects) {
-      res.render('user/targets/single', {
+      res.render('user/targets/edit', {
         title: req.__('Edit target'),
         section: 'targetedit',
         edit: true,
@@ -220,6 +220,47 @@ router.post('/targets/:id/edit', function (req, res, next) {
         errorMessage: req.__('There are invalid values')
       });
     });
+  });
+});
+
+router.get('/targets/:id', sendflash, function (req, res, next) {
+  models.Target.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    },
+    include: [{
+      model: models.Project,
+      as: 'projects',
+      order: [['name', 'ASC']],
+      include: [{
+        model: models.Session,
+        as: 'sessions',
+        required: false,
+        where: {
+          start: {
+            between: [
+             models.Sequelize.literal('`Target`.`start`'),
+             models.Sequelize.literal('`Target`.`end`')
+            ]
+          }
+        },
+        order: [['start', 'DESC']]
+      }]
+    }]
+  }).then(function (target) {
+    if (!target) {
+      var error = new Error('Not found');
+      error.status = 404;
+      return next(error);
+    }
+    res.render('user/targets/single', {
+      title: 'Target ' + target.name,
+      section: 'targetsingle',
+      target: target
+    });
+  }).catch(function (err) {
+    next(err);
   });
 });
 

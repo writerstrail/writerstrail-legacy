@@ -16,7 +16,7 @@ block content
         span.fa.fa-fw.fa-clock-o
         | &nbsp;
         a(href=("/sessions/" + session.id) title=session.summary)
-          strong= session['Project.name']
+          strong= session['project.name']
           | &nbsp;
           if session.summary
             = '[' + session.summary + ']'
