@@ -1,4 +1,4 @@
-function buildChart(targetId, $, c3, d3, chartType) {
+function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
   $(function () {
     console.log(chartType);
     var isAcc = chartType === 'cumulative',
@@ -26,7 +26,9 @@ function buildChart(targetId, $, c3, d3, chartType) {
           wordcount: '#674732',
           target: '#9e9e9e'
         },
-        hide: (isAcc ? ['daily', 'dailytarget'] : ['wordcount', 'target']).concat(['ponddailytarget', 'remaining'])
+        hide: (isAcc ? ['daily', 'dailytarget'] : ['wordcount', 'target'])
+            .concat(showRem ? [] : ['remaining'])
+            .concat(showPond ? [] : ['ponddailytarget'])
       },
       axis: {
         x: {

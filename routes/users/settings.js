@@ -15,19 +15,22 @@ router.get('/', sendflash, function (req, res) {
 });
 
 router.post('/', function (req, res, next) {
-  var dateFormat = req.body.dateformat,
+  var settings = req.user.settings,
+    dateFormat = req.body.dateformat,
     timeFormat = req.body.timeformat,
     chartType = req.body.charttype;
   if (_.contains(dateFormats.data, dateFormat)) {
     console.log(dateFormat);
-    req.user.settings.dateFormat = dateFormat;
+    settings.dateFormat = dateFormat;
   }
   if (_.contains(timeFormats.data, timeFormat)) {
-    req.user.settings.timeFormat = timeFormat;
+    settings.timeFormat = timeFormat;
   }
   if (_.contains(chartTypes, chartType)) {
-    req.user.settings.chartType = chartType;
+    settings.chartType = chartType;
   }
+  settings.showRemaining = !!req.body.showremaining;
+  settings.showPondered = !!req.body.showpondered;
   req.user.settings.save().then(function () {
     req.flash('success', 'Your settings were successfully saved');
     res.redirect('back');

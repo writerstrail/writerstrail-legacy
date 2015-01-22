@@ -33,5 +33,14 @@ block content
           input#charttype(type='radio' name='charttype' value='daily' checked='daily' == user.settings.chartType)
           | Daily writing/target
     .form-group
+      label.col-sm-2.control-label Target chart extra data:
+      .col-sm-10
+        label.checkbox-inline
+          input(type='checkbox' name='showremaining' checked=user.settings.showRemaining)
+          | Remaining wordcount
+        label.checkbox-inline
+          input(type='checkbox' name='showpondered' checked=user.settings.showPondered)
+          | Pondered daily target
+    .form-group
       .col-sm-offset-2.col-sm-2
         button.btn.btn-primary(type='submit' name='save' value='save') Save

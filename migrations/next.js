@@ -321,7 +321,17 @@ module.exports = {
           ],
           defaultValue: 'cumulative',
           allowNull: false
-        } ,
+        },
+        showRemaining: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+          allowNull: false
+        },
+        showPondered: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+          allowNull: false
+        },
         createdAt: {
           type: DataTypes.DATE,
           allowNull: false

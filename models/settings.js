@@ -22,6 +22,16 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: timeFormats.data[0],
       allowNull: false
     },
+    showRemaining: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false
+    },
+    showPondered: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false
+    },
     chartType: {
       type: DataTypes.ENUM,
       values: chartTypes,
