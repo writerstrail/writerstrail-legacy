@@ -69,7 +69,6 @@ router.get('/sessions/new', sendflash, function (req, res) {
       section: 'sessionnew',
       edit: false,
       session: {
-        start: moment.utc().format(req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat),
         wordcount: 0,
         duration: '15:00',
         pausedTime: '0:00',

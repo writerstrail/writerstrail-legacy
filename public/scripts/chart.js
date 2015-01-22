@@ -1,6 +1,5 @@
 function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
   $(function () {
-    console.log(chartType);
     var isAcc = chartType === 'cumulative',
       chart = c3.generate({
       bindto: '#chart',
@@ -54,7 +53,7 @@ function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
       grid: {
         x: {
           lines: [
-            { value: new Date(), text: 'Today' }
+            { value: d3.time.day.floor(new Date()), text: 'Today', class: 'today-line' }
           ]
         },
         y: {
@@ -64,9 +63,7 @@ function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
       tooltip: {
         format: {
           title: d3.time.format('%Y-%b-%d'),
-          value: function (value) {
-            return d3.format(',')(value);
-          }
+          value: d3.format(',')
         }
       }
     });
