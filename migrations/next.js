@@ -149,6 +149,11 @@ module.exports = {
           type: DataTypes.DATE,
           allowNull: false
         },
+        zoneOffset: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          comment: 'User timezone offset in minutes'
+        },
         duration: {
           type: DataTypes.INTEGER.UNSIGNED,
           allowNull: false,
@@ -216,6 +221,11 @@ module.exports = {
         end: {
           type: DataTypes.DATE,
           allowNull: false
+        },
+        zoneOffset: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          comment: 'User timezone offset in minutes'
         },
         wordcount: {
           type: DataTypes.INTEGER.UNSIGNED,

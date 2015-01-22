@@ -17,6 +17,7 @@ block content
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
+    input#zoneOffset(type='hidden' name='zoneOffset' value=target.zoneOffset || '')
     
     - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
     

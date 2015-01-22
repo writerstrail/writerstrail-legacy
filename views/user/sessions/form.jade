@@ -18,6 +18,7 @@ block content
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
+    input#zoneOffset(type='hidden' name='zoneOffset' value=session.zoneOffset || '')
     
     - var summaryErr = _.find(validate, { path: 'summary' }) || ''
     
@@ -93,6 +94,7 @@ append scripts
         format: '!{user.settings.dateFormat} !{user.settings.timeFormat}',
         defaultDate: moment()
       });
+      $('#zoneOffset').val(moment().utcOffset());
     })
     
 append styles

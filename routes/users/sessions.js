@@ -85,6 +85,7 @@ router.post('/sessions/new', function (req, res, next) {
     notes: req.body.notes,
     wordcount: req.body.wordcount,
     start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
+    zoneOffset: req.body.zoneOffset || null,
     duration: durationParser(req.body.duration),
     pausedTime: durationParser(req.body.pausedTime),
     isCountdown: !!req.body.isCountdown,
@@ -113,6 +114,7 @@ router.post('/sessions/new', function (req, res, next) {
         edit: false,
         session: {
           summary: req.body.summary,
+          zoneOffset: req.body.zoneOffset || null,
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,

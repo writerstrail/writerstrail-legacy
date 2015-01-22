@@ -67,7 +67,8 @@ router.post('/targets/new', function (req, res, next) {
     end: end,
     wordcount: req.body.wordcount,
     notes: req.body.notes,
-    ownerId: req.user.id
+    ownerId: req.user.id,
+    zoneOffset: req.body.zoneOffset || null,
   }).then(function (target) {
     return models.Project.findAll({
       where: {
@@ -100,6 +101,7 @@ router.post('/targets/new', function (req, res, next) {
           name: req.body.name,
           start: req.body.start,
           end: req.body.end,
+          zoneOffset: req.body.zoneOffset || null,
           wordcount: req.body.wordcount,
           notes: req.body.notes,
           Projects: filterIds(projects, req.body.projects)
