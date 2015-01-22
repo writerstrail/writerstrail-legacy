@@ -4,7 +4,7 @@ block content
   h1= title
     small
       | &nbsp;(
-      = moment(session.start).format(user.settings.dateFormat + ' HH:mm:ss')
+      = moment(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
       | )
       
   .btn-group(role='toolbar')
@@ -29,7 +29,7 @@ block content
     .col-sm-2.text-right
       strong Start:
     .col-sm-10
-      = moment(session.start).format(user.settings.dateFormat + ' HH:mm:ss')
+      = moment(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
   
   .row
     .col-sm-2.text-right

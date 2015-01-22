@@ -113,7 +113,7 @@ block content
               for session,i in project.sessions.slice(0, 3)
                 if i > 0
                   | ,&nbsp;
-                - var sessionName = (session.summary) || (moment(session.start).format(user.settings.dateFormat + ' HH:mm:ss'))
+                - var sessionName = (session.summary) || (moment(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat))
                 a(href='/sessions/' + session.id title='View session ' + sessionName)= sessionName
             | ,&nbsp;
             a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...

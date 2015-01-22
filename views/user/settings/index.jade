@@ -9,8 +9,20 @@ block content
       label.col-sm-2.control-label(for='dateformat') Date format:
       .col-sm-10
         select#dateformat.form-control(name='dateformat')
-          for format in dateFormats
-            option(value=format selected=format == user.settings.dateFormat)= format
+          for format, i in dateFormats.data
+            option(value=format selected=format == user.settings.dateFormat)= dateFormats.labels[i]
+              | &nbsp;(
+              = moment().format(format)
+              | )
+    .form-group
+      label.col-sm-2.control-label(for='timeformat') Time format:
+      .col-sm-10
+        select#timeformat.form-control(name='timeformat')
+          for format, i in timeFormats.data
+            option(value=format selected=format == user.settings.timeFormat)= timeFormats.labels[i]
+              | &nbsp;(
+              = moment().format(format)
+              | )
     .form-group
       label.col-sm-2.control-label(for='charttype') Preferred target chart type:
       .col-sm-10

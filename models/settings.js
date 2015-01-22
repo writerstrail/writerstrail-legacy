@@ -1,6 +1,7 @@
 "use strict";
 
 var dateFormats = require('../utils/data/dateformats'),
+  timeFormats = require('../utils/data/timeformats'),
   chartTypes = require('../utils/data/charttypes');
 
 module.exports = function (sequelize, DataTypes) {
@@ -10,9 +11,15 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true
     },
     dateFormat: {
-      type: DataTypes.ENUM,
-      values: dateFormats,
-      defaultValue: dateFormats[0],
+      type: DataTypes.ENUM + ' CHARSET utf8 COLLATE utf8_bin',
+      values: dateFormats.data,
+      defaultValue: dateFormats.data[0],
+      allowNull: false
+    },
+    timeFormat: {
+      type: DataTypes.ENUM + ' CHARSET utf8 COLLATE utf8_bin',
+      values: timeFormats.data,
+      defaultValue: timeFormats.data[0],
       allowNull: false
     },
     chartType: {

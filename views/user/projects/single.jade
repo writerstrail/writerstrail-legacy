@@ -87,4 +87,4 @@ block content
     .col-sm-2.text-right
       strong Created at:
     .col-sm-10
-      = moment(project.createdAt).format(user.settings.dateFormat + ' HH:mm:ss')
+      = moment(project.createdAt).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)

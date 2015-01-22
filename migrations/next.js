@@ -300,6 +300,19 @@ module.exports = {
           defaultValue: 'YYYY-MM-DD',
           allowNull: false
         },
+        timeFormat: {
+          type: DataTypes.ENUM,
+          values: [
+            'H:mm:ss',
+            'HH:mm:ss',
+            'h:mm:ss A',
+            'hh:mm:ss A',
+            'h:mm:ss a',
+            'hh:mm:ss a'
+          ],
+          defaultValue: 'HH:mm:ss',
+          allowNull: false
+        },        
         chartType: {
           type: DataTypes.ENUM,
           values: [
@@ -318,7 +331,8 @@ module.exports = {
           allowNull: false
         }
       }, {
-        charset: 'utf8'
+        charset: 'utf8',
+        collate: 'utf8_bin'
       });
     }).then(done);
   },
