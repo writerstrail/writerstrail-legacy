@@ -44,8 +44,8 @@ router.get('/targets/new', sendflash, function (req, res, next) {
       edit: false,
       target: {
         wordcount: 50000,
-        start: moment().add(1, 'day').format('YYYY-MM-DD'),
-        end: moment().add(31, 'days').format('YYYY-MM-DD')
+        start: moment().add(1, 'day').format(req.user.settings.dateFormat),
+        end: moment().add(30, 'days').format(req.user.settings.dateFormat)
       },
       projects: chunk(projects, 3)
     });
@@ -55,8 +55,8 @@ router.get('/targets/new', sendflash, function (req, res, next) {
 });
 
 router.post('/targets/new', function (req, res, next) {
-  var start = moment(req.body.start, 'YYYY-MM-DD'),
-      end =  moment(req.body.end, 'YYYY-MM-DD');
+  var start = moment(req.body.start, req.user.settings.dateFormat),
+      end =  moment(req.body.end, req.user.settings.dateFormat);
 
   start = start.isValid() ? start.toDate() : null;
   end = end.isValid() ? end.toDate() : null;
@@ -138,8 +138,8 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
       ]
     }).then(function (projects) {
       var data = target.dataValues;
-      data.start = moment(data.start).format('YYYY-MM-DD');
-      data.end = moment(data.end).format('YYYY-MM-DD');
+      data.start = moment(data.start).format(req.user.settings.dateFormat);
+      data.end = moment(data.end).format(req.user.settings.dateFormat);
       res.render('user/targets/form', {
         title: req.__('Target edit'),
         section: 'targetedit',
@@ -169,8 +169,8 @@ router.post('/targets/:id/edit', function (req, res, next) {
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
       target.set('wordcount', req.body.wordcount);
-      target.set('start', moment(req.body.start, 'YYYY-MM-DD'));
-      target.set('end', moment(req.body.end, 'YYYY-MM-DD'));
+      target.set('start', moment(req.body.start, req.user.settings.dateFormat));
+      target.set('end', moment(req.body.end, req.user.settings.dateFormat));
       return target.save().then(function () {
         return models.Project.findAll({
           where: {
@@ -311,7 +311,7 @@ router.get('/targets/:id/data.json', function (req, res) {
       return acc;
     }, []);
     
-    var a = _.groupBy(allSessions, function(sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD'); });
+    var a = _.groupBy(allSessions, function (sess) { return moment(sess.dataValues.start).format(req.user.settings.dateFormat); });
     
     for (var i = 1; i <= totalDays; i++) {
       var today = moment(target.start).add(i - 1, 'days').format('YYYY-MM-DD');
@@ -321,7 +321,7 @@ router.get('/targets/:id/data.json', function (req, res) {
       pondDailyTarget.push(Math.max(0, pondTarget));
       daysRange.push(today);
       if (a[today]) {
-        var todayWc = _.reduce(a[today], function(wc, sess) { return wc + sess.dataValues.wordcount; }, 0);
+        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues.wordcount; }, 0);
         accWc += todayWc;
         daily.push(todayWc);
       } else {
@@ -344,7 +344,7 @@ router.get('/targets/:id/data.json', function (req, res) {
       ponddailytarget: pondDailyTarget,
       remaining: remaining
     };
-    res.send(result).end();
+    res.json(result).end();
   });
 });
 

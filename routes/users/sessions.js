@@ -69,7 +69,7 @@ router.get('/sessions/new', sendflash, function (req, res) {
       section: 'sessionnew',
       edit: false,
       session: {
-        start: moment().subtract(2, 'hours').format('YYYY-MM-DD HH:mm:ss'),
+        start: moment().subtract(2, 'hours').format(req.user.settings.dateFormat + ' HH:mm:ss'),
         wordcount: 0,
         duration: '15:00',
         pausedTime: '0:00',
@@ -85,7 +85,7 @@ router.post('/sessions/new', function (req, res, next) {
     summary: req.body.summary || null,
     notes: req.body.notes,
     wordcount: req.body.wordcount,
-    start: moment(req.body.start, 'YYYY-MM-DD HH:mm:ss').toDate(),
+    start: moment(req.body.start, req.user.settings.dateFormat + ' HH:mm:ss').toDate(),
     duration: durationParser(req.body.duration),
     pausedTime: durationParser(req.body.pausedTime),
     isCountdown: !!req.body.isCountdown,
@@ -159,7 +159,7 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
     }, {
       raw: true
     }).then(function (projects) {
-      session.start = moment(session.start).format('YYYY-MM-DD HH:mm:ss');
+      session.start = moment(session.start).format(req.user.settings.dateFormat + ' HH:mm:ss');
       session.duration = durationFormatter(session.duration);
       session.pausedTime = durationFormatter(session.pausedTime);
       res.render('user/sessions/form', {
@@ -199,7 +199,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
       session.set('summary', req.body.summary);
       session.set('notes', req.body.notes);
       session.set('wordcount', req.body.wordcount);
-      session.set('start', moment(req.body.start, 'YYYY-MM-DD HH:mm:ss').toDate());
+      session.set('start', moment(req.body.start, req.user.settings.dateFormat + ' HH:mm:ss').toDate());
       session.set('duration', durationParser(req.body.duration));
       session.set('pausedTime', durationParser(req.body.pausedTime));
       session.set('isCountdown', !!req.body.isCountdown);

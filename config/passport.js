@@ -28,7 +28,8 @@ module.exports = function passportConfig(passport) {
           },
           include: [{
             model: models.Settings,
-            as: 'settings'
+            as: 'settings',
+            required: true
           }]
         }).complete(function (err, user) {
 			done(err, user);
