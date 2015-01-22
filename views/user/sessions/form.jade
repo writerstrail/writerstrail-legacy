@@ -18,6 +18,7 @@ block content
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
+    input#zoneOffset(type='hidden' name='zoneOffset' value=session.zoneOffset || '')
     
     - var summaryErr = _.find(validate, { path: 'summary' }) || ''
     
@@ -42,7 +43,7 @@ block content
         .input-group.date#startpicker
           span.input-group-addon
             span.fa.fa-fw.fa-clock-o
-          input#start.form-control(type='text' name='start' placeholder=__('Start time') value=session.start aria-describedby='starthelp' data-date-format='YYYY-MM-DD HH:mm:ss')
+          input#start.form-control(type='text' name='start' placeholder=__('Start time') value=session.start aria-describedby='starthelp')
         span#starthelp.help-block= __(startErr ? startErr.message : '')
         
     - var durErr = _.find(validate, { path: 'duration' }) || ''
@@ -89,7 +90,11 @@ append scripts
   script(type='text/javascript', src='/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
   script.
     $(document).ready(function () {
-      $('#startpicker').datetimepicker();
+      $('#startpicker').datetimepicker({
+        format: '!{user.settings.dateFormat} !{user.settings.timeFormat}',
+        defaultDate: moment()
+      });
+      $('#zoneOffset').val(moment().utcOffset());
     })
     
 append styles

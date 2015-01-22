@@ -149,6 +149,11 @@ module.exports = {
           type: DataTypes.DATE,
           allowNull: false
         },
+        zoneOffset: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          comment: 'User timezone offset in minutes'
+        },
         duration: {
           type: DataTypes.INTEGER.UNSIGNED,
           allowNull: false,
@@ -217,6 +222,11 @@ module.exports = {
           type: DataTypes.DATE,
           allowNull: false
         },
+        zoneOffset: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          comment: 'User timezone offset in minutes'
+        },
         wordcount: {
           type: DataTypes.INTEGER.UNSIGNED,
           allowNull: false
@@ -276,11 +286,81 @@ module.exports = {
       }, {
         charset: 'utf8'
       });
+    }).then(function () {
+      return migration.createTable('settings', {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        dateFormat: {
+          type: DataTypes.ENUM,
+          values: [
+            'YYYY-MM-DD',
+            'YYYY/MM/DD',
+            'DD-MM-YYYY',
+            'DD/MM/YYYY',
+            'MM-DD-YYYY',
+            'MM/DD/YYYY'
+          ],
+          defaultValue: 'YYYY-MM-DD',
+          allowNull: false
+        },
+        timeFormat: {
+          type: DataTypes.ENUM,
+          values: [
+            'H:mm:ss',
+            'HH:mm:ss',
+            'h:mm:ss A',
+            'hh:mm:ss A',
+            'h:mm:ss a',
+            'hh:mm:ss a'
+          ],
+          defaultValue: 'HH:mm:ss',
+          allowNull: false
+        },        
+        chartType: {
+          type: DataTypes.ENUM,
+          values: [
+            'cumulative',
+            'daily'
+          ],
+          defaultValue: 'cumulative',
+          allowNull: false
+        },
+        showRemaining: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+          allowNull: false
+        },
+        showPondered: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+          allowNull: false
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8',
+        collate: 'utf8_bin'
+      });
     }).then(done);
   },
 
   down: function (migration, DataTypes, done) {
-    migration.dropTable('projectsTargets').then(function () {
+    migration.dropTable('settings').then(function () {
+      return migration.dropTable('projectsTargets');
+    }).then(function () {
       return migration.dropTable('targets');
     }).then(function () {
       return migration.dropTable('writingSessions');

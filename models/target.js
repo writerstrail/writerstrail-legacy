@@ -30,6 +30,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false
     },
+    zoneOffset: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: 'User timezone offset in minutes'
+    },
     wordcount: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
@@ -71,7 +76,7 @@ module.exports = function (sequelize, DataTypes) {
     ],
     validate: {
       startBeforeEnd: function () {
-        if (!(moment(this.start).isBefore(this.end))) {
+        if (!(moment.utc(this.start).isBefore(this.end))) {
           throw new Error('The start date must be before the end date and both must be valid');
         }
       }

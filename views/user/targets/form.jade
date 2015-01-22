@@ -17,6 +17,7 @@ block content
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
+    input#zoneOffset(type='hidden' name='zoneOffset' value=target.zoneOffset || '')
     
     - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
     
@@ -42,7 +43,7 @@ block content
         .input-group.date#startpicker
           span.input-group-addon
             span.fa.fa-fw.fa-calendar
-          input#start.form-control(type='text' name='start' placeholder=__('Start date') value=target.start aria-describedby='starthelp' data-date-format='YYYY-MM-DD')
+          input#start.form-control(type='text' name='start' placeholder=__('Start date') value=target.start aria-describedby='starthelp')
         span#starthelp.help-block= __(startErr ? startErr.message : '')
           
     - var endErr = _.find(validate, function(err) { return err.path === 'end' || err.path === 'startBeforeEnd'; }) || ''
@@ -53,13 +54,13 @@ block content
         .input-group.date#endpicker
           span.input-group-addon
               span.fa.fa-fw.fa-calendar
-          input#end.form-control(type='text' name='end' placeholder=__('End date') value=target.end aria-describedby='endhelp' data-date-format='YYYY-MM-DD')
+          input#end.form-control(type='text' name='end' placeholder=__('End date') value=target.end aria-describedby='endhelp')
         span#endhelp.help-block= __(endErr ? endErr.message : '')
     
     .form-group
       label.col-sm-2.control-label Total days
       .col-sm-10
-        p#totaldays.control-static= moment(target.end).diff(target.start, 'days') + 1
+        p#totaldays.control-static= moment.utc(target.end).diff(target.start, 'days') + 1
         
     .form-group
       label.col-sm-2.control-label(for='notes')= __('Notes')
@@ -95,22 +96,22 @@ append scripts
   script.
     $(document).ready(function () {
       $('#startpicker').datetimepicker({
-        pickTime: false,
-        maxDate: moment('!{target.end}', 'YYYY-MM-DD').subtract(1, 'day')
+        format: '!{user.settings.dateFormat}',
+        maxDate: moment.utc('!{target.end}', '!{user.settings.dateFormat}').subtract(1, 'day')
       });
       $('#endpicker').datetimepicker({
-        pickTime: false,
-        minDate: moment('!{target.start}', 'YYYY-MM-DD').add(1, 'day')
+        format: '!{user.settings.dateFormat}',
+        minDate: moment.utc('!{target.start}', '!{user.settings.dateFormat}').add(1, 'day')
       });
       $('#startpicker').on('dp.change', function (e) {
         var endPicker = $('#endpicker').data("DateTimePicker");
-        endPicker.setMinDate(moment(e.date).add('1', 'day'));
-        $('#totaldays').html((moment(endPicker.getDate()).diff(moment(e.date), 'days') + 1).toString());
+        endPicker.minDate(moment.utc(e.date).add('1', 'day'));
+        $('#totaldays').html((moment.utc(endPicker.date()).diff(moment.utc(e.date), 'days') + 1).toString());
       });
       $('#endpicker').on('dp.change', function (e) {
         var startPicker = $('#startpicker').data("DateTimePicker");
-        startPicker.setMaxDate(moment(e.date).subtract('1', 'day'));
-        $('#totaldays').html((moment(e.date).diff(moment(startPicker.getDate()), 'days') + 1).toString());
+        startPicker.maxDate(moment.utc(e.date).subtract('1', 'day'));
+        $('#totaldays').html((moment.utc(e.date).diff(moment.utc(startPicker.date()), 'days') + 1).toString());
       });
     })
     

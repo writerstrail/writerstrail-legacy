@@ -11,7 +11,8 @@ module.exports = function (req) {
             { 'href': '/targets', 'key': 'targets', 'label': req.__('Targets'), 'title': req.__('Your writing targets to achieve') },
             { 'href': '/genres', 'key': 'genres', 'label': req.__('Genres'), 'title': req.__('Your defined genres') },
             { 'key': 'divider' },
-            { 'href': '/account', 'key': 'account', 'label': 'Account', 'title': 'Your account settings' },
+            { 'href': '/settings', 'key': 'settings', 'label': 'Settings', 'title': 'Your personal settings' },
+            { 'href': '/account', 'key': 'account', 'label': 'Account', 'title': 'Your account data' },
             { 'href': '/signout', 'key': 'signout', 'label': 'Sign out', 'title': 'Sign out from Writer\'s Trail' }
           ]
         }

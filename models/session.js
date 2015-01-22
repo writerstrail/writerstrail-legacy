@@ -21,6 +21,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false
     },
+    zoneOffset: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: 'User timezone offset in minutes'
+    },
     duration: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,

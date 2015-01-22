@@ -1,14 +1,14 @@
 extends ../../layout
 
 block content
-  - var now = moment()
-  - var totalDays = Math.floor(moment(target.end).diff(moment(target.start), 'days', true)) + 1
-  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment(target.start), 'days', true))))
+  - var now = moment.utc()
+  - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
+  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true))))
   - var daysRem = totalDays - daysPast
   - var allSessions = []
   - var totalWordcount = 0
   - _.forEach(target.projects, function(proj) { allSessions = allSessions.concat(proj.sessions) })
-  for sessions, day in _.groupBy(allSessions, function(sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD') })
+  for sessions, day in _.groupBy(allSessions, function(sess) { return moment.utc(sess.dataValues.start).format(user.settings.dateFormat) })
     - totalWordcount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues.wordcount }, 0)
   - var remainingWordcount = Math.max(0, target.wordcount - totalWordcount)
 
@@ -71,13 +71,13 @@ block content
     .col-sm-2.text-right
       strong Start:
     .col-sm-10
-      = moment(target.start).format('YYYY-MM-DD')
+      = moment.utc(target.start).format(user.settings.dateFormat)
  
   .row
     .col-sm-2.text-right
       strong End:
     .col-sm-10
-      = moment(target.end).format('YYYY-MM-DD')
+      = moment.utc(target.end).format(user.settings.dateFormat)
       
   .row
     .col-sm-2.text-right: strong Total days:
@@ -113,7 +113,7 @@ block content
               for session,i in project.sessions.slice(0, 3)
                 if i > 0
                   | ,&nbsp;
-                - var sessionName = (session.summary) || (moment(session.start).format('YYYY-MM-DD HH:mm:ss'))
+                - var sessionName = (session.summary) || (moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat))
                 a(href='/sessions/' + session.id title='View session ' + sessionName)= sessionName
             | ,&nbsp;
             a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
@@ -147,12 +147,12 @@ block content
 
     .row
       .col-sm-2.text-right: strong Average words per day:
-      .col-sm-10= Math.round(totalWordcount / daysPast)
+      .col-sm-10= daysPast === 0 ? 0 : Math.round(totalWordcount / daysPast)
         | &nbsp;words
 
     .row
       .col-sm-2.text-right: strong Predicted finish by this rate:
-      .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / daysPast)), 'days').format('YYYY-MM-DD')
+      .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / daysPast)), 'days').format(user.settings.dateFormat)
 
     .row
       .col-sm-2.text-right: strong Daily target to finish on time:
@@ -170,4 +170,4 @@ append scripts
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/scripts/chart.js')    
   script(type='text/javascript').
-    buildChart(!{target.id}, jQuery, c3, d3);
+    buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});

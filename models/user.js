@@ -100,12 +100,16 @@ module.exports = function (sequelize, DataTypes) {
           foreignKey: 'ownerId'
         });
         User.hasMany(models.Project, {
-          as: 'Projects',
+          as: 'projects',
           foreignKey: 'ownerId'
         });
         User.hasMany(models.Target, {
-          as: 'Targets',
+          as: 'targets',
           foreignKey: 'ownerId'
+        });
+        User.hasOne(models.Settings, {
+          as: 'settings',
+          foreignKey: 'id'
         });
         User.afterCreate(function (user) {
           var genres = [
@@ -120,7 +124,11 @@ module.exports = function (sequelize, DataTypes) {
               ownerId: user.id
             }
           ];
-          models.Genre.bulkCreate(genres);
+          return models.Genre.bulkCreate(genres).then(function () {
+            return models.Settings.create({
+              id: user.id
+            });
+          });
         });
       }
     },

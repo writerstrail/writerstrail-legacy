@@ -69,7 +69,6 @@ router.get('/sessions/new', sendflash, function (req, res) {
       section: 'sessionnew',
       edit: false,
       session: {
-        start: moment().subtract(2, 'hours').format('YYYY-MM-DD HH:mm:ss'),
         wordcount: 0,
         duration: '15:00',
         pausedTime: '0:00',
@@ -85,7 +84,8 @@ router.post('/sessions/new', function (req, res, next) {
     summary: req.body.summary || null,
     notes: req.body.notes,
     wordcount: req.body.wordcount,
-    start: moment(req.body.start, 'YYYY-MM-DD HH:mm:ss').toDate(),
+    start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
+    zoneOffset: req.body.zoneOffset || null,
     duration: durationParser(req.body.duration),
     pausedTime: durationParser(req.body.pausedTime),
     isCountdown: !!req.body.isCountdown,
@@ -114,6 +114,7 @@ router.post('/sessions/new', function (req, res, next) {
         edit: false,
         session: {
           summary: req.body.summary,
+          zoneOffset: req.body.zoneOffset || null,
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
@@ -159,7 +160,7 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
     }, {
       raw: true
     }).then(function (projects) {
-      session.start = moment(session.start).format('YYYY-MM-DD HH:mm:ss');
+      session.start = moment.utc(session.start).format(req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat);
       session.duration = durationFormatter(session.duration);
       session.pausedTime = durationFormatter(session.pausedTime);
       res.render('user/sessions/form', {
@@ -199,7 +200,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
       session.set('summary', req.body.summary);
       session.set('notes', req.body.notes);
       session.set('wordcount', req.body.wordcount);
-      session.set('start', moment(req.body.start, 'YYYY-MM-DD HH:mm:ss').toDate());
+      session.set('start', moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate());
       session.set('duration', durationParser(req.body.duration));
       session.set('pausedTime', durationParser(req.body.pausedTime));
       session.set('isCountdown', !!req.body.isCountdown);

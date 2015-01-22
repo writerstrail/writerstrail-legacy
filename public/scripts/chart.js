@@ -1,6 +1,7 @@
-function buildChart(targetId, $, c3, d3) {
-  $(function() {
-    var chart = c3.generate({
+function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
+  $(function () {
+    var isAcc = chartType === 'cumulative',
+      chart = c3.generate({
       bindto: '#chart',
       data: {
         url: '/targets/' + targetId + '/data.json',
@@ -24,7 +25,9 @@ function buildChart(targetId, $, c3, d3) {
           wordcount: '#674732',
           target: '#9e9e9e'
         },
-        hide: ['daily', 'dailytarget', 'ponddailytarget', 'remaining']
+        hide: (isAcc ? ['daily', 'dailytarget'] : ['wordcount', 'target'])
+            .concat(showRem ? [] : ['remaining'])
+            .concat(showPond ? [] : ['ponddailytarget'])
       },
       axis: {
         x: {
@@ -50,7 +53,7 @@ function buildChart(targetId, $, c3, d3) {
       grid: {
         x: {
           lines: [
-            { value: new Date(), text: 'Today' }
+            { value: d3.time.day.floor(new Date()), text: 'Today', class: 'today-line' }
           ]
         },
         y: {
@@ -60,15 +63,14 @@ function buildChart(targetId, $, c3, d3) {
       tooltip: {
         format: {
           title: d3.time.format('%Y-%b-%d'),
-          value: function (value) {
-            return d3.format(',')(value);
-          }
+          value: d3.format(',')
         }
       }
     });
     
     $('#target-change')
-      .data('acc', true)
+      .data('acc', isAcc)
+      .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
       .click(function () {
         var self = $(this);
         if (self.data('acc')) {

@@ -3,6 +3,7 @@ var router = require('express').Router(),
   projects = require('./users/projects'),
   targets = require('./users/targets'),
   sessions = require('./users/sessions'),
+  settings = require('./users/settings'),
   isactivated = require('../utils/middlewares/isactivated');
 
 router.use(isactivated);
@@ -22,5 +23,6 @@ router.use(genres);
 router.use('/projects', projects);
 router.use(targets);
 router.use(sessions);
+router.use('/settings', settings);
 
 module.exports = router;
