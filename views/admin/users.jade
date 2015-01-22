@@ -89,8 +89,8 @@ block content
                     td= u.googleToken ? __('Yes') : __('No')
                     td= u.linkedinToken ? __('Yes') : __('No')
                     td= u.wordpressToken ? __('Yes') : __('No')
-                    td= moment(u.createdAt).format('YYYY/MM/DD HH:mm')
-                    td= moment(u.lastAccess).format('YYYY/MM/DD HH:mm')
+                    td= moment.utc(u.createdAt).format('YYYY/MM/DD HH:mm')
+                    td= moment.utc(u.lastAccess).format('YYYY/MM/DD HH:mm')
         .well.well-sm
             .btn-toolbar(role='toolbar')
                 .btn-group(role='group')

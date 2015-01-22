@@ -12,7 +12,7 @@ block content
           for format, i in dateFormats.data
             option(value=format selected=format == user.settings.dateFormat)= dateFormats.labels[i]
               | &nbsp;(
-              = moment().format(format)
+              = moment.utc().format(format)
               | )
     .form-group
       label.col-sm-2.control-label(for='timeformat') Time format:
@@ -21,7 +21,7 @@ block content
           for format, i in timeFormats.data
             option(value=format selected=format == user.settings.timeFormat)= timeFormats.labels[i]
               | &nbsp;(
-              = moment().format(format)
+              = moment.utc().format(format)
               | )
     .form-group
       label.col-sm-2.control-label(for='charttype') Preferred target chart type:

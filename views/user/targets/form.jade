@@ -59,7 +59,7 @@ block content
     .form-group
       label.col-sm-2.control-label Total days
       .col-sm-10
-        p#totaldays.control-static= moment(target.end).diff(target.start, 'days') + 1
+        p#totaldays.control-static= moment.utc(target.end).diff(target.start, 'days') + 1
         
     .form-group
       label.col-sm-2.control-label(for='notes')= __('Notes')
@@ -96,21 +96,21 @@ append scripts
     $(document).ready(function () {
       $('#startpicker').datetimepicker({
         format: '!{user.settings.dateFormat}',
-        maxDate: moment('!{target.end}', '!{user.settings.dateFormat}').subtract(1, 'day')
+        maxDate: moment.utc('!{target.end}', '!{user.settings.dateFormat}').subtract(1, 'day')
       });
       $('#endpicker').datetimepicker({
         format: '!{user.settings.dateFormat}',
-        minDate: moment('!{target.start}', '!{user.settings.dateFormat}').add(1, 'day')
+        minDate: moment.utc('!{target.start}', '!{user.settings.dateFormat}').add(1, 'day')
       });
       $('#startpicker').on('dp.change', function (e) {
         var endPicker = $('#endpicker').data("DateTimePicker");
-        endPicker.minDate(moment(e.date).add('1', 'day'));
-        $('#totaldays').html((moment(endPicker.date()).diff(moment(e.date), 'days') + 1).toString());
+        endPicker.minDate(moment.utc(e.date).add('1', 'day'));
+        $('#totaldays').html((moment.utc(endPicker.date()).diff(moment.utc(e.date), 'days') + 1).toString());
       });
       $('#endpicker').on('dp.change', function (e) {
         var startPicker = $('#startpicker').data("DateTimePicker");
-        startPicker.maxDate(moment(e.date).subtract('1', 'day'));
-        $('#totaldays').html((moment(e.date).diff(moment(startPicker.date()), 'days') + 1).toString());
+        startPicker.maxDate(moment.utc(e.date).subtract('1', 'day'));
+        $('#totaldays').html((moment.utc(e.date).diff(moment.utc(startPicker.date()), 'days') + 1).toString());
       });
     })
     

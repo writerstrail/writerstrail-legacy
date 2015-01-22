@@ -44,8 +44,8 @@ router.get('/targets/new', sendflash, function (req, res, next) {
       edit: false,
       target: {
         wordcount: 50000,
-        start: moment().add(1, 'day').format(req.user.settings.dateFormat),
-        end: moment().add(30, 'days').format(req.user.settings.dateFormat)
+        start: moment.utc().add(1, 'day').format(req.user.settings.dateFormat),
+        end: moment.utc().add(30, 'days').format(req.user.settings.dateFormat)
       },
       projects: chunk(projects, 3)
     });
@@ -55,8 +55,8 @@ router.get('/targets/new', sendflash, function (req, res, next) {
 });
 
 router.post('/targets/new', function (req, res, next) {
-  var start = moment(req.body.start, req.user.settings.dateFormat),
-      end =  moment(req.body.end, req.user.settings.dateFormat);
+  var start = moment.utc(req.body.start, req.user.settings.dateFormat),
+      end =  moment.utc(req.body.end, req.user.settings.dateFormat);
 
   start = start.isValid() ? start.toDate() : null;
   end = end.isValid() ? end.toDate() : null;
@@ -138,8 +138,8 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
       ]
     }).then(function (projects) {
       var data = target.dataValues;
-      data.start = moment(data.start).format(req.user.settings.dateFormat);
-      data.end = moment(data.end).format(req.user.settings.dateFormat);
+      data.start = moment.utc(data.start).format(req.user.settings.dateFormat);
+      data.end = moment.utc(data.end).format(req.user.settings.dateFormat);
       res.render('user/targets/form', {
         title: req.__('Target edit'),
         section: 'targetedit',
@@ -169,8 +169,8 @@ router.post('/targets/:id/edit', function (req, res, next) {
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
       target.set('wordcount', req.body.wordcount);
-      target.set('start', moment(req.body.start, req.user.settings.dateFormat));
-      target.set('end', moment(req.body.end, req.user.settings.dateFormat));
+      target.set('start', moment.utc(req.body.start, req.user.settings.dateFormat));
+      target.set('end', moment.utc(req.body.end, req.user.settings.dateFormat));
       return target.save().then(function () {
         return models.Project.findAll({
           where: {
@@ -295,7 +295,7 @@ router.get('/targets/:id/data.json', function (req, res) {
     if (!target) {
       return res.status(404).send('{"Error":"Not found"}').end();
     }
-    var totalDays = Math.floor(moment(target.end).diff(moment(target.start), 'days', true)) + 1;
+    var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
     var daysRange = [];
     var daily = [];
     var wordcount = [], accWc = 0;
@@ -311,10 +311,10 @@ router.get('/targets/:id/data.json', function (req, res) {
       return acc;
     }, []);
     
-    var a = _.groupBy(allSessions, function (sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD'); });
+    var a = _.groupBy(allSessions, function (sess) { return moment.utc(sess.dataValues.start).format('YYYY-MM-DD'); });
     
     for (var i = 1; i <= totalDays; i++) {
-      var today = moment(target.start).add(i - 1, 'days').format('YYYY-MM-DD');
+      var today = moment.utc(target.start).add(i - 1, 'days').format('YYYY-MM-DD');
       var diffWc = target.wordcount - accWc;
       var diffDays = totalDays - i + 1;
       var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);

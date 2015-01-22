@@ -71,7 +71,7 @@ module.exports = function (sequelize, DataTypes) {
     ],
     validate: {
       startBeforeEnd: function () {
-        if (!(moment(this.start).isBefore(this.end))) {
+        if (!(moment.utc(this.start).isBefore(this.end))) {
           throw new Error('The start date must be before the end date and both must be valid');
         }
       }

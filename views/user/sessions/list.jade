@@ -21,5 +21,5 @@ block content
           if session.summary
             = '[' + session.summary + ']'
             | &nbsp;
-          = '(' + moment(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat) + ')'
+          = '(' + moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat) + ')'
   +paginate(paginate, pageCount, currentPage)
