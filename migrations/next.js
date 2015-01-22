@@ -291,12 +291,24 @@ module.exports = {
           type: DataTypes.ENUM,
           values: [
             'YYYY-MM-DD',
+            'YYYY/MM/DD',
             'DD-MM-YYYY',
-            'MM-DD-YYYY'
+            'DD/MM/YYYY',
+            'MM-DD-YYYY',
+            'MM/DD/YYYY'
           ],
           defaultValue: 'YYYY-MM-DD',
           allowNull: false
         },
+        chartType: {
+          type: DataTypes.ENUM,
+          values: [
+            'cumulative',
+            'daily'
+          ],
+          defaultValue: 'cumulative',
+          allowNull: false
+        } ,
         createdAt: {
           type: DataTypes.DATE,
           allowNull: false

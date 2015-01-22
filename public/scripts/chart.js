@@ -1,6 +1,8 @@
-function buildChart(targetId, $, c3, d3) {
-  $(function() {
-    var chart = c3.generate({
+function buildChart(targetId, $, c3, d3, chartType) {
+  $(function () {
+    console.log(chartType);
+    var isAcc = chartType === 'cumulative',
+      chart = c3.generate({
       bindto: '#chart',
       data: {
         url: '/targets/' + targetId + '/data.json',
@@ -24,7 +26,7 @@ function buildChart(targetId, $, c3, d3) {
           wordcount: '#674732',
           target: '#9e9e9e'
         },
-        hide: ['daily', 'dailytarget', 'ponddailytarget', 'remaining']
+        hide: (isAcc ? ['daily', 'dailytarget'] : ['wordcount', 'target']).concat(['ponddailytarget', 'remaining'])
       },
       axis: {
         x: {
@@ -68,7 +70,8 @@ function buildChart(targetId, $, c3, d3) {
     });
     
     $('#target-change')
-      .data('acc', true)
+      .data('acc', isAcc)
+      .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
       .click(function () {
         var self = $(this);
         if (self.data('acc')) {

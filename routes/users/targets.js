@@ -311,7 +311,7 @@ router.get('/targets/:id/data.json', function (req, res) {
       return acc;
     }, []);
     
-    var a = _.groupBy(allSessions, function (sess) { return moment(sess.dataValues.start).format(req.user.settings.dateFormat); });
+    var a = _.groupBy(allSessions, function (sess) { return moment(sess.dataValues.start).format('YYYY-MM-DD'); });
     
     for (var i = 1; i <= totalDays; i++) {
       var today = moment(target.start).add(i - 1, 'days').format('YYYY-MM-DD');

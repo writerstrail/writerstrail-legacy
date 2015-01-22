@@ -12,5 +12,14 @@ block content
           for format in dateFormats
             option(value=format selected=format == user.settings.dateFormat)= format
     .form-group
+      label.col-sm-2.control-label(for='charttype') Preferred target chart type:
+      .col-sm-10
+        label.radio-inline
+          input#charttype(type='radio' name='charttype' value='cumulative' checked='cumulative' == user.settings.chartType)
+          | Cumulative writing/target
+        label.radio-inline
+          input#charttype(type='radio' name='charttype' value='daily' checked='daily' == user.settings.chartType)
+          | Daily writing/target
+    .form-group
       .col-sm-offset-2.col-sm-2
         button.btn.btn-primary(type='submit' name='save' value='save') Save
