@@ -1,0 +1,16 @@
+extends ../../layout
+
+block content
+  h1= title
+  
+  form.form-horizontal(method='post')
+    input(type='hidden' name='_csrf' value=csrf)
+    .form-group
+      label.col-sm-2.control-label(for='dateformat') Date format:
+      .col-sm-10
+        select#dateformat.form-control(name='dateformat')
+          for format in dateFormats
+            option(value=format selected=format == user.settings.dateFormat)= format
+    .form-group
+      .col-sm-offset-2.col-sm-2
+        button.btn.btn-primary(type='submit' name='save' value='save') Save

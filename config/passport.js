@@ -1,7 +1,6 @@
 var models = require('../models');
 var config = require('./config.js')[process.env.NODE_ENV || "development"];
 var FacebookStrategy = require('passport-facebook').Strategy;
-var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var LinkedinStrategy = require('passport-linkedin').Strategy;
 var WordpressStrategy = require('passport-wordpress').Strategy;
@@ -23,7 +22,15 @@ module.exports = function passportConfig(passport) {
 	
 	// used to deserialize the user
 	passport.deserializeUser(function (id, done) {
-		models.User.find(id).complete(function (err, user) {
+		models.User.find({
+          where: {
+            id: id
+          },
+          include: [{
+            model: models.Settings,
+            as: 'settings'
+          }]
+        }).complete(function (err, user) {
 			done(err, user);
 		});
 	});

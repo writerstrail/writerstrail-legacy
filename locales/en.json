@@ -217,5 +217,8 @@
 	"Session \"%s\" successfully deleted.": "Session \"%s\" successfully deleted.",
 	"Time not writing (min or min:sec)": "Time not writing (min or min:sec)",
 	"Time not writing": "Time not writing",
-	"Your active writing projects": "Your active writing projects"
+	"Your active writing projects": "Your active writing projects",
+	"Your personal settings": "Your personal settings",
+	"Settings": "Settings",
+	"Your account data": "Your account data"
 }

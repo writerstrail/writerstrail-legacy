@@ -276,11 +276,45 @@ module.exports = {
       }, {
         charset: 'utf8'
       });
+    }).then(function () {
+      return migration.createTable('settings', {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        dateFormat: {
+          type: DataTypes.ENUM,
+          values: [
+            'YYYY-MM-DD',
+            'DD-MM-YYYY',
+            'MM-DD-YYYY'
+          ],
+          defaultValue: 'YYYY-MM-DD',
+          allowNull: false
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8'
+      });
     }).then(done);
   },
 
   down: function (migration, DataTypes, done) {
-    migration.dropTable('projectsTargets').then(function () {
+    migration.dropTable('settings').then(function () {
+      return migration.dropTable('projectsTargets');
+    }).then(function () {
       return migration.dropTable('targets');
     }).then(function () {
       return migration.dropTable('writingSessions');
