@@ -29,7 +29,13 @@ module.exports = function (sequelize, DataTypes) {
     duration: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
-      comment: 'Duration of session in seconds'
+      comment: 'Duration of session in seconds',
+      validate: {
+        min: {
+          args: 1,
+          msg: 'The duration can\'t be zero'
+        }
+      }
     },
     pausedTime: {
       type: DataTypes.INTEGER.UNSIGNED,

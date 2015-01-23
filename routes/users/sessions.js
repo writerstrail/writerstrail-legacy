@@ -1,13 +1,18 @@
 var router = require('express').Router(),
   moment = require('moment'),
   models = require('../../models'),
-  sendflash = require('../../utils/middlewares/sendflash');
+  sendflash = require('../../utils/middlewares/sendflash'),
+  promise = require('sequelize').Promise;
 
 function durationParser(dur) {
   var parts = dur.split(':', 2),
     min = parts[0] ? parseInt(parts[0], 10) : 0,
-    sec = parts[1] ? parseInt(parts[1], 10) : 0;
-  return (min * 60) + sec;
+    sec = parts[1] ? parseInt(parts[1], 10) : 0,
+    result = (min * 60) + sec;
+  if (isNaN(result)) {
+    return 0;
+  }
+  return result;
 }
 
 function durationFormatter(dur) {
@@ -59,10 +64,13 @@ router.get('/sessions', sendflash, function (req, res, next) {
 
 router.get('/sessions/new', sendflash, function (req, res) {
   models.Project.findAll({
-    where: {
-      ownerId: req.user.id,
-      active: true
-    },
+    where: [
+      { ownerId: req.user.id },
+      models.Sequelize.or(
+        { active: true },
+        { id: req.query.projectid || 0 }
+      )
+    ],
     order: [['name', 'ASC']]
   }).then(function (projects) {
     res.render('user/sessions/form', {
@@ -75,25 +83,46 @@ router.get('/sessions/new', sendflash, function (req, res) {
         pausedTime: '0:00',
         'project.id': req.query.projectid || 0
       },
-      projects: projects
+      projects: projects,
+      errorMessage: projects.length > 0 ? '' : 'No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.'
     });
   });
 });
 
 router.post('/sessions/new', function (req, res, next) {
-  models.Session.create({
-    summary: req.body.summary || null,
-    notes: req.body.notes,
-    wordcount: req.body.wordcount,
-    start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
-    zoneOffset: req.body.zoneOffset || null,
-    duration: durationParser(req.body.duration),
-    pausedTime: durationParser(req.body.pausedTime),
-    isCountdown: !!req.body.isCountdown,
-    projectId: req.body.project
+  models.Project.findOne({
+    where: {
+      id: req.body.project,
+      ownerId: req.user.id
+    }
+  }, {
+    raw: true
+  }).then(function (project) {
+    if (!project) {
+      var err = new Error('Validation error');
+      err.errors = [{
+        path: 'project',
+        message: 'Not a valid project'
+      }];
+      return promise.reject(err);
+    } else {
+      return promise.resolve(project);
+    }
+  }).then(function (project) {
+    return models.Session.create({
+      summary: req.body.summary || null,
+      notes: req.body.notes,
+      wordcount: req.body.wordcount,
+      start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
+      zoneOffset: req.body.zoneOffset || null,
+      duration: durationParser(req.body.duration),
+      pausedTime: durationParser(req.body.pausedTime),
+      isCountdown: !!req.body.isCountdown,
+      projectId: project.id
+    });
   }).then(function () {      
     req.flash('success', req.__('Session "%s" successfully created',
-                                req.body.summary.length > 0 ? req.body.summary : req.body.start));
+                                  req.body.summary.length > 0 ? req.body.summary : req.body.start));
     if (req.body.create) { return res.redirect('/sessions'); }
     res.redirect('/sessions/new');
   }).catch(function (err) {
@@ -119,14 +148,14 @@ router.post('/sessions/new', function (req, res, next) {
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
-          pausedTime: req.body.pausedTime,
-          duration: req.body.duration,
+          pausedTime: durationFormatter(durationParser(req.body.pausedTime)),
+          duration: durationFormatter(durationParser(req.body.duration)),
           isCountdown: !!req.body.isCountdown,
           'project.id': req.body.project
         },
         projects: projects,
         validate: err.errors,
-        errorMessage: req.__('There are invalid values')
+        errorMessage: projects.length > 0 ? req.__('There are invalid values') : 'No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.'
       });
     });
   });
@@ -151,10 +180,13 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
       return next(error);
     }
     models.Project.findAll({
-      where: {
-        ownerId: req.user.id,
-        active: true
-      },
+      where: [
+        { ownerId: req.user.id },
+        models.Sequelize.or(
+          { active: true },
+          { id: session['project.id'] } 
+        )
+      ],
       order: [
         ['name', 'ASC']
       ]
@@ -198,15 +230,44 @@ router.post('/sessions/:id/edit', function (req, res, next) {
       return next(error);
     }
     if (!req.body.delete) {
-      session.set('summary', req.body.summary);
-      session.set('notes', req.body.notes);
-      session.set('wordcount', req.body.wordcount);
-      session.set('start', moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate());
-      session.set('duration', durationParser(req.body.duration));
-      session.set('pausedTime', durationParser(req.body.pausedTime));
-      session.set('isCountdown', !!req.body.isCountdown);
-      session.set('projectId', parseInt(req.body.project, 10));
-      return session.save();
+      var start = moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat);
+      if (!start.isValid()) {
+        var err = new Error('Validation error');
+        err.errors = [{
+          path: 'start',
+          message: 'The start date and time must be valid'
+        }];
+        return promise.reject(err);
+      }
+      return models.Project.findOne({
+        where: {
+          id: req.body.project,
+          ownerId: req.user.id
+        }
+      }, {
+        raw: true
+      }).then(function (project) {
+        if (!project) {
+          var err = new Error('Validation error');
+          err.errors = [{
+            path: 'project',
+            message: 'Not a valid project'
+          }];
+          return promise.reject(err);
+        } else {
+          return promise.resolve(project);
+        }
+      }).then(function () {
+        session.set('summary', req.body.summary);
+        session.set('notes', req.body.notes);
+        session.set('wordcount', req.body.wordcount);
+        session.set('start', start.toDate());
+        session.set('duration', durationParser(req.body.duration));
+        session.set('pausedTime', durationParser(req.body.pausedTime));
+        session.set('isCountdown', !!req.body.isCountdown);
+        session.set('projectId', parseInt(req.body.project, 10));
+        return session.save();
+      });
     }
     return session.destroy();
   }).then(function () {
@@ -220,10 +281,13 @@ router.post('/sessions/:id/edit', function (req, res, next) {
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Project.findAll({
-      where: {
-        ownerId: req.user.id,
-        active: true
-      },
+      where: [
+        { ownerId: req.user.id },
+        models.Sequelize.or(
+          { active: true },
+          { id: req.body.project } 
+        )
+      ],
       order: [
         ['name', 'ASC']
       ]
@@ -235,12 +299,13 @@ router.post('/sessions/:id/edit', function (req, res, next) {
         section: 'projectedit',
         edit: true,
         session: {
+          id: req.params.id,
           summary: req.body.summary,
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
-          duration: req.body.duration,
-          pausedTime: req.body.pausedTime,
+          duration: durationFormatter(durationParser(req.body.duration)),
+          pausedTime: durationFormatter(durationParser(req.body.pausedTime)),
           isCountdown: !!req.body.isCountdown,
           'project.id': req.body.project
         },

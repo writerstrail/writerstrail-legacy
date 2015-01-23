@@ -28,12 +28,15 @@ block content
         input#summary.form-control(type='text' name='summary' placeholder=__('Summary') value=session.summary aria-describedby='summaryhelp')
         span#summaryhelp.help-block= __(summaryErr ? summaryErr.message : '')
         
-    .form-group
+    - var projectErr = _.find(validate, { path: 'project' }) || ''
+        
+    .form-group(class=(projectErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='project')= __('Project')
       .col-sm-10
-        select#project.form-control(name='project')
+        select#project.form-control(name='project' aria-describedby='projecthelp')
           for proj in projects
             option(value=proj.id selected=proj.id == session['project.id'])= proj.name
+        span#projecthelp.help-block= __(projectErr ? projectErr.message : '')
 
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     
@@ -56,7 +59,7 @@ block content
         
     - var pausedErr = _.find(validate, { path: 'pausedTime' }) || ''
 
-    .form-group(class=(durErr ? 'has-error' : ''))
+    .form-group(class=(pausedErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
       .col-sm-10
         input#pausedTime.form-control(type='texts' name='pausedTime' placeholder=__('Time not writing') value=session.pausedTime aria-describedby='pausedTimehelp')
