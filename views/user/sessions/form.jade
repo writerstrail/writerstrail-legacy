@@ -59,7 +59,7 @@ block content
         
     - var pausedErr = _.find(validate, { path: 'pausedTime' }) || ''
 
-    .form-group(class=(durErr ? 'has-error' : ''))
+    .form-group(class=(pausedErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
       .col-sm-10
         input#pausedTime.form-control(type='texts' name='pausedTime' placeholder=__('Time not writing') value=session.pausedTime aria-describedby='pausedTimehelp')
