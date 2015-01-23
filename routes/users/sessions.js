@@ -60,7 +60,8 @@ router.get('/sessions', sendflash, function (req, res, next) {
 router.get('/sessions/new', sendflash, function (req, res) {
   models.Project.findAll({
     where: {
-      ownerId: req.user.id
+      ownerId: req.user.id,
+      active: true
     },
     order: [['name', 'ASC']]
   }).then(function (projects) {
@@ -220,7 +221,8 @@ router.post('/sessions/:id/edit', function (req, res, next) {
     if (err.message !== 'Validation error') { return next(err); }
     models.Project.findAll({
       where: {
-        ownerId: req.user.id
+        ownerId: req.user.id,
+        active: true
       },
       order: [
         ['name', 'ASC']
