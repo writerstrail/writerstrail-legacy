@@ -28,12 +28,15 @@ block content
         input#summary.form-control(type='text' name='summary' placeholder=__('Summary') value=session.summary aria-describedby='summaryhelp')
         span#summaryhelp.help-block= __(summaryErr ? summaryErr.message : '')
         
-    .form-group
+    - var projectErr = _.find(validate, { path: 'project' }) || ''
+        
+    .form-group(class=(projectErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='project')= __('Project')
       .col-sm-10
-        select#project.form-control(name='project')
+        select#project.form-control(name='project' aria-describedby='projecthelp')
           for proj in projects
             option(value=proj.id selected=proj.id == session['project.id'])= proj.name
+        span#projecthelp.help-block= __(projectErr ? projectErr.message : '')
 
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     
