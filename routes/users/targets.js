@@ -1,6 +1,7 @@
 var router = require('express').Router(),
   _ = require('lodash'),
   moment = require('moment'),
+  promise = require('sequelize').Promise,
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   chunk = require('../../utils/functions/chunk'),
@@ -61,14 +62,36 @@ router.post('/targets/new', function (req, res, next) {
   start = start.isValid() ? start.toDate() : null;
   end = end.isValid() ? end.toDate() : null;
 
-  models.Target.create({
-    name: req.body.name,
-    start: start,
-    end: end,
-    wordcount: req.body.wordcount,
-    notes: req.body.notes,
-    ownerId: req.user.id,
-    zoneOffset: req.body.zoneOffset || null,
+  (function () {
+    var err = null;
+    if (start === null) {
+      err = new Error('Validation error');
+      err.errors = [{
+        path: 'start',
+        message: 'The start date must be valid'
+      }];
+    }
+    if (end === null) {
+      err = err || new Error('Validation error');
+      err.errors = [{
+        path: 'end',
+        message: 'The end date must be valid'
+      }].concat(err.errors || []);
+    }
+    if (err) {
+      return promise.reject(err);
+    }
+    return promise.resolve([start, end]);
+  })().spread(function (start, end) {
+    return models.Target.create({
+      name: req.body.name,
+      start: start,
+      end: end,
+      wordcount: req.body.wordcount,
+      notes: req.body.notes,
+      ownerId: req.user.id,
+      zoneOffset: req.body.zoneOffset || null,
+    });
   }).then(function (target) {
     return models.Project.findAll({
       where: {
@@ -99,8 +122,8 @@ router.post('/targets/new', function (req, res, next) {
         edit: false,
         target: {
           name: req.body.name,
-          start: req.body.start,
-          end: req.body.end,
+          start: start ? req.body.start : '',
+          end: end ? req.body.end : '',
           zoneOffset: req.body.zoneOffset || null,
           wordcount: req.body.wordcount,
           notes: req.body.notes,
@@ -131,10 +154,13 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
       return next(error);
     }
     return models.Project.findAll({
-      where: {
-        ownerId: req.user.id,
-        active: true
-      },
+      where: [
+        { ownerId: req.user.id },
+        models.Sequelize.or(
+          { active: true },
+          { id: { in: _.pluck(target.projects, 'id')} }
+        )
+      ],
       order: [
         ['name', 'ASC']
       ]
@@ -168,11 +194,36 @@ router.post('/targets/:id/edit', function (req, res, next) {
       return next(error);
     }
     if (!req.body.delete) {
+      var start = moment.utc(req.body.start, req.user.settings.dateFormat),
+        end =  moment.utc(req.body.end, req.user.settings.dateFormat);
+
+      start = start.isValid() ? start.toDate() : null;
+      end = end.isValid() ? end.toDate() : null;
+      
+      var err = null;
+      if (start === null) {
+        err = new Error('Validation error');
+        err.errors = [{
+          path: 'start',
+          message: 'The start date must be valid'
+        }];
+      }
+      if (end === null) {
+        err = err || new Error('Validation error');
+        err.errors = [{
+          path: 'end',
+          message: 'The end date must be valid'
+        }].concat(err.errors || []);
+      }
+      if (err) {
+        return promise.reject(err);
+      }
+      
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
       target.set('wordcount', req.body.wordcount);
-      target.set('start', moment.utc(req.body.start, req.user.settings.dateFormat));
-      target.set('end', moment.utc(req.body.end, req.user.settings.dateFormat));
+      target.set('start', start);
+      target.set('end', end);
       return target.save().then(function () {
         return models.Project.findAll({
           where: {
@@ -236,6 +287,7 @@ router.get('/targets/:id', sendflash, function (req, res, next) {
       model: models.Project,
       as: 'projects',
       order: [['name', 'ASC']],
+      required: true,
       include: [{
         model: models.Session,
         as: 'sessions',

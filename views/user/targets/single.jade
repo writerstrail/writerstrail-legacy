@@ -103,7 +103,7 @@ block content
       strong Projects:
     .col-sm-10
       ul
-        for project in target.projects
+        for project in _.sortBy(target.projects, 'name')
           li
             a(href='/projects/' + project.id title='View project ' + project.name)= project.name
             | &nbsp;(

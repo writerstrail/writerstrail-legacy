@@ -224,5 +224,7 @@
 	"Not a valid project": "Not a valid project",
 	"The start date and time must be valid": "The start date and time must be valid",
 	"pausedTime cannot be null": "pausedTime cannot be null",
-	"The duration can't be zero": "The duration can't be zero"
+	"The duration can't be zero": "The duration can't be zero",
+	"The start date must be valid": "The start date must be valid",
+	"The end date must be valid": "The end date must be valid"
 }
