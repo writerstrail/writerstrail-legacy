@@ -39,9 +39,9 @@ router.post('/genres/new', function (req, res, next) {
     name: req.body.name,
     description: req.body.description,
     ownerId: req.user.id
-  }).then(function () {
+  }).then(function (genre) {
     req.flash('success', req.__('Genre "%s" successfully created', req.body.name));
-    if (req.body.create) { return res.redirect('/genres'); }
+    if (req.body.create) { return res.redirect('/genres/' + genre.id); }
     res.redirect('/genres/new');
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
@@ -99,11 +99,11 @@ router.post('/genres/:id/edit', function (req, res, next) {
       return genres[0].save();
     }
     return genres[0].destroy();
-  }).then(function () {
+  }).then(function (genre) {
     var msg = (!!req.body.save) ? req.__('Genre %s successfully saved.') : req.__('Genre %s successfully deleted.');
     req.flash('success', req.__(msg, req.body.name));
     if (!!req.body.save) {
-      res.redirect('back');
+      res.redirect('/genres/' + genre.id);
     } else {
       res.redirect('/genres');
     }

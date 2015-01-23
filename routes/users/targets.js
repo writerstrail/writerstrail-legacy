@@ -56,8 +56,9 @@ router.get('/targets/new', sendflash, function (req, res, next) {
 });
 
 router.post('/targets/new', function (req, res, next) {
-  var start = moment.utc(req.body.start, req.user.settings.dateFormat),
-      end =  moment.utc(req.body.end, req.user.settings.dateFormat);
+  var savedTarget = {},
+    start = moment.utc(req.body.start, req.user.settings.dateFormat),
+    end =  moment.utc(req.body.end, req.user.settings.dateFormat);
 
   start = start.isValid() ? start.toDate() : null;
   end = end.isValid() ? end.toDate() : null;
@@ -93,6 +94,7 @@ router.post('/targets/new', function (req, res, next) {
       zoneOffset: req.body.zoneOffset || null,
     });
   }).then(function (target) {
+    savedTarget = target;
     return models.Project.findAll({
       where: {
         ownerId: req.user.id,
@@ -103,7 +105,7 @@ router.post('/targets/new', function (req, res, next) {
     });
   }).then(function () {
     req.flash('success', req.__('The target "%s" was successfull created', req.body.name));
-    if (req.body.create) { return res.redirect('/targets'); }
+    if (req.body.create) { return res.redirect('/targets/' + savedTarget.id); }
     res.redirect('/targets/new');
   }).catch(function (err) {
     console.log('----err', err);
@@ -182,6 +184,7 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
 });
 
 router.post('/targets/:id/edit', function (req, res, next) {
+  var savedTarget = {};
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -218,7 +221,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
       if (err) {
         return promise.reject(err);
       }
-      
+      savedTarget = target;
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
       target.set('wordcount', req.body.wordcount);
@@ -242,7 +245,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
     var msg = (!!req.body.save) ? req.__('Target "%s" successfully saved.') : req.__('Target "%s" successfully deleted.');
     req.flash('success', req.__(msg, req.body.name));
     if (!!req.body.save) {
-      res.redirect('back');
+      res.redirect('/targets/' + savedTarget.id);
     } else {
       res.redirect('/targets');
     }

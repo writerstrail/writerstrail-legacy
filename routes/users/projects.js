@@ -66,6 +66,7 @@ router.get('/new', sendflash, function (req, res) {
 });
 
 router.post('/new', function (req, res, next) {
+  var savedProject = {};
   models.Project.create({
     name: req.body.name,
     description: req.body.description,
@@ -75,6 +76,7 @@ router.post('/new', function (req, res, next) {
     finished: !!req.body.finished,
     ownerId: req.user.id
   }).then(function (project) {
+    savedProject = project;
     return models.Genre.findAll({
       where: {
         ownerId: req.user.id,
@@ -87,7 +89,7 @@ router.post('/new', function (req, res, next) {
     });
   }).then(function () {      
     req.flash('success', req.__('Project "%s" successfully created', req.body.name));
-    if (req.body.create) { return res.redirect('/projects'); }
+    if (req.body.create) { return res.redirect('/projects/' + savedProject.id); }
     res.redirect('/projects/new');
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
@@ -159,6 +161,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
 });
 
 router.post('/:id/edit', function (req, res, next) {
+  var savedProject = null;
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -178,6 +181,7 @@ router.post('/:id/edit', function (req, res, next) {
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
       return project.save().then(function () {
+        savedProject = project;
         return models.Genre.findAll({
           where: {
             ownerId: req.user.id,
@@ -195,7 +199,7 @@ router.post('/:id/edit', function (req, res, next) {
     var msg = (!!req.body.save) ? req.__('Project %s successfully saved.') : req.__('Project %s successfully deleted.');
     req.flash('success', req.__(msg, req.body.name));
     if (!!req.body.save) {
-      res.redirect('back');
+      res.redirect('/projects/' + savedProject.id);
     } else {
       res.redirect('/projects');
     }

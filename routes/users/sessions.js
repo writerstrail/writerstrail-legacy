@@ -120,10 +120,10 @@ router.post('/sessions/new', function (req, res, next) {
       isCountdown: !!req.body.isCountdown,
       projectId: project.id
     });
-  }).then(function () {      
+  }).then(function (session) {      
     req.flash('success', req.__('Session "%s" successfully created',
                                   req.body.summary.length > 0 ? req.body.summary : req.body.start));
-    if (req.body.create) { return res.redirect('/sessions'); }
+    if (req.body.create) { return res.redirect('/sessions/' + session.id); }
     res.redirect('/sessions/new');
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
@@ -270,11 +270,11 @@ router.post('/sessions/:id/edit', function (req, res, next) {
       });
     }
     return session.destroy();
-  }).then(function () {
+  }).then(function (session) {
     var msg = (!!req.body.save) ? 'Session "%s" successfully saved.' : 'Session "%s" successfully deleted.';
     req.flash('success', req.__(msg, req.body.summary.length > 0 ? req.body.summary : req.body.start));
     if (!!req.body.save) {
-      res.redirect('back');
+      res.redirect('/sessions/' + session.id);
     } else {
       res.redirect('/sessions');
     }
