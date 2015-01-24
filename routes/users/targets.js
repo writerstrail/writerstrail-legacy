@@ -290,7 +290,6 @@ router.get('/targets/:id', sendflash, function (req, res, next) {
       model: models.Project,
       as: 'projects',
       order: [['name', 'ASC']],
-      required: true,
       include: [{
         model: models.Session,
         as: 'sessions',
