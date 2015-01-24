@@ -370,7 +370,8 @@ router.get('/targets/:id/data.json', function (req, res) {
     var a = _.groupBy(allSessions, function (sess) { return moment.utc(sess.dataValues.start).format('YYYY-MM-DD'); });
     
     for (var i = 1; i <= totalDays; i++) {
-      var today = moment.utc(target.start).add(i - 1, 'days').format('YYYY-MM-DD');
+      var workingDate = moment.utc(target.start).add(i - 1, 'days');
+      var today = workingDate.format('YYYY-MM-DD');
       var diffWc = target.wordcount - accWc;
       var diffDays = totalDays - i + 1;
       var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
@@ -383,7 +384,11 @@ router.get('/targets/:id/data.json', function (req, res) {
       } else {
         daily.push(0);
       }
-      wordcount.push(accWc);
+      if (moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
+        wordcount.push(accWc);
+      } else {
+        wordcount.push(null);
+      }
       var incTarget = Math.floor(target.wordcount / totalDays) + (target.wordcount % totalDays < i ? 0 : 1);
       dailytarget.push(incTarget);
       accTgt += incTarget;

@@ -4,7 +4,7 @@ function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
       chart = c3.generate({
       bindto: '#chart',
       data: {
-        url: '/targets/' + targetId + '/data.json',
+        url: '/targets/' + targetId + '/data.json?zoneOffset=' + (new Date()).getTimezoneOffset(),
         mimeType: 'json',
         x: 'date',
         types: {
