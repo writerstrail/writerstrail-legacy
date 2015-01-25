@@ -104,6 +104,7 @@ append scripts
         format: '!{user.settings.dateFormat}'
         !{target.start ? ", minDate: moment.utc('" + target.start + "', '" + user.settings.dateFormat + "').subtract(1, 'day')" : '' }
       });
+      $('#zoneOffset').val(moment().utcOffset());
       $('#startpicker').on('dp.change', function (e) {
         if (!e.date) { 
           $('#totaldays').html('Invalid date');
@@ -125,6 +126,5 @@ append scripts
         $('#totaldays').html(isNaN(totalDays) ? 'Invalid date' : totalDays.toString());
       });
     })
-    
 append styles
   link(rel='stylesheet', href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')

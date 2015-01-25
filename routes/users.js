@@ -50,25 +50,37 @@ router.get('/dashboard', function (req, res, next) {
     },
     getTarget = function () {
       return models.Target.findOne({
-        where: {
-          ownerId: req.user.id,
-          end: {
-            gte: moment.utc().subtract(0, 'day').toDate(),
-          }
-        },
+        where: [
+          { ownerId: req.user.id },
+          models.Sequelize.literal(
+              'CASE WHEN `Target`.`zoneOffset` IS NOT NULL THEN `Target`.`end` >= DATE_SUB(NOW(), INTERVAL `Target`.`zoneOffset` MINUTE)' +
+              'ELSE `Target`.`end` >= NOW() END')
+        ],
         order: [['end', 'ASC']]
       }, {
         raw: true
       });
+    },
+    getTotalWordcount = function () {
+      return models.Project.sum('currentWordcount', {
+        where: {
+          ownerId: req.user.id
+        }
+      });
+    },
+    renderer = function (projects, target, totalWordcount) {
+      res.render('user/dashboard', {
+        title: 'Dashboard',
+        section: 'dashboard',
+        projects: projects,
+        target: target,
+        stats: {
+          totalWordcount: totalWordcount
+        }
+      });
     };
-  promise.join(getProjects(), getTarget(), function (projects, target) {
-    res.render('user/dashboard', {
-      title: 'Dashboard',
-      section: 'dashboard',
-      projects: projects,
-      target: target
-    });
-  }).catch(function (err) {
+  promise.join(getProjects(), getTarget(), getTotalWordcount(), renderer)
+  .catch(function (err) {
     next(err);
   });
 });

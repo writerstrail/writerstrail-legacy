@@ -37,11 +37,25 @@ block content
         .panel-heading
           h3.panel-title Nearest target
         .panel-body
-          h3.text-center
-            a(href='/targets/' + target.id)= target.name
-          #chart
-          .text-center
-            button#target-change.btn.btn-default(type='button') Show as daily writing
+          if target
+            h3.text-center
+              a(href='/targets/' + target.id)= target.name
+            #chart
+            .text-center
+              button#target-change.btn.btn-default(type='button') Show as daily writing
+          else
+            h3.text-center You have no active target
+            p.text-center
+              a(href='/targets/new' title='New target') Create a new one now.
+            
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Writing stats
+        ul.list-group
+          li.list-group-item You have written a total of 
+            strong= stats.totalWordcount
+            |  words.
           
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
@@ -51,5 +65,6 @@ append scripts
   script(type='text/javascript', src='/bower_components/d3/d3.min.js')
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/scripts/chart.js')    
-  script(type='text/javascript').
-    buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+  if target
+    script(type='text/javascript').
+      buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});

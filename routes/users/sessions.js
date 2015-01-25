@@ -266,6 +266,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
         session.set('pausedTime', durationParser(req.body.pausedTime));
         session.set('isCountdown', !!req.body.isCountdown);
         session.set('projectId', parseInt(req.body.project, 10));
+        session.set('zoneOffset', session.zoneOffset || (req.body.zoneOffset || null));
         return session.save();
       });
     }
