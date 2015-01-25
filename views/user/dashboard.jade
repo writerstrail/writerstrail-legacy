@@ -1,0 +1,55 @@
+extends ../layout
+
+block content
+  h1= title
+  
+  .row
+    .col-sm-12
+      .panel.panel-primary
+        .panel-heading
+          h3.panel-title Last five active projects
+        .panel-body
+          if projects.length === 0
+            .row
+              .col-sm-12
+                p.text-center No current active project
+          for project in projects
+            .row
+              .col-sm-2
+                p.text-right(style='height: 4ex;')
+                  a(href='/projects/' + project.id title=project.description)= project.name
+              .col-sm-8
+                if project.targetwc === 0
+                  p No target defined. 
+                    = project.currentWordcount
+                    |  written words.
+                else
+                  .progress(title=project.currentWordcount + '/' + project.targetwc)
+                    - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
+                    .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%;' class='progress-bar-' + barClass)
+                      = project.percentage + '%'
+              .col-sm-2
+                a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
+            
+  .row
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Nearest target
+        .panel-body
+          h3.text-center
+            a(href='/targets/' + target.id)= target.name
+          #chart
+          .text-center
+            button#target-change.btn.btn-default(type='button') Show as daily writing
+          
+append styles
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/stylesheets/chart.css')
+
+append scripts  
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/scripts/chart.js')    
+  script(type='text/javascript').
+    buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});

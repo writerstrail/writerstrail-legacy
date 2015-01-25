@@ -4,6 +4,7 @@ module.exports = function (req) {
     navlist = {
       'left': [],
       'right': [
+        { 'href': '/dashboard', 'key': 'dashboard', 'label': req.__('Dashboard'), 'title': req.__('The summary page') },
         {
           'dropdown': true, 'label': req.user.name, 'list': [
             { 'href': '/projects/active', 'key': 'projects', 'label': req.__('Projects'), 'title': req.__('Your active writing projects') },

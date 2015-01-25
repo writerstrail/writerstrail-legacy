@@ -226,5 +226,7 @@
 	"pausedTime cannot be null": "pausedTime cannot be null",
 	"The duration can't be zero": "The duration can't be zero",
 	"The start date must be valid": "The start date must be valid",
-	"The end date must be valid": "The end date must be valid"
+	"The end date must be valid": "The end date must be valid",
+	"Dashboard": "Dashboard",
+	"The summary page": "The summary page"
 }
