@@ -119,7 +119,7 @@ module.exports = function (passport) {
           delete req.session.referrer;
           return res.redirect(ref);
         }
-        return res.redirect('/projects/active');
+        return res.redirect('/dashboard');
       });
     })(req, res, next);
   };
