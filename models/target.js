@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
       validate: {
         len: {
           args: [3, 255],
-          msg: 'The name of the trget must have between 3 and 255 characters'
+          msg: 'The name of the target must have between 3 and 255 characters'
         }
       }
     },

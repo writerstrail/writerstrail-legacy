@@ -1,7 +1,9 @@
 extends ../../layout
 
 block content
+  - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
   - var now = moment.utc()
+  - var hasStarted = moment.utc().isAfter(target.start)
   - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
   - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true))))
   - var daysRem = totalDays - daysPast
@@ -51,6 +53,13 @@ block content
             | You didn't write a single word. Make a 
             a.alert-link(href='/targets/new' title='New target'): strong new target 
             | and this time get over the blank page!
+    p
+    
+  if !hasStarted
+    .row
+      .col-sm-2: strong This target still not started.
+      .col-sm-10.alert-danger
+        p This target will start <strong>!{moment.utc(target.start).calendar()}</strong>. Be ready for it!
     p
   
   .row: .col-sm-12: .panel.panel-primary
@@ -129,7 +138,7 @@ block content
     .col-sm-10= totalWordcount
       | &nbsp;words
       
-  if daysRem > 0
+  if daysRem > 0 && hasStarted
     .row
       .col-sm-2.text-right: strong Days past:
       .col-sm-10= daysPast
