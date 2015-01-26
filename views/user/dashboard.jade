@@ -80,6 +80,14 @@ block content
               |  words per minute.
           else
             li.list-group-item You don't have enough sessions to calculate the most productive session type.
+          if stats.largestProject
+            li.list-group-item Your largest project is 
+              strong= stats.largestProject.name
+              |  with 
+              strong= stats.largestProject.currentWordcount
+              |  total words.
+          else
+            li.list-group-item You don't have any project.
           
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')

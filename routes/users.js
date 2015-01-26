@@ -100,7 +100,17 @@ router.get('/dashboard', function (req, res, next) {
     getPerformanceSession = function () {
       return models.sequelize.query("SELECT AVG(s.wordcount / (s.duration / 60)) AS performance, CASE WHEN isCountdown = 0 THEN 'forward' ELSE 'countdown' END AS direction, duration FROM writingSessions s INNER JOIN projects p ON p.id = s.projectId AND p.ownerId = " + req.user.id + " GROUP BY duration, isCountdown ORDER BY performance DESC LIMIT 1;");
     },
-    renderer = function (projects, target, totalWordcount, dailyCounts, perfPeriod, perfSession) {
+    getLargestProject = function () {
+      return models.Project.findOne({
+        where: {
+          ownerId: req.user.id
+        },
+        order: [['currentWordcount', 'DESC']]
+      }, {
+        raw: true
+      });
+    },
+    renderer = function (projects, target, totalWordcount, dailyCounts, perfPeriod, perfSession, largestProject) {
       var totalDailyCounts = _.reduce(dailyCounts, function (acc, d) { return acc + d.dailyCount; }, 0),
         totalDuration = _.reduce(dailyCounts, function (acc, d) { return acc + d.totalDuration; }, 0);
       res.render('user/dashboard', {
@@ -113,12 +123,13 @@ router.get('/dashboard', function (req, res, next) {
           dailyAverage: dailyCounts.length > 0 ? totalDailyCounts / dailyCounts.length : 0,
           wpm: dailyCounts.length > 0 ? totalDailyCounts / totalDuration : 0,
           period: perfPeriod.length > 0 ? perfPeriod[0] : null,
-          session: perfSession.length > 0 ? perfSession[0] : null
+          session: perfSession.length > 0 ? perfSession[0] : null,
+          largestProject: largestProject
         },
         durationFormatter: durationFormatterAlt
       });
     };
-  promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), renderer)
+  promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
   .catch(function (err) {
     next(err);
   });
