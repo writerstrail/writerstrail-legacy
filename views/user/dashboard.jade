@@ -1,0 +1,102 @@
+extends ../layout
+
+block content
+  h1= title
+  
+  .row
+    .col-sm-12
+      .panel.panel-primary
+        .panel-heading
+          h3.panel-title Last five active projects
+        .panel-body
+          if projects.length === 0
+            .row
+              .col-sm-12
+                p.text-center No current active project
+          for project in projects
+            .row
+              .col-sm-2
+                p.text-right(style='height: 4ex;')
+                  a(href='/projects/' + project.id title=project.description)= project.name
+              .col-sm-8
+                if project.targetwc === 0
+                  p No target defined. 
+                    = project.currentWordcount
+                    |  written words.
+                else
+                  .progress(title=project.currentWordcount + '/' + project.targetwc)
+                    - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
+                    .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%;' class='progress-bar-' + barClass)
+                      = project.percentage + '%'
+              .col-sm-2
+                a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
+            
+  .row
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Nearest target
+        .panel-body
+          if target
+            h3.text-center
+              a(href='/targets/' + target.id)= target.name
+            #chart
+            .text-center
+              button#target-change.btn.btn-default(type='button') Show as daily writing
+          else
+            h3.text-center You have no active target
+            p.text-center
+              a(href='/targets/new' title='New target') Create a new one now.
+            
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Writing stats
+        ul.list-group
+          li.list-group-item You have written a total of 
+            strong= isNaN(stats.totalWordcount) ? 0 : stats.totalWordcount
+            |  words.
+          li.list-group-item You have an average of 
+            strong= stats.dailyAverage.toFixed(2)
+            |  words written per day.
+          li.list-group-item You have an average of 
+            strong= stats.wpm.toFixed(2)
+            |  words written per minute.
+          if stats.period
+            li.list-group-item You are most productive at 
+              strong(title!=getPeriodFromName(stats.period.period) style='border-bottom: 1px dashed #999')= stats.period.period
+              |  period, achieving 
+              strong= stats.period.performance.toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive period.
+          if stats.session
+            li.list-group-item You are most productive at 
+              strong= durationFormatter(stats.session.duration)
+              |  
+              strong= stats.session.direction
+              |  sessions, achieving 
+              strong= stats.session.performance.toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive session type.
+          if stats.largestProject
+            li.list-group-item Your largest project is 
+              strong= stats.largestProject.name
+              |  with 
+              strong= stats.largestProject.currentWordcount
+              |  total words.
+          else
+            li.list-group-item You don't have any project.
+          
+append styles
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/stylesheets/chart.css')
+
+append scripts  
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/scripts/chart.js')    
+  if target
+    script(type='text/javascript').
+      buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});

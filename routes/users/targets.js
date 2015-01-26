@@ -227,6 +227,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
       target.set('wordcount', req.body.wordcount);
       target.set('start', start);
       target.set('end', end);
+      target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || null));
       return target.save().then(function () {
         return models.Project.findAll({
           where: {

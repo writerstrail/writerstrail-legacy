@@ -6,6 +6,7 @@ module.exports =
     "database": "nwt",
     "host": "127.0.0.1",
     "dialect": "mysql",
+    "timezone": "+00:00",
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
