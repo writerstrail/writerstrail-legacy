@@ -17,6 +17,26 @@ function durationFormatterAlt(dur) {
   return (min.toString() +  'm' + (sec < 10 ? '0' + sec : sec)) + 's';
 }
 
+function getPeriodFromName(period) {
+  switch (period) {
+    case 'early morning': {
+      return '00:00:00&mdash;05:59:59';
+    }
+    case 'morning': {
+      return '06:00:00&mdash;11:59:59';
+    }
+    case 'afternoon': {
+      return '12:00:00&mdash;17:59:59';
+    }
+    case 'evening': {
+      return '18:00:00&mdash;23:59:59';
+    }
+    default: {
+      return '';
+    }
+  }
+}
+
 router.use(isactivated);
 
 router.param('id', function (req, res, next, id) {
@@ -126,7 +146,8 @@ router.get('/dashboard', function (req, res, next) {
           session: perfSession.length > 0 ? perfSession[0] : null,
           largestProject: largestProject
         },
-        durationFormatter: durationFormatterAlt
+        durationFormatter: durationFormatterAlt,
+        getPeriodFromName: getPeriodFromName
       });
     };
   promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
