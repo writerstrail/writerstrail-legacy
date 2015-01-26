@@ -54,8 +54,32 @@ block content
           h3.panel-title Writing stats
         ul.list-group
           li.list-group-item You have written a total of 
-            strong= stats.totalWordcount
+            strong= isNaN(stats.totalWordcount) ? 0 : stats.totalWordcount
             |  words.
+          li.list-group-item You have an average of 
+            strong= stats.dailyAverage.toFixed(2)
+            |  words written per day.
+          li.list-group-item You have an average of 
+            strong= stats.wpm.toFixed(2)
+            |  words written per minute.
+          if stats.period
+            li.list-group-item You are most productive at 
+              strong= stats.period.period
+              |  period, achieving 
+              strong= stats.period.performance.toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive period.
+          if stats.session
+            li.list-group-item You are most productive at 
+              strong= durationFormatter(stats.session.duration)
+              |  
+              strong= stats.session.direction
+              |  sessions, achieving 
+              strong= stats.session.performance.toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive session type.
           
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
