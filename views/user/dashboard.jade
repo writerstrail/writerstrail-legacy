@@ -30,6 +30,9 @@ block content
                       = project.percentage + '%'
               .col-sm-2
                 a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
+        ul.list-group
+          li.list-group-item.text-center
+            a(href='/projects/active') See all active projects
             
   .row
     .col-sm-6
@@ -47,6 +50,9 @@ block content
             h3.text-center You have no active target
             p.text-center
               a(href='/targets/new' title='New target') Create a new one now.
+        ul.list-group
+          li.list-group-item.text-center
+            a(href='/targets') See all targets
             
     .col-sm-6
       .panel.panel-default
