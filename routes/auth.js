@@ -2,12 +2,13 @@ var express = require('express'),
   Router = express.Router,
   models = require('../models'),
   _ = require('lodash'),
-  isLogged = require('../utils/middlewares/islogged');
+  isLogged = require('../utils/middlewares/islogged'),
+  sendflash = require('../utils/middlewares/sendflash');
 
 module.exports = function (passport) {
   var routes = Router();
   
-  routes.get('/signin', function (req, res) {
+  routes.get('/signin', sendflash, function (req, res) {
     if (req.isAuthenticated()) {
       res.redirect('/account');
     } else {
@@ -123,6 +124,10 @@ module.exports = function (passport) {
       });
     })(req, res, next);
   };
+  
+  routes.post('/auth/signup', function (req, res, next) {
+    authFunction('local-signup', req, res, next);
+  });
  
   routes.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
   
