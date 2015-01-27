@@ -24,14 +24,20 @@ block content
             h2 Existing account
             form.form-horizontal(method='post' action='/auth/signin')
               input(type='hidden' name='_csrf' value=csrf)
-              .form-group.form-group-lg
-                label.col-sm-3.control-label(for='email') Email
+              
+              - var loginErr = _.find(validate, { path: 'login' }) || ''
+              .form-group.form-group-lg(class=loginErr ? 'has-error' : '')
+                label.col-sm-3.control-label(for='emaillogin') Email
                 .col-sm-9
-                  input#email.form-control(type='email' name='email' placeholder='Email' autofocus=true required=true)
-              .form-group.form-group-lg
-                label.col-sm-3.control-label(for='password') Password
+                  input#emaillogin.form-control(type='email' name='email' placeholder='Email' autofocus=true required=true aria-describedby='emailloginhelp')
+                  span#emailloginhelp.help-block!= loginErr ? loginErr.message : ''
+                  
+              .form-group.form-group-lg(class=loginErr ? 'has-error' : '')
+                label.col-sm-3.control-label(for='passwordlogin') Password
                 .col-sm-9
-                  input#password.form-control(type='password' name='password' placeholder='Password' required=true)
+                  input#passwordlogin.form-control(type='password' name='password' placeholder='Password' required=true aria-describedby='passloginhelp')
+                  span#passloginhelp.help-block!= loginErr ? loginErr.message : ''
+                  
               .form-group.form-group-lg
                 .col-sm-offset-3.col-sm-9
                   button.btn.btn-success(type='submit' name='action' value='signin') Signin

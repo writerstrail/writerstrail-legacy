@@ -45,7 +45,6 @@ module.exports = function passportConfig(passport) {
     passwordField: 'password',
     passReqToCallback: true
   }, function (req, email, password, done) {
-    console.log('----got here-----');
     if (!req.user) {
       models.User.find({
         where: models.Sequelize.or(
@@ -123,6 +122,40 @@ module.exports = function passportConfig(passport) {
       });
     }
   }));
+  
+  passport.use('local-signin', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+  }, function (req, email, password, done) {
+     models.User.findOne({
+       where: {
+         email: { like: email }
+       }
+     }).then(function (user) {
+       var msg = 'Email or password incorrect. Have you <a href="/password/recover">forgotten your password</a>?';
+       if (!user) {
+         req.flash('error', msg);
+         req.flash('valerror', new ValidationError('Validation error', [
+           new ValidationErrorItem(msg, 'incorrect', 'login', '')
+         ]));
+         req.flash('data', { login: email });
+         return done(null, false);
+       }
+       if (!user.validPassword(password)) {
+         req.flash('error', msg);
+         req.flash('valerror', new ValidationError('Validation error', [
+           new ValidationErrorItem(msg, 'incorrect', 'login', '')
+         ]));
+         req.flash('data', { login: email });
+         return done(null, false);
+       }
+       return done(null, user);
+     }).catch(function (err) {
+       req.flash('error', 'Internal error');
+       return done(err);
+     });
+   }));
   
   passport.use('facebook', new FacebookStrategy({
     clientID: config.facebook.appid,

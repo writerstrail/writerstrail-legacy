@@ -167,11 +167,14 @@ module.exports = function (sequelize, DataTypes) {
             done(null, user);
           });
         });
-      },
-      instanceMethods: {
-        validPassword: function (password) {
+      }
+    },
+    instanceMethods: {
+      validPassword: function (password) {
+        if (this.password) {
           return bcrypt.compareSync(password, this.password);
         }
+        return false;
       }
     },
     paranoid: true,
