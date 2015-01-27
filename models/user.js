@@ -139,7 +139,8 @@ module.exports = function (sequelize, DataTypes) {
         });
         User.afterValidate(function (user, options, done) {
           bcrypt.genSalt(8, function (salt) {
-            bcrypt.hash(user.password, salt, null, function (hash) {
+            bcrypt.hash(user.password, salt, null, function (err, hash) {
+              if (err) { return done(err); }
               user.password = hash;
               done(null, user);
             });

@@ -2,12 +2,13 @@ var express = require('express'),
   Router = express.Router,
   models = require('../models'),
   _ = require('lodash'),
-  islogged = require('../utils/middlewares/islogged');
+  islogged = require('../utils/middlewares/islogged'),
+  sendflash = require('../utils/middlewares/sendflash');
 
 module.exports = function (passport) {
   var routes = Router();
   
-  routes.get('/signin', function (req, res) {
+  routes.get('/signin', sendflash, function (req, res) {
     if (req.isAuthenticated()) {
       res.redirect('/account');
     } else {
@@ -16,7 +17,6 @@ module.exports = function (passport) {
       res.render('auth/signin', {
         title: 'Sign in',
         section: 'signin',
-        errorMessage: req.flash('error'),
         validate: validation[0] ? validation[0].errors : [],
         data: req.flash('data')[0] || {}
       });

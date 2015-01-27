@@ -38,7 +38,7 @@ function getPeriodFromName(period) {
   }
 }
 
-router.use(isactivated);
+router.all('*', isactivated);
 
 router.param('id', function (req, res, next, id) {
   var regex = /\d+/;
