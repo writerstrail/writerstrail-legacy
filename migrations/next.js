@@ -1,37 +1,47 @@
 "use strict";
 module.exports = {
   up: function (migration, DataTypes, done) {
-    migration.createTable('genres', {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      description: {
-        type: DataTypes.TEXT
-      },
-      ownerId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: 'users',
-        referencesKey: 'id',
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-      }
-    }, {
-      charset: 'utf8'
+    migration.addColumn('users', 'password', {
+      type: DataTypes.STRING,
+      allowNull: true
+    }).then(function () {
+      return migration.addColumn('users', 'verifyToken', {
+        type: DataTypes.STRING(40),
+        allowNull: true
+      });
+    }).then(function () {
+      return migration.createTable('genres', {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+        },
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        description: {
+          type: DataTypes.TEXT
+        },
+        ownerId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8'
+      });
     }).then(function () {
       return migration.addIndex('genres', ['name', 'ownerId'], {
         indexName: 'name',
@@ -370,6 +380,10 @@ module.exports = {
       return migration.dropTable('projects');
     }).then(function () {
       return migration.dropTable('genres');
+    }).then(function () {
+      return migration.removeColumn('users', 'verifyToken');
+    }).then(function () {
+      return migration.removeColumn('users', 'password');
     }).then(done);
   }
 };

@@ -4,21 +4,72 @@ block content
     .jumbotron.text-center
         h1= __('Sign in to Writer\'s Trail')
         p= __('Login or register with:')
-        a.btn.btn-xlarge.btn-facebook(href="/auth/facebook")
+        a.btn.btn-lg.btn-facebook(href="/auth/facebook")
             span.fa.fa-facebook.fa-fw
             span= __('Facebook')
         span &nbsp;
-        a.btn.btn-xlarge.btn-google-plus(href="/auth/google")
+        a.btn.btn-lg.btn-google-plus(href="/auth/google")
             span.fa.fa-google-plus.fa-fw
             span= __('Google')
         span &nbsp;
-        a.btn.btn-xlarge.btn-linkedin(href="/auth/linkedin")
+        a.btn.btn-lg.btn-linkedin(href="/auth/linkedin")
             span.fa.fa-linkedin.fa-fw
             span= __('LinkedIn')
         span &nbsp;
-        a.btn.btn-xlarge.btn-twitter(href="/auth/wordpress")
+        a.btn.btn-lg.btn-twitter(href="/auth/wordpress")
             span.fa.fa-wordpress.fa-fw
             span= __('Wordpress')
+        .row
+          .col-sm-6
+            h2 Existing account
+            form.form-horizontal(method='post' action='/auth/signin')
+              input(type='hidden' name='_csrf' value=csrf)
+              .form-group.form-group-lg
+                label.col-sm-3.control-label(for='email') Email
+                .col-sm-9
+                  input#email.form-control(type='email' name='email' placeholder='Email' autofocus=true required=true)
+              .form-group.form-group-lg
+                label.col-sm-3.control-label(for='password') Password
+                .col-sm-9
+                  input#password.form-control(type='password' name='password' placeholder='Password' required=true)
+              .form-group.form-group-lg
+                .col-sm-offset-3.col-sm-9
+                  button.btn.btn-success(type='submit' name='action' value='signin') Signin
+          .col-sm-6
+            h2 New account
+            form.form-horizontal(method='post' action='/auth/signup')
+              input(type='hidden' name='_csrf' value=csrf)
+              
+              - var nameErr = _.find(validate, { path: 'name' }) || ''
+              .form-group.form-group-lg(class=nameErr ? 'has-error' : '')
+                label.col-sm-3.control-label(for='name') Name
+                .col-sm-9
+                  input#name.form-control(type='text' name='name' placeholder='Name' required=false aria-describedby='namehelp' value=data.name)
+                  span#namehelp.help-block= nameErr ? nameErr.message : ''
+                  
+              - var emailErr = _.find(validate, { path: 'email' }) || ''
+              .form-group.form-group-lg(class=emailErr ? 'has-error' : '')
+                label.col-sm-3.control-label(for='email') Email
+                .col-sm-9
+                  input#email.form-control(type='text' name='email' placeholder='Email' required=false aria-describedby='emailhelp' value=data.email)
+                  span#emailhelp.help-block!= emailErr ? emailErr.message : ''
+                  
+              - var passErr = _.find(validate, { path: 'password' }) || ''
+              .form-group.form-group-lg(class=passErr ? 'has-error' : '')
+                label.col-sm-3.control-label(for='password') Password
+                .col-sm-9
+                  input#password.form-control(type='password' name='password' placeholder='Password' required=false aria-describedby='passwordhelp')
+                  span#passwordhelp.help-block= passErr ? passErr.message : ''
+                  
+              - var passConfErr = _.find(validate, { type: 'confirm' }) || ''
+              .form-group.form-group-lg(class=passConfErr ? 'has-error' : '')
+                label.col-sm-3.control-label(for='passwordConfirm') Confirm password
+                .col-sm-9
+                  input#passwordConfirm.form-control(type='password' name='passwordConfirm' placeholder='Confirm password' required=false aria-describedby='confirmhelp')
+                  span#confirmhelp.help-block= passConfErr ? passConfErr.message : ''
+              .form-group.form-group-lg
+                .col-sm-offset-3.col-sm-9
+                  button.btn.btn-primary(type='submit' name='action' value='signup') Signup
 
 append styles
     link(rel='stylesheet', href='/stylesheets/social-buttons.css')
