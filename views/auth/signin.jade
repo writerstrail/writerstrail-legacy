@@ -50,28 +50,28 @@ block content
               .form-group.form-group-lg(class=nameErr ? 'has-error' : '')
                 label.col-sm-3.control-label(for='name') Name
                 .col-sm-9
-                  input#name.form-control(type='text' name='name' placeholder='Name' required=false aria-describedby='namehelp' value=data.name)
+                  input#name.form-control(type='text' name='name' placeholder='Name' required=true aria-describedby='namehelp' value=data.name)
                   span#namehelp.help-block= nameErr ? nameErr.message : ''
                   
               - var emailErr = _.find(validate, { path: 'email' }) || ''
               .form-group.form-group-lg(class=emailErr ? 'has-error' : '')
                 label.col-sm-3.control-label(for='email') Email
                 .col-sm-9
-                  input#email.form-control(type='text' name='email' placeholder='Email' required=false aria-describedby='emailhelp' value=data.email)
+                  input#email.form-control(type='email' name='email' placeholder='Email' required=true aria-describedby='emailhelp' value=data.email)
                   span#emailhelp.help-block!= emailErr ? emailErr.message : ''
                   
               - var passErr = _.find(validate, { path: 'password' }) || ''
               .form-group.form-group-lg(class=passErr ? 'has-error' : '')
                 label.col-sm-3.control-label(for='password') Password
                 .col-sm-9
-                  input#password.form-control(type='password' name='password' placeholder='Password' required=false aria-describedby='passwordhelp')
+                  input#password.form-control(type='password' name='password' placeholder='Password' required=true aria-describedby='passwordhelp')
                   span#passwordhelp.help-block= passErr ? passErr.message : ''
                   
               - var passConfErr = _.find(validate, { type: 'confirm' }) || ''
               .form-group.form-group-lg(class=passConfErr ? 'has-error' : '')
                 label.col-sm-3.control-label(for='passwordConfirm') Confirm password
                 .col-sm-9
-                  input#passwordConfirm.form-control(type='password' name='passwordConfirm' placeholder='Confirm password' required=false aria-describedby='confirmhelp')
+                  input#passwordConfirm.form-control(type='password' name='passwordConfirm' placeholder='Confirm password' required=true aria-describedby='confirmhelp')
                   span#confirmhelp.help-block= passConfErr ? passConfErr.message : ''
               .form-group.form-group-lg
                 .col-sm-offset-3.col-sm-9

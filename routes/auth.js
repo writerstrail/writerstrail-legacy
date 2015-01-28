@@ -2,6 +2,8 @@ var express = require('express'),
   Router = express.Router,
   models = require('../models'),
   _ = require('lodash'),
+  promise = require('sequelize').Promise,
+  moment = require('moment'),
   islogged = require('../utils/middlewares/islogged'),
   sendflash = require('../utils/middlewares/sendflash'),
   sendverify = require('../utils/functions/sendverify'),
@@ -183,21 +185,42 @@ module.exports = function (passport) {
   });
   
   routes.get('/account/verify/:token', islogged, function (req, res) {
-    if (req.user.verifyToken === req.params.token && req.query.email === req.user.email) {
-      req.user.verifyToken = null;
+    models.Token.findOne({
+      where: {
+        ownerId: req.user.id,
+        token: {
+          like: req.params.token
+        },
+        type: 'email'
+      }
+    }).then(function (token) {
+      if (!token) {
+        return promise.reject('Invalid token');
+      }
+      if (moment(token.expire).isBefore(moment())) {
+        token.destroy();
+        return promise.reject('Invalid token');
+      }
+      if (token.data !== req.query.email) {
+        return promise.reject('Invalid token');
+      }
+      return token.destroy();
+    }).then(function () {
       req.user.verified = true;
-      req.user.verifiedEmail = req.user.email;
-      req.user.save().then(function () {
-        req.flash('success', 'Your email address is now confirmed.');
-      }).catch(function () {
+      req.user.verifiedEmail = req.query.email;
+      return req.user.save();
+    }).then(function () {
+      req.flash('success', 'Your email address is now confirmed.');
+    }).catch(function (err) {
+      console.log('----err', err);
+      if (err !== 'Invalid token') {
         req.flash('error', 'There was an error while trying to verify your email. Try again later.');
-      }).finally(function () {
-        res.redirect('/account');
-      });
-    } else {
-      req.flash('error', 'Invalid request');
+      } else {
+        req.flash('error', 'Invalid request');
+      }
+    }).finally(function () {
       res.redirect('/account');
-    }
+    });
   });
 
  // AUTH ROUTES

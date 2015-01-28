@@ -52,10 +52,6 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: false,
       allowNull: false
     },
-    verifyToken: {
-      type: DataTypes.STRING(40),
-      allowNull: true
-    },
     role: {
       type: DataTypes.ENUM,
       values: ['user', 'moderator', 'admin', 'superadmin'],
@@ -140,6 +136,10 @@ module.exports = function (sequelize, DataTypes) {
         User.hasOne(models.Settings, {
           as: 'settings',
           foreignKey: 'id'
+        });
+        User.hasMany(models.Token, {
+          as: 'tokens',
+          foreignKey: 'ownerId'
         });
         User.afterValidate(function (user, options, done) {
           if (!user.password) {
