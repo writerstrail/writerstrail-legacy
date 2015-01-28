@@ -191,6 +191,7 @@ module.exports = function passportConfig(passport) {
             user.set('lastAccess', new Date());
             user.save().complete(function (err) {
               if (err) { return done(err); }
+              req.flash('success', 'Your Facebook account was successfully associated');
               return done(null, user);
             });
           } else {
@@ -207,7 +208,6 @@ module.exports = function passportConfig(passport) {
           newUser.set("email", profile.emails[0].value);
           newUser.set("facebookEmail", profile.emails[0].value);
           newUser.set("verified", true);
-          newUser.set("verifiedEmail", profile.emails[0].value);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -235,8 +235,13 @@ module.exports = function passportConfig(passport) {
           user.set("facebookName", profile.name.givenName + ' ' + profile.name.familyName);
           user.set("facebookEmail", profile.emails[0].value);
           
+          if (user.email === profile.emails[0].value) {
+            user.set("verified", true);
+          }
+          
           user.save().complete(function (err) {
             if (err) { return done(err); }
+            req.flash('success', 'Your Facebook account was successfully associated');
             return done(null, user);
           });
         } else {
@@ -275,6 +280,7 @@ module.exports = function passportConfig(passport) {
             
             user.save().complete(function (err) {
               if (err) { return done(err); }
+              req.flash('success', 'Your Google account was successfully associated');
               return done(null, user);
             });
           } else {
@@ -291,7 +297,6 @@ module.exports = function passportConfig(passport) {
           newUser.set("email", profile.emails[0].value);
           newUser.set("googleEmail", profile.emails[0].value);
           newUser.set("verified", true);
-          newUser.set("verifiedEmail", profile.emails[0].value);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -319,8 +324,13 @@ module.exports = function passportConfig(passport) {
           user.set("googleName", profile.displayName);
           user.set("googleEmail", profile.emails[0].value);
           
+          if (user.email === profile.emails[0].value) {
+            user.set("verified", true);
+          }
+          
           user.save().complete(function (err) {
             if (err) { return done(err); }
+            req.flash('success', 'Your Google account was successfully associated');
             return done(null, user);
           });
         } else {
@@ -360,6 +370,7 @@ module.exports = function passportConfig(passport) {
             
             user.save().complete(function (err) {
               if (err) { return done(err); }
+              req.flash('success', 'Your LinkedIn account was successfully associated');
               return done(null, user);
             });
           } else {
@@ -376,7 +387,6 @@ module.exports = function passportConfig(passport) {
           newUser.set("email", profile.emails[0].value);
           newUser.set("linkedinEmail", profile.emails[0].value);
           newUser.set("verified", true);
-          newUser.set("verifiedEmail", profile.emails[0].value);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -404,8 +414,13 @@ module.exports = function passportConfig(passport) {
           user.set("linkedinName", profile.name.givenName + ' ' + profile.name.familyName);
           user.set("linkedinEmail", profile.emails[0].value);
           
+          if (user.email === profile.emails[0].value) {
+            user.set("verified", true);
+          }
+          
           user.save().complete(function (err) {
             if (err) { return done(err); }
+            req.flash('success', 'Your LinkedIn account was successfully associated');
             return done(null, user);
           });
         } else {
@@ -444,6 +459,7 @@ module.exports = function passportConfig(passport) {
             
             user.save().complete(function (err) {
               if (err) { return done(err); }
+              req.flash('success', 'Your Wordpress account was successfully associated');
               return done(null, user);
             });
           } else {
@@ -460,7 +476,6 @@ module.exports = function passportConfig(passport) {
           newUser.set("name", profile._json.display_name);
           newUser.set("email", profile._json.email);
           newUser.set("verified", true);
-          newUser.set("verifiedEmail", profile._json.email);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -488,8 +503,13 @@ module.exports = function passportConfig(passport) {
           user.set("wordpressName", profile._json.display_name);
           user.set("wordpressEmail", profile._json.email);
           
+          if (user.email === profile._json.email) {
+            user.set("verified", true);
+          }
+          
           user.save().complete(function (err) {
             if (err) { return done(err); }
+            req.flash('success', 'Your Wordpress account was successfully associated');
             return done(null, user);
           });
         } else {

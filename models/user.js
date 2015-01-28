@@ -142,6 +142,9 @@ module.exports = function (sequelize, DataTypes) {
           foreignKey: 'id'
         });
         User.afterValidate(function (user, options, done) {
+          if (!user.password) {
+            return done(null, user);
+          }
           bcrypt.genSalt(8, function (salt) {
             bcrypt.hash(user.password, salt, null, function (err, hash) {
               if (err) { return done(err); }

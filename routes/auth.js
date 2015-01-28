@@ -4,7 +4,9 @@ var express = require('express'),
   _ = require('lodash'),
   islogged = require('../utils/middlewares/islogged'),
   sendflash = require('../utils/middlewares/sendflash'),
-  sendverify = require('../utils/functions/sendverify');
+  sendverify = require('../utils/functions/sendverify'),
+  ValidationError = require('sequelize').ValidationError,
+  ValidationErrorItem = require('sequelize').ValidationErrorItem;
 
 module.exports = function (passport) {
   var routes = Router();
@@ -48,22 +50,56 @@ module.exports = function (passport) {
   routes.post('/account', islogged, function (req, res, next) {
     req.user.name = req.body.name || '';
     var validemails = _.uniq(_.compact([
-      req.user.email,
       req.user.facebookEmail,
       req.user.googleEmail,
       req.user.linkedinEmail,
       req.user.wordpressEmail,
       req.user.verifiedEmail
     ]));
-    req.user.email = req.body.email;
-    if (!_.contains(validemails, req.body.email)) {
-      req.user.verified = false;
-    } else {
-      req.user.verified = true;
+    var emailChanged = false;
+    if (req.user.email !== req.body.email) {
+      emailChanged = true;
+      req.user.email = req.body.email;
+      if (!_.contains(validemails, req.body.email)) {
+        req.user.verified = false;
+      } else {
+        req.user.verified = true;
+      }
+    }
+    if (req.body.newpassword) {
+      var err = null;
+      if (req.user.password) {
+        if (!req.user.validPassword(req.body.oldpassword)) {
+          err = new ValidationError('Validation error', [
+            new ValidationErrorItem('The old password does not match', 'oldpassword', 'oldpassword', '')
+          ]);
+        }
+      } else {
+        if (req.body.oldpassword) {
+          err = new ValidationError('Validation error', [
+            new ValidationErrorItem('The old password does not match', 'oldpassword', 'oldpassword', '')
+          ]);
+        }
+      }
+      
+      if (!err && req.body.newpassword !== req.body.confirmpassword) {
+        err = new ValidationError('Validation error', [
+          new ValidationErrorItem('The new password does not match the confirmation', 'confirm', 'password', '')
+        ]);
+      }
+      
+      if (err) {
+        req.flash('error', 'There are invalid values');
+        req.flash('valerror', err);
+        req.flash('data', { name: req.body.name, email: req.body.email });
+        return res.redirect('back');
+      } else {
+        req.user.password = req.body.newpassword;
+      }
     }
     req.user.save().then(function (user) {
       req.flash('success', res.__('Account sucessfully updated'));
-      if (!user.verified) {
+      if (emailChanged && !user.verified) {
         sendverify(req.user, function (err) {
           if (err) {
             req.flash('error', 'There was an error while trying to send your email. Try again later.');
@@ -132,13 +168,17 @@ module.exports = function (passport) {
   });
   
   routes.get('/account/verify/resend', islogged, function (req, res) {
+    if (req.user.verified) {
+      req.flash('error', 'Your email address is already verified');
+      return res.redirect('/account');
+    }
     sendverify(req.user, function (err) {
       if (err) {
         req.flash('error', 'There was an error while trying to send your email. Try again later.');
       } else {
         req.flash('success', 'Your confirmation message was sent. Check your email inbox.');
       }
-      res.redirect('back');
+      res.redirect('/account');
     });
   });
   
