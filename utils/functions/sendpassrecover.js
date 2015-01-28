@@ -1,4 +1,4 @@
-// Send verify email to user
+// Send link to recover password
 
 var sendgrid = require('./getsendgrid'),
   moment = require('moment'),
@@ -6,20 +6,17 @@ var sendgrid = require('./getsendgrid'),
   randomstring = require('randomstring'),
   config = require('../../config/config')[process.env.NODE_ENV || 'development'];
 
-module.exports = function sendverify(user, done) {
-  // Do not let verified user waste email
-  if (user.verified) { return done (null, true); }
-  
+module.exports = function sendpassrecover(user, usedemail, done) {
   var string = randomstring.generate(40);
   
-  var link = config.baseurl + '/account/verify/' + string + '?email=' + user.email,
+  var link = config.baseurl + '/password/recover/' + string + '?email=' + usedemail,
     email = new sendgrid.Email({
-      to: user.email,
+      to: usedemail,
       toname: user.name,
       from: 'writerstrail@georgemarques.com.br',
       fromname: "Writer's Trail",
-      subject: 'Verify your email for Writer\'s Trail',
-      html: '<a href="' + link + '">Click here to verify your email</a>. Or follow the link: ' + link,
+      subject: 'Recover your password for Writer\'s Trail',
+      html: '<a href="' + link + '">Click here to recover your password</a>. Or follow the link: ' + link,
       smtpapi: new sendgrid.smtpapi({
         filters: {
           templates: {
@@ -35,20 +32,18 @@ module.exports = function sendverify(user, done) {
   models.Token.destroy({
     where: {
       ownerId: user.id,
-      type: 'email'
+      type: 'password'
     }
-  }).then(function (){
+  }).then(function () {
     return models.Token.create({
-      token: string,
       ownerId: user.id,
-      type: 'email',
-      data: user.email,
-      expire: moment().add(48, 'hours').toDate()
+      type: 'password',
+      expire: moment().add(48, 'hours').toDate(),
+      token: string,
+      data: usedemail
     });
   }).then(function () {
-    return user.save();
-  }).then(function ()  {
-    sendgrid.send(email, done);             
+    sendgrid.send(email, done);
   }).catch(function (err) {
     done(err);
   });

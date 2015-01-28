@@ -7,6 +7,7 @@ var express = require('express'),
   islogged = require('../utils/middlewares/islogged'),
   sendflash = require('../utils/middlewares/sendflash'),
   sendverify = require('../utils/functions/sendverify'),
+  sendpassrecover = require('../utils/functions/sendpassrecover'),
   ValidationError = require('sequelize').ValidationError,
   ValidationErrorItem = require('sequelize').ValidationErrorItem;
 
@@ -212,7 +213,6 @@ module.exports = function (passport) {
     }).then(function () {
       req.flash('success', 'Your email address is now confirmed.');
     }).catch(function (err) {
-      console.log('----err', err);
       if (err !== 'Invalid token') {
         req.flash('error', 'There was an error while trying to verify your email. Try again later.');
       } else {
@@ -220,6 +220,138 @@ module.exports = function (passport) {
       }
     }).finally(function () {
       res.redirect('/account');
+    });
+  });
+  
+  routes.get('/password/recover', function (req, res) {
+    res.render('auth/recover', {
+      title: 'Recover password'
+    });
+  });
+  
+  routes.post('/password/recover', function (req, res) {
+    models.User.findOne({
+      where: models.Sequelize.or(
+        { email: { like: req.body.email } },
+        { verifiedEmail: { like: req.body.email } }
+      )
+    }).then(function (user) {
+      if (!user) {
+        req.flash('There was an error while trying to send your email. Try again later.');
+        return res.redirect('/signin');
+      }
+      sendpassrecover(user, req.body.email, function (err) {
+        if (err) {
+          req.flash('error', 'There was an error while trying to send your email. Try again later.');
+        } else {
+          req.flash('success', 'Your recovery was sent. Check your email inbox.');
+        }
+        res.redirect('/signin');
+      });
+    }).catch(function (err) {
+      req.flash('error', 'There was an unknown error. Try again later.');
+      res.redirect('/signin');
+    });
+  });
+  
+  routes.get('/password/recover/:token', function (req, res) {
+    models.Token.findOne({
+      where: {
+        type: 'password',
+        token: { like: req.params.token },
+        data: { like: req.query.email }
+      }
+    }).then(function (token) {
+      if (!token) {
+        return promise.reject('No token');
+      }
+      if (moment().isAfter(moment(token.expire))) {
+        token.destroy();
+        return promise.reject('Expired token');
+      }
+      return models.User.findOne({
+        where: {
+          id: token.ownerId
+        }
+      });
+    }).then(function (user) {
+      if (!user) {
+        return promise.reject('No user');
+      }
+      res.render('auth/newpassword', {
+        title: 'Change password',
+        user: user,
+        usedemail: req.query.email
+      });
+    }).catch(function (err) {
+      req.flash('error', 'Invalid request');
+      res.redirect('/signin');
+    });
+  });
+  
+  routes.post('/password/recover/:token', function (req, res) {
+    var savedToken = null,
+      savedUser = null;
+    
+    models.Token.findOne({
+      where: {
+        type: 'password',
+        token: { like: req.params.token },
+        data: { like: req.query.email }
+      }
+    }).then(function (token) {
+      if (!token) {
+        return promise.reject('No token');
+      }
+      if (moment().isAfter(moment(token.expire))) {
+        token.destroy();
+        return promise.reject('Expired token');
+      }
+      
+      savedToken = token;
+      
+      return models.User.findOne({
+        where: {
+          id: token.ownerId
+        }
+      });
+    }).then(function (user) {
+      if (!user) {
+        return promise.reject('No user');
+      }
+      savedUser = user;
+      var err = null;
+      if (!req.body.password) {
+        err = new ValidationError('Validation error', [
+          new ValidationErrorItem('You must provide a new password', 'blank', 'password', '')
+        ]);
+        return promise.reject(err);
+      }
+      if (req.body.password !== req.body.confirmpassword) {
+        err = new ValidationError('Validation error', [
+          new ValidationErrorItem('The typed passwords don\'t match', 'confirm', 'password', '')
+        ]);
+        return promise.reject(err);
+      }
+      
+      user.password = req.body.password;
+      return user.save();
+    }).then(function () {
+      req.flash('success', 'Password successfully changed');
+      return savedToken.destroy();
+    }).then(function () {
+      res.redirect('/signin');
+    }).catch(function (err) {
+      if (err.name === 'SequelizeValidationError') {
+        res.render('auth/newpassword', {
+          title: 'Change password',
+          user: savedUser,
+          usedemail: req.query.email,
+          validate: err.errors
+        });
+      }
+      req.flash('error', 'Invalid request');
+      res.redirect('/signin');
     });
   });
 
