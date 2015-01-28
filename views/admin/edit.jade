@@ -52,20 +52,20 @@ block content
             .form-group
                 label.col-sm-2.control-label= __('Member since')
                 .col-sm-10
-                    p.form-control-static= moment(u.createdAt).format('YYYY/MM/DD HH:mm')
-                        input(type='hidden' value=+moment(u.createdAt) name='createdAt')
+                    p.form-control-static= moment.utc(u.createdAt).format('YYYY/MM/DD HH:mm')
+                        input(type='hidden' value=+moment.utc(u.createdAt) name='createdAt')
             .form-group
                 label.col-sm-2.control-label= __('Last access')
                 .col-sm-10
-                    p.form-control-static= moment(u.lastAccess).format('YYYY/MM/DD HH:mm')
+                    p.form-control-static= moment.utc(u.lastAccess).format('YYYY/MM/DD HH:mm')
             .form-group
                 label.col-sm-2.control-label= __('Last update')
                 .col-sm-10
-                    p.form-control-static= moment(u.updatedAt).format('YYYY/MM/DD HH:mm')
+                    p.form-control-static= moment.utc(u.updatedAt).format('YYYY/MM/DD HH:mm')
             .form-group
                 label.col-sm-2.control-label= __('Deleted at')
                 .col-sm-10
-                    p.form-control-static= u.deletedAt ? moment(u.deletedAt).format('YYYY/MM/DD HH:mm') : __('Never')
+                    p.form-control-static= u.deletedAt ? moment.utc(u.deletedAt).format('YYYY/MM/DD HH:mm') : __('Never')
             +socialInputs('facebookId', __('Facebook Id'))
             +socialInputs('facebookName', __('Facebook Name'))
             +socialInputs('facebookEmail', __('Facebook Email'))

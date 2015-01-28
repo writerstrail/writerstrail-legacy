@@ -1,0 +1,7 @@
+{
+  "node" : true,
+  "camelcase": true,
+  "indent": 2,
+  "unused": true,
+  "undef": true
+}

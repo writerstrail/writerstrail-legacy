@@ -32,27 +32,49 @@ block content
                 form.form-horizontal(method="post")
                     input(type="hidden", name="_csrf", value=csrf)
                     .form-group
-                        label.col-sm-1.control-label(for="id")= __('Id')
-                        .col-sm-11
+                        label.col-sm-2.control-label(for="id")= __('Id')
+                        .col-sm-10
                             p#id.form-control-static= user.id
+                            
+                    - var nameErr = _.find(validate, { path: 'name' }) || ''
+                    .form-group(class=nameErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="name")= __('Name')
+                        .col-sm-10
+                            input#name.form-control(value=data.name || user.name, name="name", placeholder=__("Name"), autofocus=user.activated aria-describedby='namehelp')
+                            span#namehelp.help-block!= nameErr ? nameErr.message : ''
+                    
+                    - var emailErr = _.find(validate, { path: 'email' }) || ''
+                    .form-group(class=emailErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="email")= __('Email')
+                        .col-sm-10
+                            input#name.form-control(type='email' value=data.email || user.email, name="email", placeholder=__("Email"))
+                            span#namehelp.help-block!= emailErr ? emailErr.message : (user.verified ? '<i class="fa fa-check"></i> Your email address is already verified' : 'Your email address is still not verified. <a href="/account/verify/resend">Resend confirmation message.</a>')
+                            
+                    h4.col-sm-10.col-sm-offset-2 Change password
+                            
+                    - var oldpassErr = _.find(validate, { path: 'oldpassword' }) || ''
+                    .form-group(class=oldpassErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="oldpassword")= __('Old password')
+                        .col-sm-10
+                            input#oldpassword.form-control(type='password' name="oldpassword", placeholder=__("Old password (leave blank if none)"), autofocus=user.activated aria-describedby='oldpasswordhelp')
+                            span#oldpasswordhelp.help-block!= oldpassErr ? oldpassErr.message : ''
+                    
+                    - var passErr = _.find(validate, { path: 'password' }) || ''
+                    .form-group(class=passErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="newpassword")= __('New password')
+                        .col-sm-10
+                            input#newpassword.form-control(type='password' name="newpassword", placeholder=__("New password"), autofocus=user.activated aria-describedby='newpasswordhelp')
+                            span#newpasswordhelp.help-block!= passErr ? passErr.message : ''
+                            
+                    - var confirmErr = _.find(validate, { type: 'confirm' }) || ''
+                    .form-group(class=confirmErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="confirmpassword")= __('Confirm password')
+                        .col-sm-10
+                            input#confirmpassword.form-control(type='password' name="confirmpassword", placeholder=__("Confirm password"), autofocus=user.activated aria-describedby='confirmpasswordhelp')
+                            span#confirmpasswordhelp.help-block!= confirmErr ? confirmErr.message : ''
+                            
                     .form-group
-                        label.col-sm-1.control-label(for="name")= __('Name')
-                        .col-sm-11
-                            input#name.form-control(value=user.name, name="name", placeholder=__("Name"), autofocus=user.activated)
-                    - if(emails.length == 1)
-                        .form-group
-                            label.col-sm-1.control-label(for="email")= __('Email')
-                            .col-sm-11
-                                p#email.form-control-static= user.email
-                    - else
-                        .form-group
-                            label.col-sm-1.control-label(for="email")= __('Email')
-                            .col-sm-11
-                                select#email.form-control(name='email')
-                                    each m in emails
-                                        option(value=m)= m
-                    .form-group
-                        .col-sm-11.col-sm-offset-1
+                        .col-sm-10.col-sm-offset-2
                             button.btn.btn-primary(type="submit")= __('Update')
     .row
         .col-sm-3

@@ -1,0 +1,90 @@
+extends ../../layout
+
+block content
+  h1= title
+    | &nbsp;
+    
+    | &nbsp;
+    
+      
+  .btn-group(role='toolbar')
+    a.btn.btn-lg.btn-default(href='/projects/active' title='List of active projects' role='button')
+      span.fa.fa-dashboard.fa-lg
+    a.btn.btn-lg.btn-default(href='/projects' title='List of all projects' role='button')
+      span.fa.fa-files-o.fa-lg
+    a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit this project' role='button')
+      span.fa.fa-edit.fa-lg
+    a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + project.id title='New session' role='button')
+      span.fa.fa-clock-o.fa-lg
+    a.btn.btn-lg.btn-default(href='/sessions?projectid=' + project.id title='All sessions for this project' role='button')
+      span.fa.fa-list-alt.fa-lg
+  p &nbsp;
+  
+  if project.targetwc > 0
+    .row
+      .col-sm-12
+        - var percentage = Math.min(100, Math.max(0, Math.floor((project.currentWordcount / project.targetwc) * 100)))
+        .progress(title=project.currentWordcount + '/' + project.targetwc)
+          - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
+          .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%;' class='progress-bar-' + barClass)
+            = percentage + '%'
+
+  .row
+    .col-sm-2.text-right
+      strong Name:
+    .col-sm-10
+      = project.name
+  .row
+    .col-sm-2.text-right
+      strong Description:
+    .col-sm-10
+      - var descPieces = project.description.split(/(?:\r\n|\r|\n)/g)
+      for desc, i in descPieces
+        if i > 0
+          br
+        = desc
+  .row
+    .col-sm-2.text-right
+      strong Wordcount/Target:
+    .col-sm-10
+      = project.currentWordcount + '/' + project.targetwc
+  .row
+    .col-sm-2.text-right
+      strong Starting wordcount:
+    .col-sm-10
+      = project.wordcount
+  
+  .row
+    .col-sm-2.text-right
+      strong Genres:
+    .col-sm-10
+      for genre, i in project.genres
+        if i > 0
+          | ,&nbsp;
+        a(href='/genres/' + genre.id title=genre.name)= genre.name
+      
+  .row
+    .col-sm-2.text-right
+      strong Included in targets:
+    .col-sm-10
+      for target, i in project.targets
+        if i > 0
+          | ,&nbsp;
+        a(href='/targets/' + target.id title=target.name)= target.name
+  
+  .row
+    .col-sm-2.text-right
+      strong Is active:
+    .col-sm-10
+      = project.active ? 'Yes' : 'No'
+      
+  .row
+    .col-sm-2.text-right
+      strong Is finished:
+    .col-sm-10
+      = project.finished ? 'Yes' : 'No'
+  .row
+    .col-sm-2.text-right
+      strong Created at:
+    .col-sm-10
+      = moment.utc(project.createdAt).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
