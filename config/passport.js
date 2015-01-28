@@ -91,7 +91,6 @@ module.exports = function passportConfig(passport) {
             }
           });
         }
-
       });
     } else {
       models.User.find({

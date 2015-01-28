@@ -35,22 +35,21 @@ block content
                         label.col-sm-1.control-label(for="id")= __('Id')
                         .col-sm-11
                             p#id.form-control-static= user.id
-                    .form-group
+                            
+                    - var nameErr = _.find(validate, { path: 'name' }) || ''
+                    .form-group(class=nameErr ? 'has-error' : '')
                         label.col-sm-1.control-label(for="name")= __('Name')
                         .col-sm-11
-                            input#name.form-control(value=user.name, name="name", placeholder=__("Name"), autofocus=user.activated)
-                    - if(emails.length == 1)
-                        .form-group
-                            label.col-sm-1.control-label(for="email")= __('Email')
-                            .col-sm-11
-                                p#email.form-control-static= user.email
-                    - else
-                        .form-group
-                            label.col-sm-1.control-label(for="email")= __('Email')
-                            .col-sm-11
-                                select#email.form-control(name='email')
-                                    each m in emails
-                                        option(value=m)= m
+                            input#name.form-control(value=data.name || user.name, name="name", placeholder=__("Name"), autofocus=user.activated aria-describedby='namehelp')
+                            span#namehelp.help-block!= nameErr ? nameErr.message : ''
+                    
+                    - var emailErr = _.find(validate, { path: 'email' }) || ''
+                    .form-group(class=emailErr ? 'has-error' : '')
+                        label.col-sm-1.control-label(for="email")= __('Email')
+                        .col-sm-11
+                            input#name.form-control(value=data.email || user.email, name="email", placeholder=__("Email"))
+                            span#namehelp.help-block!= emailErr ? emailErr.message : (user.verified ? '' : 'Your email is still not verified. <a href="/account/verify/resend">Resend confirmation message.</a>')
+                            
                     .form-group
                         .col-sm-11.col-sm-offset-1
                             button.btn.btn-primary(type="submit")= __('Update')

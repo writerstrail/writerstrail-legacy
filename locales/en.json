@@ -228,5 +228,6 @@
 	"The start date must be valid": "The start date must be valid",
 	"The end date must be valid": "The end date must be valid",
 	"Dashboard": "Dashboard",
-	"The summary page": "The summary page"
+	"The summary page": "The summary page",
+	"This Wordpress account is associated with another user": "This Wordpress account is associated with another user"
 }

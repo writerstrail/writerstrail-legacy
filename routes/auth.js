@@ -28,7 +28,8 @@ module.exports = function (passport) {
     res.redirect('/');
   });
   
-  routes.get('/account', islogged, function (req, res) {
+  routes.get('/account', islogged, sendflash, function (req, res) {
+    var validate = req.flash('valerror');
     res.render('user/account', {
       title: 'Account',
       section: 'account',
@@ -39,31 +40,36 @@ module.exports = function (passport) {
         req.user.linkedinEmail,
         req.user.wordpressEmail
       ])),
-      successMessage: req.flash('success'),
-      errorMessage: req.flash('error')
+      validate: validate[0] ? validate[0].errors : [],
+      data: req.flash('data')[0] || {}
     });
   });
   
   routes.post('/account', islogged, function (req, res, next) {
-    if (req.body.name) {
-      req.user.name = req.body.name;
-      var validemails = _.uniq(_.compact([
-        req.user.email,
-        req.user.facebookEmail,
-        req.user.googleEmail,
-        req.user.linkedinEmail,
-        req.user.wordpressEmail
-      ]));
-      if (_.contains(validemails, req.body.email)) {
-        req.user.email = req.body.email;
-      }
-      req.user.save().then(function () {
-        req.flash('success', res.__('Account sucessfully updated'));
-        return res.redirect('/account');
-      }).catch(function (err) {
-        return next(err);
-      });
+    req.user.name = req.body.name || '';
+    var validemails = _.uniq(_.compact([
+      req.user.email,
+      req.user.facebookEmail,
+      req.user.googleEmail,
+      req.user.linkedinEmail,
+      req.user.wordpressEmail
+    ]));
+    if (!_.contains(validemails, req.body.email)) {
+      req.user.email = req.body.email;
+      req.user.verified = false;
     }
+    req.user.save().then(function () {
+      req.flash('success', res.__('Account sucessfully updated'));
+      return res.redirect('/account');
+    }).catch(function (err) {
+      if (err.name === 'SequelizeValidationError') {
+        req.flash('error', 'There are invalid values');
+        req.flash('valerror', err);
+        req.flash('data', { name: req.body.name, email: req.body.email });
+        return res.redirect('back');
+      }
+      return next(err);
+    });
   });
   
   routes.post('/account/delete', islogged, function (req, res) {
