@@ -108,7 +108,6 @@ router.post('/targets/new', function (req, res, next) {
     if (req.body.create) { return res.redirect('/targets/' + savedTarget.id); }
     res.redirect('/targets/new');
   }).catch(function (err) {
-    console.log('----err', err);
     if (err.message !== 'Validation error') { return next(err); }
     models.Project.findAll({
       where: {

@@ -1,37 +1,47 @@
 "use strict";
 module.exports = {
   up: function (migration, DataTypes, done) {
-    migration.createTable('genres', {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-      },
-      name: {
+    migration.addColumn('users', 'password', {
+      type: DataTypes.STRING,
+      allowNull: true
+    }).then(function () {
+      return migration.addColumn('users', 'verifiedEmail', {
         type: DataTypes.STRING,
-        allowNull: false
-      },
-      description: {
-        type: DataTypes.TEXT
-      },
-      ownerId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: 'users',
-        referencesKey: 'id',
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-      }
-    }, {
-      charset: 'utf8'
+        comment: 'Last email that was verified'
+      });
+    }).then(function () {
+      return migration.createTable('genres', {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+        },
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        description: {
+          type: DataTypes.TEXT
+        },
+        ownerId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8'
+      });
     }).then(function () {
       return migration.addIndex('genres', ['name', 'ownerId'], {
         indexName: 'name',
@@ -354,11 +364,54 @@ module.exports = {
         charset: 'utf8',
         collate: 'utf8_bin'
       });
+    }).then(function () {
+      return migration.createTable('tokens', {
+        token: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          primaryKey: true
+        },
+        expire: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        data: {
+          type: DataTypes.STRING,
+          allowNull: true
+        },
+        type: {
+          type: DataTypes.ENUM,
+          values: ['password', 'email'],
+          allowNull: false,
+          defaultValue: 'email'
+        },
+        ownerId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8',
+        collate: 'utf8_bin'
+      });
     }).then(done);
   },
 
   down: function (migration, DataTypes, done) {
-    migration.dropTable('settings').then(function () {
+    migration.dropTable('tokens').then(function () {
+      return migration.dropTable('settings');
+    }).then(function () {
       return migration.dropTable('projectsTargets');
     }).then(function () {
       return migration.dropTable('targets');
@@ -370,6 +423,10 @@ module.exports = {
       return migration.dropTable('projects');
     }).then(function () {
       return migration.dropTable('genres');
+    }).then(function () {
+      return migration.removeColumn('users', 'verifiedEmail');
+    }).then(function () {
+      return migration.removeColumn('users', 'password');
     }).then(done);
   }
 };

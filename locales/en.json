@@ -228,5 +228,10 @@
 	"The start date must be valid": "The start date must be valid",
 	"The end date must be valid": "The end date must be valid",
 	"Dashboard": "Dashboard",
-	"The summary page": "The summary page"
+	"The summary page": "The summary page",
+	"This Wordpress account is associated with another user": "This Wordpress account is associated with another user",
+	"Old password": "Old password",
+	"Old password (leave blank if none)": "Old password (leave blank if none)",
+	"New password": "New password",
+	"Confirm password": "Confirm password"
 }

@@ -2,18 +2,28 @@ var express = require('express'),
   Router = express.Router,
   models = require('../models'),
   _ = require('lodash'),
-  isLogged = require('../utils/middlewares/islogged');
+  promise = require('sequelize').Promise,
+  moment = require('moment'),
+  islogged = require('../utils/middlewares/islogged'),
+  sendflash = require('../utils/middlewares/sendflash'),
+  sendverify = require('../utils/functions/sendverify'),
+  sendpassrecover = require('../utils/functions/sendpassrecover'),
+  ValidationError = require('sequelize').ValidationError,
+  ValidationErrorItem = require('sequelize').ValidationErrorItem;
 
 module.exports = function (passport) {
   var routes = Router();
   
-  routes.get('/signin', function (req, res) {
+  routes.get('/signin', sendflash, function (req, res) {
     if (req.isAuthenticated()) {
       res.redirect('/account');
     } else {
+      var validation = req.flash('valerror');
       res.render('auth/signin', {
         title: 'Sign in',
-        section: 'signin'
+        section: 'signin',
+        validate: validation[0] ? validation[0].errors : [],
+        data: req.flash('data')[0] || {}
       });
     }
   });
@@ -23,7 +33,8 @@ module.exports = function (passport) {
     res.redirect('/');
   });
   
-  routes.get('/account', isLogged, function (req, res) {
+  routes.get('/account', islogged, sendflash, function (req, res) {
+    var validate = req.flash('valerror');
     res.render('user/account', {
       title: 'Account',
       section: 'account',
@@ -34,40 +45,93 @@ module.exports = function (passport) {
         req.user.linkedinEmail,
         req.user.wordpressEmail
       ])),
-      successMessage: req.flash('success'),
-      errorMessage: req.flash('error')
+      validate: validate[0] ? validate[0].errors : [],
+      data: req.flash('data')[0] || {}
     });
   });
   
-  routes.post('/account', isLogged, function (req, res, next) {
-    if (req.body.name) {
-      req.user.name = req.body.name;
-      var validemails = _.uniq(_.compact([
-        req.user.email,
-        req.user.facebookEmail,
-        req.user.googleEmail,
-        req.user.linkedinEmail,
-        req.user.wordpressEmail
-      ]));
-      if (_.contains(validemails, req.body.email)) {
-        req.user.email = req.body.email;
+  routes.post('/account', islogged, function (req, res, next) {
+    req.user.name = req.body.name || '';
+    var validemails = _.uniq(_.compact([
+      req.user.facebookEmail,
+      req.user.googleEmail,
+      req.user.linkedinEmail,
+      req.user.wordpressEmail,
+      req.user.verifiedEmail
+    ]));
+    var emailChanged = false;
+    if (req.user.email !== req.body.email) {
+      emailChanged = true;
+      req.user.email = req.body.email;
+      if (!_.contains(validemails, req.body.email)) {
+        req.user.verified = false;
+      } else {
+        req.user.verified = true;
       }
-      req.user.save().then(function () {
-        req.flash('success', res.__('Account sucessfully updated'));
-        return res.redirect('/account');
-      }).catch(function (err) {
-        return next(err);
-      });
     }
+    if (req.body.newpassword) {
+      var err = null;
+      if (req.user.password) {
+        if (!req.user.validPassword(req.body.oldpassword)) {
+          err = new ValidationError('Validation error', [
+            new ValidationErrorItem('The old password does not match', 'oldpassword', 'oldpassword', '')
+          ]);
+        }
+      } else {
+        if (req.body.oldpassword) {
+          err = new ValidationError('Validation error', [
+            new ValidationErrorItem('The old password does not match', 'oldpassword', 'oldpassword', '')
+          ]);
+        }
+      }
+      
+      if (!err && req.body.newpassword !== req.body.confirmpassword) {
+        err = new ValidationError('Validation error', [
+          new ValidationErrorItem('The new password does not match the confirmation', 'confirm', 'password', '')
+        ]);
+      }
+      
+      if (err) {
+        req.flash('error', 'There are invalid values');
+        req.flash('valerror', err);
+        req.flash('data', { name: req.body.name, email: req.body.email });
+        return res.redirect('back');
+      } else {
+        req.user.password = req.body.newpassword;
+      }
+    }
+    req.user.save().then(function (user) {
+      req.flash('success', res.__('Account sucessfully updated'));
+      if (emailChanged && !user.verified) {
+        sendverify(req.user, function (err) {
+          if (err) {
+            req.flash('error', 'There was an error while trying to send your email. Try again later.');
+          } else {
+            req.flash('success', 'Your confirmation message was sent. Check your email inbox.');
+          }
+          return res.redirect('back');
+        });
+      } else {
+        return res.redirect('back');
+      }
+    }).catch(function (err) {
+      if (err.name === 'SequelizeValidationError') {
+        req.flash('error', 'There are invalid values');
+        req.flash('valerror', err);
+        req.flash('data', { name: req.body.name, email: req.body.email });
+        return res.redirect('back');
+      }
+      return next(err);
+    });
   });
   
-  routes.post('/account/delete', isLogged, function (req, res) {
+  routes.post('/account/delete', islogged, function (req, res) {
     res.render('user/delete', {
       title: 'Delete account'
     });
   });
   
-  routes.post('/account/delete/confirm', isLogged, function (req, res) {
+  routes.post('/account/delete/confirm', islogged, function (req, res) {
     req.user.destroy().then(function () {
       req.logout();
       req.flash('success', 'Your account was successfully deleted. We\'re sorry to have you gone <span class="fa fa-frown-o"></span>');
@@ -75,7 +139,7 @@ module.exports = function (passport) {
     });
   });
   
-  routes.post('/account/activate', isLogged, function (req, res) {
+  routes.post('/account/activate', islogged, function (req, res) {
     // Do not let activated users spend codes
     if (req.user.activated) {
       req.flash('error', 'You are already activated');
@@ -105,12 +169,199 @@ module.exports = function (passport) {
       }
     });
   });
+  
+  routes.get('/account/verify/resend', islogged, function (req, res) {
+    if (req.user.verified) {
+      req.flash('error', 'Your email address is already verified');
+      return res.redirect('/account');
+    }
+    sendverify(req.user, function (err) {
+      if (err) {
+        req.flash('error', 'There was an error while trying to send your email. Try again later.');
+      } else {
+        req.flash('success', 'Your confirmation message was sent. Check your email inbox.');
+      }
+      res.redirect('/account');
+    });
+  });
+  
+  routes.get('/account/verify/:token', islogged, function (req, res) {
+    models.Token.findOne({
+      where: {
+        ownerId: req.user.id,
+        token: {
+          like: req.params.token
+        },
+        type: 'email'
+      }
+    }).then(function (token) {
+      if (!token) {
+        return promise.reject('Invalid token');
+      }
+      if (moment(token.expire).isBefore(moment())) {
+        token.destroy();
+        return promise.reject('Invalid token');
+      }
+      if (token.data !== req.query.email) {
+        return promise.reject('Invalid token');
+      }
+      return token.destroy();
+    }).then(function () {
+      req.user.verified = true;
+      req.user.verifiedEmail = req.query.email;
+      return req.user.save();
+    }).then(function () {
+      req.flash('success', 'Your email address is now confirmed.');
+    }).catch(function (err) {
+      if (err !== 'Invalid token') {
+        req.flash('error', 'There was an error while trying to verify your email. Try again later.');
+      } else {
+        req.flash('error', 'Invalid request');
+      }
+    }).finally(function () {
+      res.redirect('/account');
+    });
+  });
+  
+  routes.get('/password/recover', function (req, res) {
+    res.render('auth/recover', {
+      title: 'Recover password'
+    });
+  });
+  
+  routes.post('/password/recover', function (req, res) {
+    models.User.findOne({
+      where: models.Sequelize.or(
+        { email: { like: req.body.email } },
+        { verifiedEmail: { like: req.body.email } }
+      )
+    }).then(function (user) {
+      if (!user) {
+        req.flash('There was an error while trying to send your email. Try again later.');
+        return res.redirect('/signin');
+      }
+      sendpassrecover(user, req.body.email, function (err) {
+        if (err) {
+          req.flash('error', 'There was an error while trying to send your email. Try again later.');
+        } else {
+          req.flash('success', 'Your recovery was sent. Check your email inbox.');
+        }
+        res.redirect('/signin');
+      });
+    }).catch(function (err) {
+      req.flash('error', 'There was an unknown error. Try again later.');
+      res.redirect('/signin');
+    });
+  });
+  
+  routes.get('/password/recover/:token', function (req, res) {
+    models.Token.findOne({
+      where: {
+        type: 'password',
+        token: { like: req.params.token },
+        data: { like: req.query.email }
+      }
+    }).then(function (token) {
+      if (!token) {
+        return promise.reject('No token');
+      }
+      if (moment().isAfter(moment(token.expire))) {
+        token.destroy();
+        return promise.reject('Expired token');
+      }
+      return models.User.findOne({
+        where: {
+          id: token.ownerId
+        }
+      });
+    }).then(function (user) {
+      if (!user) {
+        return promise.reject('No user');
+      }
+      res.render('auth/newpassword', {
+        title: 'Change password',
+        user: user,
+        usedemail: req.query.email
+      });
+    }).catch(function (err) {
+      req.flash('error', 'Invalid request');
+      res.redirect('/signin');
+    });
+  });
+  
+  routes.post('/password/recover/:token', function (req, res) {
+    var savedToken = null,
+      savedUser = null;
+    
+    models.Token.findOne({
+      where: {
+        type: 'password',
+        token: { like: req.params.token },
+        data: { like: req.query.email }
+      }
+    }).then(function (token) {
+      if (!token) {
+        return promise.reject('No token');
+      }
+      if (moment().isAfter(moment(token.expire))) {
+        token.destroy();
+        return promise.reject('Expired token');
+      }
+      
+      savedToken = token;
+      
+      return models.User.findOne({
+        where: {
+          id: token.ownerId
+        }
+      });
+    }).then(function (user) {
+      if (!user) {
+        return promise.reject('No user');
+      }
+      savedUser = user;
+      var err = null;
+      if (!req.body.password) {
+        err = new ValidationError('Validation error', [
+          new ValidationErrorItem('You must provide a new password', 'blank', 'password', '')
+        ]);
+        return promise.reject(err);
+      }
+      if (req.body.password !== req.body.confirmpassword) {
+        err = new ValidationError('Validation error', [
+          new ValidationErrorItem('The typed passwords don\'t match', 'confirm', 'password', '')
+        ]);
+        return promise.reject(err);
+      }
+      
+      user.password = req.body.password;
+      return user.save();
+    }).then(function () {
+      req.flash('success', 'Password successfully changed');
+      return savedToken.destroy();
+    }).then(function () {
+      res.redirect('/signin');
+    }).catch(function (err) {
+      if (err.name === 'SequelizeValidationError') {
+        res.render('auth/newpassword', {
+          title: 'Change password',
+          user: savedUser,
+          usedemail: req.query.email,
+          validate: err.errors
+        });
+      }
+      req.flash('error', 'Invalid request');
+      res.redirect('/signin');
+    });
+  });
 
  // AUTH ROUTES
   
   var authFunction = function (strategy, req, res, next) {
     passport.authenticate(strategy, function (err, user) {
-      if (err) { return next(err); }
+      if (err) {
+        return next(err);
+      }
       if (!user) { return res.redirect('/signin'); }
       req.logIn(user, function (err) {
         if (err) { return next(err); }
@@ -123,6 +374,14 @@ module.exports = function (passport) {
       });
     })(req, res, next);
   };
+  
+  routes.post('/auth/signup', function (req, res, next) {
+    authFunction('local-signup', req, res, next);
+  });
+  
+  routes.post('/auth/signin', function (req, res, next) {
+    authFunction('local-signin', req, res, next);
+  });
  
   routes.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
   
@@ -157,10 +416,10 @@ module.exports = function (passport) {
   // facebook -------------------------------
   
   // send to facebook to do the authentication
-  routes.get('/connect/facebook', isLogged, passport.authorize('facebook', { scope: 'email' }));
+  routes.get('/connect/facebook', islogged, passport.authorize('facebook', { scope: 'email' }));
   
   // handle the callback after facebook has authorized the user
-  routes.get('/connect/facebook/callback', isLogged,
+  routes.get('/connect/facebook/callback', islogged,
 passport.authorize('facebook', {
     successRedirect: '/account',
     failureRedirect: '/signin'
@@ -170,10 +429,10 @@ passport.authorize('facebook', {
   // google ---------------------------------
   
   // send to google to do the authentication
-  routes.get('/connect/google', isLogged, passport.authorize('google', { scope: ['profile', 'email'] }));
+  routes.get('/connect/google', islogged, passport.authorize('google', { scope: ['profile', 'email'] }));
   
   // the callback after google has authorized the user
-  routes.get('/connect/google/callback', isLogged,
+  routes.get('/connect/google/callback', islogged,
 passport.authorize('google', {
     successRedirect: '/account',
     failureRedirect: '/signin'
@@ -182,10 +441,10 @@ passport.authorize('google', {
   // linkedin ---------------------------------
   
   // send to linkedin to do the authentication
-  routes.get('/connect/linkedin', isLogged, passport.authorize('linkedin', { scope: ['r_basicprofile', 'r_emailaddress'] }));
+  routes.get('/connect/linkedin', islogged, passport.authorize('linkedin', { scope: ['r_basicprofile', 'r_emailaddress'] }));
   
   // the callback after google has authorized the user
-  routes.get('/connect/linkedin/callback', isLogged,
+  routes.get('/connect/linkedin/callback', islogged,
 passport.authorize('linkedin', {
     successRedirect: '/account',
     failureRedirect: '/signin'
@@ -195,10 +454,10 @@ passport.authorize('linkedin', {
   // wordpress ---------------------------------
   
   // send to wordpress to do the authentication
-  routes.get('/connect/wordpress', isLogged, passport.authorize('wordpress', { scope: ['auth'] }));
+  routes.get('/connect/wordpress', islogged, passport.authorize('wordpress', { scope: ['auth'] }));
   
   // handle the callback after facebook has authorized the user
-  routes.get('/connect/wordpress/callback', isLogged,
+  routes.get('/connect/wordpress/callback', islogged,
 passport.authorize('wordpress', {
     successRedirect: '/account',
     failureRedirect: '/signin'
@@ -211,7 +470,7 @@ passport.authorize('wordpress', {
   // user account will stay active in case they want to reconnect in the future
   
   // facebook -------------------------------
-  routes.get('/unlink/facebook', isLogged, function (req, res) {
+  routes.get('/unlink/facebook', islogged, function (req, res) {
     var user = req.user;
     user.facebookToken = null;
     user.save().then(function () {
@@ -220,7 +479,7 @@ passport.authorize('wordpress', {
   });
   
   // google ---------------------------------
-  routes.get('/unlink/google', isLogged, function (req, res) {
+  routes.get('/unlink/google', islogged, function (req, res) {
     var user = req.user;
     user.googleToken = null;
     user.save().then(function () {
@@ -229,7 +488,7 @@ passport.authorize('wordpress', {
   });
   
   // linkedin ---------------------------------
-  routes.get('/unlink/linkedin', isLogged, function (req, res) {
+  routes.get('/unlink/linkedin', islogged, function (req, res) {
     var user = req.user;
     user.linkedinToken = null;
     user.save().then(function () {
@@ -238,7 +497,7 @@ passport.authorize('wordpress', {
   });
   
   // wordpress ---------------------------------
-  routes.get('/unlink/wordpress', isLogged, function (req, res) {
+  routes.get('/unlink/wordpress', islogged, function (req, res) {
     var user = req.user;
     user.wordpressToken = null;
     user.save().then(function () {

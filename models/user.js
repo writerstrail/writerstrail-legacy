@@ -1,5 +1,7 @@
 "use strict";
 
+var bcrypt = require('bcrypt-nodejs');
+
 module.exports = function (sequelize, DataTypes) {
   var User = sequelize.define("User", {
     id: {
@@ -8,12 +10,36 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true
     },
     name: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: {
+          args: [1, 255],
+          msg: 'You must provide a name'
+        }
+      }
     },
     email: {
       type: DataTypes.STRING,
       validate: {
-        isEmail: true
+        isEmail: {
+          args: true,
+          msg: 'The email address must be valid'
+        }
+      }
+    },
+    verifiedEmail: {
+      type: DataTypes.STRING,
+      comment: 'Last email that was verified'
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        len: {
+          args: [8, 255],
+          msg: 'The password must have at least 8 characters'
+        }
       }
     },
     activated: {
@@ -111,7 +137,23 @@ module.exports = function (sequelize, DataTypes) {
           as: 'settings',
           foreignKey: 'id'
         });
-        User.afterCreate(function (user) {
+        User.hasMany(models.Token, {
+          as: 'tokens',
+          foreignKey: 'ownerId'
+        });
+        User.afterValidate(function (user, options, done) {
+          if (!user.password) {
+            return done(null, user);
+          }
+          bcrypt.genSalt(8, function (salt) {
+            bcrypt.hash(user.password, salt, null, function (err, hash) {
+              if (err) { return done(err); }
+              user.password = hash;
+              done(null, user);
+            });
+          });
+        });
+        User.afterCreate(function (user, options, done) {
           var genres = [
             {
               name: 'Fantasy',
@@ -128,8 +170,18 @@ module.exports = function (sequelize, DataTypes) {
             return models.Settings.create({
               id: user.id
             });
+          }).then(function () {
+            done(null, user);
           });
         });
+      }
+    },
+    instanceMethods: {
+      validPassword: function (password) {
+        if (this.password) {
+          return bcrypt.compareSync(password, this.password);
+        }
+        return false;
       }
     },
     paranoid: true,

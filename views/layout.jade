@@ -9,11 +9,14 @@ html
     .container
         include navbar
         - if(successMessage && successMessage.length > 0)
-            .alert.alert-success!= successMessage
+          for msg in successMessage
+            .alert.alert-success!= msg
         - if(errorMessage && errorMessage.length > 0)
-            .alert.alert-danger!= errorMessage
+          for msg in errorMessage
+            .alert.alert-danger!= msg
         - if(warningMessage && warningMessage.length > 0)
-            .alert.alert-warning!= warningMessage
+          for msg in warningMessage
+            .alert.alert-warning!= msg
         block content
 
     block scripts

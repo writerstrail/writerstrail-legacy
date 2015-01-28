@@ -8,7 +8,8 @@ var router = require('express').Router(),
   sessions = require('./users/sessions'),
   settings = require('./users/settings'),
   isactivated = require('../utils/middlewares/isactivated'),
-  models = require('../models');
+  models = require('../models'),
+  sendflash = require('../utils/middlewares/sendflash');
 
 function durationFormatterAlt(dur) {
   var min = Math.floor(dur / 60),
@@ -37,7 +38,7 @@ function getPeriodFromName(period) {
   }
 }
 
-router.use(isactivated);
+router.all('*', isactivated);
 
 router.param('id', function (req, res, next, id) {
   var regex = /\d+/;
@@ -56,7 +57,7 @@ router.use(targets);
 router.use(sessions);
 router.use('/settings', settings);
 
-router.get('/dashboard', function (req, res, next) {
+router.get('/dashboard', sendflash, function (req, res, next) {
   var getProjects = function () {  
       return models.Project.findAll({
         where: {
