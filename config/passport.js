@@ -198,6 +198,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("name", profile.name.givenName + ' ' + profile.name.familyName);
           newUser.set("email", profile.emails[0].value);
           newUser.set("facebookEmail", profile.emails[0].value);
+          newUser.set("verified", true);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -280,6 +281,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("name", profile.displayName);
           newUser.set("email", profile.emails[0].value);
           newUser.set("googleEmail", profile.emails[0].value);
+          newUser.set("verified", true);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -363,6 +365,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("name", profile.name.givenName + ' ' + profile.name.familyName);
           newUser.set("email", profile.emails[0].value);
           newUser.set("linkedinEmail", profile.emails[0].value);
+          newUser.set("verified", true);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -446,6 +449,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("wordpressEmail", profile._json.email);
           newUser.set("name", profile._json.display_name);
           newUser.set("email", profile._json.email);
+          newUser.set("verified", true);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
