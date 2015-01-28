@@ -20,7 +20,6 @@ router.post('/', function (req, res, next) {
     timeFormat = req.body.timeformat,
     chartType = req.body.charttype;
   if (_.contains(dateFormats.data, dateFormat)) {
-    console.log(dateFormat);
     settings.dateFormat = dateFormat;
   }
   if (_.contains(timeFormats.data, timeFormat)) {

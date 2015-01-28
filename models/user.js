@@ -28,6 +28,10 @@ module.exports = function (sequelize, DataTypes) {
         }
       }
     },
+    verifiedEmail: {
+      type: DataTypes.STRING,
+      comment: 'Last email that was verified'
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: true,

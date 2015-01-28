@@ -3,7 +3,8 @@ var express = require('express'),
   models = require('../models'),
   _ = require('lodash'),
   islogged = require('../utils/middlewares/islogged'),
-  sendflash = require('../utils/middlewares/sendflash');
+  sendflash = require('../utils/middlewares/sendflash'),
+  sendverify = require('../utils/functions/sendverify');
 
 module.exports = function (passport) {
   var routes = Router();
@@ -13,7 +14,6 @@ module.exports = function (passport) {
       res.redirect('/account');
     } else {
       var validation = req.flash('valerror');
-      console.log('----got err', validation);
       res.render('auth/signin', {
         title: 'Sign in',
         section: 'signin',
@@ -52,15 +52,29 @@ module.exports = function (passport) {
       req.user.facebookEmail,
       req.user.googleEmail,
       req.user.linkedinEmail,
-      req.user.wordpressEmail
+      req.user.wordpressEmail,
+      req.user.verifiedEmail
     ]));
+    req.user.email = req.body.email;
     if (!_.contains(validemails, req.body.email)) {
-      req.user.email = req.body.email;
       req.user.verified = false;
+    } else {
+      req.user.verified = true;
     }
-    req.user.save().then(function () {
+    req.user.save().then(function (user) {
       req.flash('success', res.__('Account sucessfully updated'));
-      return res.redirect('/account');
+      if (!user.verified) {
+        sendverify(req.user, function (err) {
+          if (err) {
+            req.flash('error', 'There was an error while trying to send your email. Try again later.');
+          } else {
+            req.flash('success', 'Your confirmation message was sent. Check your email inbox.');
+          }
+          return res.redirect('back');
+        });
+      } else {
+        return res.redirect('back');
+      }
     }).catch(function (err) {
       if (err.name === 'SequelizeValidationError') {
         req.flash('error', 'There are invalid values');
@@ -116,13 +130,42 @@ module.exports = function (passport) {
       }
     });
   });
+  
+  routes.get('/account/verify/resend', islogged, function (req, res) {
+    sendverify(req.user, function (err) {
+      if (err) {
+        req.flash('error', 'There was an error while trying to send your email. Try again later.');
+      } else {
+        req.flash('success', 'Your confirmation message was sent. Check your email inbox.');
+      }
+      res.redirect('back');
+    });
+  });
+  
+  routes.get('/account/verify/:token', islogged, function (req, res) {
+    if (req.user.verifyToken === req.params.token && req.query.email === req.user.email) {
+      req.user.verifyToken = null;
+      req.user.verified = true;
+      req.user.verifiedEmail = req.user.email;
+      req.user.save().then(function () {
+        req.flash('success', 'Your email address is now confirmed.');
+      }).catch(function () {
+        req.flash('error', 'There was an error while trying to verify your email. Try again later.');
+      }).finally(function () {
+        res.redirect('/account');
+      });
+    } else {
+      req.flash('error', 'Invalid request');
+      res.redirect('/account');
+    }
+  });
 
  // AUTH ROUTES
   
   var authFunction = function (strategy, req, res, next) {
     passport.authenticate(strategy, function (err, user) {
       if (err) {
-        console.log(err); return next(err);
+        return next(err);
       }
       if (!user) { return res.redirect('/signin'); }
       req.logIn(user, function (err) {

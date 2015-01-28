@@ -1,6 +1,7 @@
 /*jshint camelcase: false*/
 var models = require('../models'),
   config = require('./config.js')[process.env.NODE_ENV || "development"],
+  sendverify = require('../utils/functions/sendverify'),
   LocalStrategy = require('passport-local').Strategy,
   FacebookStrategy = require('passport-facebook').Strategy,
   GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
@@ -79,7 +80,14 @@ module.exports = function passportConfig(passport) {
             password: password
           }).then(function (newUser) {
             req.flash('success', 'Your account was succesfully created');
-            return done(null, newUser);
+            sendverify(newUser, function (err) {
+              if (err) {
+                req.flash('error', 'Your confirmation message could not be sent. Try again later.');
+              } else {
+                req.flash('success', 'Your confirmation message was sent. Check your email inbox.');
+              }
+              return done(null, newUser);
+            });
           }).catch(function (err) {
             if (err.name === 'SequelizeValidationError') {
               req.flash('error', 'There are invalid values');
@@ -199,6 +207,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("email", profile.emails[0].value);
           newUser.set("facebookEmail", profile.emails[0].value);
           newUser.set("verified", true);
+          newUser.set("verifiedEmail", profile.emails[0].value);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -282,6 +291,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("email", profile.emails[0].value);
           newUser.set("googleEmail", profile.emails[0].value);
           newUser.set("verified", true);
+          newUser.set("verifiedEmail", profile.emails[0].value);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -366,6 +376,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("email", profile.emails[0].value);
           newUser.set("linkedinEmail", profile.emails[0].value);
           newUser.set("verified", true);
+          newUser.set("verifiedEmail", profile.emails[0].value);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }
@@ -411,7 +422,6 @@ module.exports = function passportConfig(passport) {
     callbackURL: config.wordpress.callback,
     passReqToCallback: true
   }, function (req, token, tokenSecret, profile, done) {
-    console.log('profile', profile);
     if (!req.user) {
       models.User.find({
         where: models.Sequelize.or(
@@ -450,6 +460,7 @@ module.exports = function passportConfig(passport) {
           newUser.set("name", profile._json.display_name);
           newUser.set("email", profile._json.email);
           newUser.set("verified", true);
+          newUser.set("verifiedEmail", profile._json.email);
           
           newUser.save().complete(function (err) {
             if (err) { return done(err); }

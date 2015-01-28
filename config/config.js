@@ -7,6 +7,7 @@ module.exports =
     "host": "127.0.0.1",
     "dialect": "mysql",
     "timezone": "+00:00",
+    "baseurl": "http://localhost:8080",
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
@@ -26,6 +27,10 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_WORDPRESS_ID,
       "secret": process.env.WRITERSTRAIL_WORDPRESS_SECRET,
       "callback": process.env.WRITERSTRAIL_WORDPRESS_CALLBACK
+    },
+    "sendgrid": {
+      "user": process.env.WRITERSTRAIL_SENDGRID_USER,
+      "key": process.env.WRITERSTRAIL_SENDGRID_KEY
     }
   },
   "test": {
@@ -34,6 +39,8 @@ module.exports =
     "database": "nwt",
     "host": "127.0.0.1",
     "dialect": "mysql",
+    "timezone": "+00:00",
+    "baseurl": "http://localhost:8080",
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
@@ -53,6 +60,10 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_WORDPRESS_ID,
       "secret": process.env.WRITERSTRAIL_WORDPRESS_SECRET,
       "callback": process.env.WRITERSTRAIL_WORDPRESS_CALLBACK
+    },
+    "sendgrid": {
+      "user": process.env.WRITERSTRAIL_SENDGRID_USER,
+      "key": process.env.WRITERSTRAIL_SENDGRID_KEY
     }
   },
   "production": {
@@ -62,6 +73,8 @@ module.exports =
     "port": process.env.OPENSHIFT_MYSQL_DB_PORT,
     "host": process.env.OPENSHIFT_MYSQL_DB_HOST,
     "dialect": "mysql",
+    "timezone": "+00:00",
+    "baseurl": process.env.WRITERSTRAIL_BASE_URL,
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
@@ -81,6 +94,10 @@ module.exports =
       "appid": process.env.WRITERSTRAIL_WORDPRESS_ID,
       "secret": process.env.WRITERSTRAIL_WORDPRESS_SECRET,
       "callback": process.env.WRITERSTRAIL_WORDPRESS_CALLBACK
+    },
+    "sendgrid": {
+      "user": process.env.WRITERSTRAIL_SENDGRID_USER,
+      "key": process.env.WRITERSTRAIL_SENDGRID_KEY
     }
   }
 };

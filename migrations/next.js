@@ -10,6 +10,11 @@ module.exports = {
         allowNull: true
       });
     }).then(function () {
+      return migration.addColumn('users', 'verifiedEmail', {
+        type: DataTypes.STRING,
+        comment: 'Last email that was verified'
+      });
+    }).then(function () {
       return migration.createTable('genres', {
         id: {
           type: DataTypes.INTEGER,
@@ -380,6 +385,8 @@ module.exports = {
       return migration.dropTable('projects');
     }).then(function () {
       return migration.dropTable('genres');
+    }).then(function () {
+      return migration.removeColumn('users', 'verifiedEmail');
     }).then(function () {
       return migration.removeColumn('users', 'verifyToken');
     }).then(function () {
