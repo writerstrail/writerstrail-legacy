@@ -3,11 +3,14 @@ html
   head
     title!= (title ? title + ' &raquo; ' : '') + __('Writer\'s Trail')
     block styles
-        link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
-        link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
+      link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+      link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
+      link(rel='stylesheet', href='/stylesheets/main.css')
   body
-    .container
-        include navbar
+    .wrapper
+      include includes/header
+      
+      .container
         - if(successMessage && successMessage.length > 0)
           for msg in successMessage
             .alert.alert-success!= msg
@@ -18,6 +21,10 @@ html
           for msg in warningMessage
             .alert.alert-warning!= msg
         block content
+      block outside
+    
+    .footer
+      include includes/footer
 
     block scripts
         script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')

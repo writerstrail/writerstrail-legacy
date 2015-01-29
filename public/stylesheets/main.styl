@@ -1,0 +1,17 @@
+footer-height = 30px
+
+html, body
+  height 100%
+
+.wrapper
+  min-height 100%
+  margin-bottom: -(footer-height)
+  &:after
+    content ""
+    display block
+    height: footer-height
+
+.footer
+  height: footer-height
+    
+  
