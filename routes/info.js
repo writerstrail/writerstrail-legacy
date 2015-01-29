@@ -1,5 +1,12 @@
 var router = require('express').Router();
 
+router.get('/about', function (req, res) {
+  res.render('info/about', {
+    title: 'About',
+    section: 'about'
+  });
+});
+
 router.get('/privacy', function (req, res) {
   res.render('info/privacy', {
     title: 'Privacy Policy'
