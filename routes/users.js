@@ -1,7 +1,6 @@
 var router = require('express').Router(),
   promise = require('sequelize').Promise,
   _ = require('lodash'),
-  //moment = require('moment'),
   genres = require('./users/genres'),
   projects = require('./users/projects'),
   targets = require('./users/targets'),
@@ -38,8 +37,6 @@ function getPeriodFromName(period) {
   }
 }
 
-router.all('*', isactivated);
-
 router.param('id', function (req, res, next, id) {
   var regex = /\d+/;
   if (regex.test(id)) {
@@ -51,13 +48,13 @@ router.param('id', function (req, res, next, id) {
   }
 });
 
-router.use(genres);
-router.use('/projects', projects);
-router.use(targets);
-router.use(sessions);
-router.use('/settings', settings);
+router.use('/genres', isactivated, genres);
+router.use('/projects', isactivated, projects);
+router.use('/targets', isactivated, targets);
+router.use('/sessions', isactivated, sessions);
+router.use('/settings', isactivated, settings);
 
-router.get('/dashboard', sendflash, function (req, res, next) {
+router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
   var getProjects = function () {  
       return models.Project.findAll({
         where: {
