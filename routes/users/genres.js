@@ -2,7 +2,7 @@ var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash');
   
-router.get('/genres', sendflash, function (req, res, next) {
+router.get('/', sendflash, function (req, res, next) {
   models.Genre.findAndCountAll({
     where: {
       ownerId: req.user.id
@@ -25,7 +25,7 @@ router.get('/genres', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/genres/new', sendflash, function (req, res) {
+router.get('/new', sendflash, function (req, res) {
   res.render('user/genres/form', {
     title: req.__('New genre'),
     section: 'genrenew',
@@ -34,7 +34,7 @@ router.get('/genres/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/genres/new', function (req, res, next) {
+router.post('/new', function (req, res, next) {
   models.Genre.create({
     name: req.body.name,
     description: req.body.description,
@@ -60,7 +60,7 @@ router.post('/genres/new', function (req, res, next) {
   });
 });
 
-router.get('/genres/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', sendflash, function (req, res, next) {
   req.user.getGenres({
     where: {
       id: req.params.id
@@ -82,7 +82,7 @@ router.get('/genres/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/genres/:id/edit', function (req, res, next) {
+router.post('/:id/edit', function (req, res, next) {
   req.user.getGenres({
     where: {
       id: req.params.id
@@ -123,7 +123,7 @@ router.post('/genres/:id/edit', function (req, res, next) {
   });
 });
 
-router.get('/genres/:id', sendflash, function (req, res, next) {
+router.get('/:id', sendflash, function (req, res, next) {
   models.Genre.findOne({
     where: {
       id: req.params.id,

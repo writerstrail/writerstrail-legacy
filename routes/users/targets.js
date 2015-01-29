@@ -7,7 +7,7 @@ var router = require('express').Router(),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids');
 
-router.get('/targets', sendflash, function (req, res, next) {
+router.get('/', sendflash, function (req, res, next) {
   models.Target.findAndCountAll({
     where: {
       ownerId: req.user.id
@@ -30,7 +30,7 @@ router.get('/targets', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/targets/new', sendflash, function (req, res, next) {
+router.get('/new', sendflash, function (req, res, next) {
   models.Project.findAll({
     where: {
       ownerId: req.user.id,
@@ -55,7 +55,7 @@ router.get('/targets/new', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/targets/new', function (req, res, next) {
+router.post('/new', function (req, res, next) {
   var savedTarget = {},
     start = moment.utc(req.body.start, req.user.settings.dateFormat),
     end =  moment.utc(req.body.end, req.user.settings.dateFormat);
@@ -138,7 +138,7 @@ router.post('/targets/new', function (req, res, next) {
   });
 });
 
-router.get('/targets/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -182,7 +182,7 @@ router.get('/targets/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/targets/:id/edit', function (req, res, next) {
+router.post('/:id/edit', function (req, res, next) {
   var savedTarget = {};
   models.Target.findOne({
     where: {
@@ -280,7 +280,7 @@ router.post('/targets/:id/edit', function (req, res, next) {
   });
 });
 
-router.get('/targets/:id', sendflash, function (req, res, next) {
+router.get('/:id', sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -321,7 +321,7 @@ router.get('/targets/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/targets/:id/data.json', function (req, res) {
+router.get('/:id/data.json', function (req, res) {
   models.Target.findOne({
     where: {
       id: req.params.id,

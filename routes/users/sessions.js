@@ -29,7 +29,7 @@ function durationFormatterAlt(dur) {
   return (min.toString() +  'm' + (sec < 10 ? '0' + sec : sec)) + 's';
 }
 
-router.get('/sessions', sendflash, function (req, res, next) {
+router.get('/', sendflash, function (req, res, next) {
   var whereOpt = { ownerId: req.user.id };
   if (req.query.projectid) {
     whereOpt.id = req.query.projectid;
@@ -62,7 +62,7 @@ router.get('/sessions', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/sessions/new', sendflash, function (req, res) {
+router.get('/new', sendflash, function (req, res) {
   models.Project.findAll({
     where: [
       { ownerId: req.user.id },
@@ -89,7 +89,7 @@ router.get('/sessions/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/sessions/new', function (req, res, next) {
+router.post('/new', function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.body.project,
@@ -161,7 +161,7 @@ router.post('/sessions/new', function (req, res, next) {
   });
 });
 
-router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', sendflash, function (req, res, next) {
   models.Session.findOne({
     where: {
       id: req.params.id,
@@ -209,7 +209,7 @@ router.get('/sessions/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/sessions/:id/edit', function (req, res, next) {
+router.post('/:id/edit', function (req, res, next) {
   models.Session.findOne({
     where: {
       id: req.params.id
@@ -318,7 +318,7 @@ router.post('/sessions/:id/edit', function (req, res, next) {
   });
 });
 
-router.get('/sessions/:id', sendflash, function (req, res, next) {
+router.get('/:id', sendflash, function (req, res, next) {
   models.Session.findOne({
     where: {
       id: req.params.id
