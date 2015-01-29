@@ -4,6 +4,7 @@ var router = require('express').Router(),
   promise = require('sequelize').Promise,
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
+  isverified = require('../../utils/middlewares/isverified'),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids');
 
@@ -55,7 +56,7 @@ router.get('/new', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/new', function (req, res, next) {
+router.post('/new', isverified, function (req, res, next) {
   var savedTarget = {},
     start = moment.utc(req.body.start, req.user.settings.dateFormat),
     end =  moment.utc(req.body.end, req.user.settings.dateFormat);
@@ -182,7 +183,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', function (req, res, next) {
+router.post('/:id/edit', isverified, function (req, res, next) {
   var savedTarget = {};
   models.Target.findOne({
     where: {

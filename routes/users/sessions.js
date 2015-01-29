@@ -2,6 +2,7 @@ var router = require('express').Router(),
   moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
+  isverified = require('../../utils/middlewares/isverified'),
   promise = require('sequelize').Promise;
 
 function durationParser(dur) {
@@ -89,7 +90,7 @@ router.get('/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/new', function (req, res, next) {
+router.post('/new', isverified, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.body.project,
@@ -209,7 +210,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', function (req, res, next) {
+router.post('/:id/edit', isverified, function (req, res, next) {
   models.Session.findOne({
     where: {
       id: req.params.id

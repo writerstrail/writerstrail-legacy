@@ -1,5 +1,6 @@
 var router = require('express').Router(),
   models = require('../../models'),
+  isverified = require('../../utils/middlewares/isverified'),
   sendflash = require('../../utils/middlewares/sendflash');
   
 router.get('/', sendflash, function (req, res, next) {
@@ -34,7 +35,7 @@ router.get('/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/new', function (req, res, next) {
+router.post('/new', isverified, function (req, res, next) {
   models.Genre.create({
     name: req.body.name,
     description: req.body.description,
@@ -82,7 +83,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', function (req, res, next) {
+router.post('/:id/edit', isverified, function (req, res, next) {
   req.user.getGenres({
     where: {
       id: req.params.id

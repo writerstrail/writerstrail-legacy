@@ -236,5 +236,7 @@
 	"Confirm password": "Confirm password",
 	"About Writer's Trail": "About Writer's Trail",
 	"About": "About",
-	"Login or register to beta test with:": "Login or register to beta test with:"
+	"Login or register to beta test with:": "Login or register to beta test with:",
+	"You can't create or edit any content without confirmed email address.": "You can't create or edit any content without confirmed email address.",
+	"You can't create or edit any content without a confirmed email address.": "You can't create or edit any content without a confirmed email address."
 }

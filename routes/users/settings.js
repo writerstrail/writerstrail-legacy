@@ -1,6 +1,7 @@
 var router = require('express').Router(),
   _ = require('lodash'),
   sendflash = require('../../utils/middlewares/sendflash'),
+  isverified = require('../../utils/middlewares/isverified'),
   dateFormats = require('../../utils/data/dateformats'),
   timeFormats = require('../../utils/data/timeformats'),
   chartTypes = require('../../utils/data/charttypes');
@@ -14,7 +15,7 @@ router.get('/', sendflash, function (req, res) {
   });
 });
 
-router.post('/', function (req, res, next) {
+router.post('/', isverified, function (req, res, next) {
   var settings = req.user.settings,
     dateFormat = req.body.dateformat,
     timeFormat = req.body.timeformat,

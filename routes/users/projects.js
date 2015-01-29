@@ -1,6 +1,7 @@
 var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
+  isverified = require('../../utils/middlewares/isverified'),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids');
 
@@ -65,7 +66,7 @@ router.get('/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/new', function (req, res, next) {
+router.post('/new', isverified, function (req, res, next) {
   var savedProject = {};
   models.Project.create({
     name: req.body.name,
@@ -160,7 +161,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', function (req, res, next) {
+router.post('/:id/edit', isverified, function (req, res, next) {
   var savedProject = null;
   models.Project.findOne({
     where: {
