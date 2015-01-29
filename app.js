@@ -50,7 +50,7 @@ i18n.configure({
 require('./config/passport')(passport);
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.png'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -72,6 +72,7 @@ app.use(passport.session());
 app.use(paginate.middleware(10, 50));
 
 var routes = require('./routes/index');
+var infoRoutes = require('./routes/info');
 var authRoutes = require('./routes/auth')(passport);
 var adminRoutes = require('./routes/admin');
 var userRoutes = require('./routes/users');
@@ -91,6 +92,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', routes);
+app.use('/', infoRoutes);
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
