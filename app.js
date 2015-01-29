@@ -28,6 +28,14 @@ var sessionStore = new MysqlStore({
   database: config.database
 });
 
+// ignore openshift's haproxy health check
+app.use(function (req, res, next) {
+  if (typeof req.header('user-agent') === 'undefined') {
+    return res.status(200).send('OK').end();
+  }
+  next();
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -110,7 +118,7 @@ if (app.get('env') === 'development') {
 
 // 404 error handler
 app.use(function (err, req, res, next) {
-  if (!(404 === err.status)) { return next(err); }
+  if (404 !== err.status) { return next(err); }
 
   res.render('error/404', {
     title: req.__('Page not found - 404'),
