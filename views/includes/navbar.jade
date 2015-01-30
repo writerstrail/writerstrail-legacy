@@ -1,7 +1,7 @@
 mixin navDropdown(obj)
   - if (obj.dropdown)
     li.dropdown
-      a.dropdown-toggle(href='#' data-toggle='dropdown' role='button' aria-expanded='false')
+      a.dropdown-toggle(href='#' data-toggle='dropdown' data-hover="dropdown" role='button' aria-expanded='false')
         = obj.label
         span.caret
       ul.dropdown-menu(role='menu')
