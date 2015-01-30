@@ -313,7 +313,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         },
         projects: projects,
         validate: err.errors,
-        errorMessage: req.__('There are invalid values')
+        errorMessage: [req.__('There are invalid values')]
       });
     });
   });

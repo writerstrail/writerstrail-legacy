@@ -2,21 +2,30 @@ extends ../../layout
 
 block content
   include ../../mixins/paginate
-  h1= __('Projects')
+  h1
+    span.fa.fa-lg.fa-files-o
+    |  
+    = __('Projects')
   
+  .btn-group(role='toolbar')
+    a.btn.btn-default(href='/projects/active')
+      span.fa.fa-lg.fa-fire
+      |  Active projects
+    a.btn.btn-success(href='/projects/new')
+      span.fa.fa-lg.fa-plus
+      |  New project
   p
-    a(href='/projects/active') Active projects
 
-  p
-    a(href='/projects/new') New project
-
-  ul.list-group
-    each project in projects
-      li.list-group-item
-        span.fa.fa-fw.fa-folder-open-o
-        | &nbsp;
-        a(href=("/projects/" + project.id) title=project.description)= project.name
-        | &nbsp; 
-        a(href='/projects/' + project.id + '/edit' title='Edit')
-          span.fa.fa-edit
-  +paginate(paginate, pageCount, currentPage)
+  if projects.length === 0
+    h3 No project found.
+  else
+    ul.list-group
+      each project in projects
+        li.list-group-item
+          a.btn.btn-primary(href='/projects/' + project.id + '/edit' title='Edit')
+            span.fa.fa-edit
+          |  
+          span.fa.fa-fw.fa-file-o
+          | &nbsp;
+          a(href=("/projects/" + project.id) title=project.description)= project.name
+    +paginate(paginate, pageCount, currentPage)

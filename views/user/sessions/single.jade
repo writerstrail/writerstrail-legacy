@@ -8,16 +8,10 @@ block content
       | )
       
   .btn-group(role='toolbar')
-    a.btn.btn-lg.btn-default(href='/sessions' title='List of sessions' role='button')
-      span.fa.fa-list.fa-lg
-    a.btn.btn-lg.btn-default(href='/sessions/' + session.id + '/edit' title='Edit this session' role='button')
+    a.btn.btn-lg.btn-default(href='/sessions/' + session.id + '/edit' title='Edit this session')
       span.fa.fa-edit.fa-lg
-    a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + session.project.id title='New session with same project' role='button')
-      span.fa.fa-clock-o.fa-lg
-    a.btn.btn-lg.btn-default(href='/sessions?projectid=' + session.project.id title='All sessions for the same project' role='button')
-      span.fa.fa-list-alt.fa-lg
-      
-  p &nbsp;
+    include toolbar
+  p  
   
   .row
     .col-sm-2.text-right
@@ -66,6 +60,8 @@ block content
     .col-sm-2.text-right
       strong Targets advanced:
     .col-sm-10
+      if session.project.targets.length === 0
+        | None
       for t, i in session.project.targets
         if i > 0
           | ,&nbsp

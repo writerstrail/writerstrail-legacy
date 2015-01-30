@@ -2,8 +2,10 @@ extends ../../layout
 
 block content
   - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
-  - var now = moment.utc()
-  - var hasStarted = moment.utc().isAfter(target.start)
+  - var now = moment.utc().add(target.zoneOffset, 'minutes')
+  - var hasStarted = now.isAfter(target.start)
+  - console.log('---star', target.start)
+  - console.log('---snow', now.toDate())
   - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
   - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true))))
   - var daysRem = totalDays - daysPast
@@ -17,10 +19,9 @@ block content
   h1= title
   
   .btn-group(role='toolbar')
-    a.btn.btn-lg.btn-default(href='/targets' title='List of all targets' role='button')
-      span.fa.fa-list-ul.fa-lg
-    a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target' role='button')
+    a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target')
       span.fa.fa-edit.fa-lg
+    include toolbar
   p
   
   .row
@@ -59,7 +60,7 @@ block content
     .row
       .col-sm-2: strong This target still not started.
       .col-sm-10.alert-danger
-        p This target will start <strong>!{moment.utc(target.start).calendar()}</strong>. Be ready for it!
+        p This target will start <strong>!{moment.utc(target.start).subtract(target.zoneOffset || 0, 'minutes').calendar()}</strong>. Be ready for it!
     p
   
   .row: .col-sm-12: .panel.panel-primary

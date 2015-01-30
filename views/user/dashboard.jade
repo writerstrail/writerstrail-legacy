@@ -1,7 +1,10 @@
 extends ../layout
 
 block content
-  h1= title
+  h1
+    span.fa.fa-lg.fa-dashboard
+    |  
+    = title
   
   .row
     .col-sm-12
@@ -64,7 +67,7 @@ block content
       .panel.panel-default
         .panel-heading
           h3.panel-title
-            span.fa.fa-dashboard
+            span.fa.fa-calculator
             |  Writing stats
         ul.list-group
           li.list-group-item You have written a total of 
