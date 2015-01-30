@@ -32,7 +32,7 @@ module.exports = function (req) {
     }
   } else {
     navlist.right.push(
-        { 'href': '/signin', 'key': 'signin', 'label': 'Sign in', 'title': 'Sign in to Writer\'s Trail', icon: 'sign-in' }
+      { 'href': '/signin', 'key': 'signin', 'label': 'Sign in', 'title': 'Sign in to Writer\'s Trail', icon: 'sign-in' }
     );
   }
 

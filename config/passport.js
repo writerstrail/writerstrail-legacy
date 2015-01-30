@@ -132,6 +132,9 @@ module.exports = function passportConfig(passport) {
          req.flash('data', { login: email });
          return done(null, false);
        }
+       if (req.body.remember) {
+         req.session.cookie.maxAge = 604800000; // 7 days
+       }
        return done(null, user);
      }).catch(function (err) {
        req.flash('error', 'Internal error');

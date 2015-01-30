@@ -1,5 +1,5 @@
 mixin navDropdown(obj)
-  - if (obj.dropdown)
+  if (obj.dropdown)
     li.dropdown
       a.dropdown-toggle(href='#' data-toggle='dropdown' data-hover="dropdown" role='button' aria-expanded='false')
         if obj.icon
@@ -10,10 +10,10 @@ mixin navDropdown(obj)
       ul.dropdown-menu(role='menu')
         each item in obj.list
           +navDropdown(item)
-  - else
-    - if(obj.key === 'divider')
+  else
+    if(obj.key === 'divider')
       li.divider
-    - else
+    else
       - var isActive = (obj.key === section ? 'active' : '')
       li(class=isActive)
         a(href=obj.href, title=__(obj.title))
@@ -23,7 +23,7 @@ mixin navDropdown(obj)
           = __(obj.label)
     
 
-nav.navbar.navbar-default(role='navigation')
+nav.navbar.navbar-default.navbar-static-top(role='navigation')
   .container
     .navbar-header
       button.navbar-toggle.collapsed(data-toggle='collapse', data-target='#navbar')
@@ -38,6 +38,6 @@ nav.navbar.navbar-default(role='navigation')
       ul.nav.navbar-nav
         each item in left
           +navDropdown(item)
-       ul.nav.navbar-nav.navbar-right
+      ul.nav.navbar-nav.navbar-right
         each item in navlist.right
           +navDropdown(item)
