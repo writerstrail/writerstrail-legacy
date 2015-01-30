@@ -7,12 +7,16 @@ block content
     .col-sm-12
       .panel.panel-primary
         .panel-heading
-          h3.panel-title Last five active projects
+          h3.panel-title
+            span.fa.fa-files-o
+            |  Last five active projects
         .panel-body
           if projects.length === 0
             .row
               .col-sm-12
-                p.text-center No current active project
+                h3.text-center No current active project
+                p.text-center
+                  a.btn.btn-primary(href='/projects/new' title='New project') Create a new one now
           for project in projects
             .row
               .col-sm-2
@@ -38,7 +42,9 @@ block content
     .col-sm-6
       .panel.panel-default
         .panel-heading
-          h3.panel-title Nearest target
+          h3.panel-title
+            span.fa.fa-line-chart
+            |  Nearest target
         .panel-body
           if target
             h3.text-center
@@ -49,7 +55,7 @@ block content
           else
             h3.text-center You have no active target
             p.text-center
-              a(href='/targets/new' title='New target') Create a new one now.
+              a.btn.btn-primary(href='/targets/new' title='New target') Create a new one now
         ul.list-group
           li.list-group-item.text-center
             a(href='/targets') See all targets
@@ -57,7 +63,9 @@ block content
     .col-sm-6
       .panel.panel-default
         .panel-heading
-          h3.panel-title Writing stats
+          h3.panel-title
+            span.fa.fa-dashboard
+            |  Writing stats
         ul.list-group
           li.list-group-item You have written a total of 
             strong= isNaN(stats.totalWordcount) ? 0 : stats.totalWordcount

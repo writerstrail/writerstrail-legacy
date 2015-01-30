@@ -85,7 +85,7 @@ router.get('/new', sendflash, function (req, res) {
         'project.id': req.query.projectid || 0
       },
       projects: projects,
-      errorMessage: projects.length > 0 ? '' : 'No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.'
+      errorMessage: projects.length > 0 ? [] : ['No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.']
     });
   });
 });
@@ -156,7 +156,7 @@ router.post('/new', isverified, function (req, res, next) {
         },
         projects: projects,
         validate: err.errors,
-        errorMessage: projects.length > 0 ? req.__('There are invalid values') : 'No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.'
+        errorMessage: projects.length > 0 ? [req.__('There are invalid values')] : ['No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.']
       });
     });
   });
