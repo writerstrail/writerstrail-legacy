@@ -248,7 +248,7 @@ module.exports = function (passport) {
         }
         res.redirect('/signin');
       });
-    }).catch(function (err) {
+    }).catch(function () {
       req.flash('error', 'There was an unknown error. Try again later.');
       res.redirect('/signin');
     });
@@ -283,7 +283,7 @@ module.exports = function (passport) {
         user: user,
         usedemail: req.query.email
       });
-    }).catch(function (err) {
+    }).catch(function () {
       req.flash('error', 'Invalid request');
       res.redirect('/signin');
     });
