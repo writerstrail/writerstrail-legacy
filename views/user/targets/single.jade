@@ -4,8 +4,6 @@ block content
   - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
   - var now = moment.utc().add(target.zoneOffset, 'minutes')
   - var hasStarted = now.isAfter(target.start)
-  - console.log('---star', target.start)
-  - console.log('---snow', now.toDate())
   - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
   - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true))))
   - var daysRem = totalDays - daysPast
@@ -16,7 +14,11 @@ block content
     - totalWordcount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues.wordcount }, 0)
   - var remainingWordcount = Math.max(0, target.wordcount - totalWordcount)
 
-  h1= title
+  h1 Target 
+    em= target.name 
+    small  (
+      = _.reduce(target.projects, function (acc, proj) { acc.push(proj.name); return acc; }, []).join(', ')
+      | )
   
   .btn-group(role='toolbar')
     a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target')
@@ -29,7 +31,7 @@ block content
       - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
       .progress(title=totalWordcount + '/' + target.wordcount)
         - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
-        .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%;' class='progress-bar-' + barClass)
+        .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
           = percentage + '%'
   
   if daysRem == 0        

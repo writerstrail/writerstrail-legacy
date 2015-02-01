@@ -33,7 +33,7 @@ block content
                 else
                   .progress(title=project.currentWordcount + '/' + project.targetwc)
                     - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
-                    .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%;' class='progress-bar-' + barClass)
+                    .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
                       = project.percentage + '%'
               .col-sm-2
                 a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session

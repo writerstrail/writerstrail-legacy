@@ -126,7 +126,7 @@ module.exports = function (sequelize, DataTypes) {
         });
       },
       targetOverStart: function (next) {
-        if (parseInt(this.targetwc, 10) < parseInt(this.wordcount, 10)){
+        if (this.targetwc > 0 && parseInt(this.targetwc, 10) < parseInt(this.wordcount, 10)){
           return next(new Error('The target can\'t be less than the starting wordcount'));
         }
         next();

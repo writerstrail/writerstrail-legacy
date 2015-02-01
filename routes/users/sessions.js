@@ -355,7 +355,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       return next(error);
     }
     res.render('user/sessions/single', {
-      title: 'View session',
+      title: 'Session for ' + session.project.name,
       section: 'sessionsingle',
       session: session,
       durFormat: durationFormatterAlt

@@ -313,7 +313,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       return next(error);
     }
     res.render('user/targets/single', {
-      title: 'Target ' + target.name,
+      title: target.name + ' target',
       section: 'targetsingle',
       target: target
     });

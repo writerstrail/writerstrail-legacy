@@ -141,7 +141,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       return next(error);
     }
     res.render('user/genres/single', {
-      title: 'Genre ' + genre.name,
+      title: genre.name + ' genre',
       section: 'genresingle',
       genre: genre
     });

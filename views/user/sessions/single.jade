@@ -1,9 +1,12 @@
 extends ../../layout
 
 block content
-  h1= title
+  h1  Session 
+    em= session.summary
     small
-      | &nbsp;(
+      |  (
+      = session.project.name
+      |  &mdash; 
       = moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
       | )
       

@@ -257,7 +257,7 @@ router.get('/active', sendflash, function (req, res, next) {
     raw: true
   }).then(function (result) {
     var count = result.count,
-      projects = result.rows
+      projects = result.rows;
     res.render('user/projects/active', {
       title: 'Active projects',
       section: 'projectsactive',
@@ -296,7 +296,7 @@ router.get('/:id', sendflash, function (req, res, next) {
     }
     
     res.render('user/projects/single', {
-      title: 'Project ' + project.name,
+      title: project.name + ' project',
       section: 'projectsingle',
       project: project
     });

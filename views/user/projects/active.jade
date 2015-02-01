@@ -33,7 +33,7 @@ block content
               if project.targetwc > 0
                 .progress(title=project.currentWordcount + '/' + project.targetwc)
                   - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
-                  .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%;' class='progress-bar-' + barClass)
+                  .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
                     = project.percentage + '%'
               else
                 | No target defined.&nbsp;
