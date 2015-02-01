@@ -101,32 +101,7 @@ module.exports = function passportConfig(passport) {
         }
       });
     } else {
-      models.User.find({
-        where: models.Sequelize.or(
-          { "email": { like: email } },
-          { "facebookEmail": { like: email } }, 
-          { "googleEmail": { like: email } },
-          { "linkedinEmail": { like: email } },
-          { "wordpressEmail": { like: email } }
-        )
-      }).complete(function (err, exuser) {
-        if (err) { return done(err); }
-        
-        if (!exuser || (exuser.id === req.user.id)) {
-          var user = req.user;
-          user.set("name", req.body.name);
-          user.set("email", email);
-          user.set("password", password);
-          
-          user.save().complete(function (err) {
-            if (err) { return done(err); }
-            return done(null, user);
-          });
-        } else {
-          req.flash('error', req.__('This account is associated with another user'));
-          done(null, req.user);
-        }
-      });
+      done(null, req.user);
     }
   }));
   
@@ -140,7 +115,7 @@ module.exports = function passportConfig(passport) {
          email: { like: email }
        }
      }).then(function (user) {
-       var msg = 'Email or password incorrect. Have you <a href="/password/recover">forgotten your password</a>?';
+       var msg = 'Email or password incorrect. Have you <a class="alert-link" href="/password/recover">forgotten your password</a>?';
        if (!user) {
          req.flash('error', msg);
          req.flash('valerror', new ValidationError('Validation error', [
@@ -156,6 +131,9 @@ module.exports = function passportConfig(passport) {
          ]));
          req.flash('data', { login: email });
          return done(null, false);
+       }
+       if (req.body.remember) {
+         req.session.cookie.maxAge = 604800000; // 7 days
        }
        return done(null, user);
      }).catch(function (err) {

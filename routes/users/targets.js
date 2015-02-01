@@ -132,7 +132,7 @@ router.post('/new', isverified, function (req, res, next) {
           Projects: filterIds(projects, req.body.projects)
         },
         validate: err.errors,
-        errorMessage: req.__('There are invalid values'),
+        errorMessage: [req.__('There are invalid values')],
         projects: chunk(projects, 3)
       });
     });
@@ -275,7 +275,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         },
         projects: chunk(projects, 3),
         validate: err.errors,
-        errorMessage: req.__('There are invalid values')
+        errorMessage: [req.__('There are invalid values')]
       });
     });
   });
@@ -313,7 +313,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       return next(error);
     }
     res.render('user/targets/single', {
-      title: 'Target ' + target.name,
+      title: target.name + ' target',
       section: 'targetsingle',
       target: target
     });

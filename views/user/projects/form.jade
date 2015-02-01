@@ -9,19 +9,22 @@ block content
   else 
     h1= __('New project')
     
-  if edit
-    .btn-group(role='toolbar')
-      a.btn.btn-lg.btn-default(href='/projects/active' title='List of active projects' role='button')
-        span.fa.fa-dashboard.fa-lg
-      a.btn.btn-lg.btn-default(href='/projects' title='List of all projects' role='button')
-        span.fa.fa-files-o.fa-lg
-      a.btn.btn-lg.btn-default(href='/projects/' + project.id title='View this project' role='button')
+  .btn-group(role='toolbar')
+    if edit 
+      a.btn.btn-lg.btn-default(href='/projects/' + project.id title='View this project')
         span.fa.fa-eye.fa-lg
-      a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + project.id title='New session' role='button')
-        span.fa.fa-clock-o.fa-lg
-      a.btn.btn-lg.btn-default(href='/sessions?projectid=' + project.id title='All sessions for this project' role='button')
-        span.fa.fa-list-alt.fa-lg
-    p &nbsp;
+    else
+      a.btn.btn-lg.btn-default(href='/projects/active' title='List of active projects')
+        span.fa.fa-fire.fa-lg
+      a.btn.btn-lg.btn-default(href='/projects' title='List of all projects')
+        span.fa.fa-files-o.fa-lg
+    a.btn.btn-lg.btn-default(href='/genres/new' title='Create new genre')
+      span.fa.fa-lg.fa-plus
+      |  
+      span.fa.fa-lg.fa-tag
+    if edit
+      include toolbar
+  p  
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)

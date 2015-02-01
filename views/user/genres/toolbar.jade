@@ -1,0 +1,12 @@
+a.btn.btn-lg.btn-default(href='/genres' title='List of all genres')
+  span.fa.fa-tags.fa-lg
+a.btn.btn-lg.btn-default(href='/projects?genreid=' + genre.id title='List of projects with this genre')
+  span.fa.fa-files-o.fa-lg
+a.btn.btn-lg.btn-default(href='/projects/new?genreid=' + genre.id title='New project with this genre')
+  span.fa.fa-plus.fa-lg
+  |  
+  span.fa.fa-file-o.fa-lg
+a.btn.btn-lg.btn-default(href='/genres/new' title='New genre')
+  span.fa.fa-plus.fa-lg
+  |  
+  span.fa.fa-tag.fa-lg

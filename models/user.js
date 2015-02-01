@@ -1,6 +1,6 @@
 "use strict";
 
-var bcrypt = require('bcrypt-nodejs');
+var bcrypt = require('bcrypt');
 
 module.exports = function (sequelize, DataTypes) {
   var User = sequelize.define("User", {
@@ -141,16 +141,14 @@ module.exports = function (sequelize, DataTypes) {
           as: 'tokens',
           foreignKey: 'ownerId'
         });
-        User.afterValidate(function (user, options, done) {
-          if (!user.password) {
+        User.beforeUpdate(function (user, options, done) {
+          if (!user.password || user.password === user._previousDataValues.password) {
             return done(null, user);
           }
-          bcrypt.genSalt(8, function (salt) {
-            bcrypt.hash(user.password, salt, null, function (err, hash) {
-              if (err) { return done(err); }
-              user.password = hash;
-              done(null, user);
-            });
+          bcrypt.hash(user.password, 10, function (err, hash) {
+            if (err) { return done(err); }
+            user.password = hash;
+            done(null, user);
           });
         });
         User.afterCreate(function (user, options, done) {

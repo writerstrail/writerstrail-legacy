@@ -26,6 +26,7 @@
     "font-awesome": "~4.2.0",
     "eonasdan-bootstrap-datetimepicker": "~4.0.0",
     "moment": "~2.9.0",
-    "c3": "~0.4.9"
+    "c3": "~0.4.9",
+    "bootstrap-hover-dropdown": "~2.0.11"
   }
 }

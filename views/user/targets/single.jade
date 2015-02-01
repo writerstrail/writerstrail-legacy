@@ -2,10 +2,10 @@ extends ../../layout
 
 block content
   - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
-  - var now = moment.utc()
-  - var hasStarted = moment.utc().isAfter(target.start)
+  - var now = moment.utc().add(target.zoneOffset, 'minutes')
+  - var hasStarted = now.isAfter(target.start)
   - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
-  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true))))
+  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true)))) 
   - var daysRem = totalDays - daysPast
   - var allSessions = []
   - var totalWordcount = 0
@@ -14,13 +14,16 @@ block content
     - totalWordcount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues.wordcount }, 0)
   - var remainingWordcount = Math.max(0, target.wordcount - totalWordcount)
 
-  h1= title
+  h1 Target 
+    em= target.name 
+    small  (
+      = _.reduce(target.projects, function (acc, proj) { acc.push(proj.name); return acc; }, []).join(', ')
+      | )
   
   .btn-group(role='toolbar')
-    a.btn.btn-lg.btn-default(href='/targets' title='List of all targets' role='button')
-      span.fa.fa-list-ul.fa-lg
-    a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target' role='button')
+    a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target')
       span.fa.fa-edit.fa-lg
+    include toolbar
   p
   
   .row
@@ -28,9 +31,8 @@ block content
       - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
       .progress(title=totalWordcount + '/' + target.wordcount)
         - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
-        .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%;' class='progress-bar-' + barClass)
+        .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
           = percentage + '%'
-  
   if daysRem == 0        
     .row
       .col-sm-2: strong This target is already overdue.
@@ -54,14 +56,13 @@ block content
             a.alert-link(href='/targets/new' title='New target'): strong new target 
             | and this time get over the blank page!
     p
-    
   if !hasStarted
     .row
       .col-sm-2: strong This target still not started.
       .col-sm-10.alert-danger
-        p This target will start <strong>!{moment.utc(target.start).calendar()}</strong>. Be ready for it!
+        p This target will start <strong>!{moment.utc(target.start).subtract(target.zoneOffset || 0, 'minutes').calendar()}</strong>. Be ready for it!
     p
-  
+    
   .row: .col-sm-12: .panel.panel-primary
     .panel-heading: h2.panel-title Target progress
     .panel-body
@@ -69,104 +70,102 @@ block content
       #chart
       .text-center
         button#target-change.btn.btn-default(type='button') Show as daily writing
-  
-  .row
-    .col-sm-2.text-right
-      strong Name:
-    .col-sm-10
-      = target.name
-      
-  .row
-    .col-sm-2.text-right
-      strong Start:
-    .col-sm-10
-      = moment.utc(target.start).format(user.settings.dateFormat)
- 
-  .row
-    .col-sm-2.text-right
-      strong End:
-    .col-sm-10
-      = moment.utc(target.end).format(user.settings.dateFormat)
-      
-  .row
-    .col-sm-2.text-right: strong Total days:
-    .col-sm-10= totalDays
-      | &nbsp;days
-  .row
-    .col-sm-2.text-right
-      strong Target wordcount:
-    .col-sm-10
-      = target.wordcount
-      
-  .row
-    .col-sm-2.text-right
-      strong Notes:
-    .col-sm-10
-      - var notePieces = target.notes.split(/(?:\r\n|\r|\n)/g)
-      for line, i in notePieces
-        if i > 0
-          br
-        = line
-  .row
-    .col-sm-2.text-right
-      strong Projects:
-    .col-sm-10
-      ul
-        for project in _.sortBy(target.projects, 'name')
-          li
-            a(href='/projects/' + project.id title='View project ' + project.name)= project.name
-            | &nbsp;(
-            if project.sessions.length == 0
-              | No session in this project within this target's period
-            else
-              for session,i in project.sessions.slice(0, 3)
-                if i > 0
-                  | ,&nbsp;
-                - var sessionName = (session.summary) || (moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat))
-                a(href='/sessions/' + session.id title='View session ' + sessionName)= sessionName
-            | ,&nbsp;
-            a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
-            | )
-  
-  .row
-    .col-sm-2.text-right: strong Target count per day:
-    .col-sm-10= Math.ceil(target.wordcount / totalDays)
-      | &nbsp;words
-    
-  .row
-    .col-sm-2.text-right: strong Words written:
-    .col-sm-10= totalWordcount
-      | &nbsp;words
-      
-  if daysRem > 0 && hasStarted
-    .row
-      .col-sm-2.text-right: strong Days past:
-      .col-sm-10= daysPast
-        | &nbsp;days
-
-    .row
-      .col-sm-2.text-right: strong Words remaining:
-      .col-sm-10= remainingWordcount
-        | &nbsp;words
-
-    .row
-      .col-sm-2.text-right: strong Days remaining:
-      .col-sm-10= daysRem
-        | &nbsp;days
-
-    .row
-      .col-sm-2.text-right: strong Average words per day:
-      .col-sm-10= daysPast === 0 ? 0 : Math.round(totalWordcount / daysPast)
-        | &nbsp;words
-
-    .row
-      .col-sm-2.text-right: strong Predicted finish by this rate:
-      .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / daysPast)), 'days').format(user.settings.dateFormat)
-
-    .row
-      .col-sm-2.text-right: strong Daily target to finish on time:
-      .col-sm-10= Math.ceil((remainingWordcount) / daysRem)
-        | &nbsp;words
+  ul.list-group
+    li.list-group-item
+      .row
+        .col-sm-2
+          strong Period:
+        .col-sm-10
+          = moment.utc(target.start).format(user.settings.dateFormat)
+          |  &mdash; 
+          = moment.utc(target.end).format(user.settings.dateFormat)
+    li.list-group-item
+      .row
+        .col-sm-2: strong Total days:
+        .col-sm-10= totalDays
+          | &nbsp;days
+    li.list-group-item
+      .row
+        .col-sm-2
+          strong Target wordcount:
+        .col-sm-10
+          = target.wordcount
+    li.list-group-item
+      .row
+        .col-sm-2
+          strong Notes:
+        .col-sm-10
+          unless target.notes
+            | None
+          else
+            - var notePieces = target.notes.split(/(?:\r\n|\r|\n)/g)
+            for line, i in notePieces
+              if i > 0
+                br
+              = line
+    li.list-group-item
+      .row
+        .col-sm-2
+          strong Projects:
+        .col-sm-10
+          ul.fa-ul
+            for project in _.sortBy(target.projects, 'name')
+              li
+                a(href='/projects/' + project.id title='View project ' + project.name)
+                  span.fa.fa-li.fa-file-o
+                  = project.name
+                | &nbsp;(
+                if project.sessions.length == 0
+                  | No session in this project within this target's period
+                else
+                  for session,i in project.sessions.slice(0, 3)
+                    if i > 0
+                      | ,&nbsp;
+                    - var sessionName = (session.summary) || (moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat))
+                    a(href='/sessions/' + session.id title='View session ' + sessionName)= sessionName
+                | ,&nbsp;
+                a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
+                | )
+    li.list-group-item
+      .row
+        .col-sm-2: strong Target count per day:
+        .col-sm-10= Math.ceil(target.wordcount / totalDays)
+          | &nbsp;words
+    li.list-group-item
+      .row
+        .col-sm-2: strong Words written:
+        .col-sm-10= totalWordcount
+          | &nbsp;words
+    if daysRem > 0 && hasStarted
+      li.list-group-item
+        .row
+          .col-sm-2: strong Days past:
+          .col-sm-10= daysPast
+            | &nbsp;days
+      li.list-group-item
+        .row
+          .col-sm-2: strong Words remaining:
+          .col-sm-10= remainingWordcount
+            | &nbsp;words
+      li.list-group-item
+        .row
+          .col-sm-2: strong Days remaining:
+          .col-sm-10= daysRem
+            | &nbsp;days
+      li.list-group-item
+        .row
+          .col-sm-2: strong Average words per day:
+          .col-sm-10= Math.round(totalWordcount / (daysPast + 1))
+            | &nbsp;words
+      li.list-group-item
+        .row
+          .col-sm-2: strong Predicted finish by this rate:
+          .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
+      li.list-group-item
+        .row
+          .col-sm-2: strong Daily target to finish on time:
+          .col-sm-10= Math.ceil(remainingWordcount / (daysRem - 1))
+            | &nbsp;words
       
   p &nbsp;
 

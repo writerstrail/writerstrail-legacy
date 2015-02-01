@@ -117,7 +117,7 @@ router.post('/new', isverified, function (req, res, next) {
         },
         genres: chunk(genres, 3),
         validate: err.errors,
-        errorMessage: req.__('There are invalid values')
+        errorMessage: [req.__('There are invalid values')]
       });
     });
   });
@@ -229,14 +229,14 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         },
         genres: chunk(genres, 3),
         validate: err.errors,
-        errorMessage: req.__('There are invalid values')
+        errorMessage: [req.__('There are invalid values')]
       });
     });
   });
 });
 
 router.get('/active', sendflash, function (req, res, next) {
-  models.Project.findAll({
+  models.Project.findAndCountAll({
     where: {
       ownerId: req.user.id,
       active: true
@@ -247,17 +247,23 @@ router.get('/active', sendflash, function (req, res, next) {
         'LEAST(100, GREATEST(0, FLOOR((`currentWordcount` / `targetwc`) * 100)))'
       ), 'percentage']
     ],
+    limit: req.query.limit,
+    offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10),
     order: [
       [models.Sequelize.literal('`percentage`'), 'DESC'],
       ['name', 'ASC']
     ]
   }, {
     raw: true
-  }).then(function (projects) {
+  }).then(function (result) {
+    var count = result.count,
+      projects = result.rows;
     res.render('user/projects/active', {
       title: 'Active projects',
       section: 'projectsactive',
-      projects: projects
+      projects: projects,
+      pageCount: Math.ceil(count / parseInt(req.query.limit, 10)),
+      currentPage: req.query.page
     });
   }).catch(function (err) {
     next(err);
@@ -290,7 +296,7 @@ router.get('/:id', sendflash, function (req, res, next) {
     }
     
     res.render('user/projects/single', {
-      title: 'Project ' + project.name,
+      title: project.name + ' project',
       section: 'projectsingle',
       project: project
     });

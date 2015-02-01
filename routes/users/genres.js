@@ -55,7 +55,7 @@ router.post('/new', isverified, function (req, res, next) {
         description: req.body.description
       },
       validate: err.errors,
-      errorMessage: req.__('There are invalid values')
+      errorMessage: [req.__('There are invalid values')]
     });
 
   });
@@ -119,7 +119,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         description: req.body.description
       },
       validate: err.errors,
-      errorMessage: req.__('There are invalid values')
+      errorMessage: [req.__('There are invalid values')]
     });
   });
 });
@@ -141,7 +141,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       return next(error);
     }
     res.render('user/genres/single', {
-      title: 'Genre ' + genre.name,
+      title: genre.name + ' genre',
       section: 'genresingle',
       genre: genre
     });

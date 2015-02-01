@@ -25,7 +25,9 @@ var sessionStore = new MysqlStore({
   port: config.port || 3306,
   user: config.username,
   password: config.password,
-  database: config.database
+  database: config.database,
+  expiration: 604800000, // 7 days
+  checkExpirationInterval: 3600000 // every hour
 });
 
 // ignore openshift's haproxy health check
@@ -58,8 +60,11 @@ app.use(cookieParser());
 app.use(session({
   secret: (process.env.WRITERSTRAIL_SESSION_SECRET || 'changemeasimnotsecret'),
   store: sessionStore,
-  saveUninitialized: true,
-  resave: true
+  saveUninitialized: false,
+  resave: false,
+  cookie: {
+    maxAge: null
+  }
 }));
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
