@@ -10,27 +10,26 @@ block content
     include toolbar
   p 
   
-  .row
-    .col-sm-2.text-right
-      strong Name:
-    .col-sm-10
-      = genre.name
-    
-  .row
-    .col-sm-2.text-right
-      strong Description:  
-    .col-sm-10
-      - var descPieces = genre.description.split(/(?:\r\n|\r|\n)/g)
-      for desc, i in descPieces
-        if i > 0
-          br
-        = desc
-        
-  .row
-    .col-sm-2.text-right
-      strong Projects with this:  
-    .col-sm-10
-      for project, i in genre.projects
-        if i > 0
-          | ,&nbsp;
-        a(href='/projects/' + project.id title='View project ' + project.name)= project.name
+  ul.list-group
+    li.list-group-item
+      .row
+        .col-sm-2
+          strong Description:  
+        .col-sm-10
+          unless genre.description
+            | No description provided
+          else
+            - var descPieces = genre.description.split(/(?:\r\n|\r|\n)/g)
+            for desc, i in descPieces
+              if i > 0
+                br
+              = desc
+    li.list-group-item
+      .row
+        .col-sm-2
+          strong Projects with this genre: 
+        .col-sm-10
+          for project, i in genre.projects
+            if i > 0
+              | ,&nbsp;
+            a(href='/projects/' + project.id title='View project ' + project.name)= project.name

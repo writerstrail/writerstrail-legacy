@@ -15,58 +15,59 @@ block content
       span.fa.fa-edit.fa-lg
     include toolbar
   p  
-  
-  .row
-    .col-sm-2.text-right
-      strong Summary:
-    .col-sm-10
-      = session.summary || 'No summary provided'
-      
-  .row
-    .col-sm-2.text-right
-      strong Start:
-    .col-sm-10
-      = moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
-  
-  .row
-    .col-sm-2.text-right
-      strong Duration:
-    .col-sm-10
-      = durFormat(session.duration)
-      
-  .row
-    .col-sm-2.text-right
-      strong Time not writing:
-    .col-sm-10
-      = durFormat(session.pausedTime)
-      
-  .row
-    .col-sm-2.text-right
-      strong Words written:
-    .col-sm-10
-      = session.wordcount
-      | &nbsp;words
-      
-  .row
-    .col-sm-2.text-right
-      strong Is countdown?
-    .col-sm-10
-      = session.isCountdown ? 'Yes' : 'No'
-      
-  .row
-    .col-sm-2.text-right
-      strong Project:
-    .col-sm-10
-      a(href='/projects/' + session.project.id title='View project ' + session.project.name)= session.project.name
-  
-  .row
-    .col-sm-2.text-right
-      strong Targets advanced:
-    .col-sm-10
-      if session.project.targets.length === 0
-        | None
-      for t, i in session.project.targets
-        if i > 0
-          | ,&nbsp
-        a(href='/targets/' + t.id title='View target ' + t.name)= t.name
-  
+    
+    ul.list-group
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Summary:
+          .col-sm-10
+            = session.summary || 'No summary provided'
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Start:
+          .col-sm-10
+            = moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Duration:
+          .col-sm-10
+            = durFormat(session.duration)
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Time not writing:
+          .col-sm-10
+            = durFormat(session.pausedTime)
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Total written:
+          .col-sm-10
+            = session.wordcount
+            | &nbsp;words
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Is countdown?
+          .col-sm-10
+            = session.isCountdown ? 'Yes' : 'No'
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Project:
+          .col-sm-10
+            a(href='/projects/' + session.project.id title='View project ' + session.project.name)= session.project.name
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Targets advanced:
+          .col-sm-10
+            if session.project.targets.length === 0
+              | None
+            for t, i in session.project.targets
+              if i > 0
+                | ,&nbsp
+              a(href='/targets/' + t.id title='View target ' + t.name)= t.name
