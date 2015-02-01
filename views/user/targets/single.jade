@@ -5,7 +5,7 @@ block content
   - var now = moment.utc().add(target.zoneOffset, 'minutes')
   - var hasStarted = now.isAfter(target.start)
   - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
-  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true))))
+  - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true)))) 
   - var daysRem = totalDays - daysPast
   - var allSessions = []
   - var totalWordcount = 0
@@ -155,16 +155,16 @@ block content
       li.list-group-item
         .row
           .col-sm-2: strong Average words per day:
-          .col-sm-10= daysPast === 0 ? 0 : Math.round(totalWordcount / daysPast)
+          .col-sm-10= Math.round(totalWordcount / (daysPast + 1))
             | &nbsp;words
       li.list-group-item
         .row
           .col-sm-2: strong Predicted finish by this rate:
-          .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / daysPast)), 'days').format(user.settings.dateFormat)
+          .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
       li.list-group-item
         .row
           .col-sm-2: strong Daily target to finish on time:
-          .col-sm-10= Math.ceil((remainingWordcount) / daysRem)
+          .col-sm-10= Math.ceil(remainingWordcount / (daysRem - 1))
             | &nbsp;words
       
   p &nbsp;

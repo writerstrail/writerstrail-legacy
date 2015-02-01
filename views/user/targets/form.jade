@@ -67,7 +67,7 @@ block content
     .form-group
       label.col-sm-2.control-label Total days
       .col-sm-10
-        - var totalDays = moment.utc(target.end).diff(target.start, 'days') + 1
+        - var totalDays = moment.utc(target.end, user.settings.dateFormat).diff(moment.utc(target.start, user.settings.dateFormat), 'days') + 1
         p#totaldays.control-static= isNaN(totalDays) ? 'Invalid date' : totalDays
         
     .form-group
@@ -97,6 +97,7 @@ block content
                 input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
                 = chunk[2].name
     include ../../mixins/single-form-buttons
+    - console.log('----end', target.end)
     
 append scripts
   script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
