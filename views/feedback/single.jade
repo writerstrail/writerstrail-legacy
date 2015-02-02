@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+  h1
+    a.text-success(href='/feedback/' + feedback.id + '/upvote' + (vote === 1 ? '/undo' : '') title='I approve' + (vote === 1 ? ' (undo)' : ''))
+      span.fa(class='fa-thumbs-' + (vote === 1 ? '' : 'o-') + 'up')
+    |  
+    a.text-danger(href='/feedback/' + feedback.id + '/downvote' + (vote === -1 ? '/undo' : '') title='I disapprove' + (vote === -1 ? ' (undo)' : ''))
+      span.fa(class='fa-thumbs-' + (vote === -1 ? '' : 'o-') + 'down')
+    |  
+    = feedback.type
+  
+  .list-group
+    .row.list-group-item
+      .col-sm-2
+        strong Vote score
+      .col-sm-10
+        = feedback.totalVotes || 0
+    .row.list-group-item
+      .col-sm-2
+        strong Summary
+      .col-sm-10
+        = feedback.summary
+    .row.list-group-item
+      .col-sm-2
+        strong Description
+      .col-sm-10
+        unless feedback.description
+          | No description provided.
+        else
+          - var lines = feedback.description.split(/(?:\r\n|\r|\n)/g)
+            for line, i in lines
+              if i > 0
+                br
+              = line

@@ -64,7 +64,7 @@ router.post('/new', isactivated, function (req, res, next) {
   models.Feedback.create({
     authorId: req.user.id,
     summary: req.body.summary,
-    description: req.body.description,
+    description: req.body.description || null,
     type: req.body.type
   }).then(function () {
     req.flash('success', 'The feedback "' + req.body.summary + '" was successfully created.');
@@ -91,6 +91,55 @@ router.get('/mine', islogged, function (req, res) {
       title: 'Your feedbacks',
       feedbacks: feedbacks
     });
+  });
+});
+
+router.get('/:id', function (req, res, next) {
+  var userVote = null;
+  
+  (function () {
+    if (!req.user) {
+      return promise.resolve(null);
+    }
+    return models.Vote.findOne({
+      where: {
+        voterId: req.user.id,
+        feedbackId: req.params.id
+      }
+    });
+  })().then(function (vote) {
+    userVote = vote;
+    return models.Feedback.findOne({
+      where: {
+        id: req.params.id
+      },
+      include: {
+        model: models.Vote,
+        as: 'votes',
+        required: false
+      },
+      attributes: [
+        'id',
+        'summary',
+        'type',
+        models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
+      ],
+    }, {
+      raw: true
+    });
+  }).then(function (feedback) {
+    if (!feedback) {
+      var err = new Error('Not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('feedback/single', {
+      title: feedback.type,
+      feedback: feedback,
+      vote: userVote ? userVote.vote : 0
+    });
+  }).catch(function (err) {
+    next(err);
   });
 });
 
