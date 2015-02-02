@@ -18,11 +18,23 @@ router.get('/', sendflash, function (req, res, next) {
       limit: req.query.limit,
       offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
     };
-  
   if (req.query.current) {
     config.where.push(models.Sequelize.literal('`Target`.`start` <= (NOW() + INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)'));
     config.where.push(models.Sequelize.literal('`Target`.`end` >= (NOW() - INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)'));
     filters.push('Only current targets are shown.');
+  }
+  
+  if (req.query.projectid) {
+    config.include = [{
+      model: models.Project,
+      as: 'projects',
+      where: {
+        ownerId: req.user.id,
+        id: req.query.projectid
+      },
+      required: true
+    }];
+    filters.push('Filtering by targets that contain project with id ' + req.query.projectid + '.');
   }
   
   models.Target.findAndCountAll(config).then(function (result) {
@@ -57,7 +69,8 @@ router.get('/new', sendflash, function (req, res, next) {
       target: {
         wordcount: 50000,
         start: moment.utc().add(1, 'day').format(req.user.settings.dateFormat),
-        end: moment.utc().add(30, 'days').format(req.user.settings.dateFormat)
+        end: moment.utc().add(30, 'days').format(req.user.settings.dateFormat),
+        projects: [{ id: req.query.projectid }]
       },
       projects: chunk(projects, 3)
     });
