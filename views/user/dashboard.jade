@@ -81,8 +81,8 @@ block content
             |  words written per minute.
           if stats.period
             li.list-group-item You are most productive at 
-              strong(title!=getPeriodFromName(stats.period.period) style='border-bottom: 1px dashed #999')= stats.period.period
-              |  period, achieving 
+              strong(title!=stats.period.start + '&mdash;' + stats.period.end style='border-bottom: 1px dashed #999')= stats.period.period
+              |  period, achieving an average of 
               strong= stats.period.performance.toFixed(2)
               |  words per minute.
           else
@@ -92,7 +92,7 @@ block content
               strong= durationFormatter(stats.session.duration)
               |  
               strong= stats.session.direction
-              |  sessions, achieving 
+              |  sessions, achieving an average of 
               strong= stats.session.performance.toFixed(2)
               |  words per minute.
           else

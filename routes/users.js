@@ -17,26 +17,6 @@ function durationFormatterAlt(dur) {
   return (min.toString() +  'm' + (sec < 10 ? '0' + sec : sec)) + 's';
 }
 
-function getPeriodFromName(period) {
-  switch (period) {
-    case 'early morning': {
-      return '00:00:00&mdash;05:59:59';
-    }
-    case 'morning': {
-      return '06:00:00&mdash;11:59:59';
-    }
-    case 'afternoon': {
-      return '12:00:00&mdash;17:59:59';
-    }
-    case 'evening': {
-      return '18:00:00&mdash;23:59:59';
-    }
-    default: {
-      return '';
-    }
-  }
-}
-
 router.param('id', function (req, res, next, id) {
   var regex = /\d+/;
   if (regex.test(id)) {
@@ -113,10 +93,10 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
       });
     },
     getPerformancePeriod = function () {
-      return models.sequelize.query("SELECT AVG(s.wordcount / (s.duration / 60)) AS performance, CASE WHEN TIME(start) BETWEEN '06:00:00' AND '11:59:59' THEN 'morning' WHEN TIME(start) BETWEEN '12:00:00' AND '17:59:59' THEN 'afternoon' WHEN TIME(start) BETWEEN '18:00:00' AND '23:59:59' THEN 'evening' WHEN TIME(start) BETWEEN '00:00:00' AND '5:59:59' THEN 'early morning' END AS period FROM writingSessions s INNER JOIN projects p ON p.id = s.projectId AND p.ownerId = " + req.user.id + " GROUP BY period ORDER BY performance DESC LIMIT 1");
+      return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " LIMIT 1;");
     },
     getPerformanceSession = function () {
-      return models.sequelize.query("SELECT AVG(s.wordcount / (s.duration / 60)) AS performance, CASE WHEN isCountdown = 0 THEN 'forward' ELSE 'countdown' END AS direction, duration FROM writingSessions s INNER JOIN projects p ON p.id = s.projectId AND p.ownerId = " + req.user.id + " GROUP BY duration, isCountdown ORDER BY performance DESC LIMIT 1;");
+      return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " LIMIT 1;");
     },
     getLargestProject = function () {
       return models.Project.findOne({
@@ -144,8 +124,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
           session: perfSession.length > 0 ? perfSession[0] : null,
           largestProject: largestProject
         },
-        durationFormatter: durationFormatterAlt,
-        getPeriodFromName: getPeriodFromName
+        durationFormatter: durationFormatterAlt
       });
     };
   promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
