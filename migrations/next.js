@@ -571,7 +571,7 @@ module.exports = {
     }).then(function () {
       return migration.sequelize.query('CREATE ALGORITHM = MERGE VIEW `periodPerformance` AS select `p`.`ownerId` AS `ownerID`,avg((`s`.`wordcount` / (`s`.`duration` / 60))) AS `performance`,`t`.`name` AS `period`,`t`.`start` AS `start`,`t`.`end` AS `end` from ((`writingSessions` `s` join `projects` `p` on((`p`.`id` = `s`.`projectId`))) join `periods` `t` on((case when (`t`.`start` < `t`.`end`) then (cast(`s`.`start` as time) between `t`.`start` and `t`.`end`) else ((cast(`s`.`start` as time) >= `t`.`start`) or (cast(`s`.`start` as time) <= `t`.`end`)) end))) group by `p`.`ownerId`,`t`.`name` order by avg((`s`.`wordcount` / (`s`.`duration` / 60))) desc;');
     }).then(function () {
-      return migration.sequelize.query('CREATE ALGORITHM = MERGE VIEW `sessionPerformance` AS SELECT `p`.`ownerId` AS `ownerId`, AVG(s.wordcount / (s.duration / 60)) AS `performance`, CASE WHEN `isCountdown` = 0 THEN \'forward\' ELSE \'countdown\' END AS `direction`, `duration` FROM `writingSessions` `s` INNER JOIN `projects` `p` ON `p`.`id` = `s`.`projectId` GROUP BY `ownerId`, `duration`, `isCountdown` ORDER BY `performance` DESC;');
+      return migration.sequelize.query('CREATE ALGORITHM = MERGE VIEW `sessionPerformance` AS SELECT `p`.`ownerId` AS `ownerId`, AVG(s.wordcount / (s.duration / 60)) AS `performance`, CASE WHEN `isCountdown` = 0 THEN \'forward\' ELSE \'countdown\' END AS `direction`, ROUND(`s`.`duration` / 60) AS `minuteDuration` FROM `writingSessions` `s` INNER JOIN `projects` `p` ON `p`.`id` = `s`.`projectId` GROUP BY `ownerId`, `minuteDuration`, `isCountdown` ORDER BY `performance` DESC;');
     }).then(done);
   },
   

@@ -89,8 +89,8 @@ block content
             li.list-group-item You don't have enough sessions to calculate the most productive period.
           if stats.session
             li.list-group-item You are most productive at 
-              strong= durationFormatter(stats.session.duration)
-              |  
+              strong!= '&#x2248;' + stats.session.minuteDuration
+              |  minutes 
               strong= stats.session.direction
               |  sessions, achieving an average of 
               strong= stats.session.performance.toFixed(2)
