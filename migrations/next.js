@@ -572,12 +572,112 @@ module.exports = {
       return migration.sequelize.query('CREATE ALGORITHM = MERGE VIEW `periodPerformance` AS select `p`.`ownerId` AS `ownerID`,avg((`s`.`wordcount` / (`s`.`duration` / 60))) AS `performance`,`t`.`name` AS `period`,`t`.`start` AS `start`,`t`.`end` AS `end` from ((`writingSessions` `s` join `projects` `p` on((`p`.`id` = `s`.`projectId`))) join `periods` `t` on((case when (`t`.`start` < `t`.`end`) then (cast(`s`.`start` as time) between `t`.`start` and `t`.`end`) else ((cast(`s`.`start` as time) >= `t`.`start`) or (cast(`s`.`start` as time) <= `t`.`end`)) end))) group by `p`.`ownerId`,`t`.`name` order by avg((`s`.`wordcount` / (`s`.`duration` / 60))) desc;');
     }).then(function () {
       return migration.sequelize.query('CREATE ALGORITHM = MERGE VIEW `sessionPerformance` AS SELECT `p`.`ownerId` AS `ownerId`, AVG(s.wordcount / (s.duration / 60)) AS `performance`, CASE WHEN `isCountdown` = 0 THEN \'forward\' ELSE \'countdown\' END AS `direction`, ROUND(`s`.`duration` / 60) AS `minuteDuration` FROM `writingSessions` `s` INNER JOIN `projects` `p` ON `p`.`id` = `s`.`projectId` GROUP BY `ownerId`, `minuteDuration`, `isCountdown` ORDER BY `performance` DESC;');
+    }).then(function () {
+      return migration.createTable('feedback', {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+          allowNull: false
+        },
+        type: {
+          type: DataTypes.ENUM,
+          values: ['Bug', 'Suggestion', 'Feedback'],
+          defaultValue: 'Feedback',
+          allowNull: false
+        },
+        summary: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          validate: {
+            len: {
+              args: [5, 255],
+              msg: 'The summary must have between 5 and 255 characters'
+            }
+          },
+        },
+        description: {
+          type: DataTypes.TEXT,
+          allowNull: true
+        },
+        authorId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8'
+      });
+    }).then(function () {
+      return migration.addIndex('feedback', ['type'], { indexName: 'type' });
+    }).then(function () {
+      return migration.createTable('votes', {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+          allowNull: false
+        },
+        vote: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0
+        },
+        voterId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        feedbackId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'feedback',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8'
+      });
+    }).then(function () {
+      return migration.addIndex('votes', ['vote'], { indexName: 'vote' });
+    }).then(function () {
+      return migration.addIndex('votes', ['voterId', 'feedbackId'], {
+        indexName: 'oneVoteOnly',
+        indicesType: 'UNIQUE'
+      });
     }).then(done);
   },
   
   down: function (migration, DataTypes, done) {
     migration.sequelize.query('DROP VIEW `sessionPerformance`;').then(function () {
       return migration.sequelize.query('DROP VIEW `periodPerformance`;');
+    }).then(function () {
+      return migration.dropTable('votes');
+    }).then(function () {
+      return migration.dropTable('feedback');
     }).then(function () {
       return migration.dropTable('periods');
     }).then(function () {
