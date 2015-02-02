@@ -1,0 +1,12 @@
+mixin filters(filters, link)
+  div
+    if filters.length > 0    
+      p: a.btn.btn-danger(href=link)
+        span.fa.fa-remove
+        |  Remove filters
+      for filter in filters
+        p
+          span.fa.fa-filter
+          |  
+          strong!= filter
+          |  
