@@ -30,6 +30,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   }, {
     tableName: 'feedback',
+    paranoid: true,
     classMethods: {
       associate: function (models) {
         Feedback.belongsTo(models.User, {
