@@ -9,14 +9,23 @@ var router = require('express').Router(),
   filterIds = require('../../utils/functions/filterids');
 
 router.get('/', sendflash, function (req, res, next) {
-  models.Target.findAndCountAll({
-    where: {
-      ownerId: req.user.id
-    },
-    order: [['name', 'ASC']],
-    limit: req.query.limit,
-    offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
-  }).then(function (result) {
+  var filter = [],
+    config = {
+      where: [
+        { ownerId: req.user.id }
+      ],
+      order: [['name', 'ASC']],
+      limit: req.query.limit,
+      offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
+    };
+  
+  if (!req.query.all) {
+    config.where.push(models.Sequelize.literal('`Target`.`start` <= (NOW() + INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)'));
+    config.where.push(models.Sequelize.literal('`Target`.`end` >= (NOW() - INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)'));
+    filter.push('Only current targets are shown');
+  }
+  
+  models.Target.findAndCountAll(config).then(function (result) {
     var targets = result.rows,
       count = result.count;
     res.render('user/targets/list', {
@@ -24,7 +33,8 @@ router.get('/', sendflash, function (req, res, next) {
       section: 'targets',
       targets: targets,
       pageCount: Math.ceil(count / parseInt(req.query.limit, 10)),
-      currentPage: req.query.page
+      currentPage: req.query.page,
+      filter: filter
     });
   }).catch(function (err) {
     next(err);
@@ -92,7 +102,7 @@ router.post('/new', isverified, function (req, res, next) {
       wordcount: req.body.wordcount,
       notes: req.body.notes,
       ownerId: req.user.id,
-      zoneOffset: req.body.zoneOffset || null,
+      zoneOffset: req.body.zoneOffset || 0,
     });
   }).then(function (target) {
     savedTarget = target;
@@ -126,7 +136,7 @@ router.post('/new', isverified, function (req, res, next) {
           name: req.body.name,
           start: start ? req.body.start : '',
           end: end ? req.body.end : '',
-          zoneOffset: req.body.zoneOffset || null,
+          zoneOffset: req.body.zoneOffset || 0,
           wordcount: req.body.wordcount,
           notes: req.body.notes,
           Projects: filterIds(projects, req.body.projects)
@@ -227,7 +237,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       target.set('wordcount', req.body.wordcount);
       target.set('start', start);
       target.set('end', end);
-      target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || null));
+      target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));
       return target.save().then(function () {
         return models.Project.findAll({
           where: {
