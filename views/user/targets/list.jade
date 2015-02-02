@@ -6,6 +6,18 @@ block content
     span.fa.fa-lg.fa-bullseye
     |  
     = __('Targets')
+  
+  div
+    if filters.length > 0    
+      p: a.btn.btn-danger(href='/targets')
+        span.fa.fa-remove
+        |  Remove filters
+      for filter in filters
+        p
+          span.fa.fa-filter
+          |  
+          strong!= filter
+          |  
 
   .btn-group(role='toolbar')
     a.btn.btn-success(href='/targets/new')

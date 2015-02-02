@@ -9,7 +9,7 @@ var router = require('express').Router(),
   filterIds = require('../../utils/functions/filterids');
 
 router.get('/', sendflash, function (req, res, next) {
-  var filter = [],
+  var filters = [],
     config = {
       where: [
         { ownerId: req.user.id }
@@ -19,10 +19,10 @@ router.get('/', sendflash, function (req, res, next) {
       offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
     };
   
-  if (!req.query.all) {
+  if (req.query.current) {
     config.where.push(models.Sequelize.literal('`Target`.`start` <= (NOW() + INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)'));
     config.where.push(models.Sequelize.literal('`Target`.`end` >= (NOW() - INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)'));
-    filter.push('Only current targets are shown');
+    filters.push('Only current targets are shown.');
   }
   
   models.Target.findAndCountAll(config).then(function (result) {
@@ -34,7 +34,7 @@ router.get('/', sendflash, function (req, res, next) {
       targets: targets,
       pageCount: Math.ceil(count / parseInt(req.query.limit, 10)),
       currentPage: req.query.page,
-      filter: filter
+      filters: filters
     });
   }).catch(function (err) {
     next(err);
