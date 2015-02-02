@@ -6,14 +6,15 @@ var router = require('express').Router(),
   filterIds = require('../../utils/functions/filterids');
 
 router.get('/', sendflash, function (req, res, next) {
-  var searchOpts = {
-    where: {
-      ownerId: req.user.id
-    },
-    order: [['name', 'ASC']],
-    limit: req.query.limit,
-    offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
-  };
+  var filters = [],
+    searchOpts = {
+      where: {
+        ownerId: req.user.id
+      },
+      order: [['name', 'ASC']],
+      limit: req.query.limit,
+      offset: (parseInt(req.query.page, 10) - 1) * parseInt(req.query.limit, 10)
+    };
   
   if (req.query.genreid) {
     searchOpts.include = [
@@ -25,6 +26,7 @@ router.get('/', sendflash, function (req, res, next) {
         }
       }
     ];
+    filters.push('Filtering by projects that have genre with id ' + req.query.genreid + '.');
   }
   
   models.Project.findAndCountAll(searchOpts).then(function (result) {
@@ -35,7 +37,8 @@ router.get('/', sendflash, function (req, res, next) {
       section: 'projects',
       projects: projects,
       pageCount: Math.ceil(count / parseInt(req.query.limit, 10)),
-      currentPage: req.query.page
+      currentPage: req.query.page,
+      filters: filters
     });
   }).catch(function (err) {
     return next(err);

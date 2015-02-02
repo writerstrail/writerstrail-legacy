@@ -19,7 +19,8 @@ router.get('/', sendflash, function (req, res, next) {
       section: 'genres',
       genres: genres,
       pageCount: Math.ceil(count / parseInt(req.query.limit, 10)),
-      currentPage: req.query.page
+      currentPage: req.query.page,
+      filters: []
     });
   }).catch(function (err) {
     return next(err);
