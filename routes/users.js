@@ -58,8 +58,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         where: [
           { ownerId: req.user.id },
           models.Sequelize.literal(
-              'CASE WHEN `Target`.`zoneOffset` IS NOT NULL THEN `Target`.`end` >= DATE_SUB(NOW(), INTERVAL `Target`.`zoneOffset` MINUTE) ' +
-              'ELSE `Target`.`end` >= NOW() END')
+              '`Target`.`end` >= DATE_SUB(NOW(), INTERVAL `Target`.`zoneOffset` MINUTE)')
         ],
         order: [['end', 'ASC']]
       }, {

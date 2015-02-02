@@ -115,7 +115,7 @@ router.post('/new', isverified, function (req, res, next) {
       notes: req.body.notes,
       wordcount: req.body.wordcount,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
-      zoneOffset: req.body.zoneOffset || null,
+      zoneOffset: req.body.zoneOffset || 0,
       duration: durationParser(req.body.duration),
       pausedTime: durationParser(req.body.pausedTime),
       isCountdown: !!req.body.isCountdown,
@@ -145,7 +145,7 @@ router.post('/new', isverified, function (req, res, next) {
         edit: false,
         session: {
           summary: req.body.summary,
-          zoneOffset: req.body.zoneOffset || null,
+          zoneOffset: req.body.zoneOffset || 0,
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
@@ -267,7 +267,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         session.set('pausedTime', durationParser(req.body.pausedTime));
         session.set('isCountdown', !!req.body.isCountdown);
         session.set('projectId', parseInt(req.body.project, 10));
-        session.set('zoneOffset', session.zoneOffset || (req.body.zoneOffset || null));
+        session.set('zoneOffset', session.zoneOffset || (req.body.zoneOffset || 0));
         return session.save();
       });
     }
