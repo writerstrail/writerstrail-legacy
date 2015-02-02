@@ -241,5 +241,7 @@
 	"You can't create or edit any content without a confirmed email address.": "You can't create or edit any content without a confirmed email address.",
 	"Active projects": "Active projects",
 	"The name of the target must have between 3 and 255 characters": "The name of the target must have between 3 and 255 characters",
-	"Your current writing targets to achieve": "Your current writing targets to achieve"
+	"Your current writing targets to achieve": "Your current writing targets to achieve",
+	"Send feedback about Writer's Trail": "Send feedback about Writer's Trail",
+	"Feedback": "Feedback"
 }

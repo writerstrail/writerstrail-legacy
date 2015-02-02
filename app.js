@@ -81,6 +81,7 @@ var infoRoutes = require('./routes/info');
 var authRoutes = require('./routes/auth')(passport);
 var adminRoutes = require('./routes/admin');
 var userRoutes = require('./routes/users');
+var feedbackRoutes = require('./routes/feedback');
 var navlist = require('./routes/navlist');
 
 // Adding locals
@@ -101,6 +102,7 @@ app.use('/', infoRoutes);
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
+app.use('/feedback', feedbackRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

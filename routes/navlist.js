@@ -3,7 +3,9 @@ module.exports = function (req) {
     left: [
       { 'href': '/about', 'key': 'about', 'label': 'About', 'title': 'About Writer\'s Trail' }
     ],
-    right: []
+    right: [
+      { 'href': '/feedback', 'key': 'feedback', 'label': 'Feedback', 'title': 'Send feedback about Writer\'s Trail', icon: 'comments-o' }
+    ]
   };
   if (req.user) {
     navlist .right.push(

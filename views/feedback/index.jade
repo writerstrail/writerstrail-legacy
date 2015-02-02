@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+  h1 Feedback list
+  
+  .row
+    .col-sm-6
+      ul.list-group
+        for fb in feedbacks
+          - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : 'info')
+          li.list-group-item(class='list-group-item-' + itemclass)
+            span.badge= fb.totalVotes
+            if user
+              - var vote = _.where(votes, { feedbackId: fb.id })
+              - vote = vote.length > 0 ? vote[0].vote : '0'
+              a.text-success(href='/feedback/' + fb.id + '/upvote' + (vote === 1 ? '/undo' : '') title='I approve' + (vote === 1 ? ' (undo)' : '')): span.fa.fa-lg(class='fa-thumbs-' + (vote === 1 ? '' : 'o-') + 'up')
+              |  
+              a.text-danger(href='#' title='I disapprove'): span.fa.fa-lg(class='fa-thumbs-' + (vote === -1 ? '' : 'o-') + 'down')
+              |  
+            a(href='/feedback/' + fb.id title=fb.type class='text-' + itemclass)= fb.summary
