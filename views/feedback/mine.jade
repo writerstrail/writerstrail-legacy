@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  h1 Your feedbacks
+  
+  p.text-muted For better usability, you can't edit the feedbacks. If anything, delete and create another or contact us at 
+    strong writerstrail@georgemarques.com.br
+    | .
+  
+  if feedbacks.length === 0
+    h3 You haven't provided any feedback.
+  else
+    ul.list-group
+      for fb in feedbacks
+        li.list-group-item
+          a.text-danger(href='/feedback/' + fb.id + '/delete' title='Delete')
+            span.fa.fa-lg.fa-trash-o
+          |  
+          a(href='/feedback/' + fb.id)= fb.summary
