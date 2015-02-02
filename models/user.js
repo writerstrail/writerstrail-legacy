@@ -1,6 +1,8 @@
 "use strict";
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt'),
+  _ = require('lodash'),
+  genres = require('../utils/data/genres');
 
 module.exports = function (sequelize, DataTypes) {
   var User = sequelize.define("User", {
@@ -152,19 +154,11 @@ module.exports = function (sequelize, DataTypes) {
           });
         });
         User.afterCreate(function (user, options, done) {
-          var genres = [
-            {
-              name: 'Fantasy',
-              description: 'Mages, Maidens, Heroes and Dragons.',
-              ownerId: user.id
-            },
-            {
-              name: 'Science Fiction',
-              description: 'Machines, Scientists, Time travel and Space exploration.',
-              ownerId: user.id
-            }
-          ];
-          return models.Genre.bulkCreate(genres).then(function () {
+          var userGenres = _.map(genres, function (g) { 
+            g.ownerId = user.id;
+            return g;
+          });
+          return models.Genre.bulkCreate(userGenres).then(function () {
             return models.Settings.create({
               id: user.id
             });
