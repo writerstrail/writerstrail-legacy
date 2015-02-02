@@ -1,5 +1,11 @@
 "use strict";
 
+var _ = require('lodash'),
+  periods = require('../utils/data/periods'),
+  quote = function (string) {
+    return "'" + string + "'";
+  };
+
 module.exports = {
   up: function (migration, DataTypes, done) {
     migration.createTable('users', {
@@ -536,11 +542,47 @@ module.exports = {
         charset: 'utf8',
         collate: 'utf8_bin'
       });
+    }).then(function () {
+      return migration.createTable('periods', {
+        name: {
+          type: DataTypes.STRING,
+          primaryKey: true,
+          allowNull: false
+        },
+        start: {
+          type: 'TIME',
+          allowNull: false
+        },
+        end: {
+          type: 'TIME',
+          allowNull: false
+        }
+      }, {
+        charset: 'utf8',
+        collate: 'utf8_bin'
+      });
+    }).then(function () {
+      var inserts = _.reduce(periods, function (acc, per) {
+        acc.push([quote(per.name), quote(per.start), quote(per.end)].join(','));
+        return acc;
+      }, []).join('), (');
+      var query = 'INSERT INTO `periods` (`name`,`start`,`end`) VALUES (' + inserts + ');';
+      return migration.sequelize.query(query);
+    }).then(function () {
+      return migration.sequelize.query('CREATE ALGORITHM = MERGE VIEW `periodPerformance` AS select `p`.`ownerId` AS `ownerID`,avg((`s`.`wordcount` / (`s`.`duration` / 60))) AS `performance`,`t`.`name` AS `period`,`t`.`start` AS `start`,`t`.`end` AS `end` from ((`writingSessions` `s` join `projects` `p` on((`p`.`id` = `s`.`projectId`))) join `periods` `t` on((case when (`t`.`start` < `t`.`end`) then (cast(`s`.`start` as time) between `t`.`start` and `t`.`end`) else ((cast(`s`.`start` as time) >= `t`.`start`) or (cast(`s`.`start` as time) <= `t`.`end`)) end))) group by `p`.`ownerId`,`t`.`name` order by avg((`s`.`wordcount` / (`s`.`duration` / 60))) desc;');
+    }).then(function () {
+      return migration.sequelize.query('CREATE ALGORITHM = MERGE VIEW `sessionPerformance` AS SELECT `p`.`ownerId` AS `ownerId`, AVG(s.wordcount / (s.duration / 60)) AS `performance`, CASE WHEN `isCountdown` = 0 THEN \'forward\' ELSE \'countdown\' END AS `direction`, ROUND(`s`.`duration` / 60) AS `minuteDuration` FROM `writingSessions` `s` INNER JOIN `projects` `p` ON `p`.`id` = `s`.`projectId` GROUP BY `ownerId`, `minuteDuration`, `isCountdown` ORDER BY `performance` DESC;');
     }).then(done);
   },
   
   down: function (migration, DataTypes, done) {
-    migration.dropTable('tokens').then(function () {
+    migration.sequelize.query('DROP VIEW `sessionPerformance`;').then(function () {
+      return migration.sequelize.query('DROP VIEW `periodPerformance`;');
+    }).then(function () {
+      return migration.dropTable('periods');
+    }).then(function () {
+      return migration.dropTable('tokens');
+    }).then(function () {
       return migration.dropTable('settings');
     }).then(function () {
       return migration.dropTable('projectsTargets');
