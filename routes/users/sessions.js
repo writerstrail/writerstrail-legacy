@@ -31,9 +31,11 @@ function durationFormatterAlt(dur) {
 }
 
 router.get('/', sendflash, function (req, res, next) {
-  var whereOpt = { ownerId: req.user.id };
+  var whereOpt = { ownerId: req.user.id },
+    filters = [];
   if (req.query.projectid) {
     whereOpt.id = req.query.projectid;
+    filters.push('Filtering by sessions of project with id ' + req.query.projectid + '.');
   }
   models.Session.findAndCountAll({
     include: [
@@ -56,7 +58,8 @@ router.get('/', sendflash, function (req, res, next) {
       section: 'sessions',
       sessions: sessions,
       pageCount: Math.ceil(count / parseInt(req.query.limit, 10)),
-      currentPage: req.query.page
+      currentPage: req.query.page,
+      filters: filters
     });
   }).catch(function (err) {
     return next(err);

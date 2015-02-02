@@ -2,10 +2,13 @@ extends ../../layout
 
 block content
   include ../../mixins/paginate
+  include ../../mixins/filters
   h1
     span.fa.fa-lg.fa-bullseye
     |  
     = __('Targets')
+  
+  +filters(filters, '/targets')
 
   .btn-group(role='toolbar')
     a.btn.btn-success(href='/targets/new')
