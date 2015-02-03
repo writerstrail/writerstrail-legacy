@@ -1,6 +1,7 @@
 var router = require('express').Router(),
   models = require('../models'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  feedbackRoutes = require('./admin/feedback');
 
 function isAdmin(req, res, next) {
   if (req.user && req.user.role === 'superadmin') {
@@ -364,6 +365,6 @@ router.post('/user/edit', function (req, res, next) {
   }
 });
 
-
+router.use('/feedback', feedbackRoutes);
 
 module.exports = router;

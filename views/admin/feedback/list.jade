@@ -1,0 +1,44 @@
+extends ../../layout
+
+block content
+  include ../../mixins/filters
+  h1 Feedback list
+  
+  +filters(filters, '/admin/feedback?all=true')
+  
+  p  
+  
+  form.form-inline(method='get')
+    .form-group
+      select#status.form-control(name='status')
+        option(selected=i === 'all') All
+        for i in stati
+          option(selected=i === query.status)= i
+    |  
+    .checkbox
+      label
+        input(type='checkbox' checked=!!query.deleted name='deleted')
+        | Show deleted
+    |  
+    .form-group
+      button.btn.btn-primary(type='submit') Filter
+      
+  p  
+  
+  .row
+    .col-sm-8
+      ul.list-group
+        for fb in feedbacks
+          - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : 'info')
+          li.list-group-item(class='list-group-item-' + itemclass)
+            span.badge= fb.totalVotes || 0
+            a.btn.btn-default(href='/admin/feedback/' + fb.id title='Reply' class='text-' + itemclass)
+              span.fa.fa-reply.fa-lg
+            |  
+            span.text-muted: small (#{fb.status}) 
+            a(href='/feedback/' + fb.id title=fb.type class='text-' + itemclass)
+              if fb.deletedAt === null 
+                = fb.summary
+              else
+                s= fb.summary
+  
