@@ -608,6 +608,15 @@ module.exports = {
           onUpdate: 'CASCADE',
           onDelete: 'CASCADE'
         },
+        status: {
+          type: DataTypes.ENUM,
+          values: ['New', 'Reviewing', 'Dismissed', 'Duplicate', 'On hold', 'Accepted', 'Developing'],
+          allowNull: false,
+          defaultValue: 'New'
+        },
+        response: {
+          type: DataTypes.TEXT
+        },
         createdAt: {
           type: DataTypes.DATE,
           allowNull: false

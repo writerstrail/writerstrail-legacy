@@ -1,5 +1,7 @@
 "use strict";
 
+var feedbackstati = require('../utils/data/feedbackstati');
+
 module.exports = function (sequelize, DataTypes) {
   var Feedback = sequelize.define("Feedback", {
     id: {
@@ -27,6 +29,15 @@ module.exports = function (sequelize, DataTypes) {
     description: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    status: {
+      type: DataTypes.ENUM,
+      values: feedbackstati,
+      allowNull: false,
+      defaultValue: 'New'
+    },
+    response: {
+      type: DataTypes.TEXT
     }
   }, {
     tableName: 'feedback',
