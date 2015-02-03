@@ -2,12 +2,13 @@ extends ../layout
 
 block content
   h1
-    a.text-success(href='/feedback/' + feedback.id + '/upvote' + (vote === 1 ? '/undo' : '') title='I approve' + (vote === 1 ? ' (undo)' : ''))
-      span.fa(class='fa-thumbs-' + (vote === 1 ? '' : 'o-') + 'up')
-    |  
-    a.text-danger(href='/feedback/' + feedback.id + '/downvote' + (vote === -1 ? '/undo' : '') title='I disapprove' + (vote === -1 ? ' (undo)' : ''))
-      span.fa(class='fa-thumbs-' + (vote === -1 ? '' : 'o-') + 'down')
-    |  
+    if user
+      a.text-success(href='/feedback/' + feedback.id + '/upvote' + (vote === 1 ? '/undo' : '') title='I approve' + (vote === 1 ? ' (undo)' : ''))
+        span.fa(class='fa-thumbs-' + (vote === 1 ? '' : 'o-') + 'up')
+      |  
+      a.text-danger(href='/feedback/' + feedback.id + '/downvote' + (vote === -1 ? '/undo' : '') title='I disapprove' + (vote === -1 ? ' (undo)' : ''))
+        span.fa(class='fa-thumbs-' + (vote === -1 ? '' : 'o-') + 'down')
+      |  
     = feedback.type
   
   .list-group
@@ -33,3 +34,7 @@ block content
               if i > 0
                 br
               = line
+  if user && user.id == feedback.authorId
+    a.btn.btn-danger(href='/feedback/' + feedback.id + '/delete' title='Delete this feedback')
+      span.fa.fa-trash
+      |  Delete

@@ -122,13 +122,14 @@ router.get('/:id', sendflash, function (req, res, next) {
         'id',
         'summary',
         'type',
+        'authorId',
         models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
       ],
     }, {
       raw: true
     });
   }).then(function (feedback) {
-    if (!feedback) {
+    if (!feedback.id) {
       var err = new Error('Not found');
       err.status = 404;
       return next(err);
@@ -209,6 +210,50 @@ router.get('/:id/downvote', islogged, function (req, res, next) {
 
 router.get('/:id/downvote/undo', islogged, function (req, res, next) {
   cancelVote(-1, req, res, next);
+});
+
+router.get('/:id/delete', islogged, function (req, res, next) {
+  models.Feedback.destroy({
+    where: {
+      authorId: req.user.id,
+      id: req.params.id
+    }
+  }).then(function () {
+    return models.Feedback.findOne({
+       where: {
+        authorId: req.user.id,
+        id: req.params.id
+      },
+      paranoid: false
+    });
+  }).then(function (feedback) {
+    if (!feedback) {
+      var err = new Error('Not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('feedback/delete', {
+      title: feedback.type + ' deleted',
+      feedback: feedback,
+      successMessage: ['Feedback successfully deleted.']
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id/delete/undo', islogged, function (req, res, next) {
+  models.Feedback.restore({
+    where: {
+      id: req.params.id,
+      authorId: req.user.id
+    }
+  }).then(function () {
+    req.flash('success', 'Feedback successfully restored.');
+    return res.redirect('/feedback/' + req.params.id);
+  }).catch(function (err) {
+    next(err);
+  });
 });
 
 module.exports = router;
