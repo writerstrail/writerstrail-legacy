@@ -22,7 +22,7 @@ block content
       .col-sm-2
         strong Vote score
       .col-sm-10
-        = feedback.totalVotes || 0
+        span.badge= feedback.totalVotes || 0
     .row.list-group-item
       .col-sm-2
         strong Summary
@@ -40,7 +40,24 @@ block content
               if i > 0
                 br
               = line
-  if user && user.id == feedback.authorId
+    .row.list-group-item
+      .col-sm-2
+        strong Status
+      .col-sm-10
+        = feedback.status
+    .row.list-group-item
+      .col-sm-2
+        strong Response
+      .col-sm-10
+        unless feedback.response
+          | No response yet.
+        else
+          - var lines = feedback.response.split(/(?:\r\n|\r|\n)/g)
+            for line, i in lines
+              if i > 0
+                br
+              = line
+  if user && (user.id == feedback.authorId) 
     a.btn.btn-danger(href='/feedback/' + feedback.id + '/delete' title='Delete this feedback')
       span.fa.fa-trash
       |  Delete

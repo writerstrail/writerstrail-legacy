@@ -3,10 +3,13 @@ var router = require('express').Router(),
   islogged = require('../utils/middlewares/islogged'),
   isactivated = require('../utils/middlewares/isactivated'),
   sendflash = require('../utils/middlewares/sendflash'),
-  models = require('../models');
+  _ = require('lodash'),
+  models = require('../models'),
+  stati = require('../utils/data/feedbackstati');
 
 router.get('/', sendflash, function (req, res, next) {
-  var userVotes = null;
+  var userVotes = null,
+    filters = [];
   (function () {
     if (!req.user) {
       return promise.resolve(null);
@@ -18,7 +21,8 @@ router.get('/', sendflash, function (req, res, next) {
     });
   })().then(function (votes) {
     userVotes = votes;
-    return models.Feedback.findAll({
+    var config = {
+      where: [],
       include: {
         model: models.Vote,
         as: 'votes',
@@ -28,12 +32,30 @@ router.get('/', sendflash, function (req, res, next) {
         'id',
         'summary',
         'type',
+        'deletedAt',
         models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
       ],
       group: 'Feedback.id',
-      order: [models.Sequelize.literal('totalVotes DESC')]
+      order: [
+        ['deletedAt', 'ASC'],
+        models.Sequelize.literal('totalVotes DESC')
+      ]
+    };
     
-    }, {
+    if (_.includes(stati.concat(['All']), req.query.status)) {
+      if (req.query.status !== 'All') {
+        filters.push('Only feedbacks with status "' + req.query.status + '"are shown.');
+        config.where.push ({
+          status: req.query.status
+        });
+      }
+    }
+    if (req.query.deleted) {
+      filters.push('Including deleted feedbacks.');
+      config.paranoid = false;
+    }
+    
+    return models.Feedback.findAll(config, {
       raw: true
     });
   }).then(function (feedbacks) {
@@ -41,7 +63,13 @@ router.get('/', sendflash, function (req, res, next) {
       title: 'Feedback list',
       section: 'feedback',
       feedbacks: feedbacks,
-      votes: userVotes
+      votes: userVotes,
+      filters: filters,
+      stati: stati,
+      query: {
+        status: req.query.status,
+        deleted: req.query.deleted
+      }
     });
   }).catch(function (err) {
     next(err);
@@ -86,10 +114,35 @@ router.post('/new', isactivated, function (req, res, next) {
 });
 
 router.get('/mine', islogged, sendflash, function (req, res) {
-  req.user.getFeedbacks().then(function (feedbacks) {
+  var filters = [],
+    config = {
+      where: [
+        { authorId: req.user.id }
+      ],
+      order: [
+        ['deletedAt', 'ASC'],
+        ['createdAt', 'ASC']
+      ]
+    };
+  if (_.includes(stati.concat(['All']), req.query.status)) {
+    if (req.query.status !== 'All') {
+      filters.push('Only feedbacks with status "' + req.query.status + '"are shown.');
+      config.where.push ({
+        status: req.query.status
+      });
+    }
+  }
+  if (req.query.deleted) {
+    filters.push('Including deleted feedbacks.');
+    config.paranoid = false;
+  }
+  models.Feedback.findAll(config).then(function (feedbacks) {
     res.render('feedback/mine', {
       title: 'Your feedbacks',
-      feedbacks: feedbacks
+      feedbacks: feedbacks,
+      filters: filters,
+      stati: stati,
+      query: req.query
     });
   });
 });
@@ -124,6 +177,8 @@ router.get('/:id', sendflash, function (req, res, next) {
         'type',
         'authorId',
         'deletedAt',
+        'status',
+        'response',
         models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
       ],
       paranoid: false

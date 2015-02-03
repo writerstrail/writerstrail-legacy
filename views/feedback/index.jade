@@ -1,6 +1,7 @@
 extends ../layout
 
 block content
+  include ../mixins/filters
   h1 Feedback list
   
   if user
@@ -13,6 +14,27 @@ block content
         |  See feedbacks you provided
   p  
   
+  +filters(filters, '/feedback')
+  
+  p  
+  
+  form.form-inline(method='get')
+    .form-group
+      select#status.form-control(name='status')
+        option(selected=i === 'all') All
+        for i in stati
+          option(selected=i === query.status)= i
+    |  
+    .checkbox
+      label
+        input(type='checkbox' checked=!!query.deleted name='deleted')
+        | Show deleted
+    |  
+    .form-group
+      button.btn.btn-primary(type='submit') Filter
+  
+  p  
+  
   .row
     .col-sm-8
       ul.list-group
@@ -20,11 +42,15 @@ block content
           - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : 'info')
           li.list-group-item(class='list-group-item-' + itemclass)
             span.badge= fb.totalVotes || 0
-            if user
+            if user && !fb.deletedAt
               - var vote = _.where(votes, { feedbackId: fb.id })
               - vote = vote.length > 0 ? vote[0].vote : '0'
               a.text-success(href='/feedback/' + fb.id + '/upvote' + (vote === 1 ? '/undo' : '') title='I approve' + (vote === 1 ? ' (undo)' : '')): span.fa.fa-lg(class='fa-thumbs-' + (vote === 1 ? '' : 'o-') + 'up')
               |  
               a.text-danger(href='/feedback/' + fb.id + '/downvote' + (vote === -1 ? '/undo' : '') title='I disapprove' + (vote === -1 ? ' (undo)' : '')): span.fa.fa-lg(class='fa-thumbs-' + (vote === -1 ? '' : 'o-') + 'down')
               |  
-            a(href='/feedback/' + fb.id title=fb.type class='text-' + itemclass)= fb.summary
+            a(href='/feedback/' + fb.id title=fb.type class='text-' + itemclass)
+              if fb.deletedAt
+                s= fb.summary
+              else
+                = fb.summary
