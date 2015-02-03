@@ -94,7 +94,7 @@ router.get('/mine', islogged, function (req, res) {
   });
 });
 
-router.get('/:id', function (req, res, next) {
+router.get('/:id', sendflash, function (req, res, next) {
   var userVote = null;
   
   (function () {
@@ -141,6 +141,74 @@ router.get('/:id', function (req, res, next) {
   }).catch(function (err) {
     next(err);
   });
+});
+
+var vote = function (value, req, res, next) {
+  models.Vote.findOrCreate({
+    where: {
+      voterId: req.user.id,
+      feedbackId: req.params.id
+    },
+    defaults: {
+      vote: value
+    }
+  }).then(function (result) {
+    var vote = result[0],
+      created = result[1];
+    if (created) {
+      return promise.resolve(vote);
+    }
+    return vote.updateAttributes({
+      vote: value
+    });
+  }).then(function (vote) {
+    if (vote) {
+      req.flash('success', 'Feedback successfully voted');
+    } else {
+      req.flash('error', 'Something bad occurred. You may try again later.');
+    }
+    res.redirect('back');
+  }).catch(function (err) {
+    if (err.name !== 'SequelizeValidationError') {
+      return next(err);
+    }
+    req.flash('error', 'There was something wrong with your request. Are you trying to vote twice?');
+  });
+};
+
+var cancelVote = function (value, req, res, next) {
+  models.Vote.destroy({
+    where: {
+      voterId: req.user.id,
+      feedbackId: req.params.id,
+      vote: value
+    }
+  }).then(function (vote) {
+    if (vote > 0) {
+      req.flash('success', 'Vote successfully canceled.');
+    } else {
+      req.flash('warning', 'There was no vote to cancel.');
+    }
+    res.redirect('back');
+  }).catch(function (err) {
+    next(err);
+  });
+};
+
+router.get('/:id/upvote', islogged, function (req, res, next) {
+  vote(1, req, res, next);
+});
+
+router.get('/:id/upvote/undo', islogged, function (req, res, next) {
+  cancelVote(1, req, res, next);
+});
+
+router.get('/:id/downvote', islogged, function (req, res, next) {
+  vote(-1, req, res, next);
+});
+
+router.get('/:id/downvote/undo', islogged, function (req, res, next) {
+  cancelVote(-1, req, res, next);
 });
 
 module.exports = router;

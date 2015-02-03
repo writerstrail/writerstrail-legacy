@@ -14,8 +14,8 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: 0,
       validate: {
         isIn: {
-          args: [[-1, 0, 1]],
-          msg: 'The vote value must be -1, 0 or 1'
+          args: [[-1, 1]],
+          msg: 'The vote value must be -1 or 1'
         }
       }
     }
