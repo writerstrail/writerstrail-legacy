@@ -63,7 +63,7 @@ block content
     .form-group
       label.col-sm-2.control-label Original author
       .col-sm-10
-        p.control-static= feedback.originalAuthor
+        p.control-static: a(href='/admin/user/' + feedback.originalAuthorId)= feedback.originalAuthorId
     
     button.btn.btn-success(type='submit')
       span.fa.fa-floppy-o

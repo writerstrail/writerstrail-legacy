@@ -53,6 +53,10 @@ module.exports = function (sequelize, DataTypes) {
           as: 'votes',
           foreignKey: 'feedbackId'
         });
+        Feedback.belongsTo(models.User, {
+          as: 'originalAuthor',
+          foreignKey: 'originalAuthorId'
+        });
       }
     },
     indexes: [

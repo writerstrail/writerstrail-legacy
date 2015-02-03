@@ -94,6 +94,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       'summary',
       'type',
       'authorId',
+      'originalAuthorId',
       'deletedAt',
       'status',
       'response',

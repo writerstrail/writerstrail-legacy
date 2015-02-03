@@ -608,6 +608,14 @@ module.exports = {
           onUpdate: 'CASCADE',
           onDelete: 'CASCADE'
         },
+        originalAuthorId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: 'users',
+          referencesKey: 'id',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE'
+        },
         status: {
           type: DataTypes.ENUM,
           values: ['New', 'Reviewing', 'Dismissed', 'Duplicate', 'On hold', 'Accepted', 'Developing'],
