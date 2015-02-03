@@ -1,6 +1,7 @@
 var router = require('express').Router(),
   promise = require('sequelize').Promise,
   islogged = require('../utils/middlewares/islogged'),
+  isverified = require('../utils/middlewares/isverified'),
   isactivated = require('../utils/middlewares/isactivated'),
   sendflash = require('../utils/middlewares/sendflash'),
   _ = require('lodash'),
@@ -33,6 +34,8 @@ router.get('/', sendflash, function (req, res, next) {
         'summary',
         'type',
         'deletedAt',
+        'status',
+        'response',
         models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
       ],
       group: 'Feedback.id',
@@ -88,7 +91,7 @@ router.get('/new', isactivated, sendflash, function (req, res) {
   });
 });
 
-router.post('/new', isactivated, function (req, res, next) {
+router.post('/new', isactivated, isverified, function (req, res, next) {
   models.Feedback.create({
     authorId: req.user.id,
     summary: req.body.summary,
@@ -253,23 +256,23 @@ var cancelVote = function (value, req, res, next) {
   });
 };
 
-router.get('/:id/upvote', islogged, function (req, res, next) {
+router.get('/:id/upvote', islogged, isverified, function (req, res, next) {
   vote(1, req, res, next);
 });
 
-router.get('/:id/upvote/undo', islogged, function (req, res, next) {
+router.get('/:id/upvote/undo', islogged, isverified, function (req, res, next) {
   cancelVote(1, req, res, next);
 });
 
-router.get('/:id/downvote', islogged, function (req, res, next) {
+router.get('/:id/downvote', islogged, isverified, function (req, res, next) {
   vote(-1, req, res, next);
 });
 
-router.get('/:id/downvote/undo', islogged, function (req, res, next) {
+router.get('/:id/downvote/undo', islogged, isverified, function (req, res, next) {
   cancelVote(-1, req, res, next);
 });
 
-router.get('/:id/delete', islogged, function (req, res, next) {
+router.get('/:id/delete', islogged, isverified, function (req, res, next) {
   models.Feedback.destroy({
     where: {
       authorId: req.user.id,
@@ -299,7 +302,7 @@ router.get('/:id/delete', islogged, function (req, res, next) {
   });
 });
 
-router.get('/:id/delete/undo', islogged, function (req, res, next) {
+router.get('/:id/delete/undo', islogged, isverified, function (req, res, next) {
   models.Feedback.restore({
     where: {
       id: req.params.id,

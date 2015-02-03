@@ -5,7 +5,7 @@ var router = require('express').Router(),
   stati = require('../../utils/data/feedbackstati'),
   types = require('../../utils/data/feedbacktypes');
 
-router.get('/', function (req, res, next) {
+router.get('/', sendflash, function (req, res, next) {
   var filters = [],
     config = {
       where: [],
@@ -20,6 +20,7 @@ router.get('/', function (req, res, next) {
         'type',
         'status',
         'deletedAt',
+        'response',
         models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
       ],
       group: 'Feedback.id',
@@ -109,14 +110,52 @@ router.get('/:id', sendflash, function (req, res, next) {
       err.status = 404;
       return next(err);
     }
+    var validate = req.flash('valerror');
+    var values = req.flash('values');
     res.render('admin/feedback/single', {
       title: feedback.type,
-      feedback: feedback,
       types: types,
-      stati: stati
+      stati: stati,
+      validate: validate.length > 0 ? validate[0].errors : [],
+      feedback: values.length > 0 ? values[0] : feedback
     });
   }).catch(function (err) {
     next(err);
+  });
+});
+
+router.post('/:id', sendflash, function (req, res, next) {
+  models.Feedback.update({
+    authorId: req.body.lock ? req.user.id : req.body.originalAuthorId,
+    summary: req.body.summary,
+    type: req.body.type,
+    description: req.body.description || null,
+    status: req.body.status,
+    response: req.body.response || null
+  }, {
+    where: {
+      id: req.params.id
+    }
+  }).then(function (rows) {
+    if (rows > 0) {
+      req.flash('success', 'Feedback successfully updated');
+    } else {
+      req.flash('warning', 'No row updated');
+    }
+    res.redirect('/admin/feedback');
+  }).catch(function (err) {
+    if (err.message === 'Validation error') {
+      req.flash('error', 'There are invalid values');
+      req.flash('valerror', err);
+      req.flash('values', {
+        summary: req.body.summary,
+        description: req.body.description,
+        type: req.body.type
+      });
+      res.redirect('back');
+    } else {
+      next(err);
+    }
   });
 });
 

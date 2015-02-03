@@ -51,7 +51,7 @@ block content
       label.col-sm-2.control-label(for='response') Response
       .col-sm-10
         textarea#description.form-control(name='response' placeholder='Response')
-        = feedback.response
+          = feedback.response
     
     .form-group
       .col-sm-offset-2.col-sm-10
@@ -64,6 +64,7 @@ block content
       label.col-sm-2.control-label Original author
       .col-sm-10
         p.control-static: a(href='/admin/user/' + feedback.originalAuthorId)= feedback.originalAuthorId
+        input(type='hidden' name='originalAuthorId' value=feedback.originalAuthorId)
     
     button.btn.btn-success(type='submit')
       span.fa.fa-floppy-o
@@ -77,9 +78,9 @@ block content
     else
       a.btn.btn-danger(href='/admin/feedback/' + feedback.id + '/delete/forever' title='Delete this feedback forever')
         span.fa.fa-remove
-        |  Delete 
+        |  Delete forever
       |  
-      a.btn.btn-info(href='/feedback/' + feedback.id + '/delete' title='Delete this feedback')
+      a.btn.btn-info(href='/admin/feedback/' + feedback.id + '/delete/undo' title='Restore this feedback')
         span.fa.fa-undo
         |  Restore 
       |  
