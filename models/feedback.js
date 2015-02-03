@@ -1,6 +1,7 @@
 "use strict";
 
-var feedbackstati = require('../utils/data/feedbackstati');
+var feedbackstati = require('../utils/data/feedbackstati'),
+  feedbacktypes = require('../utils/data/feedbacktypes');
 
 module.exports = function (sequelize, DataTypes) {
   var Feedback = sequelize.define("Feedback", {
@@ -12,7 +13,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     type: {
       type: DataTypes.ENUM,
-      values: ['Bug', 'Suggestion', 'Feedback'],
+      values: feedbacktypes,
       defaultValue: 'Feedback',
       allowNull: false
     },

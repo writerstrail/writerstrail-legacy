@@ -1,7 +1,9 @@
 var router = require('express').Router(),
   _ = require('lodash'),
   models = require('../../models'),
-  stati = require('../../utils/data/feedbackstati');
+  sendflash = require('../../utils/middlewares/sendflash'),
+  stati = require('../../utils/data/feedbackstati'),
+  types = require('../../utils/data/feedbacktypes');
 
 router.get('/', function (req, res, next) {
   var filters = [],
@@ -71,6 +73,46 @@ router.get('/', function (req, res, next) {
       feedbacks: feedbacks,
       stati: stati,
       query: req.query
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id', sendflash, function (req, res, next) {
+  models.Feedback.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: {
+      model: models.Vote,
+      as: 'votes',
+      required: false
+    },
+    attributes: [
+      'id',
+      'summary',
+      'type',
+      'authorId',
+      'deletedAt',
+      'status',
+      'response',
+      models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
+    ],
+    paranoid: false
+  }, {
+    raw: true
+  }).then(function (feedback) {
+    if (!feedback.id) {
+      var err = new Error('Not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('admin/feedback/single', {
+      title: feedback.type,
+      feedback: feedback,
+      types: types,
+      stati: stati
     });
   }).catch(function (err) {
     next(err);
