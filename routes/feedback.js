@@ -85,7 +85,7 @@ router.post('/new', isactivated, function (req, res, next) {
   });
 });
 
-router.get('/mine', islogged, function (req, res) {
+router.get('/mine', islogged, sendflash, function (req, res) {
   req.user.getFeedbacks().then(function (feedbacks) {
     res.render('feedback/mine', {
       title: 'Your feedbacks',
