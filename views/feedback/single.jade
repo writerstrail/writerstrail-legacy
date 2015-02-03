@@ -2,14 +2,20 @@ extends ../layout
 
 block content
   h1
-    if user
+    if user && !feedback.deletedAt
       a.text-success(href='/feedback/' + feedback.id + '/upvote' + (vote === 1 ? '/undo' : '') title='I approve' + (vote === 1 ? ' (undo)' : ''))
         span.fa(class='fa-thumbs-' + (vote === 1 ? '' : 'o-') + 'up')
       |  
       a.text-danger(href='/feedback/' + feedback.id + '/downvote' + (vote === -1 ? '/undo' : '') title='I disapprove' + (vote === -1 ? ' (undo)' : ''))
         span.fa(class='fa-thumbs-' + (vote === -1 ? '' : 'o-') + 'down')
       |  
-    = feedback.type
+    if feedback.deletedAt
+      s= feedback.type
+    else
+      = feedback.type
+  
+  if feedback.deletedAt
+    p.text-danger This feedback was deleted by the author.
   
   .list-group
     .row.list-group-item
