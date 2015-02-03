@@ -159,7 +159,7 @@ router.post('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/delete', sendflash, function (req, res, next) {
+router.get('/:id/delete', function (req, res, next) {
   models.Feedback.destroy({
     where: {
       id: req.params.id
@@ -168,15 +168,15 @@ router.get('/:id/delete', sendflash, function (req, res, next) {
     if (rows > 0) {
       req.flash('success', 'Feedback successfully deleted.');
     } else {
-      req.flash('warning', 'No feedback to delete');
+      req.flash('warning', 'No feedback to delete.');
     }
-    res.redirect('/admin/feedback');
+    res.redirect('/admin/feedback/' + req.params.id);
   }).catch(function (err) {
     next(err);
   });
 });
 
-router.get('/:id/delete/undo', sendflash, function (req, res, next) {
+router.get('/:id/delete/undo', function (req, res, next) {
   models.Feedback.restore({
     where: {
       id: req.params.id
@@ -185,9 +185,27 @@ router.get('/:id/delete/undo', sendflash, function (req, res, next) {
     if (rows) {
       req.flash('success', 'Feedback successfully restored.');
     } else {
-      req.flash('warning', 'No feedback to restore');
+      req.flash('warning', 'No feedback to restore.');
     }
     res.redirect('/admin/feedback/' + req.params.id);
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id/delete/forever', function (req, res, next) {
+  models.Feedback.destroy({
+    where: {
+      id: req.params.id
+    },
+    force: true
+  }).then(function (rows) {
+    if (rows > 0) {
+      req.flash('success', 'Feedback successfully deleted forever.');
+    } else {
+      req.flash('warning', 'No feedback to delete forever.');
+    }
+    res.redirect('/admin/feedback');
   }).catch(function (err) {
     next(err);
   });
