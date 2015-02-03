@@ -2,6 +2,9 @@ extends ../../layout
 
 block content
   h1
+    a(href='/feedback/' + feedback.id)
+      span.fa.fa-eye
+    |  
     if feedback.deletedAt
       s= feedback.type
     else
@@ -57,13 +60,19 @@ block content
       .col-sm-offset-2.col-sm-10
         .checkbox
           label(title='Avoid author from removing it')
-            input(type='checkbox' name='lock')
+            input(type='checkbox' name='lock' checked=((feedback.authorId !== feedback.originalAuthorId) && (feedback.authorId === user.id)))
             | Lock
+          if feedback.authorId !== feedback.originalAuthorId
+            if feedback.authorId === user.id
+              p.text-muted (Locked by you)
+            else 
+              p.text-muted (Locked by <a href="/admin/user/#{feedback.authorId}">#{feedback.authorId}</a>)
     
     .form-group
       label.col-sm-2.control-label Original author
       .col-sm-10
         p.control-static: a(href='/admin/user/' + feedback.originalAuthorId)= feedback.originalAuthorId
+        input(type='hidden' name='authorId' value=feedback.authorId)
         input(type='hidden' name='originalAuthorId' value=feedback.originalAuthorId)
     
     button.btn.btn-success(type='submit')

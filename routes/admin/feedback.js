@@ -125,14 +125,18 @@ router.get('/:id', sendflash, function (req, res, next) {
 });
 
 router.post('/:id', sendflash, function (req, res, next) {
-  models.Feedback.update({
-    authorId: req.body.lock ? req.user.id : req.body.originalAuthorId,
+  var config = {
     summary: req.body.summary,
     type: req.body.type,
     description: req.body.description || null,
     status: req.body.status,
     response: req.body.response || null
-  }, {
+  };
+  // Permissoion to change lock
+  if ((req.body.originalAuthorId === req.body.authorId) || (parseInt(req.body.authorId, 10) === req.user.id)) {
+    config.authorId = !!req.body.lock ? req.user.id : req.body.originalAuthorId;
+  }
+  models.Feedback.update(config, {
     where: {
       id: req.params.id
     }

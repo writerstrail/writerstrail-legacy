@@ -119,9 +119,10 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
 router.get('/mine', islogged, sendflash, function (req, res) {
   var filters = [],
     config = {
-      where: [
-        { authorId: req.user.id }
-      ],
+      where: models.Sequelize.or(
+        { authorId: req.user.id },
+        { originalAuthorId: req.user.id }
+      ),
       order: [
         ['deletedAt', 'ASC'],
         ['createdAt', 'ASC']
