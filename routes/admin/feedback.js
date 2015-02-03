@@ -165,13 +165,29 @@ router.get('/:id/delete', sendflash, function (req, res, next) {
       id: req.params.id
     }
   }).then(function (rows) {
-    console.log('------rows', rows);
     if (rows > 0) {
       req.flash('success', 'Feedback successfully deleted.');
     } else {
       req.flash('warning', 'No feedback to delete');
     }
     res.redirect('/admin/feedback');
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id/delete/undo', sendflash, function (req, res, next) {
+  models.Feedback.restore({
+    where: {
+      id: req.params.id
+    }
+  }).then(function (rows) {
+    if (rows) {
+      req.flash('success', 'Feedback successfully restored.');
+    } else {
+      req.flash('warning', 'No feedback to restore');
+    }
+    res.redirect('/admin/feedback/' + req.params.id);
   }).catch(function (err) {
     next(err);
   });
