@@ -159,4 +159,22 @@ router.post('/:id', sendflash, function (req, res, next) {
   });
 });
 
+router.get('/:id/delete', sendflash, function (req, res, next) {
+  models.Feedback.destroy({
+    where: {
+      id: req.params.id
+    }
+  }).then(function (rows) {
+    console.log('------rows', rows);
+    if (rows > 0) {
+      req.flash('success', 'Feedback successfully deleted.');
+    } else {
+      req.flash('warning', 'No feedback to delete');
+    }
+    res.redirect('/admin/feedback');
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
 module.exports = router;
