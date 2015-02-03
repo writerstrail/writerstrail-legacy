@@ -22,9 +22,7 @@ router.get('/', function (req, res, next) {
       ],
       group: 'Feedback.id',
       order: [
-        ['deletedAt', 'ASC'],
-        models.Sequelize.literal('`totalVotes` DESC'),
-        ['createdAt', 'DESC']
+        ['deletedAt', 'ASC']
       ]
     };
   if (_.includes(stati.concat(['All']), req.query.status)) {
@@ -44,6 +42,25 @@ router.get('/', function (req, res, next) {
     filters.push('Including deleted feedbacks.');
     config.paranoid = false;
   }
+  if (_.includes(['Votes', 'Creation'], req.query.order || null)) {
+    filters.push('Ordering by "' + req.query.order + '".');
+    
+    if (req.query.order === 'Votes') {
+      config.order.push(
+        models.Sequelize.literal('`totalVotes` DESC'),
+        ['createdAt', 'DESC']
+      );
+    } else {
+      config.order.push(
+        ['createdAt', 'DESC']
+      );
+    }
+  } else {
+    config.order.push(
+      models.Sequelize.literal('`totalVotes` DESC'),
+      ['createdAt', 'DESC']
+    );
+  }
   models.Feedback.findAll(config, {
     raw: true
   }).then(function (feedbacks) {
@@ -53,10 +70,7 @@ router.get('/', function (req, res, next) {
       filters: filters,
       feedbacks: feedbacks,
       stati: stati,
-      query: {
-        status: req.query.status,
-        deleted: req.query.deleted
-      }
+      query: req.query
     });
   }).catch(function (err) {
     next(err);

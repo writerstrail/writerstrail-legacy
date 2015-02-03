@@ -17,8 +17,14 @@ block content
     |  
     .checkbox
       label
-        input(type='checkbox' checked=!!query.deleted name='deleted')
+        input#deleted(type='checkbox' checked=!!query.deleted name='deleted')
         | Show deleted
+    |  
+    .form-group
+      select#order.form-control(name='order')
+        option
+        option(selected=(query.order === 'Votes')) Votes
+        option(selected=(query.order === 'Creation')) Creation
     |  
     .form-group
       button.btn.btn-primary(type='submit') Filter
