@@ -75,19 +75,19 @@ block content
         if i === 0
           label.col-sm-2.control-label Genres
         .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
-          .checkbox
+          .checkbox(title=chunk[0].description)
             label
               input(type='checkbox', name='genres[]' value=chunk[0].id checked=checkGenre(chunk[0].id))
               = chunk[0].name
         if chunk[1]
           .col-sm-3
-            .checkbox
+            .checkbox(title=chunk[1].description)
               label
                 input(type='checkbox', name='genres[]' value=chunk[1].id checked=checkGenre(chunk[1].id))
                 = chunk[1].name
         if chunk[2]
           .col-sm-3
-            .checkbox
+            .checkbox(title=chunk[2].description)
               label
                 input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
                 = chunk[2].name

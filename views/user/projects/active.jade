@@ -24,12 +24,12 @@ block content
       for project in projects
         li.list-group-item
           .row
-            .col-sm-2.text-right
+            .col-sm-3.project-list-title
               a(href='/projects/' + project.id title=project.description)= project.name
-              | &nbsp;
+              |  
               a(href='/projects/' + project.id + '/edit' title='Edit')
                 span.fa.fa-edit
-            .col-sm-8
+            .col-sm-7
               if project.targetwc > 0
                 .progress(title=project.currentWordcount + '/' + project.targetwc)
                   - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')

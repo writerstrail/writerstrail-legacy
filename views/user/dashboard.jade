@@ -13,31 +13,34 @@ block content
           h3.panel-title
             span.fa.fa-files-o
             |  Last five active projects
-        .panel-body
-          if projects.length === 0
-            .row
-              .col-sm-12
-                h3.text-center No current active project
-                p.text-center
-                  a.btn.btn-primary(href='/projects/new' title='New project') Create a new one now
-          for project in projects
-            .row
-              .col-sm-2
-                p.text-right(style='height: 4ex;')
-                  a(href='/projects/' + project.id title=project.description)= project.name
-              .col-sm-8
-                if project.targetwc === 0
-                  p No target defined. 
-                    = project.currentWordcount
-                    |  written words.
-                else
-                  .progress(title=project.currentWordcount + '/' + project.targetwc)
-                    - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
-                    .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
-                      = project.percentage + '%'
-              .col-sm-2
-                a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
         ul.list-group
+          if projects.length === 0
+            li.list-group-item
+              .row
+                .col-sm-12
+                  h3.text-center No current active project
+                  p.text-center
+                    a.btn.btn-primary(href='/projects/new' title='New project') Create a new one now
+          for project in projects
+            li.list-group-item
+              .row
+                .col-sm-3.project-list-title
+                  a.project-list-title(href='/projects/' + project.id title=project.description)= project.name
+                  |  
+                  a(href='/projects/' + project.id + '/edit' title='Edit')
+                    span.fa.fa-edit
+                .col-sm-7
+                  if project.targetwc === 0
+                    p No target defined. 
+                      = project.currentWordcount
+                      |  written words.
+                  else
+                    .progress(title=project.currentWordcount + '/' + project.targetwc)
+                      - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
+                      .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
+                        = project.percentage + '%'
+                .col-sm-2
+                  a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
           li.list-group-item.text-center
             a(href='/projects/active') See all active projects
             
