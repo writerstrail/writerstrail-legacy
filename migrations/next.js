@@ -1,7 +1,6 @@
 "use strict";
 
 var _ = require('lodash'),
-  periods = require('../utils/data/periods'),
   quote = function (string) {
     return "'" + string + "'";
   };
@@ -562,10 +561,18 @@ module.exports = {
         collate: 'utf8_bin'
       });
     }).then(function () {
-      var inserts = _.reduce(periods, function (acc, per) {
-        acc.push([quote(per.name), quote(per.start), quote(per.end)].join(','));
-        return acc;
-      }, []).join('), (');
+      var periods = [
+        { name: 'early morning',   start: '05:00:00', end: '08:59:59'},
+        { name: 'late morning',    start: '09:00:00', end: '11:59:59'},
+        { name: 'early afternoon', start: '12:00:00', end: '14:59:59'},
+        { name: 'late afternoon',  start: '15:00:00', end: '16:59:59'},
+        { name: 'evening',         start: '17:00:00', end: '20:59:59'},
+        { name: 'night',           start: '21:00:00', end: '04:59:59'}
+      ],
+        inserts = _.reduce(periods, function (acc, per) {
+          acc.push([quote(per.name), quote(per.start), quote(per.end)].join(','));
+          return acc;
+        }, []).join('), (');
       var query = 'INSERT INTO `periods` (`name`,`start`,`end`) VALUES (' + inserts + ');';
       return migration.sequelize.query(query);
     }).then(function () {
