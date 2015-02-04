@@ -118,5 +118,8 @@ append scripts
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/scripts/chart.js')    
   if target
-    script(type='text/javascript').
-      buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+    script(type='text/javascript')
+      unless tour
+        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+      else
+        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false);

@@ -1,10 +1,14 @@
 function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
+  linkChart('/targets/' + targetId + '/data.json', $, c3, d3, chartType, showRem, showPond);
+}
+
+function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
   $(function () {
     var isAcc = chartType === 'cumulative',
       chart = c3.generate({
       bindto: '#chart',
       data: {
-        url: '/targets/' + targetId + '/data.json?zoneOffset=' + (new Date()).getTimezoneOffset(),
+        url: link + '?zoneOffset=' + (new Date()).getTimezoneOffset(),
         mimeType: 'json',
         x: 'date',
         types: {

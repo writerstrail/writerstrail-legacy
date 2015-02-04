@@ -6,6 +6,7 @@ var router = require('express').Router(),
   targets = require('./users/targets'),
   sessions = require('./users/sessions'),
   settings = require('./users/settings'),
+  tour = require('./users/tour'),
   isactivated = require('../utils/middlewares/isactivated'),
   models = require('../models'),
   sendflash = require('../utils/middlewares/sendflash');
@@ -33,6 +34,7 @@ router.use('/projects', isactivated, projects);
 router.use('/targets', isactivated, targets);
 router.use('/sessions', isactivated, sessions);
 router.use('/settings', isactivated, settings);
+router.use('/', tour);
 
 router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
   var getProjects = function () {  
