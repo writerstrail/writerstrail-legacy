@@ -8,8 +8,11 @@ html
       link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
       link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
       link(rel='stylesheet', href='/stylesheets/main.css')
-      if user && user.activated
-        link(rel='stylesheet', href='/stylesheets/feedback.css')
+      if user
+        if user.activated
+          link(rel='stylesheet', href='/stylesheets/feedback.css')
+        if user.settings.showTour
+          link(rel='stylesheet', href='/bower_components/hopscotch/dist/css/hopscotch.min.css')
   body
     .wrapper
       include includes/header
@@ -39,3 +42,6 @@ html
         script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
         script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
         script(type='text/javascript', src='/bower_components/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js')
+        if user && user.settings.showTour
+          script(type='text/javascript', src='/bower_components/hopscotch/dist/js/hopscotch.min.js')
+          script(type='text/javascript', src='/scripts/tour.js')
