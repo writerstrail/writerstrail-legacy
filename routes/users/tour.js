@@ -9,7 +9,7 @@ var router = require('express').Router(),
 router.get('/example/dashboard', isactivated, sendflash, function (req, res) {
   res.render('user/dashboard', {
     title: 'Dashboard',
-    tour: true,
+    example: true,
     projects: sampleProjects,
     target: sampleTarget,
     stats: {
@@ -50,7 +50,6 @@ router.get('/example/targetdata.json', function (req, res) {
     daysRange.push(today);
     var todayWc = daily[i - 1];
     accWc += todayWc;
-    daily.push(todayWc);
     if (moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
       wordcount.push(accWc);
     } else {

@@ -27,7 +27,7 @@ module.exports = [
   },
   {
     id: 0,
-    name: 'To Kill a Mockinbird',
+    name: 'To Kill a Mockingbird',
     wordcount: 0,
     currentWordcount: 12345,
     targetwc: 120000,

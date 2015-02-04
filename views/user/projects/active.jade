@@ -16,7 +16,7 @@ block content
       
   p
   
-  .panel.panel-primary
+  #active-projects.panel.panel-primary
     .panel-heading
       h3.panel-title List of active projects
       
@@ -46,3 +46,8 @@ block content
         li.list-group-item: h3 No active project found.
   include ../../mixins/paginate
   +paginate(paginate, pageCount, currentPage)
+  
+append scripts
+  if user.settings.showTour
+    script(type='text/javascript').
+      tour(hopscotch, [1]);

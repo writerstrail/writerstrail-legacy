@@ -8,7 +8,7 @@ block content
   
   .row
     .col-sm-12
-      .panel.panel-primary
+      #active-projects.panel.panel-primary
         .panel-heading
           h3.panel-title
             span.fa.fa-files-o
@@ -46,7 +46,7 @@ block content
             
   .row
     .col-sm-6
-      .panel.panel-default
+      #latest-targets.panel.panel-default
         .panel-heading
           h3.panel-title
             span.fa.fa-line-chart
@@ -67,7 +67,7 @@ block content
             a(href='/targets') See all targets
             
     .col-sm-6
-      .panel.panel-default
+      #stats.panel.panel-default
         .panel-heading
           h3.panel-title
             span.fa.fa-calculator
@@ -119,10 +119,15 @@ append scripts
   script(type='text/javascript', src='/scripts/chart.js')    
   if target
     script(type='text/javascript')
-      unless tour
+      unless example
         | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
       else
         | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false);
+  script
+    unless example
       if user.settings.showTour
-        | var tourDef = tour(hopscotch);
-        | if (tourDef) { hopscotch.startTour(tourDef); }
+        | tour(hopscotch, range(0, 1));
+    else
+      | $(function() { $('a').click(function(e) { e.preventDefault(); }) });
+      if user.settings.showTour
+        | tour(hopscotch, range(2, 100));
