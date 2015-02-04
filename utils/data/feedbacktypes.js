@@ -1,2 +1,2 @@
 // Types of feedback
-module.exports = ['Bug', 'Suggestion', 'Feedback'];
+module.exports = ['Bug', 'Suggestion', 'Feedback', 'Spelling/Layout'];

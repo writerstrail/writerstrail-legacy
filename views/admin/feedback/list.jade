@@ -35,7 +35,7 @@ block content
     .col-sm-8
       ul.list-group
         for fb in feedbacks
-          - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : 'info')
+          - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : (fb.type === 'Feedback' ? 'info': 'warning'))
           li.list-group-item(class='list-group-item-' + itemclass)
             span.badge= fb.totalVotes || 0
             a.btn.btn-default(href='/admin/feedback/' + fb.id title='Reply' class='text-' + itemclass)

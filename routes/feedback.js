@@ -6,7 +6,8 @@ var router = require('express').Router(),
   sendflash = require('../utils/middlewares/sendflash'),
   _ = require('lodash'),
   models = require('../models'),
-  stati = require('../utils/data/feedbackstati');
+  stati = require('../utils/data/feedbackstati'),
+  types = require('../utils/data/feedbacktypes');
 
 router.get('/', sendflash, function (req, res, next) {
   var userVotes = null,
@@ -85,7 +86,7 @@ router.get('/new', isactivated, sendflash, function (req, res) {
   res.render('feedback/form', {
     title: 'New feedback',
     section: 'feedbackform',
-    types: ['Bug', 'Suggestion', 'Feedback'],
+    types: types,
     validate: validate.length > 0 ? validate[0].errors : [],
     feedback: values.length > 0 ? values[0] : {}
   });
@@ -94,6 +95,7 @@ router.get('/new', isactivated, sendflash, function (req, res) {
 router.post('/new', isactivated, isverified, function (req, res, next) {
   models.Feedback.create({
     authorId: req.user.id,
+    originalAuthorId: req.user.id,
     summary: req.body.summary,
     description: req.body.description || null,
     type: req.body.type

@@ -582,7 +582,7 @@ module.exports = {
         },
         type: {
           type: DataTypes.ENUM,
-          values: ['Bug', 'Suggestion', 'Feedback'],
+          values: ['Bug', 'Suggestion', 'Feedback', 'Spelling/Layout'],
           defaultValue: 'Feedback',
           allowNull: false
         },
