@@ -117,6 +117,10 @@ module.exports = {
     }).then(function () {
       return migration.addIndex('users', ['email'], { indexName: 'email' });
     }).then(function () {
+      return migration.addIndex('users', ['deletedAt'], {
+        indexName: 'deletedAt'
+      });
+    }).then(function () {
       return migration.createTable('invitations', {
         id: {
           type: DataTypes.INTEGER,
@@ -250,6 +254,10 @@ module.exports = {
         indexName: 'name'
       });
     }).then(function () {
+      return migration.addIndex('projects', ['deletedAt'], {
+        indexName: 'deletedAt'
+      });
+    }).then(function () {
       return migration.createTable('projectsGenres', {
         projectId: {
           type: DataTypes.INTEGER,
@@ -338,6 +346,9 @@ module.exports = {
         updatedAt: {
           type: DataTypes.DATE,
           allowNull: false
+        },
+        deletedAt: {
+          type: DataTypes.DATE
         }
       }, {
         charset: 'utf8'
@@ -345,6 +356,10 @@ module.exports = {
     }).then(function () {
       return migration.addIndex('writingSessions', ['start'], {
         indexName: 'start'
+      });
+    }).then(function () {
+      return migration.addIndex('writingSessions', ['deletedAt'], {
+        indexName: 'deletedAt'
       });
     }).then(function () {
       return migration.createTable('targets', {
@@ -653,6 +668,10 @@ module.exports = {
       });
     }).then(function () {
       return migration.addIndex('feedback', ['type'], { indexName: 'type' });
+    }).then(function () {
+      return migration.addIndex('feedback', ['deletedAt'], {
+        indexName: 'deletedAt'
+      });
     }).then(function () {
       return migration.createTable('votes', {
         id: {
