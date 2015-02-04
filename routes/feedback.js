@@ -119,10 +119,9 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
 router.get('/mine', islogged, sendflash, function (req, res) {
   var filters = [],
     config = {
-      where: models.Sequelize.or(
-        { authorId: req.user.id },
+      where: [
         { originalAuthorId: req.user.id }
-      ),
+      ],
       order: [
         ['deletedAt', 'ASC'],
         ['createdAt', 'ASC']
@@ -130,7 +129,7 @@ router.get('/mine', islogged, sendflash, function (req, res) {
     };
   if (_.includes(stati.concat(['All']), req.query.status)) {
     if (req.query.status !== 'All') {
-      filters.push('Only feedbacks with status "' + req.query.status + '"are shown.');
+      filters.push('Only feedbacks with status "' + req.query.status + '" are shown.');
       config.where.push ({
         status: req.query.status
       });
