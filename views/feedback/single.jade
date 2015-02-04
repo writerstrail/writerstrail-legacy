@@ -17,6 +17,11 @@ block content
   if feedback.deletedAt
     p.text-danger This feedback was deleted by the author.
   
+  if feedback.originalAuthorId === user.id
+    p.text-muted For better usability, you can't edit the feedbacks. If anything, delete and create another or contact us at 
+      strong writerstrail@georgemarques.com.br
+      | .
+  
   .list-group
     .row.list-group-item
       .col-sm-2
@@ -58,6 +63,11 @@ block content
                 br
               = line
   if user && (user.id == feedback.authorId) 
-    a.btn.btn-danger(href='/feedback/' + feedback.id + '/delete' title='Delete this feedback')
-      span.fa.fa-trash
-      |  Delete
+    unless feedback.deletedAt
+      a.btn.btn-danger(href='/feedback/' + feedback.id + '/delete' title='Delete this feedback')
+        span.fa.fa-trash
+        |  Delete
+    else
+      a.btn.btn-primary(href='/feedback/' + feedback.id + '/delete/undo' title='Restore this feedback')
+        span.fa.fa-undo
+        |  Restore

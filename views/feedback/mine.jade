@@ -36,9 +36,14 @@ block content
       for fb in feedbacks
         li.list-group-item
           if user.id === fb.authorId
-            a.text-danger(href='/feedback/' + fb.id + '/delete' title='Delete')
-              span.fa.fa-lg.fa-trash-o
-            |  
+            unless fb.deletedAt
+              a.text-danger(href='/feedback/' + fb.id + '/delete' title='Delete')
+                span.fa.fa-lg.fa-trash-o
+              |  
+            else
+              a.text-success(href='/feedback/' + fb.id + '/delete/undo' title='Restore')
+                span.fa.fa-lg.fa-undo
+              |  
           else
             span(title='This feedback was locked by an administrator' style='cursor: default;')
               span.fa.fa-lg.fa-lock
