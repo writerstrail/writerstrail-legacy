@@ -12,7 +12,7 @@ function tour($, hopscotch, steps) {
     var tourDef = {
       id: 'wt-tour',
       showPrevButton: true,
-      skipIfNoElement: false,
+      skipIfNoElement: true,
       onClose: function () {
         window.location = '/tour/ended';
       },
@@ -21,7 +21,7 @@ function tour($, hopscotch, steps) {
           target: 'h1',
           placement: 'bottom',
           title: 'Dashboard',
-          content: "Welcome to Writer's Trail! I'll guide you around the site. This is your dashboard.<br><br>You may dismiss this tour and go to your setting to disable it."
+          content: "Welcome to Writer's Trail! I'll guide you around the site. This is your dashboard.<br><br>You may dismiss this tour and go to your setting to reenable it."
         },
         {
           target: '#active-projects',
@@ -91,7 +91,7 @@ function tour($, hopscotch, steps) {
           placement: 'right',
           xOffset: 0,
           arrowOffset: 0,
-          title: 'Latest target',
+          title: 'Nearest target',
           content: "This is the chart for the target that will finish first."
         },
         {
@@ -110,7 +110,7 @@ function tour($, hopscotch, steps) {
           xOffset: 0,
           arrowOffset: 0,
           title: 'Display mode',
-          content: "See how it changed? The default can be configured on your settings page."
+          content: "See how it changed? The default can be configured on your <a href='/settings'>settings page</a>."
         },
         {
           target: '#chart',
@@ -174,7 +174,7 @@ function tour($, hopscotch, steps) {
           xOffset: 0,
           arrowOffset: 0,
           title: 'Project name',
-          content: "Set a nice an meaningful name to it. For usability reasons, you can't have more than one project with the same name.",
+          content: "Set a nice and meaningful name to it. For usability reasons, you can't have more than one project with the same name.",
           showNextButton: false,
           ctaLabel: 'I wrote the name',
           showCTAButton: true,
@@ -344,7 +344,7 @@ function tour($, hopscotch, steps) {
           xOffset: 'center',
           arrowOffset: 'center',
           title: 'Session form',
-          content: "Here is the form to input a new writing session. From now on, start timing your work sessions and take notw so you put them here.",
+          content: "Here is the form to input a new writing session. From now on, start timing your work sessions and take note so you put them here.",
           showNextButton: false,
           ctaLabel: 'I\'ve filled the form',
           showCTAButton: true,
@@ -369,7 +369,7 @@ function tour($, hopscotch, steps) {
           xOffset: 'center',
           arrowOffset: 'center',
           title: 'Session info',
-          content: "Now you crated a new session. If it advanced any target, it'll be shown in this page and reflected in the chart. Also it generates stats about your writing habits in your dashboard."
+          content: "Now you have created a new session. If it advanced any target, it'll be shown in this page and reflected in the chart. Also it generates stats about your writing habits in your dashboard."
         },
         {
           target: '#dashboard-navbar-link',
