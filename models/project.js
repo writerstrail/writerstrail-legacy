@@ -104,6 +104,17 @@ module.exports = function (sequelize, DataTypes) {
         Project.beforeCreate(function (project) {
           project.currentWordcount = project.wordcount;
         });
+        Project.beforeDestroy(function (project, options, done) {
+          project.setTargets([], {}, {}).then(function () {
+            return models.Session.destroy({
+              where: {
+                projectId: project.id
+              }
+            });
+          }).finally(function () {
+            done(null, project);
+          });
+        });
       }
     },
     paranoid: true,

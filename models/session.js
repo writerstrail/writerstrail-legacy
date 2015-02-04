@@ -70,6 +70,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   }, {
     tableName: 'writingSessions',
+    paranoid: true,
     classMethods: {
       associate: function (models) {
         Session.belongsTo(models.Project, {
