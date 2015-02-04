@@ -122,7 +122,10 @@ block content
                     if i > 0
                       | ,&nbsp;
                     - var sessionName = (session.summary) || (moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat))
-                    a(href='/sessions/' + session.id title='View session ' + sessionName)= sessionName
+                    a(href='/sessions/' + session.id title='View session ' + sessionName)
+                      span.fa.fa-clock-o
+                      |  
+                      = sessionName
                 | ,&nbsp;
                 a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
                 | )
