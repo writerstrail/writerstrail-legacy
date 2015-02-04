@@ -17,7 +17,7 @@ router.get('/example/dashboard', isactivated, sendflash, function (req, res) {
       totalWordcount: 123456,
       dailyAverage: 733.42,
       wpm: 36.32,
-      period: { name: 'night', start: '21:00:00', end: '04:59:59', performance: 43.98},
+      period: { period: 'night', start: '21:00:00', end: '04:59:59', performance: 43.98},
       session: { minuteDuration: 20, direction: 'countdown', performance: 45.38 },
       largestProject: {
         id: 0,
