@@ -34,20 +34,23 @@ block content
   .row
     .col-sm-8
       ul.list-group
-        for fb in feedbacks
-          - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : (fb.type === 'Feedback' ? 'info': 'warning'))
-          li.list-group-item(class='list-group-item-' + itemclass)
-            span.badge= fb.totalVotes || 0
-            a.btn.btn-default(href='/admin/feedback/' + fb.id title='Reply' class='text-' + itemclass)
-              span.fa.fa-reply.fa-lg
-            |  
-            a(href='/feedback/' + fb.id title=fb.type class='text-' + itemclass)
-              if fb.response
-                span.fa.fa-reply(title='Has developer response')
-                |  
-              if fb.deletedAt === null 
-                = fb.summary
-              else
-                s= fb.summary
-            span.text-muted.pull-right: small (#{fb.status}) 
+        if feedbacks.length === 0
+          h3 No feedbacks to show.
+        else
+          for fb in feedbacks
+            - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : (fb.type === 'Feedback' ? 'info': 'warning'))
+            li.list-group-item(class='list-group-item-' + itemclass)
+              span.badge= fb.totalVotes || 0
+              a.btn.btn-default(href='/admin/feedback/' + fb.id title='Reply' class='text-' + itemclass)
+                span.fa.fa-reply.fa-lg
+              |  
+              a(href='/feedback/' + fb.id title=fb.type class='text-' + itemclass)
+                if fb.response
+                  span.fa.fa-reply(title='Has developer response')
+                  |  
+                if fb.deletedAt === null 
+                  = fb.summary
+                else
+                  s= fb.summary
+              span.text-muted.pull-right: small (#{fb.status}) 
   
