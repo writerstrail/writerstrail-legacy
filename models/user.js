@@ -152,7 +152,7 @@ module.exports = function (sequelize, DataTypes) {
           foreignKey: 'voterId'
         });
         User.beforeUpdate(function (user, options, done) {
-          if (!user.password || user.password === user._previousDataValues.password) {
+          if (!user.password || !user.changed('password')) {
             return done(null, user);
           }
           bcrypt.hash(user.password, 10, function (err, hash) {
@@ -166,9 +166,13 @@ module.exports = function (sequelize, DataTypes) {
             g.ownerId = user.id;
             return g;
           });
-          return models.Genre.bulkCreate(userGenres).then(function () {
+          return models.Genre.bulkCreate(userGenres, {
+            transaction: options.transaction
+          }).then(function () {
             return models.Settings.create({
               id: user.id
+            }, {
+              transaction: options.transaction
             });
           }).then(function () {
             done(null, user);
