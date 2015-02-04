@@ -618,7 +618,7 @@ module.exports = {
         },
         status: {
           type: DataTypes.ENUM,
-          values: ['New', 'Reviewing', 'Dismissed', 'Duplicate', 'On hold', 'Accepted', 'Developing'],
+          values: ['New', 'Reviewing', 'Dismissed', 'Duplicate', 'On hold', 'Accepted', 'Developing', 'Done'],
           allowNull: false,
           defaultValue: 'New'
         },
