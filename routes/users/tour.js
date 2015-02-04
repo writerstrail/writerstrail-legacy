@@ -28,7 +28,7 @@ router.get('/example/dashboard', isactivated, sendflash, function (req, res) {
   });
 });
 
-router.get('/example/targetdata.json', function (req, res) {
+router.get('/example/targetdata.json', isactivated, function (req, res) {
   var target = sampleTarget;
   var totalDays = sampleDaily.length;
   var daysRange = [];
@@ -73,6 +73,16 @@ router.get('/example/targetdata.json', function (req, res) {
     remaining: remaining
   };
   res.json(result).end();
+});
+
+router.get('/tour/ended', isactivated, function (req, res, next) {
+  req.user.settings.updateAttributes({
+    showTour: false
+  }).then(function () {
+    res.redirect('back');
+  }).catch(function (err) {
+    next(err);
+  });
 });
 
 module.exports = router;
