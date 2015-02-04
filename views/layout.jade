@@ -8,6 +8,8 @@ html
       link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
       link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
       link(rel='stylesheet', href='/stylesheets/main.css')
+      if user && user.activated
+        link(rel='stylesheet', href='/stylesheets/feedback.css')
   body
     .wrapper
       include includes/header
@@ -27,7 +29,12 @@ html
     
     .footer
       include includes/footer
-
+      
+    unless noFeedback
+      if user && user.activated
+        #feedback
+          a.btn.btn-lg.btn-danger(href='/feedback/new') Found a bug!
+        
     block scripts
         script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
         script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')

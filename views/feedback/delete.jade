@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+  h1 #{feedback.type} deleted
+  
+  a.btn.btn-primary.btn-lg(href='/feedback/' + feedback.id + '/delete/undo') No, I didn't mean to do that! Undo it!
+  
+  p  
+  
+  .row: .col-sm-12: .panel.panel-success
+    .panel-heading
+      h3.panel-title Deleted feedback was:
+    ul.list-group
+      li.list-group-item: .row
+        .col-sm-2
+          strong Summary
+        .col-sm-10
+          = feedback.summary
+      li.list-group-item: .row
+        .col-sm-2
+          strong Description
+        .col-sm-10
+          unless feedback.description
+            | No description provided.
+          else
+            - var lines = feedback.description.split(/(?:\r\n|\r|\n)/g)
+              for line, i in lines
+                if i > 0
+                  br
+                = line

@@ -1,0 +1,73 @@
+extends ../layout
+
+block content
+  h1
+    if user && !feedback.deletedAt
+      a.text-success(href='/feedback/' + feedback.id + '/upvote' + (vote === 1 ? '/undo' : '') title='I approve' + (vote === 1 ? ' (undo)' : ''))
+        span.fa(class='fa-thumbs-' + (vote === 1 ? '' : 'o-') + 'up')
+      |  
+      a.text-danger(href='/feedback/' + feedback.id + '/downvote' + (vote === -1 ? '/undo' : '') title='I disapprove' + (vote === -1 ? ' (undo)' : ''))
+        span.fa(class='fa-thumbs-' + (vote === -1 ? '' : 'o-') + 'down')
+      |  
+    if feedback.deletedAt
+      s= feedback.type
+    else
+      = feedback.type
+  
+  if feedback.deletedAt
+    p.text-danger This feedback was deleted by the author.
+  
+  if feedback.originalAuthorId === user.id
+    p.text-muted For better usability, you can't edit the feedbacks. If anything, delete and create another or contact us at 
+      strong writerstrail@georgemarques.com.br
+      | .
+  
+  .list-group
+    .row.list-group-item
+      .col-sm-2
+        strong Vote score
+      .col-sm-10
+        span.badge= feedback.totalVotes || 0
+    .row.list-group-item
+      .col-sm-2
+        strong Summary
+      .col-sm-10
+        = feedback.summary
+    .row.list-group-item
+      .col-sm-2
+        strong Description
+      .col-sm-10
+        unless feedback.description
+          | No description provided.
+        else
+          - var lines = feedback.description.split(/(?:\r\n|\r|\n)/g)
+            for line, i in lines
+              if i > 0
+                br
+              = line
+    .row.list-group-item
+      .col-sm-2
+        strong Status
+      .col-sm-10
+        = feedback.status
+    .row.list-group-item
+      .col-sm-2
+        strong Response
+      .col-sm-10
+        unless feedback.response
+          | No response yet.
+        else
+          - var lines = feedback.response.split(/(?:\r\n|\r|\n)/g)
+            for line, i in lines
+              if i > 0
+                br
+              = line
+  if user && (user.id == feedback.authorId) 
+    unless feedback.deletedAt
+      a.btn.btn-danger(href='/feedback/' + feedback.id + '/delete' title='Delete this feedback')
+        span.fa.fa-trash
+        |  Delete
+    else
+      a.btn.btn-primary(href='/feedback/' + feedback.id + '/delete/undo' title='Restore this feedback')
+        span.fa.fa-undo
+        |  Restore

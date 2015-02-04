@@ -3,7 +3,9 @@ module.exports = function (req) {
     left: [
       { 'href': '/about', 'key': 'about', 'label': 'About', 'title': 'About Writer\'s Trail' }
     ],
-    right: []
+    right: [
+      { 'href': '/feedback', 'key': 'feedback', 'label': 'Feedback', 'title': 'Send feedback about Writer\'s Trail', icon: 'comments-o' }
+    ]
   };
   if (req.user) {
     navlist .right.push(
@@ -26,7 +28,9 @@ module.exports = function (req) {
         'dropdown': true, 'label': 'Admin',
         'list': [
           { 'href': '/admin', 'key': 'admin', 'label': 'Admin', 'title': 'Admin page' },
-          { 'href': '/admin/users', 'key': 'adminusers', 'label': 'Users', 'title': 'User administration' }
+          { 'href': '/admin/users', 'key': 'adminusers', 'label': 'Users', 'title': 'User administration' },
+          { 'key': 'divider' },
+          { 'href': '/admin/feedback', 'key': 'adminfeedback', 'label': 'Feedback', 'title': 'Feedback administration' }
         ]
       });
     }

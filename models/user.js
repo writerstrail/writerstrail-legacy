@@ -143,6 +143,14 @@ module.exports = function (sequelize, DataTypes) {
           as: 'tokens',
           foreignKey: 'ownerId'
         });
+        User.hasMany(models.Feedback, {
+          as: 'feedbacks',
+          foreignKey: 'authorId'
+        });
+        User.hasMany(models.Vote, {
+          as: 'votes',
+          foreignKey: 'voterId'
+        });
         User.beforeUpdate(function (user, options, done) {
           if (!user.password || user.password === user._previousDataValues.password) {
             return done(null, user);
