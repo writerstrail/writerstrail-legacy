@@ -71,7 +71,19 @@ block content
               if i > 0
                 | ,&nbsp
               a(href='/targets/' + t.id title='View target ' + t.name)= t.name
-              
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Notes:
+          .col-sm-10
+            unless session.notes
+                | None.
+              else
+                - var lines = session.notes.split(/(?:\r\n|\r|\n)/g)
+                for line, i in lines
+                  if i > 0
+                    br
+                  = line
               
 append scripts
   if user.settings.showTour
