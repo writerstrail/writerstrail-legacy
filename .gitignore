@@ -3,6 +3,4 @@ node_modules/*
 start.sh
 
 # Built css files
-public/stylesheets/chart.css
-public/stylesheets/main.css
-public/stylesheets/feedback.css
+public/stylesheets/*.css
