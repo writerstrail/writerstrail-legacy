@@ -11,7 +11,7 @@ module.exports = function (req) {
     navlist .right.push(
       { 'href': '/dashboard', 'key': 'dashboard', 'label': req.__('Dashboard'), 'title': req.__('The summary page'), icon: 'dashboard' },
       {
-        'dropdown': true, 'label': req.user.name, icon: 'user',  'list': [
+        'dropdown': true, 'label': req.user.name, key: 'user', icon: 'user',  'list': [
           { 'href': '/projects/active', 'key': 'projects', 'label': req.__('Projects'), 'title': req.__('Your active writing projects'), icon: 'fire' },
           { 'href': '/sessions', 'key': 'sessions', 'label': req.__('Sessions'), 'title': req.__('Your writing sessions'), icon: 'calendar' },
           { 'href': '/targets?current=true', 'key': 'targets', 'label': req.__('Targets'), 'title': req.__('Your current writing targets to achieve'), icon: 'bullseye' },

@@ -1,7 +1,7 @@
 mixin navDropdown(obj)
   if (obj.dropdown)
     li.dropdown
-      a.dropdown-toggle(href='#' data-toggle='dropdown' data-hover="dropdown" role='button' aria-expanded='false')
+      a.dropdown-toggle(href='#' data-toggle='dropdown' data-hover=example ? false : "dropdown" role='button' aria-expanded='false' id=obj.key ? obj.key + '-navbar-link' : false)
         if obj.icon
           span.fa(class='fa-' + obj.icon)
           |  
@@ -16,7 +16,7 @@ mixin navDropdown(obj)
     else
       - var isActive = (obj.key === section ? 'active' : '')
       li(class=isActive)
-        a(href=obj.href, title=__(obj.title))
+        a(href=obj.href, title=__(obj.title), id=obj.key + '-navbar-link')
           if obj.icon
             span.fa(class='fa-' + obj.icon)
             |  

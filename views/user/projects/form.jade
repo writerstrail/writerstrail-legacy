@@ -56,7 +56,7 @@ block content
     .form-group
       label.col-sm-2.control-label(for='Description')= __('Description')
       .col-sm-10
-        textarea#name.form-control(rows='3' name='description' placeholder=__('Description'))= project.description
+        textarea#description.form-control(rows='3' name='description' placeholder=__('Description'))= project.description
         
     .form-group
       .col-sm-10.col-sm-offset-2
@@ -68,10 +68,10 @@ block content
       .col-sm-10.col-sm-offset-2
         .checkbox
           label
-            input#active(type='checkbox' name='finished' checked=project.finished)
+            input#finished(type='checkbox' name='finished' checked=project.finished)
             | Finished
     for chunk, i in genres
-      .form-group
+      .form-group#genres
         if i === 0
           label.col-sm-2.control-label Genres
         .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
@@ -92,3 +92,9 @@ block content
                 input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
                 = chunk[2].name
     include ../../mixins/single-form-buttons
+    
+append scripts
+  if user.settings.showTour
+    script
+      unless edit
+        | tour(jQuery, hopscotch, range(16, 24));

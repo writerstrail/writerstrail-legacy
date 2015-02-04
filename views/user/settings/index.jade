@@ -36,11 +36,18 @@ block content
       label.col-sm-2.control-label Target chart extra data:
       .col-sm-10
         label.checkbox-inline
-          input(type='checkbox' name='showremaining' checked=user.settings.showRemaining)
+          input(type='checkbox' name='showRemaining' checked=user.settings.showRemaining)
           | Remaining wordcount
         label.checkbox-inline
-          input(type='checkbox' name='showpondered' checked=user.settings.showPondered)
+          input(type='checkbox' name='showPondered' checked=user.settings.showPondered)
           | Pondered daily target
+    .form-group
+      label.col-sm-2.control-label Show tour:
+      .col-sm-10
+        .checkbox
+          label
+            input(type='checkbox' name='showTour' checked=user.settings.showTour)
+            | Show application tour next time you visit the dashboard
     .form-group
       .col-sm-offset-2.col-sm-2
         button.btn.btn-primary(type='submit' name='save' value='save') Save

@@ -179,3 +179,6 @@ append scripts
   script(type='text/javascript', src='/scripts/chart.js')    
   script(type='text/javascript').
     buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+  if user.settings.showTour
+    script
+      | tour(jQuery, hopscotch, range(30, 32));

@@ -29,8 +29,9 @@ router.post('/', isverified, function (req, res, next) {
   if (_.contains(chartTypes, chartType)) {
     settings.chartType = chartType;
   }
-  settings.showRemaining = !!req.body.showremaining;
-  settings.showPondered = !!req.body.showpondered;
+  settings.showRemaining = !!req.body.showRemaining;
+  settings.showPondered = !!req.body.showPondered;
+  settings.showTour = !!req.body.showTour;
   req.user.settings.save().then(function () {
     req.flash('success', 'Your settings were successfully saved');
     res.redirect('back');

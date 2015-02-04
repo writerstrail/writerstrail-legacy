@@ -11,13 +11,13 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true
     },
     dateFormat: {
-      type: DataTypes.ENUM + ' CHARSET utf8 COLLATE utf8_bin',
+      type: DataTypes.ENUM,
       values: dateFormats.data,
       defaultValue: dateFormats.data[0],
       allowNull: false
     },
     timeFormat: {
-      type: DataTypes.ENUM + ' CHARSET utf8 COLLATE utf8_bin',
+      type: DataTypes.ENUM,
       values: timeFormats.data,
       defaultValue: timeFormats.data[0],
       allowNull: false
@@ -37,7 +37,12 @@ module.exports = function (sequelize, DataTypes) {
       values: chartTypes,
       defaultValue: chartTypes[0],
       allowNull: false
-    }    
+    },
+    showTour: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    }
   }, {
     tableName: 'settings',
     classMethods: {

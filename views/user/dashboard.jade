@@ -8,7 +8,7 @@ block content
   
   .row
     .col-sm-12
-      .panel.panel-primary
+      #active-projects.panel.panel-primary
         .panel-heading
           h3.panel-title
             span.fa.fa-files-o
@@ -42,11 +42,11 @@ block content
                 .col-sm-2
                   a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
           li.list-group-item.text-center
-            a(href='/projects/active') See all active projects
+            a#see-projects(href='/projects/active') See all active projects
             
   .row
     .col-sm-6
-      .panel.panel-default
+      #latest-target.panel.panel-default
         .panel-heading
           h3.panel-title
             span.fa.fa-line-chart
@@ -67,7 +67,7 @@ block content
             a(href='/targets') See all targets
             
     .col-sm-6
-      .panel.panel-default
+      #stats.panel.panel-default
         .panel-heading
           h3.panel-title
             span.fa.fa-calculator
@@ -118,5 +118,16 @@ append scripts
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/scripts/chart.js')    
   if target
-    script(type='text/javascript').
-      buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+    script(type='text/javascript')
+      unless example
+        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+      else
+        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false);
+  script
+    unless example
+      if user.settings.showTour
+        | tour(jQuery, hopscotch, range(0, 1).concat(range(37, 39)));
+    else
+      | $(function() { $('a').click(function(e) { e.preventDefault(); }) });
+      if user.settings.showTour
+        | tour(jQuery, hopscotch, range(2, 13));
