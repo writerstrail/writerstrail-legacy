@@ -71,7 +71,7 @@ block content
                 | ,&nbsp;
               a(href='/targets/' + target.id title=target.name)= target.name
           |  
-          a.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
+          a#create-target.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
               span.fa.fa-plus
               |  Create one
     li.list-group-item
@@ -92,3 +92,8 @@ block content
           strong Created at:
         .col-sm-10
           = moment.utc(project.createdAt).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
+
+append scripts
+  if user.settings.showTour
+    script
+      | tour(jQuery, hopscotch, range(24, 27));

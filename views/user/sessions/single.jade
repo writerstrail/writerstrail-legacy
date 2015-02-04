@@ -71,3 +71,10 @@ block content
               if i > 0
                 | ,&nbsp
               a(href='/targets/' + t.id title='View target ' + t.name)= t.name
+              
+              
+append scripts
+  if user.settings.showTour
+    script
+      unless edit
+        | tour(jQuery, hopscotch, range(35, 36));

@@ -76,7 +76,7 @@ block content
         textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes'))= target.notes
         
     for chunk, i in projects
-      .form-group
+      .form-group#projects
         if i === 0
           label.col-sm-2.control-label Projects
         .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
@@ -133,5 +133,8 @@ append scripts
         $('#totaldays').html(isNaN(totalDays) ? 'Invalid date' : totalDays.toString());
       });
     })
+  if user.settings.showTour
+    script
+      | tour(jQuery, hopscotch, range(27, 30));
 append styles
   link(rel='stylesheet', href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')

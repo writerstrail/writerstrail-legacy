@@ -9,6 +9,7 @@ var router = require('express').Router(),
 router.get('/example/dashboard', isactivated, sendflash, function (req, res) {
   res.render('user/dashboard', {
     title: 'Dashboard',
+    section: 'dashboard',
     example: true,
     projects: sampleProjects,
     target: sampleTarget,
