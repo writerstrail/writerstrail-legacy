@@ -160,7 +160,11 @@ block content
       li.list-group-item
         .row
           .col-sm-2: strong Predicted finish by this rate:
-          .col-sm-10= now.add(Math.ceil((remainingWordcount) / (totalWordcount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
+          .col-sm-10
+            if totalWordcount === 0
+              | Never
+            else
+              = now.add(Math.ceil((remainingWordcount) / (totalWordcount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
       li.list-group-item
         .row
           .col-sm-2: strong Daily target to finish on time:
