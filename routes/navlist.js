@@ -1,7 +1,7 @@
 module.exports = function (req) {
   var navlist = {
     left: [
-      { 'href': '/about', 'key': 'about', 'label': 'About', 'title': 'About Writer\'s Trail' }
+      { 'href': '/features', 'key': 'features', 'label': 'Features', 'title': 'Main features of Writer\'s Trail' }
     ],
     right: [
       { 'href': '/feedback', 'key': 'feedback', 'label': 'Feedback', 'title': 'Send feedback about Writer\'s Trail', icon: 'comments-o' }

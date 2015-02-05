@@ -1,9 +1,9 @@
 var router = require('express').Router();
 
-router.get('/about', function (req, res) {
-  res.render('info/about', {
-    title: 'About',
-    section: 'about'
+router.get('/features', function (req, res) {
+  res.render('info/features', {
+    title: 'Features',
+    section: 'features'
   });
 });
 
