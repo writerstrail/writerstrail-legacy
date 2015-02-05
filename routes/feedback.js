@@ -37,7 +37,7 @@ router.get('/', sendflash, function (req, res, next) {
         'deletedAt',
         'status',
         'response',
-        models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
+        models.Sequelize.literal('CASE WHEN SUM(`votes`.`vote`) IS NULL THEN 0 ELSE SUM(`votes`.`vote`) END AS `totalVotes`')
       ],
       group: 'Feedback.id',
       order: [
