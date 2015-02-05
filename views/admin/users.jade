@@ -1,0 +1,140 @@
+extends ../layout
+
+block content
+    - var pageLink = '?page=' + page
+    - var deletedLink = deleted ? '&deleted=true' : ''
+    - var orderByLink = orderBy ? '&orderby=' + orderBy : ''
+    - var orderDirLink = orderDir ? '&orderdir=' + orderDir : ''
+    - var orderByReal = orderBy || 'createdAt'
+    - var orderDirReal = orderDir || 'DESC'
+    - var orderDirClass = orderDir === 'ASC' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'
+    - var orderHref = function(id) {
+    -   if(id === orderByReal) {
+    -       return '&orderby=' + id + '&orderdir=' + (orderDirReal == 'ASC' ? 'DESC' : 'ASC')
+    -   } else {
+    -       return '&orderby=' + id + '&orderdir=ASC'
+    -   }
+    - }
+
+    mixin orderLink(id, name)
+        a(href=pageLink + deletedLink + orderHref(id), title='Order by "' + name + '"', role='link')
+            != name + '&nbsp;'
+            - if(orderByReal === id)
+                span(class=orderDirClass)
+
+    h1 User administration
+    - if(totalPages > 1)
+        nav
+            ul.pagination
+                - if(page > 1)
+                    li
+                        a(href=('/admin/users?page=1' + deletedLink + orderByLink + orderDirLink) title='First') &#8810;
+                    li
+                        a(href=('/admin/users?page=' + (page - 1) + deletedLink + orderByLink + orderDirLink), title='Previous') &lt;
+                - for(var i = 1; i <= totalPages; i++)
+                    - var active = (page == i ? 'active' : '')
+                    li(class=active)
+                        a(href='/admin/users?page=' + i + deletedLink + orderByLink + orderDirLink)= i
+                - if(page < totalPages)
+                    li
+                        a(href=('/admin/users?page=' + (page + 1) + deletedLink + orderByLink + orderDirLink), title='Next') &gt;
+                    li
+                        a(href=('/admin/users?page=' + totalPages + deletedLink + orderByLink + orderDirLink), title='Last') &#8811;
+            
+    form(method='post' action='/admin/user/edit')
+        input(type='hidden' name='_csrf' value=csrf)
+        table#users.table.table-condensed.table-hover
+            caption
+                h3= __('Users')
+            tr
+                th
+                    input#select_all(type='checkbox')
+                th 
+                th
+                th 
+                th
+                    +orderLink('id', 'Id')
+                th
+                    +orderLink('name', 'Name')
+                th= __('Activated')
+                th= __('Verified')
+                th= __('Role')
+                th Facebook
+                th Google
+                th Linkedin
+                th Wordpress
+                th
+                    +orderLink('createdAt', 'Member since')
+                th 
+                    +orderLink('lastAccess', 'Last access')
+            each u in users
+                tr.tr
+                    td
+                        input.selection(type='checkbox' name='selected[]' value=u.id)
+                    td
+                        a.btn.btn-sm.btn-primary(href='/admin/user/' + u.id role='button')= __('Edit')
+                    td
+                        button.btn.btn-sm.btn-default(type='submit' name='activate' value=u.id)
+                            = u.activated ? __('Deactivate') : __('Activate')
+                    td
+                        - var deleteSubmit = u.deletedAt ? 'undelete' : 'delete';
+                        button.btn.btn-sm.btn-danger(type='submit' name=deleteSubmit value=u.id disabled=(u.id === user.id))
+                            = u.deletedAt ? __('Restore') : __('Delete')
+                    td= u.id
+                    td= u.name
+                    td= u.activated ? __('Yes') : __('No')
+                    td= u.verified ? __('Yes') : __('No')
+                    td= roleName(u.role)
+                    td= u.facebookToken ? __('Yes') : __('No')
+                    td= u.googleToken ? __('Yes') : __('No')
+                    td= u.linkedinToken ? __('Yes') : __('No')
+                    td= u.wordpressToken ? __('Yes') : __('No')
+                    td= moment.utc(u.createdAt).format('YYYY/MM/DD HH:mm')
+                    td= moment.utc(u.lastAccess).format('YYYY/MM/DD HH:mm')
+        .well.well-sm
+            .btn-toolbar(role='toolbar')
+                .btn-group(role='group')
+                    a.btn.btn-default(title=__('Refresh') href=pageLink + orderByLink + orderDirLink + deletedLink)
+                        span.fa.fa-2x.fa-refresh
+                .btn-group(role='group')
+                    - var hideButtonTitle = deleted ? __('Hide deleted') : __('Show deleted')
+                    a.btn.btn-info(href=pageLink + orderByLink + orderDirLink + (deleted ? '' : '&deleted=true') role='button' title=hideButtonTitle)
+                        - if(deleted)
+                            span.fa.fa-2x.fa-toggle-on
+                        - else
+                            span.fa.fa-2x.fa-toggle-off
+                        | &nbsp;
+                        span.fa.fa-2x.fa-trash
+                .btn-group(role='group')
+                    button.btn.btn-primary(type='submit' name='bulkActivate' value='true' title='Activate selected')
+                        span.fa.fa-2x.fa-check
+                    button.btn.btn-warning(type='submit' name='bulkDeactivate' value='true' title='Dectivate selected')
+                        span.fa.fa-2x.fa-close
+                .btn-group(role='group')
+                    button.btn.btn-danger(type='submit' name='bulkDelete' value='true' title='Delete selected')
+                        span.fa.fa-2x.fa-trash
+                    button.btn.btn-success(type='submit' name='bulkRestore' value='true' title='Restore selected')
+                        span.fa.fa-2x.fa-undo
+    .well.well-sm
+        h3= __('Activate the next n users')
+        form.form-inline(method='post', action='/admin/users/callnext')
+            input(type='hidden' name='_csrf' value=csrf)
+            .form-group
+                label.sr-only(for='amount')
+                input#amount.form-control(placeholder=__('Amount') type='number' name='amount' value='5')
+            .form-group
+                | &nbsp;
+                button.btn.btn-info(type='submit' name='activatenext' value='true')= __('Activate')
+        | &nbsp;
+        - if(actlist)
+            - var concat = _.map(actlist, function(p) { return p.name + ' <' + p.email + '>' })
+            textarea#actlist.form-control(rows='1')
+                = concat.join()
+            | &nbsp;
+            h4= __('List of activated users')
+            ul.list-group
+                each person in actlist
+                    li.list-group-item= person.name + ' <' + person.email + '>'
+        
+append scripts
+    script(src='/scripts/users.js' type='text/javascript')

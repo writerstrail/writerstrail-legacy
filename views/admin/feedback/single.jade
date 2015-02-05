@@ -1,0 +1,95 @@
+extends ../../layout
+
+block content
+  h1
+    a(href='/feedback/' + feedback.id)
+      span.fa.fa-eye
+    |  
+    if feedback.deletedAt
+      s= feedback.type
+    else
+      = feedback.type
+  
+  if feedback.deletedAt
+    p.text-danger This feedback was deleted by the author.
+  
+  form.form-horizontal(method='post')
+    input(type='hidden' name='_csrf' value=csrf)
+    
+    - var typeErr = _.find(validate, { path: 'type' }) || ''
+    .form-group(class=typeErr ? 'has-error' : '')
+      label.col-sm-2.control-label(for='type') Type
+      .col-sm-10
+        select#type.form-control(name='type' aria-describedby='typehelp')
+          for t in types
+            option(selected=(feedback.type === t))= t
+        span#typehelp.help-block= typeErr ? typeErr.message : ''
+        
+    - var summaryErr = _.find(validate, { path: 'summary' }) || ''
+    .form-group(class=summaryErr ? 'has-error' : '')
+      label.col-sm-2.control-label(for='summary') Summary
+      .col-sm-10
+        input#summary.form-control(name='summary' type='text' required=false placeholder='Summary' value=feedback.summary aria-describedby='summaryhelp' autofocus=true)
+        span#summaryhelp.help-block= summaryErr ? summaryErr.message : ''
+        
+    .form-group
+      label.col-sm-2.control-label(for='description') Description
+      .col-sm-10
+        textarea#description.form-control(name='description' placeholder='Provide useful description and reproduction steps to make it easier to fix bugs')
+        = feedback.description
+    hr
+    
+    h3 Admin section
+    
+    - var statusErr = _.find(validate, { path: 'status' }) || ''
+    .form-group(class=statusErr ? 'has-error' : '')
+      label.col-sm-2.control-label(for='status') Status
+      .col-sm-10
+        select#status.form-control(name='status' aria-describedby='statushelp')
+          for s in stati
+            option(selected=(feedback.status === s))= s
+        span#statushelp.help-block= statusErr ? statusErr.message : ''
+        
+    .form-group
+      label.col-sm-2.control-label(for='response') Response
+      .col-sm-10
+        textarea#description.form-control(name='response' placeholder='Response')
+          = feedback.response
+    
+    .form-group
+      .col-sm-offset-2.col-sm-10
+        .checkbox
+          label(title='Avoid author from removing it')
+            input(type='checkbox' name='lock' checked=((feedback.authorId !== feedback.originalAuthorId) && (feedback.authorId === user.id)))
+            | Lock
+          if feedback.authorId !== feedback.originalAuthorId
+            if feedback.authorId === user.id
+              p.text-muted (Locked by you)
+            else 
+              p.text-muted (Locked by <a href="/admin/user/#{feedback.authorId}">#{feedback.authorId}</a>)
+    
+    .form-group
+      label.col-sm-2.control-label Original author
+      .col-sm-10
+        p.control-static: a(href='/admin/user/' + feedback.originalAuthorId)= feedback.originalAuthorId
+        input(type='hidden' name='authorId' value=feedback.authorId)
+        input(type='hidden' name='originalAuthorId' value=feedback.originalAuthorId)
+    
+    button.btn.btn-success(type='submit')
+      span.fa.fa-floppy-o
+      |  Save 
+    |  
+    unless feedback.deletedAt
+      a.btn.btn-danger(href='/admin/feedback/' + feedback.id + '/delete' title='Delete this feedback')
+        span.fa.fa-trash
+        |  Delete 
+      |  
+    else
+      a.btn.btn-danger(href='/admin/feedback/' + feedback.id + '/delete/forever' title='Delete this feedback forever')
+        span.fa.fa-remove
+        |  Delete forever
+      |  
+      a.btn.btn-info(href='/admin/feedback/' + feedback.id + '/delete/undo' title='Restore this feedback')
+        span.fa.fa-undo
+        |  Restore 
+      |  

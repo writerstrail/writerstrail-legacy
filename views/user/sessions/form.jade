@@ -1,0 +1,114 @@
+extends ../../layout
+
+block content
+  h1= edit ? __('Edit session') : __('New session')
+  
+  .btn-group(role='toolbar')
+    if edit
+      a.btn.btn-lg.btn-default(href='/sessions/' + session.id title='View this session')
+        span.fa.fa-eye.fa-lg
+    else
+      a.btn.btn-lg.btn-default(href='/sessions' title='List of sessions')
+        span.fa.fa-calendar.fa-lg
+      a.btn.btn-lg.btn-default(href='/projects/new' title='Create new project')
+        span.fa.fa-lg.fa-plus
+        |  
+        span.fa.fa-lg.fa-file-o
+      a.btn.btn-lg.btn-default(href='/sessions/new' title='Create new session')
+        span.fa.fa-lg.fa-plus
+        |  
+        span.fa.fa-lg.fa-clock-o
+    if edit
+      include toolbar 
+  p  
+
+  form.form-horizontal(method='post')
+    input(type='hidden' name='_csrf', value=csrf)
+    input#zoneOffset(type='hidden' name='zoneOffset' value=session.zoneOffset || '')
+    
+    - var summaryErr = _.find(validate, { path: 'summary' }) || ''
+    
+    .form-group(class=(summaryErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='summary')= __('Summary')
+      .col-sm-10
+        input#summary.form-control(type='text' name='summary' placeholder=__('Summary') value=session.summary aria-describedby='summaryhelp')
+        span#summaryhelp.help-block= __(summaryErr ? summaryErr.message : '')
+        
+    - var projectErr = _.find(validate, { path: 'project' }) || ''
+        
+    .form-group(class=(projectErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='project')= __('Project')
+      .col-sm-10
+        select#project.form-control(name='project' aria-describedby='projecthelp')
+          for proj in projects
+            option(value=proj.id selected=proj.id == session['project.id'])= proj.name
+        span#projecthelp.help-block= __(projectErr ? projectErr.message : '')
+
+    - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
+    
+    .form-group(class=(startErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='start')= __('Start time')
+      .col-sm-10
+        .input-group.date#startpicker
+          span.input-group-addon
+            span.fa.fa-fw.fa-clock-o
+          input#start.form-control(type='text' name='start' placeholder=__('Start time') value=session.start aria-describedby='starthelp')
+        span#starthelp.help-block= __(startErr ? startErr.message : '')
+        
+    - var durErr = _.find(validate, { path: 'duration' }) || ''
+
+    .form-group(class=(durErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='duration')= __('Session duration (min or min:sec)')
+      .col-sm-10
+        input#duration.form-control(type='texts' name='duration' placeholder=__('Session duration') value=session.duration aria-describedby='durationhelp')
+        span#durationhelp.help-block= __(durErr ? durErr.message : '')
+        
+    - var pausedErr = _.find(validate, { path: 'pausedTime' }) || ''
+
+    .form-group(class=(pausedErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
+      .col-sm-10
+        input#pausedTime.form-control(type='texts' name='pausedTime' placeholder=__('Time not writing') value=session.pausedTime aria-describedby='pausedTimehelp')
+        span#pausedTimehelp.help-block= __(pausedErr ? pausedErr.message : '')
+        
+    - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
+
+    .form-group(class=(wcErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='wordcount')= __('Words written')
+      .col-sm-10
+        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Words written') value=session.wordcount aria-describedby='wchelp')
+        span#wchelp.help-block= __(wcErr ? wcErr.message : '')
+    
+    .form-group
+      .col-sm-10.col-sm-offset-2
+        .checkbox
+          label
+            input#isCountdown(type='checkbox' name='isCountdown' checked=!!session.isCountdown)
+            | Countdown session
+        
+    .form-group
+      label.col-sm-2.control-label(for='notes')= __('Notes')
+      .col-sm-10
+        textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes'))= session.notes
+        
+    
+    include ../../mixins/single-form-buttons
+    
+append scripts
+  script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
+  script(type='text/javascript', src='/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
+  script.
+    $(document).ready(function () {
+      $('#startpicker').datetimepicker({
+        format: '!{user.settings.dateFormat} !{user.settings.timeFormat}',
+        defaultDate: moment()
+      });
+      $('#zoneOffset').val(moment().utcOffset());
+    })
+  if user.settings.showTour
+    script
+      unless edit
+        | tour(jQuery, hopscotch, range(33, 34));
+    
+append styles
+  link(rel='stylesheet', href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')

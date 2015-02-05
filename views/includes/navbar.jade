@@ -1,0 +1,43 @@
+mixin navDropdown(obj)
+  if (obj.dropdown)
+    li.dropdown
+      a.dropdown-toggle(href='#' data-toggle='dropdown' data-hover=example ? false : "dropdown" role='button' aria-expanded='false' id=obj.key ? obj.key + '-navbar-link' : false)
+        if obj.icon
+          span.fa(class='fa-' + obj.icon)
+          |  
+        = obj.label
+        span.caret
+      ul.dropdown-menu(role='menu')
+        each item in obj.list
+          +navDropdown(item)
+  else
+    if(obj.key === 'divider')
+      li.divider
+    else
+      - var isActive = (obj.key === section ? 'active' : '')
+      li(class=isActive)
+        a(href=obj.href, title=__(obj.title), id=obj.key + '-navbar-link')
+          if obj.icon
+            span.fa(class='fa-' + obj.icon)
+            |  
+          = __(obj.label)
+    
+
+nav.navbar.navbar-default.navbar-static-top(role='navigation')
+  .container
+    .navbar-header
+      button.navbar-toggle.collapsed(data-toggle='collapse', data-target='#navbar')
+        span.sr-only Toggle Navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='/', title=__('Go to home page') style='padding: 6px;')
+        img.brand(src='/images/writerstrail-brand.png' alt='Writer\'s Trail')
+    #navbar.collapse.navbar-collapse
+      - var left = navlist.left
+      ul.nav.navbar-nav
+        each item in left
+          +navDropdown(item)
+      ul.nav.navbar-nav.navbar-right
+        each item in navlist.right
+          +navDropdown(item)

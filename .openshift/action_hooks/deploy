@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+HOME=$HOME/app-root/runtime
+cd ~/repo
+npm install bower sequelize-cli
+./node_modules/.bin/bower install
+./node_modules/.bin/sequelize db:migrate --env production --config config/migrations.json --models-path models --migrations-path migrations

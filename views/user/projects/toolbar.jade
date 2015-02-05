@@ -1,0 +1,20 @@
+a.btn.btn-lg.btn-default(href='/projects/active' title='List of active projects')
+  span.fa.fa-fire.fa-lg
+a.btn.btn-lg.btn-default(href='/projects' title='List of all projects')
+  span.fa.fa-files-o.fa-lg
+a.btn.btn-lg.btn-default(href='/projects/new' title='Create new project')
+  span.fa.fa-lg.fa-plus
+  |  
+  span.fa.fa-lg.fa-file-o
+a.btn.btn-lg.btn-default(href='/sessions/new?projectid=' + project.id title='New session for this project')
+  span.fa.fa-plus.fa-lg
+  |  
+  span.fa.fa-clock-o.fa-lg
+a.btn.btn-lg.btn-default(href='/sessions?projectid=' + project.id title='All sessions for this project')
+  span.fa.fa-calendar.fa-lg
+a.btn.btn-lg.btn-default(href='/targets/new?projectid=' + project.id title='New target with this project')
+  span.fa.fa-plus.fa-lg
+  |  
+  span.fa.fa-bar-chart.fa-lg
+a.btn.btn-lg.btn-default(href='/targets?projectid=' + project.id title='All targets with this project')
+  span.fa.fa-bullseye.fa-lg

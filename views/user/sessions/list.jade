@@ -1,0 +1,37 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  include ../../mixins/filters
+  h1
+    span.fa.fa-lg.fa-calendar
+    |  
+    = __('Sessions')
+  
+  +filters(filters, '/sessions')
+  
+  .btn-group(role='toolbar')
+    a.btn.btn-success(href='/sessions/new')
+      span.fa.fa-lg.fa-plus
+      |  New session
+  p
+
+  if sessions.length === 0
+    h3 No session found.
+  else
+    ul.list-group
+      each session in sessions
+        li.list-group-item
+          a.btn.btn-primary(href='/sessions/' + session.id + '/edit' title='Edit')
+            span.fa.fa-fw.fa-edit.fa-lg
+          | &nbsp; 
+          span.fa.fa-fw.fa-clock-o
+          | &nbsp;
+          a(href=("/sessions/" + session.id) title=session.summary)
+            strong= session['project.name']
+            | &nbsp;
+            if session.summary
+              = '[' + session.summary + ']'
+              | &nbsp;
+            = '(' + moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat) + ')'
+    +paginate(paginate, pageCount, currentPage)

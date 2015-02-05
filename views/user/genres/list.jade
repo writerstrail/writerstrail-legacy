@@ -1,0 +1,31 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  include ../../mixins/filters
+  h1
+    span.fa.fa-lg.fa-tags
+    |  
+    = __('Genres')
+  
+  +filters(filters, '/genres')
+
+  .btn-group(role='toolbar')
+    a.btn.btn-success(href='/genres/new')
+      span.fa.fa-lg.fa-plus
+      |  New genre
+  p
+
+  if genres.length === 0
+    h3 No genre found.
+  else
+    ul.list-group
+      each genre in genres
+        li.list-group-item
+          a.btn.btn-primary(href='/genres/' + genre.id + '/edit' title='Edit')
+            span.fa.fa-fw.fa-edit.fa-lg
+          | &nbsp; 
+          span.fa.fa-fw.fa-tag
+          | &nbsp;
+          a(href=('/genres/' + genre.id) title=genre.description)= genre.name
+    +paginate(paginate, pageCount, currentPage)

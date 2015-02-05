@@ -1,0 +1,53 @@
+extends ../../layout
+
+block content
+  h1
+    span.fa.fa-lg.fa-fire
+    |  
+    = __('Active projects')
+  
+  .btn-group(role='toolbar')
+    a.btn.btn-default(href='/projects')
+      span.fa.fa-lg.fa-files-o
+      |  All projects
+    a.btn.btn-success(href='/projects/new')
+      span.fa.fa-lg.fa-plus
+      |  New project
+      
+  p
+  
+  #active-projects.panel.panel-primary
+    .panel-heading
+      h3.panel-title List of active projects
+      
+    ul.list-group
+      for project in projects
+        li.list-group-item
+          .row
+            .col-sm-3.project-list-title
+              a(href='/projects/' + project.id title=project.description)= project.name
+              |  
+              a(href='/projects/' + project.id + '/edit' title='Edit')
+                span.fa.fa-edit
+            .col-sm-7
+              if project.targetwc > 0
+                .progress(title=project.currentWordcount + '/' + project.targetwc)
+                  - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
+                  .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
+                    = project.percentage + '%'
+              else
+                | No target defined.&nbsp;
+                = project.currentWordcount
+                | &nbsp;written words.
+            .col-sm-2
+              a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
+              
+      if projects.length === 0
+        li.list-group-item: h3 No active project found.
+  include ../../mixins/paginate
+  +paginate(paginate, pageCount, currentPage)
+  
+append scripts
+  if user.settings.showTour
+    script(type='text/javascript').
+      tour(jQuery, hopscotch, range(14, 15));

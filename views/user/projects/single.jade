@@ -1,0 +1,99 @@
+extends ../../layout
+
+block content
+  h1 Project 
+    em= project.name
+    
+    
+  .btn-group
+    a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit this project')
+      span.fa.fa-edit.fa-lg
+    include toolbar
+  p  
+  
+  if project.targetwc > 0
+    .row
+      .col-sm-12
+        - var percentage = Math.min(100, Math.max(0, Math.floor((project.currentWordcount / project.targetwc) * 100)))
+        .progress(title=project.currentWordcount + '/' + project.targetwc)
+          - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
+          .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
+            = percentage + '%'
+
+  ul.list-group
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
+          strong Description:
+        .col-sm-10
+          unless project.description
+            | No description provided
+          else
+            - var descPieces = project.description.split(/(?:\r\n|\r|\n)/g)
+            for desc, i in descPieces
+              if i > 0
+                br
+              = desc
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
+          if project.targetwc > 0
+            strong Wordcount/Target:
+          else
+            strong Wordcount:
+        .col-sm-10
+          if project.targetwc > 0
+            = project.currentWordcount + '/' + project.targetwc
+          else  
+            = project.currentWordcount
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
+          strong Genres:
+        .col-sm-10
+          if project.genres.length === 0
+            | None
+          else
+            for genre, i in project.genres
+              if i > 0
+                | ,&nbsp;
+              a(href='/genres/' + genre.id title=genre.name)= genre.name
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
+          strong Included in targets:
+        .col-sm-10
+          if project.targets.length === 0
+            | None
+          else
+            for target, i in project.targets
+              if i > 0
+                | ,&nbsp;
+              a(href='/targets/' + target.id title=target.name)= target.name
+          |  
+          a#create-target.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
+              span.fa.fa-plus
+              |  Create one
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
+          strong Is active:
+        .col-sm-10
+          = project.active ? 'Yes' : 'No'
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
+          strong Is finished:
+        .col-sm-10
+          = project.finished ? 'Yes' : 'No'
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
+          strong Created at:
+        .col-sm-10
+          = moment.utc(project.createdAt).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
+
+append scripts
+  if user.settings.showTour
+    script
+      | tour(jQuery, hopscotch, range(24, 27));

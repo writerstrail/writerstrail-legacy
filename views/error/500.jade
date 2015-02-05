@@ -1,0 +1,6 @@
+extends ../layout
+
+block content
+    .jumbotron
+        h1= __('Server error')
+        p!= __('The server is a very lazy writer sometimes. Try again later or go to the %shome page%s.', '<a href="/">', '</a>')

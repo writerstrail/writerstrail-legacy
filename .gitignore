@@ -1,0 +1,6 @@
+bower_components/*
+node_modules/*
+start.sh
+
+# Built css files
+public/stylesheets/*.css

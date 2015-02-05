@@ -1,0 +1,24 @@
+footer-height = 30px
+
+html, body
+  height 100%
+
+.wrapper
+  min-height 100%
+  margin-bottom: -(footer-height)
+  &:after
+    content ""
+    display block
+    height: footer-height
+
+.footer
+  height: footer-height
+    
+.form-horizontal .control-label
+  text-align left
+  
+.project-list-title
+  font-size 12pt
+  
+img.brand
+  width 199px

@@ -1,0 +1,31 @@
+extends ../../layout
+
+block content
+  h1= edit ? __('Edit genre') : __('New genre')
+  
+  .btn-group(role='toolbar')
+    if edit
+      a.btn.btn-lg.btn-default(href='/genres/' + genre.id title='View this genre')
+        span.fa.fa-eye.fa-lg
+    else
+      a.btn.btn-lg.btn-default(href='/genres' title='List of all genres')
+        span.fa.fa-tags.fa-lg
+      a.btn.btn-lg.btn-default(href='/projects/active' title='List of active projects')
+        span.fa.fa-fire.fa-lg
+    if edit
+      include toolbar
+  p  
+
+  form.form-horizontal(method='post')
+    input(type='hidden' name='_csrf', value=csrf)
+    - var nameErr = _.find(validate, { path: 'name' }) || ''
+    .form-group(class=(nameErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='name')= __('Name')
+      .col-sm-10
+        input#name.form-control(type='text' name='name' placeholder=__('Name') value=genre.name aria-describedby='namehelp')
+        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
+    .form-group
+      label.col-sm-2.control-label(for='Description')= __('Description')
+      .col-sm-10
+        textarea#name.form-control(rows='3' name='description' placeholder=__('Description'))= genre.description
+    include ../../mixins/single-form-buttons

@@ -1,0 +1,91 @@
+extends ../../layout
+
+block content
+  h1  Session 
+    small
+      |  (
+      = session.project.name
+      |  &mdash; 
+      = moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
+      | )
+      
+  .btn-group(role='toolbar')
+    a.btn.btn-lg.btn-default(href='/sessions/' + session.id + '/edit' title='Edit this session')
+      span.fa.fa-edit.fa-lg
+    include toolbar
+  p  
+    
+    ul.list-group
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Summary:
+          .col-sm-10
+            = session.summary || 'No summary provided'
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Start:
+          .col-sm-10
+            = moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Duration:
+          .col-sm-10
+            = durFormat(session.duration)
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Time not writing:
+          .col-sm-10
+            = durFormat(session.pausedTime)
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Total written:
+          .col-sm-10
+            = session.wordcount
+            | &nbsp;words
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Is countdown?
+          .col-sm-10
+            = session.isCountdown ? 'Yes' : 'No'
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Project:
+          .col-sm-10
+            a(href='/projects/' + session.project.id title='View project ' + session.project.name)= session.project.name
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Targets advanced:
+          .col-sm-10
+            if session.project.targets.length === 0
+              | None
+            for t, i in session.project.targets
+              if i > 0
+                | ,&nbsp
+              a(href='/targets/' + t.id title='View target ' + t.name)= t.name
+      li.list-group-item
+        .row
+          .col-sm-2
+            strong Notes:
+          .col-sm-10
+            unless session.notes
+                | None.
+              else
+                - var lines = session.notes.split(/(?:\r\n|\r|\n)/g)
+                for line, i in lines
+                  if i > 0
+                    br
+                  = line
+              
+append scripts
+  if user.settings.showTour
+    script
+      unless edit
+        | tour(jQuery, hopscotch, range(35, 36));

@@ -1,0 +1,158 @@
+extends ../layout
+
+block content
+    h1 Account settings for #{user.name}.
+    - if (!user.activated)
+        .row
+            .col-sm-12
+                .well.well-sm
+                    h3 Activate account
+                    p. 
+                        To be able to use this beta application, you need to wait
+                        until it's publicly available. If you have an invitation code
+                        to the beta test, use it below to activate your account.
+                    form.form-horizontal(method="post" action="/account/activate")
+                        input(type="hidden" name="_csrf" value=csrf)
+                        .form-group
+                            label.col-sm-2.control-label(for="code")= __('Invitation code')
+                            .col-sm-10
+                                input#code.form-control(name="code" placeholder="Code" autofocus=true)
+                        .form-group
+                            .col-sm-10.col-sm-offset-2
+                                button.btn.btn-success(type="submit") Activate
+    - else
+        .row
+            .col-sm-12
+                .well.well-sm
+                    h3= __('Activate account')
+                    p= __('Your account is already activated.')
+    .row
+        .col-sm-12
+            .well.well-sm
+                form.form-horizontal(method="post")
+                    input(type="hidden", name="_csrf", value=csrf)
+                    .form-group
+                        label.col-sm-2.control-label(for="id")= __('Id')
+                        .col-sm-10
+                            p#id.form-control-static= user.id
+                            
+                    - var nameErr = _.find(validate, { path: 'name' }) || ''
+                    .form-group(class=nameErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="name")= __('Name')
+                        .col-sm-10
+                            input#name.form-control(value=data.name || user.name, name="name", placeholder=__("Name"), autofocus=user.activated aria-describedby='namehelp')
+                            span#namehelp.help-block!= nameErr ? nameErr.message : ''
+                    
+                    - var emailErr = _.find(validate, { path: 'email' }) || ''
+                    .form-group(class=emailErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="email")= __('Email')
+                        .col-sm-10
+                            input#name.form-control(type='email' value=data.email || user.email, name="email", placeholder=__("Email"))
+                            span#namehelp.help-block!= emailErr ? emailErr.message : (user.verified ? '<i class="fa fa-check"></i> Your email address is already verified' : 'Your email address is still not verified. <a href="/account/verify/resend">Resend confirmation message.</a>')
+                            
+                    h4.col-sm-10.col-sm-offset-2 Change password
+                            
+                    - var oldpassErr = _.find(validate, { path: 'oldpassword' }) || ''
+                    .form-group(class=oldpassErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="oldpassword")= __('Old password')
+                        .col-sm-10
+                            input#oldpassword.form-control(type='password' name="oldpassword", placeholder=__("Old password (leave blank if none)"), autofocus=user.activated aria-describedby='oldpasswordhelp')
+                            span#oldpasswordhelp.help-block!= oldpassErr ? oldpassErr.message : ''
+                    
+                    - var passErr = _.find(validate, { path: 'password' }) || ''
+                    .form-group(class=passErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="newpassword")= __('New password')
+                        .col-sm-10
+                            input#newpassword.form-control(type='password' name="newpassword", placeholder=__("New password"), autofocus=user.activated aria-describedby='newpasswordhelp')
+                            span#newpasswordhelp.help-block!= passErr ? passErr.message : ''
+                            
+                    - var confirmErr = _.find(validate, { type: 'confirm' }) || ''
+                    .form-group(class=confirmErr ? 'has-error' : '')
+                        label.col-sm-2.control-label(for="confirmpassword")= __('Confirm password')
+                        .col-sm-10
+                            input#confirmpassword.form-control(type='password' name="confirmpassword", placeholder=__("Confirm password"), autofocus=user.activated aria-describedby='confirmpasswordhelp')
+                            span#confirmpasswordhelp.help-block!= confirmErr ? confirmErr.message : ''
+                            
+                    .form-group
+                        .col-sm-10.col-sm-offset-2
+                            button.btn.btn-primary(type="submit")= __('Update')
+    .row
+        .col-sm-3
+            .well.well-sm
+                h3.text-primary
+                    span.fa.fa-fw.fa-facebook
+                    = __('Facebook')
+                - if(user.facebookToken)
+                    p= __('You are connected to Facebook as %s.', user.facebookName)
+                    a.btn.btn-facebook(href="/unlink/facebook")
+                        span.fa.fa-facebook
+                        | &nbsp;
+                        = __('Unlink Facebook')
+                - else
+                    p= __('You are not connected to Facebook.')
+                    a.btn.btn-facebook(href="/connect/facebook")
+                        span.fa.fa-facebook
+                        | &nbsp;
+                        = __('Connect to Facebook')
+        .col-sm-3
+            .well.well-sm
+                h3.text-danger
+                    span.fa.fa-fw.fa-google-plus
+                    = __('Google')
+                - if(user.googleToken)
+                    p= __('You are connected to Google as %s.', user.googleName)
+                    a.btn.btn-google-plus(href="/unlink/google")
+                        span.fa.fa-google-plus
+                        | &nbsp;
+                        = __('Unlink Google')
+                - else
+                    p= ('You are not connected to Google.')
+                    a.btn.btn-google-plus(href="/connect/google")
+                        span.fa.fa-google-plus
+                        | &nbsp;
+                        = __('Connect to Google')
+        .col-sm-3
+            .well.well-sm
+                h3.text-info
+                    span.fa.fa-fw.fa-linkedin
+                    = __('LinkedIn')
+                - if(user.linkedinToken)
+                    p= __('You are connected to LinkedIn as %s.', user.linkedinName)
+                    a.btn.btn-linkedin(href="/unlink/linkedin")
+                        span.fa.fa-linkedin
+                        | &nbsp;
+                        = __('Unlink LinkedIn')
+                - else
+                    p= __('You are not connected to LinkedIn.')
+                    a.btn.btn-linkedin(href="/connect/linkedin")
+                        span.fa.fa-linkedin
+                        | &nbsp;
+                        = __('Connect to LinkedIn')
+        .col-sm-3
+            .well.well-sm
+                h3.text-info
+                    span.fa.fa-fw.fa-wordpress
+                    = __('Wordpress')
+                - if(user.wordpressToken)
+                    p= __('You are connected to Wordpress as %s.', user.wordpressName)
+                    a.btn.btn-twitter(href="/unlink/wordpress")
+                        span.fa.fa-wordpress
+                        | &nbsp;
+                        = __('Unlink Wordpress')
+                - else
+                    p= __('You are not connected to Wordpress.')
+                    a.btn.btn-twitter(href="/connect/wordpress")
+                        span.fa.fa-wordpress
+                        | &nbsp;
+                        = __('Connect to Wordpress')
+    .row
+        .col-sm-12
+            .well.well-sm
+                h3= __('Delete account')
+                form(method="post", action='/account/delete')
+                    input(type="hidden", name="_csrf", value=csrf)
+                    .form-group
+                        button.btn.btn-danger(type="submit")= __('Delete account')
+
+append styles
+    link(rel='stylesheet', href='/vendor/social-buttons/css/social-buttons.css')

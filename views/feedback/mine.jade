@@ -1,0 +1,58 @@
+extends ../layout
+
+block content
+  include ../mixins/filters
+  h1 Your feedbacks
+  
+  p.text-muted For better usability, you can't edit the feedbacks. If anything, delete and create another or contact us at 
+    strong writerstrail@georgemarques.com.br
+    | .
+  
+  if feedbacks.length === 0
+    h3 You haven't provided any feedback.
+  else
+    +filters(filters, '/feedback/mine')
+  
+    p  
+
+    form.form-inline(method='get')
+      .form-group
+        select#status.form-control(name='status')
+          option(selected=i === 'all') All
+          for i in stati
+            option(selected=i === query.status)= i
+      |  
+      .checkbox
+        label
+          input(type='checkbox' checked=!!query.deleted name='deleted')
+          | Show deleted
+      |  
+      .form-group
+        button.btn.btn-primary(type='submit') Filter
+
+    p  
+    
+    ul.list-group
+      for fb in feedbacks
+        li.list-group-item
+          if user.id === fb.authorId
+            unless fb.deletedAt
+              a.text-danger(href='/feedback/' + fb.id + '/delete' title='Delete')
+                span.fa.fa-lg.fa-trash-o
+              |  
+            else
+              a.text-success(href='/feedback/' + fb.id + '/delete/undo' title='Restore')
+                span.fa.fa-lg.fa-undo
+              |  
+          else
+            span(title='This feedback was locked by an administrator' style='cursor: default;')
+              span.fa.fa-lg.fa-lock
+              |  
+          a(href='/feedback/' + fb.id)
+            if fb.response
+              span.fa.fa-reply(title='Has developer response')
+              |  
+            if fb.deletedAt
+              s= fb.summary
+            else
+              = fb.summary

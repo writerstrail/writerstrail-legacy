@@ -1,0 +1,53 @@
+extends ../../layout
+
+block content
+  h1= title
+  
+  form.form-horizontal(method='post')
+    input(type='hidden' name='_csrf' value=csrf)
+    .form-group
+      label.col-sm-2.control-label(for='dateformat') Date format:
+      .col-sm-10
+        select#dateformat.form-control(name='dateformat')
+          for format, i in dateFormats.data
+            option(value=format selected=format == user.settings.dateFormat)= dateFormats.labels[i]
+              | &nbsp;(
+              = moment.utc().format(format)
+              | )
+    .form-group
+      label.col-sm-2.control-label(for='timeformat') Time format:
+      .col-sm-10
+        select#timeformat.form-control(name='timeformat')
+          for format, i in timeFormats.data
+            option(value=format selected=format == user.settings.timeFormat)= timeFormats.labels[i]
+              | &nbsp;(
+              = moment.utc().format(format)
+              | )
+    .form-group
+      label.col-sm-2.control-label(for='charttype') Preferred target chart type:
+      .col-sm-10
+        label.radio-inline
+          input#charttype(type='radio' name='charttype' value='cumulative' checked='cumulative' == user.settings.chartType)
+          | Cumulative writing/target
+        label.radio-inline
+          input#charttype(type='radio' name='charttype' value='daily' checked='daily' == user.settings.chartType)
+          | Daily writing/target
+    .form-group
+      label.col-sm-2.control-label Target chart extra data:
+      .col-sm-10
+        label.checkbox-inline
+          input(type='checkbox' name='showRemaining' checked=user.settings.showRemaining)
+          | Remaining wordcount
+        label.checkbox-inline
+          input(type='checkbox' name='showPondered' checked=user.settings.showPondered)
+          | Pondered daily target
+    .form-group
+      label.col-sm-2.control-label Show tour:
+      .col-sm-10
+        .checkbox
+          label
+            input(type='checkbox' name='showTour' checked=user.settings.showTour)
+            | Show application tour next time you visit the dashboard
+    .form-group
+      .col-sm-offset-2.col-sm-2
+        button.btn.btn-primary(type='submit' name='save' value='save') Save

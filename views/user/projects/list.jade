@@ -1,0 +1,34 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  include ../../mixins/filters
+  h1
+    span.fa.fa-lg.fa-files-o
+    |  
+    = __('Projects')
+    
+  +filters(filters, '/projects')
+  
+  .btn-group(role='toolbar')
+    a.btn.btn-default(href='/projects/active')
+      span.fa.fa-lg.fa-fire
+      |  Active projects
+    a.btn.btn-success(href='/projects/new')
+      span.fa.fa-lg.fa-plus
+      |  New project
+  p
+
+  if projects.length === 0
+    h3 No project found.
+  else
+    ul.list-group
+      each project in projects
+        li.list-group-item
+          a.btn.btn-primary(href='/projects/' + project.id + '/edit' title='Edit')
+            span.fa.fa-edit
+          |  
+          span.fa.fa-fw.fa-file-o
+          | &nbsp;
+          a(href=("/projects/" + project.id) title=project.description)= project.name
+    +paginate(paginate, pageCount, currentPage)

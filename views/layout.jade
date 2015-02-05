@@ -1,0 +1,49 @@
+doctype html
+html
+  head
+    title!= (title ? title + ' &raquo; ' : '') + __('Writer\'s Trail')
+    head(profile="http://www.w3.org/2005/10/profile")
+    link(rel="icon" type="image/png" href="/favicon.png")
+    block styles
+      link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+      link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
+      link(rel='stylesheet', href='/stylesheets/main.css')
+      if user
+        if user.activated
+          link(rel='stylesheet', href='/stylesheets/feedback.css')
+        if user.settings && user.settings.showTour
+          link(rel='stylesheet', href='/bower_components/hopscotch/dist/css/hopscotch.min.css')
+  body
+    .wrapper
+      include includes/header
+      
+      block preoutside
+      
+      .container
+        - if(successMessage && successMessage.length > 0)
+          for msg in successMessage
+            .alert.alert-success!= msg
+        - if(errorMessage && errorMessage.length > 0)
+          for msg in errorMessage
+            .alert.alert-danger!= msg
+        - if(warningMessage && warningMessage.length > 0)
+          for msg in warningMessage
+            .alert.alert-warning!= msg
+        block content
+      block outside
+    
+    .footer
+      include includes/footer
+      
+    unless noFeedback
+      if user && user.activated
+        #feedback
+          a.btn.btn-lg.btn-danger(href='/feedback/new') Found a bug!
+        
+    block scripts
+        script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
+        script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+        script(type='text/javascript', src='/bower_components/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js')
+        if user && user.settings && user.settings.showTour
+          script(type='text/javascript', src='/bower_components/hopscotch/dist/js/hopscotch.min.js')
+          script(type='text/javascript', src='/scripts/tour.js')

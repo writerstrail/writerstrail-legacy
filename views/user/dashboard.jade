@@ -1,0 +1,133 @@
+extends ../layout
+
+block content
+  h1
+    span.fa.fa-lg.fa-dashboard
+    |  
+    = title
+  
+  .row
+    .col-sm-12
+      #active-projects.panel.panel-primary
+        .panel-heading
+          h3.panel-title
+            span.fa.fa-files-o
+            |  Last five active projects
+        ul.list-group
+          if projects.length === 0
+            li.list-group-item
+              .row
+                .col-sm-12
+                  h3.text-center No current active project
+                  p.text-center
+                    a.btn.btn-primary(href='/projects/new' title='New project') Create a new one now
+          for project in projects
+            li.list-group-item
+              .row
+                .col-sm-3.project-list-title
+                  a.project-list-title(href='/projects/' + project.id title=project.description)= project.name
+                  |  
+                  a(href='/projects/' + project.id + '/edit' title='Edit')
+                    span.fa.fa-edit
+                .col-sm-7
+                  if project.targetwc === 0
+                    p No target defined. 
+                      = project.currentWordcount
+                      |  written words.
+                  else
+                    .progress(title=project.currentWordcount + '/' + project.targetwc)
+                      - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
+                      .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
+                        = project.percentage + '%'
+                .col-sm-2
+                  a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
+          li.list-group-item.text-center
+            a#see-projects(href='/projects/active') See all active projects
+            
+  .row
+    .col-sm-6
+      #latest-target.panel.panel-default
+        .panel-heading
+          h3.panel-title
+            span.fa.fa-line-chart
+            |  Nearest target
+        .panel-body
+          if target
+            h3.text-center
+              a(href='/targets/' + target.id)= target.name
+            #chart
+            .text-center
+              button#target-change.btn.btn-default(type='button') Show as daily writing
+          else
+            h3.text-center You have no active target
+            p.text-center
+              a.btn.btn-primary(href='/targets/new' title='New target') Create a new one now
+        ul.list-group
+          li.list-group-item.text-center
+            a(href='/targets') See all targets
+            
+    .col-sm-6
+      #stats.panel.panel-default
+        .panel-heading
+          h3.panel-title
+            span.fa.fa-calculator
+            |  Writing stats
+        ul.list-group
+          li.list-group-item You have written a total of 
+            strong= isNaN(stats.totalWordcount) ? 0 : stats.totalWordcount
+            |  words.
+          li.list-group-item You have an average of 
+            strong= stats.dailyAverage.toFixed(2)
+            |  words written per day.
+          li.list-group-item You have an average of 
+            strong= stats.wpm.toFixed(2)
+            |  words written per minute.
+          if stats.period
+            li.list-group-item You are most productive at 
+              strong(title!=stats.period.start + '&mdash;' + stats.period.end style='border-bottom: 1px dashed #999')= stats.period.period
+              |  period, achieving an average of 
+              strong= stats.period.performance.toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive period.
+          if stats.session
+            li.list-group-item You are most productive at 
+              strong!= '&#x2248;' + stats.session.minuteDuration
+              |  minutes 
+              strong= stats.session.direction
+              |  sessions, achieving an average of 
+              strong= stats.session.performance.toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive session type.
+          if stats.largestProject
+            li.list-group-item Your largest project is 
+              strong= stats.largestProject.name
+              |  with 
+              strong= stats.largestProject.currentWordcount
+              |  total words.
+          else
+            li.list-group-item You don't have any project.
+          
+append styles
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/stylesheets/chart.css')
+
+append scripts  
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/scripts/chart.js')    
+  if target
+    script(type='text/javascript')
+      unless example
+        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+      else
+        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false);
+  script
+    unless example
+      if user.settings.showTour
+        | tour(jQuery, hopscotch, range(0, 1).concat(range(37, 39)));
+    else
+      | $(function() { $('a').click(function(e) { e.preventDefault(); }) });
+      if user.settings.showTour
+        | tour(jQuery, hopscotch, range(2, 13));

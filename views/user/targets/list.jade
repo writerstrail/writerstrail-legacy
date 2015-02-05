@@ -1,0 +1,31 @@
+extends ../../layout
+
+block content
+  include ../../mixins/paginate
+  include ../../mixins/filters
+  h1
+    span.fa.fa-lg.fa-bullseye
+    |  
+    = __('Targets')
+  
+  +filters(filters, '/targets')
+
+  .btn-group(role='toolbar')
+    a.btn.btn-success(href='/targets/new')
+      span.fa.fa-lg.fa-plus
+      |  New target
+  p
+
+  if targets.length === 0
+    h3 No target found.
+  else
+    ul.list-group
+      each target in targets
+        li.list-group-item
+          a.btn.btn-primary(href='/targets/' + target.id + '/edit' title='Edit')
+            span.fa.fa-fw.fa-edit.fa-lg
+          | &nbsp; 
+          span.fa.fa-fw.fa-bar-chart
+          | &nbsp;
+          a(href=("/targets/" + target.id) title=target.notes)= target.name
+    +paginate(paginate, pageCount, currentPage)

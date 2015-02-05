@@ -1,0 +1,6 @@
+extends ../layout
+
+block content
+    .jumbotron
+        h1= __('Page not found')
+        p!= __('This page is either a draft thrown away or a procrastination yet to be put aside. Try another address or go to the %shome page%s.', '<a href="/">', '</a>')

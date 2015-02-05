@@ -1,0 +1,33 @@
+{
+  "name": "Writerstrail",
+  "version": "0.1.0",
+  "authors": [
+    "George Marques <george@georgemarques.com.br>"
+  ],
+  "description": "Writer's progress charts a la NaNoWriMo",
+  "main": "server.js",
+  "keywords": [
+    "writing",
+    "charts"
+  ],
+  "license": "MIT",
+  "homepage": "http://georgemarques.com.br/writerscharts",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.1",
+    "jquery": "~2.1.3",
+    "font-awesome": "~4.3.0",
+    "eonasdan-bootstrap-datetimepicker": "~4.0.0",
+    "moment": "~2.9.0",
+    "c3": "~0.4.9",
+    "bootstrap-hover-dropdown": "~2.0.11",
+    "hopscotch": "~0.2.3"
+  }
+}
