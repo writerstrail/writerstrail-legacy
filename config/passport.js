@@ -110,37 +110,42 @@ module.exports = function passportConfig(passport) {
     passwordField: 'password',
     passReqToCallback: true
   }, function (req, email, password, done) {
-     models.User.findOne({
-       where: {
-         email: { like: email }
-       }
-     }).then(function (user) {
-       var msg = 'Email or password incorrect. Have you <a class="alert-link" href="/password/recover">forgotten your password</a>?';
-       if (!user) {
-         req.flash('error', msg);
-         req.flash('valerror', new ValidationError('Validation error', [
-           new ValidationErrorItem(msg, 'incorrect', 'login', '')
-         ]));
-         req.flash('data', { login: email });
-         return done(null, false);
-       }
-       if (!user.validPassword(password)) {
-         req.flash('error', msg);
-         req.flash('valerror', new ValidationError('Validation error', [
-           new ValidationErrorItem(msg, 'incorrect', 'login', '')
-         ]));
-         req.flash('data', { login: email });
-         return done(null, false);
-       }
-       if (req.body.remember) {
-         req.session.cookie.maxAge = 604800000; // 7 days
-       }
-       return done(null, user);
-     }).catch(function (err) {
-       req.flash('error', 'Internal error');
-       return done(err);
-     });
-   }));
+    models.User.findOne({
+      where: {
+        email: { like: email }
+      }
+    }).then(function (user) {
+      var msg = 'Email or password incorrect. Have you <a class="alert-link" href="/password/recover">forgotten your password</a>?';
+      if (!user) {
+        req.flash('error', msg);
+        req.flash('valerror', new ValidationError('Validation error', [
+          new ValidationErrorItem(msg, 'incorrect', 'login', '')
+        ]));
+        req.flash('data', { login: email });
+        return done(null, false);
+      }
+      if (!user.validPassword(password)) {
+        req.flash('error', msg);
+        req.flash('valerror', new ValidationError('Validation error', [
+          new ValidationErrorItem(msg, 'incorrect', 'login', '')
+        ]));
+        req.flash('data', { login: email });
+        return done(null, false);
+      }
+      if (req.body.remember) {
+        req.session.cookie.maxAge = 604800000; // 7 days
+      }
+      user.set('lastAccess', new Date());
+      user.save().then(function () {
+        done(null, user);
+      }).catch(function (err) {
+        done(err, null);
+      });
+    }).catch(function (err) {
+      req.flash('error', 'Internal error');
+      return done(err);
+    });
+  }));
   
   passport.use('facebook', new FacebookStrategy({
     clientID: config.facebook.appid,
