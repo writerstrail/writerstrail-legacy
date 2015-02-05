@@ -1,8 +1,67 @@
 extends layout
 
-block outside
+block preoutside
   include mixins/nofeedback
-  .jumbotron
+  .jumbotron.text-center
     .container
-      h1 Writer's Trail
-      p= __('Welcome to %s', __('Writer\'s Trail'))
+      h1
+        img(src='/images/banner.png' alt="Writer's Trail" title="Writer's Trail")
+      h2 Now you can keep track of your writings statistics 
+        span.fa.fa-signal
+      a.btn.btn-lg.btn-primary(href='/signin')
+        span.fa.fa-lg.fa-sign-in
+        |  Apply for closed beta
+      
+  .container
+    .text-center
+      h1 Sum up all the statistics of your writing
+      h3 Sometimes it is not enough to feel that you wrote a lot. Sometimes you need to see it.
+      h3 That's what Writer's Trail is here to do.
+      img.full(src='/images/dash.png')
+
+    .feature
+      .row
+        .col-sm-6: .well
+          h3
+            span.fa.fa-eye
+            |  Keep an eye on your progress
+          p You can make any amount of projects and each one has its own individual progress bar. Archive them to avoid cluttering the list.
+        .col-sm-6: .well
+          h3
+            span.fa.fa-bullseye
+            |  Create custom targets
+          p 50,000 words in 30 days (as is 
+            a(href='http://nanowrimo.org' title='NaNoWriMo website') NaNoWriMo
+            | )? 100,000 in 45 days? You can choose what you want and even change it midway.
+      .row
+        .col-sm-6: .well
+          h3
+            span.fa.fa-clock-o
+            |  Sessions of any length
+          p There's no hard choice of writing sessions length. You can put minutes and seconds, set paused time, mark it as forward and as countdown.
+        .col-sm-6: .well
+          h3
+            span.fa.fa-calculator
+            |  Writing habits
+          p Ever wondered if you are more productive at evening or early morning? The best session length? Now you can know that for sure.
+  
+    h1.text-center Have a peek at 
+      a(href='/features' title='Features') Writer's Trail features
+      | .
+  
+  .jumbotron.text-center
+    h2 Eyes open for the closed beta test
+    a.btn.btn-lg.btn-primary(href='/signin')
+        span.fa.fa-lg.fa-sign-in
+        |  Apply for it
+    p Follow us at 
+      a.btn.btn-primary(href='https://facebook.com/writerstrail' title='Facebook')
+        span.fa.fa-lg.fa-facebook
+      |  and 
+      a.btn.btn-info(href='https://twitter.com/writerstrail' title='Twitter')
+        span.fa.fa-lg.fa-twitter
+      |  to be one of the firsts to try out Writer's Trail.
+    
+  
+append styles
+  link(rel='stylesheet', href='/stylesheets/home.css')
