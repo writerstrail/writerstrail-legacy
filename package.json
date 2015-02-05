@@ -1,6 +1,6 @@
 {
-  "name": "WritersCharts",
-  "version": "0.0.0",
+  "name": "WritersTrail",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
