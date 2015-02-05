@@ -25,4 +25,11 @@ router.get('/donations', function (req, res) {
   });
 });
 
+router.get('/license', function (req, res) {
+  res.render('info/license', {
+    title: 'License'
+  });
+});
+
+
 module.exports = router;

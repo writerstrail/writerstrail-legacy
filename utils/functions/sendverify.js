@@ -19,7 +19,7 @@ module.exports = function sendverify(user, done) {
       from: 'writerstrail@georgemarques.com.br',
       fromname: "Writer's Trail",
       subject: 'Verify your email for Writer\'s Trail',
-      html: '<a href="' + link + '">Click here to verify your email</a>. Or follow the link: ' + link,
+      html: link,
       smtpapi: new sendgrid.smtpapi({
         filters: {
           templates: {
@@ -28,6 +28,11 @@ module.exports = function sendverify(user, done) {
               "template_id": '1a8c6d97-d082-4347-adaf-4f4735d20a87'
             }
           }
+        },
+        sub: {
+          ":conflink": [
+            link
+          ]
         }
       })
     });
@@ -43,7 +48,7 @@ module.exports = function sendverify(user, done) {
       ownerId: user.id,
       type: 'email',
       data: user.email,
-      expire: moment().add(48, 'hours').toDate()
+      expire: moment().add(24, 'hours').toDate()
     });
   }).then(function () {
     return user.save();

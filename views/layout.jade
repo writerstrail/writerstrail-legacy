@@ -11,7 +11,7 @@ html
       if user
         if user.activated
           link(rel='stylesheet', href='/stylesheets/feedback.css')
-        if user.settings.showTour
+        if user.settings && user.settings.showTour
           link(rel='stylesheet', href='/bower_components/hopscotch/dist/css/hopscotch.min.css')
   body
     .wrapper
@@ -44,6 +44,6 @@ html
         script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
         script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
         script(type='text/javascript', src='/bower_components/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js')
-        if user && user.settings.showTour
+        if user && user.settings && user.settings.showTour
           script(type='text/javascript', src='/bower_components/hopscotch/dist/js/hopscotch.min.js')
           script(type='text/javascript', src='/scripts/tour.js')
