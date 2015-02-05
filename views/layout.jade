@@ -17,6 +17,8 @@ html
     .wrapper
       include includes/header
       
+      block preoutside
+      
       .container
         - if(successMessage && successMessage.length > 0)
           for msg in successMessage
