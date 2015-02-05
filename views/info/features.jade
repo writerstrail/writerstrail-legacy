@@ -1,5 +1,75 @@
 extends ../layout
 
-block content
+block preoutside
   include ../mixins/nofeedback
-  h1 About Writer's Trail
+  .jumbotron.text-center
+    .container
+      h1 Writer's Trail Features
+      h3 Know your writing habits
+      a.btn.btn-lg.btn-primary(href='/signin')
+        span.fa.fa-lg.fa-sign-in
+        |  Apply for closed beta
+        
+  .container.feature
+    .row
+      .col-sm-6
+        img.full(src='/images/target.png' alt='Custom targets' title='Custom targets')
+      .col-sm-6
+        h2 Custom targets with progress charts
+        p Now you can have that 
+          a(href='http://nanowrimo.org' title='NaNoWriMo website') NaNoWriMo
+          |  feel any time in the year. Create targets for any amount of words and time you want.
+        p Life got in the way? Change the target midway to something you know you can make.
+        p Or increase the target word count if it got too easy.
+    .row
+      .col-sm-6
+        h2 Register your writing sessions
+        p Know all the time you have written. Keep notes for yourself about how you felt in that session.
+        p You can make a summary to make it easier to find a specific session later on.
+      .col-sm-6
+        img.full(src='/images/session.png' alt='Writing sessions' title='Writing sessions')
+    .row
+      .col-sm-6
+        img.full(src='/images/projects.png' alt='Progress bars' title='Progress bars')
+      .col-sm-6
+        h2 Visualize your progress
+        p Individual progress bars for each project, unrelated to defined targets.
+        p See how close you are of finishing that pet project of yours.
+        p Mark projects as finished and/or inactive. Inactive projects will be hidden from the main dashboard.
+    .row
+      .col-sm-6
+        h2 See your writing habits
+        p You can see a summary of your statistics and know what are the best session length for you.
+        p Know how much you have written and the period of day you are most productive.
+      .col-sm-6
+        img.full(src='/images/stats.png' alt='Habits and statistics' title='Habits and statistics')
+    .row
+      .col-sm-6
+        img.full(src='/images/settings.png' alt='Settings' title='Settings')
+      .col-sm-6
+        h2 Application settings
+        p Choose your preferred date and time format and select which data you'll see in your targets charts by default.
+        p Reset the application tour or cancel it any time you want.
+    .row
+      .col-sm-6
+        h2 Custom genres
+        p Classify your projects in any way you want. A default set is provided but you can add, remove or change them at your will.
+        p If you want to set genres as formats (novel, short story, essay, etc.) that's fine too! Writer's Trail is meant to be very customizable.
+      .col-sm-6
+        img.full(src='/images/genres.png' alt='Custom genres' title='Custom genres')
+  
+  .jumbotron.text-center
+    h2 What are you waiting for?
+    a.btn.btn-lg.btn-primary(href='/signin')
+        span.fa.fa-lg.fa-sign-in
+        |  Apply for closed beta
+    p Follow us at 
+      a.btn.btn-primary(href='https://facebook.com/writerstrail' title='Facebook')
+        span.fa.fa-lg.fa-facebook
+      |  and 
+      a.btn.btn-info(href='https://twitter.com/writerstrail' title='Twitter')
+        span.fa.fa-lg.fa-twitter
+      |  to look for beta codes and be one of the firsts to try out Writer's Trail.
+       
+append styles
+  link(rel='stylesheet', href='/stylesheets/home.css')
