@@ -16,15 +16,18 @@ module.exports = function sendpassrecover(user, usedemail, done) {
       from: 'writerstrail@georgemarques.com.br',
       fromname: "Writer's Trail",
       subject: 'Recover your password for Writer\'s Trail',
-      html: '<a href="' + link + '">Click here to recover your password</a>. Or follow the link: ' + link,
+      html: user.email,
       smtpapi: new sendgrid.smtpapi({
         filters: {
           templates: {
             settings: {
               enabled: 1,
-              "template_id": '1a8c6d97-d082-4347-adaf-4f4735d20a87'
+              "template_id": '2958c0c2-34b8-4c3e-8c59-4a07105e2742'
             }
           }
+        },
+        sub: {
+          ":reclink": [link]
         }
       })
     });
@@ -38,7 +41,7 @@ module.exports = function sendpassrecover(user, usedemail, done) {
     return models.Token.create({
       ownerId: user.id,
       type: 'password',
-      expire: moment().add(48, 'hours').toDate(),
+      expire: moment().add(2, 'hours').toDate(),
       token: string,
       data: usedemail
     });
