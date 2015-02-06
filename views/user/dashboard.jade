@@ -120,7 +120,7 @@ append scripts
   if target
     script(type='text/javascript')
       unless example
-        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showPondered});
+        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted});
       else
         | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false);
   script
