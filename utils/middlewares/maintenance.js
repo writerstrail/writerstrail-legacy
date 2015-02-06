@@ -7,6 +7,7 @@ var http = require('request'),
 
 router.use(function maintenance(req, res, next) {
   models.App.findOne(1).then(function (app) {
+    res.locals.app = app;
     if (app.maintenance === 'soft') {
       req.flash('maintenance', "Writer's Trail is under maintenance. You may experience some issues.");
       return next();
@@ -21,7 +22,6 @@ router.use(function maintenance(req, res, next) {
           return next();
         }
         return http.get('http://thecatapi.com/api/images/get?format=html&type=jpg,png&size=med', function (err, resp, cat) {
-          console.log('----cat', cat);
           return res.render('error/maintenance', {
             cat: cat
           });

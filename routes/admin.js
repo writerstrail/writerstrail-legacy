@@ -10,7 +10,6 @@ function isAdmin(req, res, next) {
     var err = new Error();
     err.message = 'Not found';
     err.status = 404;
-    err.stack = Error.captureStackTrace(this, arguments.calee);
     next(err);
   }
 }
@@ -161,6 +160,7 @@ router.post(/\/user\/(\d+)/, function (req, res) {
     activated: !!req.body.activated,
     verified: !!req.body.verified,
     email: req.body.email,
+    verifiedEmail: req.body.verifiedEmail,
     invitationCode: req.body.invitationCode || null,
     facebookId: req.body.facebookId || null,
     facebookToken: req.body.facebookToken || null,
@@ -247,6 +247,25 @@ router.post('/deleteinvitation', function (req, res) {
         res.redirect('/admin');
       });
     }
+  });
+});
+
+router.post('/maintenance', function (req, res) {
+  models.App.update({
+    maintenance: req.body.maintenance
+  }, {
+    where: { id: 1 }
+  }).then(function (rows) {
+    if (rows > 0) {
+      req.flash('success', 'Maintenance mode changed to "' + req.body.maintenance + '".');
+    } else {
+      req.flash('error', 'No row updated from maintenance mode change.');
+    }
+  }).catch(function (err) {
+    console.log('----er',err);
+    req.flash('error', 'Error: ' + err.message);
+  }).finally(function () {
+    res.redirect('back');
   });
 });
 
