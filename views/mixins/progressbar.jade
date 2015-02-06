@@ -1,0 +1,5 @@
+mixin progressbar(current, target, percentage)
+  .progress(title=current + '/' + target)
+    - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : (percentage < 100 ? 'success' : 'info'))
+    .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
+      = percentage + '%'

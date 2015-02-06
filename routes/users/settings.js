@@ -30,7 +30,7 @@ router.post('/', isverified, function (req, res, next) {
     settings.chartType = chartType;
   }
   settings.showRemaining = !!req.body.showRemaining;
-  settings.showPondered = !!req.body.showPondered;
+  settings.showAdjusted = !!req.body.showAdjusted;
   settings.showTour = !!req.body.showTour;
   req.user.settings.save().then(function () {
     req.flash('success', 'Your settings were successfully saved');

@@ -35,7 +35,7 @@ block content
       label.col-sm-2.control-label(for='name')= __('Name')
       .col-sm-10
         input#name.form-control(type='text' name='name' placeholder=__('Name') value=project.name aria-describedby='namehelp')
-        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
+        span#namehelp.help-block= __(nameErr ? nameErr.message : 'The title of your project even if temporary.')
         
     - var wcErr = _.find(validate, { path: 'wordcount'}) || ''
 
@@ -43,7 +43,7 @@ block content
       label.col-sm-2.control-label(for='wordcount')= __('Starting word count')
       .col-sm-10
         input#wordcount.form-control(type='text' name='wordcount' placeholder=__('Starting word count') value=project.wordcount aria-describedby='wchelp')
-        span#wchelp.help-block= __(wcErr ? wcErr.message : '')
+        span#wchelp.help-block= __(wcErr ? wcErr.message : 'If you already started it, put the current wordcount in here.')
         
     - var twcErr = _.find(validate, function(err) { return err.path === 'targetwc' || err.path === 'targetOverStart'; }) || ''
     
@@ -51,46 +51,56 @@ block content
       label.col-sm-2.control-label(for='targetwc')= __('Target word count')
       .col-sm-10
         input#targetwc.form-control(type='text' name='targetwc' placeholder=__('Target word count') value=project.targetwc aria-describedby='twchelp')
-        span#twchelp.help-block= __(twcErr ? twcErr.message : '')
+        span#twchelp.help-block= __(twcErr ? twcErr.message : 'The amount of words you intend to write to finish this project.')
         
     .form-group
       label.col-sm-2.control-label(for='Description')= __('Description')
       .col-sm-10
-        textarea#description.form-control(rows='3' name='description' placeholder=__('Description'))= project.description
+        textarea#description.form-control(rows='3' name='description' placeholder=__('Description') aria-describedby='deschelp')= project.description
+        span#desc.help-block Write in here what's this project is about.
         
     .form-group
       .col-sm-10.col-sm-offset-2
         .checkbox
           label
-            input#active(type='checkbox' name='active' checked=project.active)
+            input#active(type='checkbox' name='active' checked=project.active aria-describedby='activehelp')
             | Active
+          span#activehelp.help-block Check if you are currently working on this project.
     .form-group
       .col-sm-10.col-sm-offset-2
         .checkbox
           label
-            input#finished(type='checkbox' name='finished' checked=project.finished)
+            input#finished(type='checkbox' name='finished' checked=project.finished aria-describedby='finshedhelp')
             | Finished
-    for chunk, i in genres
-      .form-group#genres
-        if i === 0
-          label.col-sm-2.control-label Genres
-        .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
-          .checkbox(title=chunk[0].description)
-            label
-              input(type='checkbox', name='genres[]' value=chunk[0].id checked=checkGenre(chunk[0].id))
-              = chunk[0].name
-        if chunk[1]
-          .col-sm-3
-            .checkbox(title=chunk[1].description)
-              label
-                input(type='checkbox', name='genres[]' value=chunk[1].id checked=checkGenre(chunk[1].id))
-                = chunk[1].name
-        if chunk[2]
-          .col-sm-3
-            .checkbox(title=chunk[2].description)
-              label
-                input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
-                = chunk[2].name
+          span#finishedhelp.help-block Check if you already finished this project.
+      
+    .form-group#genres
+      .col-sm-12
+        for chunk, i in genres
+          .row
+            if i === 0
+              label.col-sm-2.control-label Genres
+            .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
+              .checkbox(title=chunk[0].description)
+                label
+                  input(type='checkbox', name='genres[]' value=chunk[0].id checked=checkGenre(chunk[0].id))
+                  = chunk[0].name
+            if chunk[1]
+              .col-sm-3
+                .checkbox(title=chunk[1].description)
+                  label
+                    input(type='checkbox', name='genres[]' value=chunk[1].id checked=checkGenre(chunk[1].id))
+                    = chunk[1].name
+            if chunk[2]
+              .col-sm-3
+                .checkbox(title=chunk[2].description)
+                  label
+                    input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
+                    = chunk[2].name
+        .row
+          .col-sm-offset-2.col-sm-10
+            span#genrehelp.help-block Select the genres this project belongs to.
+        
     include ../../mixins/single-form-buttons
     
 append scripts

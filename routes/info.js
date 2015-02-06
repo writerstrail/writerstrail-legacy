@@ -25,6 +25,14 @@ router.get('/donations', function (req, res) {
   });
 });
 
+router.get('/help', function (req, res) {
+  res.render('info/help', {
+    title: 'Help',
+    section: 'help'
+  });
+});
+
+
 router.get('/license', function (req, res) {
   res.render('info/license', {
     title: 'License'

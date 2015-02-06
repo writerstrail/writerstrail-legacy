@@ -222,6 +222,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         section: 'projectedit',
         edit: true,
         project: {
+          id: req.params.id,
           name: req.body.name,
           description: req.body.description,
           wordcount: req.body.wordcount,

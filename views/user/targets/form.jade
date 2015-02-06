@@ -32,7 +32,7 @@ block content
       label.col-sm-2.control-label(for='name')= __('Name')
       .col-sm-10
         input#name.form-control(type='text' name='name' placeholder=__('Name') value=target.name aria-describedby='namehelp')
-        span#namehelp.help-block= __(nameErr ? nameErr.message : '')
+        span#namehelp.help-block= __(nameErr ? nameErr.message : 'A unique name for this target so you can find it later.')
         
     - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
 
@@ -40,7 +40,7 @@ block content
       label.col-sm-2.control-label(for='wordcount')= __('Target word count')
       .col-sm-10
         input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp')
-        span#wchelp.help-block= __(wcErr ? wcErr.message : '')
+        span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you want to have by the end of the target period.')
         
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     
@@ -51,7 +51,7 @@ block content
           span.input-group-addon
             span.fa.fa-fw.fa-calendar
           input#start.form-control(type='text' name='start' placeholder=__('Start date') value=target.start aria-describedby='starthelp')
-        span#starthelp.help-block= __(startErr ? startErr.message : '')
+        span#starthelp.help-block= __(startErr ? startErr.message : 'When will (or did) this target\'s period start.')
           
     - var endErr = _.find(validate, function(err) { return err.path === 'end' || err.path === 'startBeforeEnd'; }) || ''
     
@@ -62,40 +62,47 @@ block content
           span.input-group-addon
               span.fa.fa-fw.fa-calendar
           input#end.form-control(type='text' name='end' placeholder=__('End date') value=target.end aria-describedby='endhelp')
-        span#endhelp.help-block= __(endErr ? endErr.message : '')
+        span#endhelp.help-block= __(endErr ? endErr.message : 'When will (or did) this target\'s period end.')
     
     .form-group
       label.col-sm-2.control-label Total days
       .col-sm-10
         - var totalDays = moment.utc(target.end, user.settings.dateFormat).diff(moment.utc(target.start, user.settings.dateFormat), 'days') + 1
         p#totaldays.control-static= isNaN(totalDays) ? 'Invalid date' : totalDays
+        span#help.help-block The total of days selected (including the start and end).
         
     .form-group
       label.col-sm-2.control-label(for='notes')= __('Notes')
       .col-sm-10
-        textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes'))= target.notes
+        textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes') aria-describedby='noteshelp')= target.notes
+        span#noteshelp.help-block Any notes you want to keep for yourself about this target.
         
-    for chunk, i in projects
-      .form-group#projects
-        if i === 0
-          label.col-sm-2.control-label Projects
-        .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
-          .checkbox
-            label
-              input(type='checkbox', name='projects[]' value=chunk[0].id checked=checkProject(chunk[0].id))
-              = chunk[0].name
-        if chunk[1]
-          .col-sm-3
-            .checkbox
-              label
-                input(type='checkbox', name='projects[]' value=chunk[1].id checked=checkProject(chunk[1].id))
-                = chunk[1].name
-        if chunk[2]
-          .col-sm-3
-            .checkbox
-              label
-                input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
-                = chunk[2].name
+    .form-group#projects
+      .col-sm-12
+        for chunk, i in projects
+          .row
+            if i === 0
+              label.col-sm-2.control-label Projects
+            .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
+              .checkbox
+                label
+                  input(type='checkbox', name='projects[]' value=chunk[0].id checked=checkProject(chunk[0].id))
+                  = chunk[0].name
+            if chunk[1]
+              .col-sm-3
+                .checkbox
+                  label
+                    input(type='checkbox', name='projects[]' value=chunk[1].id checked=checkProject(chunk[1].id))
+                    = chunk[1].name
+            if chunk[2]
+              .col-sm-3
+                .checkbox
+                  label
+                    input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
+                    = chunk[2].name
+        .row
+          .col-sm-offset-2.col-sm-10
+            span#projectshelp.help-block Select the projects that will count as fulfilling this target.
     include ../../mixins/single-form-buttons
     
 append scripts

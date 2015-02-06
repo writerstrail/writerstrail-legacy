@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+  .jumbotron.text-center
+    img(src='images/banner.png')
+    h1 Maintenance
+    p To attend to users' requests, Writer's Trail is updating right now. Try again in a few minutes.
+    if cat
+      p Here's a cat to cheer you up:
+      a(href="http://thecatapi.com")
+        != cat
+  
+  

@@ -22,7 +22,7 @@ function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
           target: 'Target',
           daily: 'Daily writing',
           dailytarget: 'Daily target',
-          ponddailytarget: 'Pondered daily target',
+          ponddailytarget: 'Adjusted daily target',
           remaining: 'Remaining wordcount'
         },
         colors: {

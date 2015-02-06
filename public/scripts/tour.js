@@ -9,13 +9,15 @@ function range(start, finish) {
 
 function tour($, hopscotch, steps) {
   $(function () { 
+    var endTour = function () {
+      window.location = '/tour/ended';
+    };
     var tourDef = {
       id: 'wt-tour',
       showPrevButton: true,
       skipIfNoElement: true,
-      onClose: function () {
-        window.location = '/tour/ended';
-      },
+      onClose: endTour,
+      onEnd: endTour,
       steps: [
         {
           target: 'h1',
@@ -29,7 +31,7 @@ function tour($, hopscotch, steps) {
           xOffset: 'center',
           arrowOffset: 'center',
           title: 'Active projects',
-          content: "These are your active projects. Since you're new here, it migth be a little empty. So let me take you to an example dashboard. Click on 'Next' button to go there.",
+          content: "These are your active projects. Since you're new here, it might be a little empty. So let me take you to an example dashboard. Click on 'Next' button to go there.",
           multipage: true,
           onNext: function () {
             window.location = '/example/dashboard';
@@ -55,7 +57,7 @@ function tour($, hopscotch, steps) {
           content: 'See? This is a sample list of projects. This only show your last five active projects (you choose which ones are active).' 
         },
         {
-          target: '#active-projects li:nth-child(1) .progress',
+          target: '#active-projects li:nth-child(3) .progress',
           placement: 'bottom',
           xOffset: 'center',
           arrowOffset: 'center',
@@ -63,15 +65,15 @@ function tour($, hopscotch, steps) {
           content: 'There are progress bar for each project, according to the defined target and the current wordcount. You can see the wordcount by hovering your mouse cursor over the bars.'
         },
         {
-          target: '#active-projects li:nth-child(3) .progress',
+          target: '#active-projects li:nth-child(4) .progress',
           placement: 'bottom',
           xOffset: 0,
-          arrowOffset: 0,
+          arrowOffset: 40,
           title: 'Progress',
           content: "A red bar means you are still at the beginning. Don't give up!"
         },
         {
-          target: '#active-projects li:nth-child(2) .progress',
+          target: '#active-projects li:nth-child(3) .progress',
           placement: 'bottom',
           xOffset: 'center',
           arrowOffset: 70,
@@ -79,12 +81,20 @@ function tour($, hopscotch, steps) {
           content: "A yellow bar means you are getting there. You're making progress."
         },
         {
-          target: '#active-projects li:nth-child(1) .progress',
+          target: '#active-projects li:nth-child(2) .progress',
           placement: 'bottom',
           xOffset: 400,
           arrowOffset: 100,
           title: 'Progress',
-          content: "A green bar means you are almost at the end or already finished. Try and get there."
+          content: "A green bar means you are almost at the end. Just a little further!"
+        },
+        {
+          target: '#active-projects li:nth-child(1) .progress',
+          placement: 'bottom',
+          xOffset: 400,
+          arrowOffset: 200,
+          title: 'Progress',
+          content: "A light blue bar means you're already got to the target. Well done!"
         },
         {
           target: '#chart',
@@ -273,7 +283,7 @@ function tour($, hopscotch, steps) {
           xOffset: 100,
           arrowOffset: 'center',
           title: 'New project',
-          content: "Here you can see infomation about the project you just created."
+          content: "Here you can see information about the project you just created."
         },
         {
           target: '#create-target',
@@ -397,7 +407,7 @@ function tour($, hopscotch, steps) {
           arrowOffset: 'center',
           fixedElement: true,
           title: "Feedback",
-          content: "If you found a bug/error/mispelling or has any important comments and suggestions, click this button here and inform us. You can see the list of requests in the <a href='/feedback'>feedback</a> page."
+          content: "If you found a bug/error/misspelling or has any important comments and suggestions, click this button here and inform us. You can see the list of requests in the <a href='/feedback'>feedback</a> page."
         },
         {
           target: '.navbar-brand',
@@ -406,17 +416,13 @@ function tour($, hopscotch, steps) {
           arrowOffset: 'center',
           title: "Writer's Trail",
           content: "That's pretty much everything for now. We hope you like it. And we also intend to add features, so keep lurking around!<br><br>Ever need to see this tour again? Select in your <a href='/settings'>settings</a>!",
-          showNextButton: false
+          showNextButton: true
         }
       ]
     };
-
-    console.log(hopscotch.getState());
-
     if (!steps) { return false; }
 
     for (var i = 0; i < steps.length; i++) {
-      console.log(steps[i]);
       if ((hopscotch.getState() === null && steps[i] === 0) || hopscotch.getState() === "wt-tour:" + steps[i]) {
         hopscotch.startTour(tourDef);
         return true;

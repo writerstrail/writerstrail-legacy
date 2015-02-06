@@ -1,6 +1,7 @@
 extends ../../layout
 
 block content
+  include ../../mixins/progressbar
   h1
     span.fa.fa-lg.fa-fire
     |  
@@ -31,10 +32,7 @@ block content
                 span.fa.fa-edit
             .col-sm-7
               if project.targetwc > 0
-                .progress(title=project.currentWordcount + '/' + project.targetwc)
-                  - var barClass = project.percentage < 33 ? 'danger' : (project.percentage < 66 ? 'warning' : 'success')
-                  .progress-bar(role='progressbar' aria-valuenow=project.percentage aria-valuemax='100' style='width: ' + project.percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
-                    = project.percentage + '%'
+                +progressbar(project.currentWordcount, project.targetwc, project.percentage)
               else
                 | No target defined.&nbsp;
                 = project.currentWordcount

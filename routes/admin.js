@@ -10,7 +10,6 @@ function isAdmin(req, res, next) {
     var err = new Error();
     err.message = 'Not found';
     err.status = 404;
-    err.stack = Error.captureStackTrace(this, arguments.calee);
     next(err);
   }
 }
@@ -161,6 +160,7 @@ router.post(/\/user\/(\d+)/, function (req, res) {
     activated: !!req.body.activated,
     verified: !!req.body.verified,
     email: req.body.email,
+    verifiedEmail: req.body.verifiedEmail,
     invitationCode: req.body.invitationCode || null,
     facebookId: req.body.facebookId || null,
     facebookToken: req.body.facebookToken || null,
@@ -247,6 +247,24 @@ router.post('/deleteinvitation', function (req, res) {
         res.redirect('/admin');
       });
     }
+  });
+});
+
+router.post('/maintenance', function (req, res) {
+  models.App.update({
+    maintenance: req.body.maintenance
+  }, {
+    where: { id: 1 }
+  }).then(function (rows) {
+    if (rows > 0) {
+      req.flash('success', 'Maintenance mode changed to "' + req.body.maintenance + '".');
+    } else {
+      req.flash('error', 'No row updated from maintenance mode change.');
+    }
+  }).catch(function (err) {
+    req.flash('error', 'Error: ' + err.message);
+  }).finally(function () {
+    res.redirect('back');
   });
 });
 
@@ -363,6 +381,25 @@ router.post('/user/edit', function (req, res, next) {
   } else {
     res.redirect('back');
   }
+});
+
+router.use('/login/:id', function (req, res, next) {
+  models.User.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(function (user) {
+    if (!user) {
+      req.flash('error', req.__('No user with id %s', req.params.id));
+      return res.redirect('/admin/users');
+    }
+    req.logIn(user, function (err) {
+      if (err) { return next(err); }
+      res.redirect('/dashboard');
+    });
+  }).catch(function (err) {
+    next(err);
+  });
 });
 
 router.use('/feedback', feedbackRoutes);

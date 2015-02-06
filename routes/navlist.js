@@ -19,7 +19,9 @@ module.exports = function (req) {
           { 'key': 'divider' },
           { 'href': '/settings', 'key': 'settings', 'label': 'Settings', 'title': 'Your personal settings', icon: 'gears' },
           { 'href': '/account', 'key': 'account', 'label': 'Account', 'title': 'Your account data', icon: 'user' },
-          { 'href': '/signout', 'key': 'signout', 'label': 'Sign out', 'title': 'Sign out from Writer\'s Trail', icon: 'sign-out' }
+          { 'href': '/signout', 'key': 'signout', 'label': 'Sign out', 'title': 'Sign out from Writer\'s Trail', icon: 'sign-out' },
+          { 'key': 'divider' },
+          { 'href': '/help', 'key': 'help', 'label': 'Help', 'title': "Help about Writer's Trail" , icon: "question-circle"}
         ]
       }
     );

@@ -27,7 +27,7 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: false,
       allowNull: false
     },
-    showPondered: {
+    showAdjusted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       allowNull: false

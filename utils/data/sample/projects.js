@@ -5,6 +5,17 @@ var calcPercent = function (wc, target) {
 module.exports = [
   {
     id: 0,
+    name: 'Ender\'s Game',
+    wordcount: 0,
+    currentWordcount: 100609,
+    targetwc: 100000,
+    percentage: calcPercent(100609, 100000),
+    active: true,
+    finished: true,
+    sessions: []
+  },
+  {
+    id: 0,
     name: 'Moby Dick',
     wordcount: 0,
     currentWordcount: 45678,

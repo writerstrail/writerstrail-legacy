@@ -79,7 +79,7 @@ router.get('/tour/ended', isactivated, function (req, res, next) {
   req.user.settings.updateAttributes({
     showTour: false
   }).then(function () {
-    res.redirect('back');
+    res.redirect('/dashboard');
   }).catch(function (err) {
     next(err);
   });
