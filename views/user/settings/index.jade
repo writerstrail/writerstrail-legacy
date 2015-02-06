@@ -8,46 +8,51 @@ block content
     .form-group
       label.col-sm-2.control-label(for='dateformat') Date format:
       .col-sm-10
-        select#dateformat.form-control(name='dateformat')
+        select#dateformat.form-control(name='dateformat' aria-describedby='datehelp')
           for format, i in dateFormats.data
             option(value=format selected=format == user.settings.dateFormat)= dateFormats.labels[i]
               | &nbsp;(
               = moment.utc().format(format)
               | )
+        span#datehelp.help-block Your preferred date format for sessions and targets.
     .form-group
       label.col-sm-2.control-label(for='timeformat') Time format:
       .col-sm-10
-        select#timeformat.form-control(name='timeformat')
+        select#timeformat.form-control(name='timeformat' aria-describedby='timehelp')
           for format, i in timeFormats.data
             option(value=format selected=format == user.settings.timeFormat)= timeFormats.labels[i]
               | &nbsp;(
               = moment.utc().format(format)
               | )
+        span#datehelp.help-block Your preferred time format for sessions.
     .form-group
       label.col-sm-2.control-label(for='charttype') Preferred target chart type:
       .col-sm-10
         label.radio-inline
-          input#charttype(type='radio' name='charttype' value='cumulative' checked='cumulative' == user.settings.chartType)
+          input#charttype(type='radio' name='charttype' value='cumulative' checked='cumulative' == user.settings.chartType aria-describedby='charttypehelp')
           | Cumulative writing/target
         label.radio-inline
-          input#charttype(type='radio' name='charttype' value='daily' checked='daily' == user.settings.chartType)
+          input#charttype(type='radio' name='charttype' value='daily' checked='daily' == user.settings.chartType aria-describedby='charttypehelp')
           | Daily writing/target
+        span#charttypehelp.help-block Show cumulative or daily wordcount by default on targets' charts.
     .form-group
       label.col-sm-2.control-label Target chart extra data:
       .col-sm-10
         label.checkbox-inline
-          input(type='checkbox' name='showRemaining' checked=user.settings.showRemaining)
+          input(type='checkbox' name='showRemaining' checked=user.settings.showRemaining aria-describedby='extrahelp')
           | Remaining wordcount
         label.checkbox-inline
-          input(type='checkbox' name='showPondered' checked=user.settings.showPondered)
+          input(type='checkbox' name='showPondered' checked=user.settings.showPondered aria-describedby='extrahelp')
           | Pondered daily target
+        span#extrahelp.help-block Show in targets' charts remaining wordcount and/or adjusted daily target to achieve on time.
     .form-group
       label.col-sm-2.control-label Show tour:
       .col-sm-10
         .checkbox
           label
-            input(type='checkbox' name='showTour' checked=user.settings.showTour)
+            input(type='checkbox' name='showTour' checked=user.settings.showTour aria-describedby='tourhelp')
             | Show application tour next time you visit the dashboard
+          span#tourhelp.help-block Start the tour again when you visit the dashboard.
     .form-group
       .col-sm-offset-2.col-sm-2
         button.btn.btn-primary(type='submit' name='save' value='save') Save

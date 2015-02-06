@@ -32,7 +32,7 @@ block content
       label.col-sm-2.control-label(for='summary')= __('Summary')
       .col-sm-10
         input#summary.form-control(type='text' name='summary' placeholder=__('Summary') value=session.summary aria-describedby='summaryhelp')
-        span#summaryhelp.help-block= __(summaryErr ? summaryErr.message : '')
+        span#summaryhelp.help-block= __(summaryErr ? summaryErr.message : 'A concise summary of this writing session (optional).')
         
     - var projectErr = _.find(validate, { path: 'project' }) || ''
         
@@ -42,7 +42,7 @@ block content
         select#project.form-control(name='project' aria-describedby='projecthelp')
           for proj in projects
             option(value=proj.id selected=proj.id == session['project.id'])= proj.name
-        span#projecthelp.help-block= __(projectErr ? projectErr.message : '')
+        span#projecthelp.help-block= __(projectErr ? projectErr.message : 'Select the project written within this session.')
 
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     
@@ -53,7 +53,7 @@ block content
           span.input-group-addon
             span.fa.fa-fw.fa-clock-o
           input#start.form-control(type='text' name='start' placeholder=__('Start time') value=session.start aria-describedby='starthelp')
-        span#starthelp.help-block= __(startErr ? startErr.message : '')
+        span#starthelp.help-block= __(startErr ? startErr.message : 'Set with the time when you started to write.')
         
     - var durErr = _.find(validate, { path: 'duration' }) || ''
 
@@ -61,7 +61,7 @@ block content
       label.col-sm-2.control-label(for='duration')= __('Session duration (min or min:sec)')
       .col-sm-10
         input#duration.form-control(type='texts' name='duration' placeholder=__('Session duration') value=session.duration aria-describedby='durationhelp')
-        span#durationhelp.help-block= __(durErr ? durErr.message : '')
+        span#durationhelp.help-block= __(durErr ? durErr.message : 'How much time you spent writing.')
         
     - var pausedErr = _.find(validate, { path: 'pausedTime' }) || ''
 
@@ -69,7 +69,7 @@ block content
       label.col-sm-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
       .col-sm-10
         input#pausedTime.form-control(type='texts' name='pausedTime' placeholder=__('Time not writing') value=session.pausedTime aria-describedby='pausedTimehelp')
-        span#pausedTimehelp.help-block= __(pausedErr ? pausedErr.message : '')
+        span#pausedTimehelp.help-block= __(pausedErr ? pausedErr.message : 'How much of the time from the field above was wasted not writing.')
         
     - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
 
@@ -77,20 +77,21 @@ block content
       label.col-sm-2.control-label(for='wordcount')= __('Words written')
       .col-sm-10
         input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Words written') value=session.wordcount aria-describedby='wchelp')
-        span#wchelp.help-block= __(wcErr ? wcErr.message : '')
+        span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you\'ve written during this session.')
     
     .form-group
       .col-sm-10.col-sm-offset-2
         .checkbox
           label
-            input#isCountdown(type='checkbox' name='isCountdown' checked=!!session.isCountdown)
+            input#isCountdown(type='checkbox' name='isCountdown' checked=!!session.isCountdown aria-describedby='countdownhelp')
             | Countdown session
+          span#countdownhelp.help-block Check if you used a timer to stop writing when it beeped.
         
     .form-group
       label.col-sm-2.control-label(for='notes')= __('Notes')
       .col-sm-10
-        textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes'))= session.notes
-        
+        textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes') aria-describedby='noteshelp')= session.notes
+        span#help.help-block Some notes about this session, if you want to record of something later.        
     
     include ../../mixins/single-form-buttons
     
