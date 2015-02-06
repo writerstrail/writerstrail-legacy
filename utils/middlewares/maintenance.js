@@ -11,7 +11,7 @@ router.use(function maintenance(req, res, next) {
       req.flash('maintenance', "Writer's Trail is under maintenance. You may experience some issues.");
       return next();
     } else if (app.maintenance === 'hard') {
-      if (req.query.maintenance === process.env.WRITERSTRAIL_MAINTENANCE_KEY) {
+      if ((req.query.maintenance === process.env.WRITERSTRAIL_MAINTENANCE_KEY) || (req.user && req.user.role === 'superadmin')) {
         return next();
       } else {
         req.logout();
