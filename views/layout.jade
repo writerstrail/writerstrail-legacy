@@ -20,6 +20,8 @@ html
       block preoutside
       
       .container
+        - if(maintenanceMessage && maintenanceMessage.length > 0)
+          .alert.alert-warning!= maintenanceMessage[0]
         - if(successMessage && successMessage.length > 0)
           for msg in successMessage
             .alert.alert-success!= msg

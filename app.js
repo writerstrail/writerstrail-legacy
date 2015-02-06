@@ -76,6 +76,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(paginate.middleware(10, 50));
 
+var maintenance = require('./utils/middlewares/maintenance');
 var routes = require('./routes/index');
 var infoRoutes = require('./routes/info');
 var authRoutes = require('./routes/auth')(passport);
@@ -97,6 +98,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(maintenance);
 app.use('/', routes);
 app.use('/', infoRoutes);
 app.use('/', authRoutes);
@@ -151,7 +153,10 @@ app.use(function (err, req, res, next) {
 
   res.render('error/500', {
     title: req.__('Server error - 500'),
-    section: '505'
+    section: '505',
+    errorMessage: req.flash('error'),
+    warningMessage: req.flash('warning'),
+    successMessage: req.flash('success')
   });
 });
 

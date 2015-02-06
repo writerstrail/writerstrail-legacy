@@ -53,16 +53,17 @@ block content
                 th
                 th 
                 th
+                th
                     +orderLink('id', 'Id')
                 th
                     +orderLink('name', 'Name')
-                th= __('Activated')
-                th= __('Verified')
-                th= __('Role')
-                th Facebook
-                th Google
-                th Linkedin
-                th Wordpress
+                th Invitation
+                th(title=__('Activated')): span.fa.fa-check
+                th(title= __('Verified')): span.fa.fa-envelope-o
+                th(title='Facebook'): span.fa.fa-facebook
+                th(title='Google'): span.fa.fa-google
+                th(title='LinkedIn'): span.fa.fa-linkedin
+                th(title='Wordpress'): span.fa.fa-wordpress
                 th
                     +orderLink('createdAt', 'Member since')
                 th 
@@ -72,19 +73,25 @@ block content
                     td
                         input.selection(type='checkbox' name='selected[]' value=u.id)
                     td
-                        a.btn.btn-sm.btn-primary(href='/admin/user/' + u.id role='button')= __('Edit')
+                        a.btn.btn-sm.btn-primary(href='/admin/user/' + u.id role='button' title= __('Edit'))
+                          span.fa.fa-lg.fa-edit
                     td
-                        button.btn.btn-sm.btn-default(type='submit' name='activate' value=u.id)
-                            = u.activated ? __('Deactivate') : __('Activate')
+                        button.btn.btn-sm.btn-default(type='submit' name='activate' value=u.id
+                            title= u.activated ? __('Deactivate') : __('Activate'))
+                          span.fa.fa-lg(class=u.activated ? 'fa-remove' : 'fa-check')
                     td
                         - var deleteSubmit = u.deletedAt ? 'undelete' : 'delete';
-                        button.btn.btn-sm.btn-danger(type='submit' name=deleteSubmit value=u.id disabled=(u.id === user.id))
-                            = u.deletedAt ? __('Restore') : __('Delete')
+                        button.btn.btn-sm.btn-danger(type='submit' name=deleteSubmit value=u.id disabled=(u.id === user.id)
+                            title= u.deletedAt ? __('Restore') : __('Delete'))
+                          span.fa.fa-lg(class=u.deletedAt ? 'fa-undo' : 'fa-trash')
+                    td
+                      a.btn.btn-info(href='/admin/login/' + u.id title='Login as ' + u.name disabled=(u.id === user.id))
+                        span.fa.fa-lg.fa-user
                     td= u.id
                     td= u.name
+                    td= u.invitationCode
                     td= u.activated ? __('Yes') : __('No')
                     td= u.verified ? __('Yes') : __('No')
-                    td= roleName(u.role)
                     td= u.facebookToken ? __('Yes') : __('No')
                     td= u.googleToken ? __('Yes') : __('No')
                     td= u.linkedinToken ? __('Yes') : __('No')
