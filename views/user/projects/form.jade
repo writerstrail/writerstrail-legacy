@@ -75,30 +75,31 @@ block content
           span#finishedhelp.help-block Check if you already finished this project.
       
     .form-group#genres
-      for chunk, i in genres
+      .col-sm-12
+        for chunk, i in genres
+          .row
+            if i === 0
+              label.col-sm-2.control-label Genres
+            .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
+              .checkbox(title=chunk[0].description)
+                label
+                  input(type='checkbox', name='genres[]' value=chunk[0].id checked=checkGenre(chunk[0].id))
+                  = chunk[0].name
+            if chunk[1]
+              .col-sm-3
+                .checkbox(title=chunk[1].description)
+                  label
+                    input(type='checkbox', name='genres[]' value=chunk[1].id checked=checkGenre(chunk[1].id))
+                    = chunk[1].name
+            if chunk[2]
+              .col-sm-3
+                .checkbox(title=chunk[2].description)
+                  label
+                    input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
+                    = chunk[2].name
         .row
-          if i === 0
-            label.col-sm-2.control-label Genres
-          .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
-            .checkbox(title=chunk[0].description)
-              label
-                input(type='checkbox', name='genres[]' value=chunk[0].id checked=checkGenre(chunk[0].id))
-                = chunk[0].name
-          if chunk[1]
-            .col-sm-3
-              .checkbox(title=chunk[1].description)
-                label
-                  input(type='checkbox', name='genres[]' value=chunk[1].id checked=checkGenre(chunk[1].id))
-                  = chunk[1].name
-          if chunk[2]
-            .col-sm-3
-              .checkbox(title=chunk[2].description)
-                label
-                  input(type='checkbox', name='genres[]' value=chunk[2].id checked=checkGenre(chunk[2].id))
-                  = chunk[2].name
-      .row
-        .col-sm-offset-2.col-sm-10
-          span#genrehelp.help-block Select the genres this project belongs to.
+          .col-sm-offset-2.col-sm-10
+            span#genrehelp.help-block Select the genres this project belongs to.
         
     include ../../mixins/single-form-buttons
     

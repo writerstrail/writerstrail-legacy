@@ -78,30 +78,31 @@ block content
         span#noteshelp.help-block Any notes you want to keep for yourself about this target.
         
     .form-group#projects
-      for chunk, i in projects
+      .col-sm-12
+        for chunk, i in projects
+          .row
+            if i === 0
+              label.col-sm-2.control-label Projects
+            .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
+              .checkbox
+                label
+                  input(type='checkbox', name='projects[]' value=chunk[0].id checked=checkProject(chunk[0].id))
+                  = chunk[0].name
+            if chunk[1]
+              .col-sm-3
+                .checkbox
+                  label
+                    input(type='checkbox', name='projects[]' value=chunk[1].id checked=checkProject(chunk[1].id))
+                    = chunk[1].name
+            if chunk[2]
+              .col-sm-3
+                .checkbox
+                  label
+                    input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
+                    = chunk[2].name
         .row
-          if i === 0
-            label.col-sm-2.control-label Projects
-          .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
-            .checkbox
-              label
-                input(type='checkbox', name='projects[]' value=chunk[0].id checked=checkProject(chunk[0].id))
-                = chunk[0].name
-          if chunk[1]
-            .col-sm-3
-              .checkbox
-                label
-                  input(type='checkbox', name='projects[]' value=chunk[1].id checked=checkProject(chunk[1].id))
-                  = chunk[1].name
-          if chunk[2]
-            .col-sm-3
-              .checkbox
-                label
-                  input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
-                  = chunk[2].name
-      .row
-        .col-sm-offset-2.col-sm-10
-          span#projectshelp.help-block Select the projects that will count as fulfilling this target.
+          .col-sm-offset-2.col-sm-10
+            span#projectshelp.help-block Select the projects that will count as fulfilling this target.
     include ../../mixins/single-form-buttons
     
 append scripts
