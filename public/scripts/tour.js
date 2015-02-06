@@ -9,13 +9,15 @@ function range(start, finish) {
 
 function tour($, hopscotch, steps) {
   $(function () { 
+    var endTour = function () {
+      window.location = '/tour/ended';
+    };
     var tourDef = {
       id: 'wt-tour',
       showPrevButton: true,
       skipIfNoElement: true,
-      onClose: function () {
-        window.location = '/tour/ended';
-      },
+      onClose: endTour,
+      onEnd: endTour,
       steps: [
         {
           target: 'h1',
@@ -406,7 +408,7 @@ function tour($, hopscotch, steps) {
           arrowOffset: 'center',
           title: "Writer's Trail",
           content: "That's pretty much everything for now. We hope you like it. And we also intend to add features, so keep lurking around!<br><br>Ever need to see this tour again? Select in your <a href='/settings'>settings</a>!",
-          showNextButton: false
+          showNextButton: true
         }
       ]
     };
