@@ -262,7 +262,6 @@ router.post('/maintenance', function (req, res) {
       req.flash('error', 'No row updated from maintenance mode change.');
     }
   }).catch(function (err) {
-    console.log('----er',err);
     req.flash('error', 'Error: ' + err.message);
   }).finally(function () {
     res.redirect('back');

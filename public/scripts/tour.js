@@ -420,13 +420,9 @@ function tour($, hopscotch, steps) {
         }
       ]
     };
-
-    console.log(hopscotch.getState());
-
     if (!steps) { return false; }
 
     for (var i = 0; i < steps.length; i++) {
-      console.log(steps[i]);
       if ((hopscotch.getState() === null && steps[i] === 0) || hopscotch.getState() === "wt-tour:" + steps[i]) {
         hopscotch.startTour(tourDef);
         return true;
