@@ -1,6 +1,7 @@
 extends ../../layout
 
 block content
+  include ../../mixins/progressbar
   - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
   - var now = moment.utc().add(target.zoneOffset, 'minutes')
   - var hasStarted = now.isAfter(target.start)
@@ -29,10 +30,7 @@ block content
   .row
     .col-sm-12
       - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
-      .progress(title=totalWordcount + '/' + target.wordcount)
-        - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
-        .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
-          = percentage + '%'
+      +progressbar(totalWordcount, target.wordcount, percentage)
   if daysRem == 0        
     .row
       .col-sm-2: strong This target is already overdue.

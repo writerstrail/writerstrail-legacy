@@ -57,7 +57,7 @@ function tour($, hopscotch, steps) {
           content: 'See? This is a sample list of projects. This only show your last five active projects (you choose which ones are active).' 
         },
         {
-          target: '#active-projects li:nth-child(1) .progress',
+          target: '#active-projects li:nth-child(3) .progress',
           placement: 'bottom',
           xOffset: 'center',
           arrowOffset: 'center',
@@ -65,15 +65,15 @@ function tour($, hopscotch, steps) {
           content: 'There are progress bar for each project, according to the defined target and the current wordcount. You can see the wordcount by hovering your mouse cursor over the bars.'
         },
         {
-          target: '#active-projects li:nth-child(3) .progress',
+          target: '#active-projects li:nth-child(4) .progress',
           placement: 'bottom',
           xOffset: 0,
-          arrowOffset: 0,
+          arrowOffset: 40,
           title: 'Progress',
           content: "A red bar means you are still at the beginning. Don't give up!"
         },
         {
-          target: '#active-projects li:nth-child(2) .progress',
+          target: '#active-projects li:nth-child(3) .progress',
           placement: 'bottom',
           xOffset: 'center',
           arrowOffset: 70,
@@ -81,12 +81,20 @@ function tour($, hopscotch, steps) {
           content: "A yellow bar means you are getting there. You're making progress."
         },
         {
-          target: '#active-projects li:nth-child(1) .progress',
+          target: '#active-projects li:nth-child(2) .progress',
           placement: 'bottom',
           xOffset: 400,
           arrowOffset: 100,
           title: 'Progress',
-          content: "A green bar means you are almost at the end or already finished. Try and get there."
+          content: "A green bar means you are almost at the end. Just a little further!"
+        },
+        {
+          target: '#active-projects li:nth-child(1) .progress',
+          placement: 'bottom',
+          xOffset: 400,
+          arrowOffset: 200,
+          title: 'Progress',
+          content: "A light blue bar means you're already got to the target. Well done!"
         },
         {
           target: '#chart',
