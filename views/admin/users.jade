@@ -53,6 +53,7 @@ block content
                 th
                 th 
                 th
+                th
                     +orderLink('id', 'Id')
                 th
                     +orderLink('name', 'Name')
@@ -83,6 +84,9 @@ block content
                         button.btn.btn-sm.btn-danger(type='submit' name=deleteSubmit value=u.id disabled=(u.id === user.id)
                             title= u.deletedAt ? __('Restore') : __('Delete'))
                           span.fa.fa-lg(class=u.deletedAt ? 'fa-undo' : 'fa-trash')
+                    td
+                      a.btn.btn-info(href='/admin/login/' + u.id title='Login as ' + u.name disabled=(u.id === user.id))
+                        span.fa.fa-lg.fa-user
                     td= u.id
                     td= u.name
                     td= u.invitationCode

@@ -365,6 +365,25 @@ router.post('/user/edit', function (req, res, next) {
   }
 });
 
+router.use('/login/:id', function (req, res, next) {
+  models.User.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(function (user) {
+    if (!user) {
+      req.flash('error', req.__('No user with id %s', req.params.id));
+      return res.redirect('/admin/users');
+    }
+    req.logIn(user, function (err) {
+      if (err) { return next(err); }
+      res.redirect('/dashboard');
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
 router.use('/feedback', feedbackRoutes);
 
 module.exports = router;
