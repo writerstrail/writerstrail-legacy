@@ -29,7 +29,7 @@ function tour($, hopscotch, steps) {
           xOffset: 'center',
           arrowOffset: 'center',
           title: 'Active projects',
-          content: "These are your active projects. Since you're new here, it migth be a little empty. So let me take you to an example dashboard. Click on 'Next' button to go there.",
+          content: "These are your active projects. Since you're new here, it might be a little empty. So let me take you to an example dashboard. Click on 'Next' button to go there.",
           multipage: true,
           onNext: function () {
             window.location = '/example/dashboard';
@@ -273,7 +273,7 @@ function tour($, hopscotch, steps) {
           xOffset: 100,
           arrowOffset: 'center',
           title: 'New project',
-          content: "Here you can see infomation about the project you just created."
+          content: "Here you can see information about the project you just created."
         },
         {
           target: '#create-target',
@@ -397,7 +397,7 @@ function tour($, hopscotch, steps) {
           arrowOffset: 'center',
           fixedElement: true,
           title: "Feedback",
-          content: "If you found a bug/error/mispelling or has any important comments and suggestions, click this button here and inform us. You can see the list of requests in the <a href='/feedback'>feedback</a> page."
+          content: "If you found a bug/error/misspelling or has any important comments and suggestions, click this button here and inform us. You can see the list of requests in the <a href='/feedback'>feedback</a> page."
         },
         {
           target: '.navbar-brand',
