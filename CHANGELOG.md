@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## v0.2.3
+
+* Amending error in Facebook meta tags.
+
 ## v0.2.2
 
 * Fixing Facebook and Open Graph tags.
