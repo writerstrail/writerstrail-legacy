@@ -46,11 +46,12 @@ router.get('/', sendflash, function (req, res, next) {
       ]
     };
     
-    if (_.includes(stati.concat(['All']), req.query.status)) {
+    if (_.includes(stati.concat(['All']), req.query.status) || !(req.query.status)) {
       if (req.query.status !== 'All') {
-        filters.push('Only feedbacks with status "' + req.query.status + '"are shown.');
+        var statusSearch = req.query.status || 'New';
+        filters.push('Only feedbacks with status "' + statusSearch + '"are shown.');
         config.where.push ({
-          status: req.query.status
+          status: statusSearch
         });
       }
     }
