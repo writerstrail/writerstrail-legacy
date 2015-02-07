@@ -17,7 +17,7 @@ block content
   if feedback.deletedAt
     p.text-danger This feedback was deleted by the author.
   
-  if feedback.originalAuthorId === user.id
+  if user && (feedback.originalAuthorId === user.id)
     p.text-muted For better usability, you can't edit the feedbacks. If anything, delete and create another or contact us at 
       strong writerstrail@georgemarques.com.br
       | .
