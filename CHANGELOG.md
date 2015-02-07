@@ -1,5 +1,14 @@
 # Writer's Trail change log
 
+## v0.2.2
+
+* Fixing Facebook and Open Graph tags.
+
+## v0.2.1
+
+* Fixing a bug that not allowed unlogged users to view single feedbacks.
+* Showing only new feedbacks by default.
+
 ## v0.2.0
 
 * Added help blocks to fields in all forms.
