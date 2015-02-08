@@ -1,6 +1,7 @@
 extends ../../layout
 
 block content
+  include ../../mixins/progressbar
   h1 Project 
     em= project.name
     
@@ -15,11 +16,7 @@ block content
     .row
       .col-sm-12
         - var percentage = Math.min(100, Math.max(0, Math.floor((project.currentWordcount / project.targetwc) * 100)))
-        .progress(title=project.currentWordcount + '/' + project.targetwc)
-          - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
-          .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
-            = percentage + '%'
-
+        +progressbar(project.currentWordcount, project.targetwc, percentage)
   ul.list-group
     li.list-group-item
       .row
