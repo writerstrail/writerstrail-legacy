@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
@@ -307,6 +308,74 @@ router.get('/:id', sendflash, function (req, res, next) {
     
   }).catch(function (err) {
     next(err);
+  });
+});
+
+router.get('/:id/data.json', function (req, res, next) {
+  models.Project.findAll({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    },
+    include: [
+      {
+        model: models.Session,
+        as: 'sessions',
+        /*where: {
+          start: {
+            gte: moment.utc().subtract(30, 'days').subtract(req.query.zoneOffset || 0, 'minutes').toDate()
+          }
+        },*/
+        attributes: [
+          models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'), models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`')
+        ],
+        required: true
+      }
+    ],
+    order: [models.Sequelize.literal('`date`')],
+    group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
+  }, {
+    raw: true
+  }).then(function (sessions) {
+    if (sessions.length === 0) {
+      return res.json({}).end();
+    }
+    
+    var daysRange = [];
+    var daily = [];
+    var wordcount = [], accWc = 0;
+    var diffDays = moment.utc(sessions[sessions.length - 1].date).diff(moment.utc(sessions[0].date), 'days');
+    
+    var j = 0;
+    
+    for (var i = 0; i <= diffDays; i++) {
+      var workingDate = moment.utc(sessions[0].date).add(i, 'days');
+      console.log('-------i', i);
+      console.log('-------j', j);
+      if (sessions[j]) { console.log('-------dif', moment.utc(sessions[j].date).diff(workingDate, 'days')); }
+      if (sessions[j] && moment.utc(sessions[j].date).diff(workingDate, 'days') === 0) {
+        daysRange.push(moment.utc(sessions[j].date).format('YYYY-MM-DD'));
+        daily.push(sessions[j].dailyCount);
+        accWc += sessions[j].dailyCount;
+        j++;
+      } else {
+        daysRange.push(workingDate.format('YYYY-MM-DD'));
+        daily.push(0);
+      }
+      wordcount.push(accWc);      
+    }
+    
+    var result = {
+      date: daysRange,
+      wordcount: wordcount,
+      daily: daily
+    };
+    res.json(result).end();
+  }).catch(function (err) {
+    if (process.env.NODE_ENV === 'development') {
+      return next(err);
+    }
+    res.json({error: err});
   });
 });
 

@@ -19,6 +19,17 @@ block content
           - var barClass = percentage < 33 ? 'danger' : (percentage < 66 ? 'warning' : 'success')
           .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
             = percentage + '%'
+            
+  #project-chart.panel.panel-default
+    .panel-heading
+      h3.panel-title
+        span.fa.fa-bar-chart
+        |  Project progress
+    .panel-body
+        h3.text-center= project.name
+        #chart
+        .text-center
+          button#target-change.btn.btn-default(type='button') Show as daily writing
 
   ul.list-group
     li.list-group-item
@@ -92,8 +103,16 @@ block content
           strong Created at:
         .col-sm-10
           = moment.utc(project.createdAt).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
+append styles
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/stylesheets/chart.css')
 
 append scripts
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/scripts/chart.js')
+  script
+    | linkChart('/projects/#{project.id}/data.json', jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted});
   if user.settings.showTour
     script
       | tour(jQuery, hopscotch, range(24, 27));
