@@ -72,6 +72,8 @@ function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
       }
     });
     
+    $('#chart').data('chart', chart);
+    
     $('#target-change')
       .data('acc', isAcc)
       .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')

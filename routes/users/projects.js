@@ -1,6 +1,5 @@
 var router = require('express').Router(),
   moment = require('moment'),
-  _ = require('lodash'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
@@ -314,6 +313,20 @@ router.get('/:id', sendflash, function (req, res, next) {
 
 router.get('/:id/data.json', function (req, res, next) {
   var daysToLook = 30;
+  var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
+  var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
+  var hasStartQuery = true, hasEndQuery = true;
+  
+  if (!start.isValid() || start.isAfter(end)) {
+    start = moment.utc().startOf('day').subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes');
+    hasStartQuery = false;
+  }
+  if (!end.isValid() || start.isAfter(end)) {
+    end = moment.utc().endOf('day').subtract(req.query.zoneOffset || 0, 'minutes');
+    hasEndQuery = false;
+  }
+  daysToLook = end.diff(start, 'days') + 1;
+  
   models.Project.findAll({
     where: {
       id: req.params.id,
@@ -325,35 +338,39 @@ router.get('/:id/data.json', function (req, res, next) {
         as: 'sessions',
         where: {
           start: {
-            gte: moment.utc().subtract(daysToLook, 'days').add(req.query.zoneOffset || 0, 'minutes').toDate()
+            gte: start.toDate(),
+            lte: end.toDate()
           }
         },
         attributes: [
-          models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'), models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`')
+          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'), models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`')
         ],
         required: true
       }
     ],
-    order: [models.Sequelize.literal('`date`')],
+    order: [models.Sequelize.literal('`date` ASC')],
     group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
   }, {
     raw: true
   }).then(function (sessions) {
-    if (sessions.length === 0) {
-      return res.json({}).end();
-    }
     
     var daysRange = [];
     var daily = [];
     var wordcount = [], accWc = 0;
-    var diffAcc = [];
     
     var j = 0;
     
+    if (!hasStartQuery) {
+      start.add(req.query.zoneOffset || 0, 'minutes');
+    }
+    if (!hasEndQuery) {
+      end.add(req.query.zoneOffset || 0, 'minutes');
+    }
+        
     for (var i = 0; i < daysToLook; i++) {
-      var workingDate = moment.utc().subtract(daysToLook, 'days').add(i, 'days');
+      var workingDate = moment(start).add(i, 'days');
       var currentWc = 0;
-      if (sessions[j] && moment.utc(sessions[j].date).add(req.query.zoneOffset || 0, 'minutes').diff(workingDate, 'days') === 0) {
+      if (sessions[j] && moment.utc(sessions[j]['sessions.start']).diff(workingDate, 'days') === 0) {
         daily.push(sessions[j].dailyCount);
         accWc += sessions[j].dailyCount;
         currentWc = sessions[j].dailyCount;
@@ -365,14 +382,9 @@ router.get('/:id/data.json', function (req, res, next) {
       wordcount.push(accWc);
     }
     
-    var startWc = sessions[0].currentWordcount - accWc;
-    _.forEach(wordcount, function (v) {
-      diffAcc.push(startWc + v);
-    });
-    
     var result = {
       date: daysRange,
-      wordcount: diffAcc,
+      wordcount: wordcount,
       daily: daily
     };
     res.json(result).end();

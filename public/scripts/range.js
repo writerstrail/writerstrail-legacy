@@ -1,9 +1,17 @@
-function range($, moment, selector, format) {
-  var onChange = function (start, end) {
-    $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
-  };
+function range($, moment, selector, format, chartSelector, link) {
   $(function (){
-    onChange(moment().subtract('days', 29), moment());
+    var chart = $(chartSelector).data('chart');
+    var start = moment().subtract('days', 29);
+    var end = moment();
+    $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
+    var onChange = function (start, end) {
+      $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
+      console.log('Start = %s', start.format(format));
+      chart.load({
+        url: link + '?zoneOffset=' + (new Date()).getTimezoneOffset() + '&start=' + start.format('YYYY-MM-DD') + '&end=' + end.format('YYYY-MM-DD'),
+        mimeType: 'json'
+      });
+    };
     $(selector).daterangepicker(
       {
         ranges: {
