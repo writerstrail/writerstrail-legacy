@@ -125,6 +125,13 @@ module.exports = function (sequelize, DataTypes) {
         });
       }
     },
+    validate: {
+      pausedLessThanDuration: function () {
+        if (this.pausedTime >= this.duration) {
+          throw new Error('The paused time must be less than the duration');
+        }
+      }
+    },
     indexes: [
       {
         name: 'start',
