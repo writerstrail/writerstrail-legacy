@@ -128,7 +128,7 @@ function tour($, hopscotch, steps) {
           xOffset: 'center',
           arrowOffset: 'center',
           title: 'Extra data',
-          content: "You may also click on the legend to show/hide data. These can be shown by default if you configure like it on your settings page."
+          content: "You may also click on the legend to show/hide data. These can be shown by default if you configure on your settings page."
         },
         {
           target: '#stats',
@@ -136,7 +136,7 @@ function tour($, hopscotch, steps) {
           yOffset: 'center',
           arrowOffset: 'center',
           title: 'Stats',
-          content: "These are your writing statistics. It show habits like the period are most productive on writing and the kind of session you perform better. Those stats are more accurate the more sessions you make."
+          content: "These are your writing statistics. It shows habits like the period you are most productive on writing and the kind of session where you perform better. Those stats are more accurate the more sessions you make."
         },
         {
           target: '#see-projects',
