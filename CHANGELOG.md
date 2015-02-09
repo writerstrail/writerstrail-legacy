@@ -1,5 +1,11 @@
 # Writer's Trail change log
 
+## v0.2.4
+
+* Fixed bug where updating sessions did not reflected into project wordcount.
+* Change the list of sessions to prioritize summary.
+* Fixed some language errors in the tour.
+
 ## v0.2.3
 
 * Amending error in Facebook meta tags.

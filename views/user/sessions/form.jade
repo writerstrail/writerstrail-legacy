@@ -44,7 +44,7 @@ block content
             option(value=proj.id selected=proj.id == session['project.id'])= proj.name
         span#projecthelp.help-block= __(projectErr ? projectErr.message : 'Select the project written within this session.')
 
-    - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
+    - var startErr = _.find(validate, function(err) { return err.path === 'start'; }) || ''
     
     .form-group(class=(startErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='start')= __('Start time')
@@ -63,7 +63,7 @@ block content
         input#duration.form-control(type='texts' name='duration' placeholder=__('Session duration') value=session.duration aria-describedby='durationhelp')
         span#durationhelp.help-block= __(durErr ? durErr.message : 'How much time you spent writing.')
         
-    - var pausedErr = _.find(validate, { path: 'pausedTime' }) || ''
+    - var pausedErr = _.find(validate, function(err) { return err.path === 'pausedTime' || err.path === 'pausedLessThanDuration'; }) || ''
 
     .form-group(class=(pausedErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
