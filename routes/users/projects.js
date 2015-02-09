@@ -1,5 +1,6 @@
 var router = require('express').Router(),
   moment = require('moment'),
+  _ = require('lodash'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
@@ -312,6 +313,7 @@ router.get('/:id', sendflash, function (req, res, next) {
 });
 
 router.get('/:id/data.json', function (req, res, next) {
+  var daysToLook = 30;
   models.Project.findAll({
     where: {
       id: req.params.id,
@@ -321,11 +323,11 @@ router.get('/:id/data.json', function (req, res, next) {
       {
         model: models.Session,
         as: 'sessions',
-        /*where: {
+        where: {
           start: {
-            gte: moment.utc().subtract(30, 'days').subtract(req.query.zoneOffset || 0, 'minutes').toDate()
+            gte: moment.utc().subtract(daysToLook, 'days').add(req.query.zoneOffset || 0, 'minutes').toDate()
           }
-        },*/
+        },
         attributes: [
           models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'), models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`')
         ],
@@ -344,30 +346,34 @@ router.get('/:id/data.json', function (req, res, next) {
     var daysRange = [];
     var daily = [];
     var wordcount = [], accWc = 0;
-    var diffDays = moment.utc(sessions[sessions.length - 1].date).diff(moment.utc(sessions[0].date), 'days');
+    var diffAcc = [];
     
     var j = 0;
     
-    for (var i = 0; i <= diffDays; i++) {
-      var workingDate = moment.utc(sessions[0].date).add(i, 'days');
-      console.log('-------i', i);
-      console.log('-------j', j);
-      if (sessions[j]) { console.log('-------dif', moment.utc(sessions[j].date).diff(workingDate, 'days')); }
-      if (sessions[j] && moment.utc(sessions[j].date).diff(workingDate, 'days') === 0) {
-        daysRange.push(moment.utc(sessions[j].date).format('YYYY-MM-DD'));
+    for (var i = 0; i < daysToLook; i++) {
+      var workingDate = moment.utc().subtract(daysToLook, 'days').add(i, 'days');
+      var currentWc = 0;
+      if (sessions[j] && moment.utc(sessions[j].date).add(req.query.zoneOffset || 0, 'minutes').diff(workingDate, 'days') === 0) {
         daily.push(sessions[j].dailyCount);
         accWc += sessions[j].dailyCount;
+        currentWc = sessions[j].dailyCount;
         j++;
       } else {
-        daysRange.push(workingDate.format('YYYY-MM-DD'));
         daily.push(0);
       }
-      wordcount.push(accWc);      
+      daysRange.push(workingDate.format('YYYY-MM-DD'));
+      wordcount.push(accWc);
     }
+    
+    var startWc = sessions[0].currentWordcount - accWc;
+    console.log('---start', startWc);
+    _.forEach(wordcount, function (v) {
+      diffAcc.push(startWc + v);
+    });
     
     var result = {
       date: daysRange,
-      wordcount: wordcount,
+      wordcount: diffAcc,
       daily: daily
     };
     res.json(result).end();
