@@ -28,10 +28,10 @@ block content
           span.fa.fa-fw.fa-clock-o
           | &nbsp;
           a(href=("/sessions/" + session.id) title=session.summary)
-            strong= session['project.name']
-            | &nbsp;
             if session.summary
-              = '[' + session.summary + ']'
-              | &nbsp;
+              strong= session.summary
+              |  
+            = '[' + session['project.name'] + ']'
+            |  
             = '(' + moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat) + ')'
     +paginate(paginate, pageCount, currentPage)

@@ -1,5 +1,7 @@
 "use strict";
 
+var promise = require("sequelize").Promise;
+
 module.exports = function (sequelize, DataTypes) {
   var Session = sequelize.define("Session", {
     id: {
@@ -79,21 +81,55 @@ module.exports = function (sequelize, DataTypes) {
           onDelete: 'CASCADE'
         });
         
-        Session.afterCreate(function (session){
-          return models.Project.findOne(session.projectId).then(function (project) {
+        Session.afterCreate(function (session, options, done){
+          models.Project.findOne(session.projectId).then(function (project) {
             return project.increment({
               currentWordcount: session.wordcount
             });
+          }).then(function () {
+            done(null, session);
+          }).catch(function (err) {
+            done(err);
           });
         });
         
-        Session.afterDestroy(function (session){
-          return models.Project.findOne(session.projectId).then(function (project) {
+        Session.afterUpdate(function (session, options, done) {
+          var promises = [];
+          promises.push(models.Project.findOne(session._previousDataValues.projectId).then(function (project) {
+            return project.decrement({
+              currentWordcount: session._previousDataValues.wordcount 
+            });
+          }));
+          promises.push(models.Project.findOne(session.projectId).then(function (project) {
+            return project.increment({
+              currentWordcount: session.wordcount
+            });
+          }));
+          promise.all(promises).then(function () {
+            done(null, session);
+          }).catch(function (err) {
+            done(err);
+          });
+        });
+        
+        Session.afterDestroy(function (session, options, done){
+          models.Project.findOne(session.projectId).then(function (project) {
             return project.decrement({
               currentWordcount: session.wordcount
             });
+          }).then(function () {
+            done(null, session);
+          }).catch(function (err) {
+            done(err);
           });
         });
+      }
+    },
+    validate: {
+      pausedLessThanDuration: function () {
+        if (this.pausedTime >= this.duration) {
+          throw new Error('The paused time must be less than the duration');
+        }
       }
     },
     indexes: [
