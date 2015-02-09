@@ -366,7 +366,6 @@ router.get('/:id/data.json', function (req, res, next) {
     }
     
     var startWc = sessions[0].currentWordcount - accWc;
-    console.log('---start', startWc);
     _.forEach(wordcount, function (v) {
       diffAcc.push(startWc + v);
     });
