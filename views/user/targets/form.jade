@@ -41,12 +41,12 @@ block content
       .col-sm-10
         .checkbox
           label
-            input#notarget(type='checkbox' name='notarget' aria-describedby='notargethelp' checked=!target.wordcount)
+            input#notarget(type='checkbox' name='notarget' aria-describedby='notargethelp' checked=target.wordcount === null)
             | No target
         span#notargethelp.help-block Check if you don't want to define a wordcount target for now.
     .form-group(class=(wcErr ? 'has-error' : ''))
       .col-sm-offset-2.col-sm-10
-        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp' disabled=!target.wordcount)
+        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp' disabled=target.wordcount === null)
         span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you want to have by the end of the target period.')
           
         
