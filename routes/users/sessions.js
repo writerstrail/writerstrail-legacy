@@ -161,6 +161,8 @@ router.post('/new', isverified, function (req, res, next) {
         validate: err.errors,
         errorMessage: projects.length > 0 ? [req.__('There are invalid values')] : ['No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.']
       });
+    }).catch(function (err) {
+      next(err);
     });
   });
 });
@@ -318,6 +320,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         validate: err.errors,
         errorMessage: [req.__('There are invalid values')]
       });
+    }).catch(function (err) {
+      next(err);
     });
   });
 });

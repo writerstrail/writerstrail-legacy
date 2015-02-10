@@ -158,6 +158,8 @@ router.post('/new', isverified, function (req, res, next) {
         errorMessage: [req.__('There are invalid values')],
         projects: chunk(projects, 3)
       });
+    }).catch(function (err) {
+      next(err);
     });
   });
 });
@@ -300,6 +302,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         validate: err.errors,
         errorMessage: [req.__('There are invalid values')]
       });
+    }).catch(function (err) {
+      next(err);
     });
   });
 });
