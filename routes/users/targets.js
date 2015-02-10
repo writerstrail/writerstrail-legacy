@@ -325,7 +325,8 @@ router.get('/:id', sendflash, function (req, res, next) {
              models.Sequelize.literal('`Target`.`start`'),
              models.Sequelize.literal('`Target`.`end`')
             ]
-          }
+          },
+          deletedAt: null
         },
         order: [['start', 'DESC']]
       }]
@@ -366,7 +367,8 @@ router.get('/:id/data.json', function (req, res) {
              models.Sequelize.literal('`Target`.`start`'),
              models.Sequelize.literal('`Target`.`end`')
             ]
-          }
+          },
+          deletedAt: null
         },
         order: [['start', 'DESC']]
       }]

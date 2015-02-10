@@ -35,25 +35,34 @@ block content
   if daysRem == 0        
     .row
       .col-sm-2: strong This target is already overdue.
-      .col-sm-10(class=(totalWordcount >= target.wordcount ? 'alert-success' : (totalWordcount > 0 ? 'alert-warning' : 'alert-danger')))
-        if totalWordcount >= target.wordcount
-          p 
-            span.fa.fa-smile-o &nbsp;
-            | Congratulations, you achieved it! Take a donut and relax! Or maybe you want to keep the momentum and 
-            a.alert-link(href='/targets/new' title='New target'): strong start a new target
-            | ! 
-        else if totalWordcount > 0
-          p
-            span.fa.fa-meh-o &nbsp;
-            | Oops, it wasn't this time. But be glad that you wrote #{totalWordcount} words! What do you think about  
-            a.alert-link(href='/targets/new' title='New target'): strong starting a new target
-            | ?
+      .col-sm-10(class=(totalWordcount === 0 ? 'alert-danger' : (!target.wordcount ? 'alert-info' : (totalWordcount >= target.wordcount ? 'alert-success' : 'alert-warning'))))
+        if target.wordcount
+          if totalWordcount >= target.wordcount
+            p 
+              span.fa.fa-smile-o &nbsp;
+              | Congratulations, you achieved it! Take a donut and relax! Or maybe you want to keep the momentum and 
+              a.alert-link(href='/targets/new' title='New target'): strong start a new target
+              | ! 
+          else if totalWordcount > 0
+            p
+              span.fa.fa-meh-o &nbsp;
+              | Oops, it wasn't this time. But be glad that you wrote #{totalWordcount} words! What do you think about  
+              a.alert-link(href='/targets/new' title='New target'): strong starting a new target
+              | ?
         else
+          if totalWordcount > 0
+            p
+              span.fa.fa-question-circle &nbsp;
+              | You didn't set up a target wordcount, so I can't tell how you went. But you can always  
+              a.alert-link(href='/targets/new' title='New target'): strong start a new target
+              | .
+        if totalWordcount === 0
           p
             span.fa.fa-frown-o &nbsp;
             | You didn't write a single word. Make a 
             a.alert-link(href='/targets/new' title='New target'): strong new target 
             | and this time get over the blank page!
+      
     p
   if !hasStarted
     .row
@@ -61,14 +70,14 @@ block content
       .col-sm-10.alert-danger
         p This target will start <strong>!{moment.utc(target.start).subtract(target.zoneOffset || 0, 'minutes').calendar()}</strong>. Be ready for it!
     p
-    
-  .row: .col-sm-12: .panel.panel-primary
-    .panel-heading: h2.panel-title Target progress
-    .panel-body
-      h3.text-center= target.name
-      #chart
-      .text-center
-        button#target-change.btn.btn-default(type='button') Show as daily writing
+  else
+    .row: .col-sm-12: .panel.panel-primary
+      .panel-heading: h2.panel-title Target progress
+      .panel-body
+        h3.text-center= target.name
+        #chart
+        .text-center
+          button#target-change.btn.btn-default(type='button') Show as daily writing
   ul.list-group
     li.list-group-item
       .row
