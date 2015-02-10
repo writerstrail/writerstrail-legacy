@@ -108,11 +108,12 @@ router.post('/new', isverified, function (req, res, next) {
     }
     return promise.resolve([start, end]);
   })().spread(function (start, end) {
+    console.log('------notarget', !!req.body.notarget);
     return models.Target.create({
       name: req.body.name,
       start: start,
       end: end,
-      wordcount: req.body.wordcount,
+      wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
       notes: req.body.notes,
       ownerId: req.user.id,
       zoneOffset: req.body.zoneOffset || 0,
@@ -150,7 +151,7 @@ router.post('/new', isverified, function (req, res, next) {
           start: start ? req.body.start : '',
           end: end ? req.body.end : '',
           zoneOffset: req.body.zoneOffset || 0,
-          wordcount: req.body.wordcount,
+          wordcount: req.body.notarget ? null : (req.body.wordcount || -1),
           notes: req.body.notes,
           Projects: filterIds(projects, req.body.projects)
         },
@@ -247,7 +248,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       savedTarget = target;
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
-      target.set('wordcount', req.body.wordcount);
+      target.set('wordcount', req.body.notarget ? null : (req.body.wordcount || 0));
       target.set('start', start);
       target.set('end', end);
       target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));
@@ -291,7 +292,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         target: {
           name: req.body.name,
           notes: req.body.notes,
-          wordcount: req.body.wordcount,
+          wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
           start: req.body.start,
           end: req.body.end,
           projects: filterIds(projects, req.body.projects)
@@ -423,12 +424,14 @@ router.get('/:id/data.json', function (req, res) {
     var result = {
       date: daysRange,
       wordcount: wordcount,
-      target: targetAcc,
-      daily: daily,
-      dailytarget: dailytarget,
-      adjusteddailytarget: pondDailyTarget,
-      remaining: remaining
+      daily: daily
     };
+    if (target.wordcount !== null) {
+      result.target = targetAcc;
+      result.dailytarget = dailytarget;
+      result.adjusteddailytarget = pondDailyTarget;
+      result.remaining = remaining;
+    }
     res.json(result).end();
   });
 });

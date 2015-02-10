@@ -36,11 +36,19 @@ block content
         
     - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
 
-    .form-group(class=(wcErr ? 'has-error' : ''))
+    .form-group
       label.col-sm-2.control-label(for='wordcount')= __('Target word count')
       .col-sm-10
-        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp')
+        .checkbox
+          label
+            input#notarget(type='checkbox' name='notarget' aria-describedby='notargethelp' checked=!target.wordcount)
+            | No target
+        span#notargethelp.help-block Check if you don't to define a wordcount target now
+    .form-group(class=(wcErr ? 'has-error' : ''))
+      .col-sm-offset-2.col-sm-10
+        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp' disabled=!target.wordcount)
         span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you want to have by the end of the target period.')
+          
         
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     
@@ -138,6 +146,9 @@ append scripts
         startPicker.maxDate(moment.utc(e.date).subtract('1', 'day'));
         var totalDays = (moment.utc(e.date).diff(moment.utc(startPicker.date()), 'days') + 1);
         $('#totaldays').html(isNaN(totalDays) ? 'Invalid date' : totalDays.toString());
+      });
+      $("#notarget").change(function (e) {
+        $("#wordcount").prop('disabled', $(this).prop('checked'));
       });
     })
   if user.settings.showTour

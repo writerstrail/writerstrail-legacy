@@ -265,5 +265,6 @@
 	"When will (or did) this target's period end.": "When will (or did) this target's period end.",
 	"Help about Writer's Trail": "Help about Writer's Trail",
 	"Help": "Help",
-	"The paused time must be less than the duration": "The paused time must be less than the duration"
+	"The paused time must be less than the duration": "The paused time must be less than the duration",
+	"wordcount cannot be null": "wordcount cannot be null"
 }

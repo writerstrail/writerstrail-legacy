@@ -27,10 +27,11 @@ block content
     include toolbar
   p
   
-  .row
-    .col-sm-12
-      - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
-      +progressbar(totalWordcount, target.wordcount, percentage)
+  if target.wordcount
+    .row
+      .col-sm-12
+        - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
+        +progressbar(totalWordcount, target.wordcount, percentage)
   if daysRem == 0        
     .row
       .col-sm-2: strong This target is already overdue.
@@ -87,7 +88,7 @@ block content
         .col-sm-2
           strong Target wordcount:
         .col-sm-10
-          = target.wordcount
+          = target.wordcount || 'No target set.'
     li.list-group-item
       .row
         .col-sm-2
@@ -127,11 +128,12 @@ block content
                 | ,&nbsp;
                 a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
                 | )
-    li.list-group-item
-      .row
-        .col-sm-2: strong Target count per day:
-        .col-sm-10= Math.ceil(target.wordcount / totalDays)
-          | &nbsp;words
+    if target.wordcount
+      li.list-group-item
+        .row
+          .col-sm-2: strong Target count per day:
+          .col-sm-10= Math.ceil(target.wordcount / totalDays)
+            | &nbsp;words
     li.list-group-item
       .row
         .col-sm-2: strong Words written:
@@ -143,11 +145,12 @@ block content
           .col-sm-2: strong Days past:
           .col-sm-10= daysPast
             | &nbsp;days
-      li.list-group-item
-        .row
-          .col-sm-2: strong Words remaining:
-          .col-sm-10= remainingWordcount
-            | &nbsp;words
+      if target.wordcount
+        li.list-group-item
+          .row
+            .col-sm-2: strong Words remaining:
+            .col-sm-10= remainingWordcount
+              | &nbsp;words
       li.list-group-item
         .row
           .col-sm-2: strong Days remaining:
@@ -158,19 +161,20 @@ block content
           .col-sm-2: strong Average words per day:
           .col-sm-10= Math.round(totalWordcount / (daysPast + 1))
             | &nbsp;words
-      li.list-group-item
-        .row
-          .col-sm-2: strong Predicted finish by this rate:
-          .col-sm-10
-            if totalWordcount === 0
-              | Never
-            else
-              = now.add(Math.ceil((remainingWordcount) / (totalWordcount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
-      li.list-group-item
-        .row
-          .col-sm-2: strong Daily target to finish on time:
-          .col-sm-10= Math.ceil(remainingWordcount / (daysRem - 1))
-            | &nbsp;words
+      if target.wordcount
+        li.list-group-item
+          .row
+            .col-sm-2: strong Predicted finish by this rate:
+            .col-sm-10
+              if totalWordcount === 0
+                | Never
+              else
+                = now.add(Math.ceil((remainingWordcount) / (totalWordcount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
+        li.list-group-item
+          .row
+            .col-sm-2: strong Daily target to finish on time:
+            .col-sm-10= Math.ceil(remainingWordcount / (daysRem - 1))
+              | &nbsp;words
       
   p &nbsp;
 
