@@ -6,10 +6,10 @@ function range($, moment, selector, format, chartSelector, link) {
     $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
     var onChange = function (start, end) {
       $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
-      console.log('Start = %s', start.format(format));
       chart.load({
         url: link + '?zoneOffset=' + (new Date()).getTimezoneOffset() + '&start=' + start.format('YYYY-MM-DD') + '&end=' + end.format('YYYY-MM-DD'),
-        mimeType: 'json'
+        mimeType: 'json',
+        unload: true
       });
     };
     $(selector).daterangepicker(
@@ -23,7 +23,8 @@ function range($, moment, selector, format, chartSelector, link) {
          'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
         },
         startDate: moment().subtract('days', 29),
-        endDate: moment()
+        endDate: moment(),
+        showDropdowns: true
       },
       onChange
     );
