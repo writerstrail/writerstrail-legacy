@@ -108,7 +108,6 @@ router.post('/new', isverified, function (req, res, next) {
     }
     return promise.resolve([start, end]);
   })().spread(function (start, end) {
-    console.log('------notarget', !!req.body.notarget);
     return models.Target.create({
       name: req.body.name,
       start: start,
@@ -151,9 +150,9 @@ router.post('/new', isverified, function (req, res, next) {
           start: start ? req.body.start : '',
           end: end ? req.body.end : '',
           zoneOffset: req.body.zoneOffset || 0,
-          wordcount: req.body.notarget ? null : (req.body.wordcount || -1),
+          wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
           notes: req.body.notes,
-          Projects: filterIds(projects, req.body.projects)
+          projects: filterIds(projects, req.body.projects)
         },
         validate: err.errors,
         errorMessage: [req.__('There are invalid values')],
