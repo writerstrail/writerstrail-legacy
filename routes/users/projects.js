@@ -318,11 +318,11 @@ router.get('/:id/data.json', function (req, res, next) {
   var hasStartQuery = true, hasEndQuery = true;
   
   if (!start.isValid() || start.isAfter(end)) {
-    start = moment.utc().startOf('day').subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes');
+    start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
     hasStartQuery = false;
   }
   if (!end.isValid() || start.isAfter(end)) {
-    end = moment.utc().endOf('day').subtract(req.query.zoneOffset || 0, 'minutes');
+    end = moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').endOf('day');
     hasEndQuery = false;
   }
   daysToLook = end.diff(start, 'days') + 1;
