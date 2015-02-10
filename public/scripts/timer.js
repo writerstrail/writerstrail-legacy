@@ -8,7 +8,11 @@ function timerSetup($, c3) {
           ['elapsed', 100]
         ],
         type : 'donut',
-        order: null
+        order: null,
+        colors: {
+          remaining: 'gray',
+          elapsed: '#337AB7'
+        }
       },
       donut: {
         title: "Minutes",
@@ -36,6 +40,7 @@ function timerSetup($, c3) {
       clearInterval(self.data('interval'));
       self.html('Start').removeClass('btn-danger').addClass('btn-primary');
       self.data('running', false);
+      $('#timerpause').html("I'm away").prop('disabled', true);
     };
     
     $('#timer-min').data('c3', timerMin);
@@ -47,6 +52,7 @@ function timerSetup($, c3) {
       } else {
         self.html('Stop').removeClass('btn-primary').addClass('btn-danger');
         self.data('running', true);
+        $('#timerpause').prop('disabled', false);
 
         var minutes = Math.max(0, parseInt($('#min').val(), 10));
         var seconds = Math.max(0, parseInt($('#sec').val(), 10));

@@ -20,8 +20,10 @@ block content
             input#sec.form-control(type='number' placeholder='Seconds' value='0')
             | &nbsp;
           .form-group
-            | &nbsp;
             button#timerstart.btn.btn-primary(type='button') Start
+            | &nbsp;
+            button#timerpause.btn.btn-warning(type='button' disabled=true) I'm away
+            
         .row
           .col-sm-6
             h2.text-center: big: strong#rem-min
