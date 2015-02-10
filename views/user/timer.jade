@@ -23,11 +23,11 @@ block content
             | &nbsp;
             button#timerstart.btn.btn-primary(type='button') Start
         .row
-          .col-sm-12
-            #timer
+          .col-sm-6
+            #timer-min
+          .col-sm-6
+            #timer-sec
       
-      
-  
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
   link(rel='stylesheet', href='/stylesheets/timer.css')
@@ -37,4 +37,4 @@ append scripts
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/scripts/timer.js')
   script.
-    timerSetup(jQuery, c3, d3, '#timer');
+    timerSetup(jQuery, c3, d3);

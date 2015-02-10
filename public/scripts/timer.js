@@ -1,17 +1,17 @@
-function timerSetup($, c3, d3, selector) {
+function timerSetup($, c3) {
   $(function () {
-    var timer = c3.generate({
-      bindto: selector,
+    var options = {
+      bindto: '#timer-min',
       data: {
         columns: [
-          ['data2', 0],
-          ['data1', 1 * 60]
+          ['remaining', 0],
+          ['elapsed', 100]
         ],
         type : 'donut',
         order: null
       },
       donut: {
-        title: "Countdown",
+        title: "Minutes",
         label: {
           show: false
         }
@@ -22,24 +22,48 @@ function timerSetup($, c3, d3, selector) {
       interaction: {
         enabled: false
       }
-    });
-    $(selector).data('c3', timer);
+    };
+    var timerMin = c3.generate(options);
+    options.donut.title = 'Seconds';
+    options.bindto = '#timer-sec';
+    var timerSec = c3.generate(options);
+    
+    $('#timer-min').data('c3', timerMin);
     $("#timerstart").click(function () {
       console.log('STARTED!!!');
       var self = $(this);
-      var total = Math.max(0, (parseInt($('#min').val(), 10) * 60) + parseInt($('#sec').val(), 10));
-      self.data('time', total);
+      
+      var minutes = Math.max(0, parseInt($('#min').val(), 10));
+      var seconds = Math.max(0, parseInt($('#sec').val(), 10));
+      
+      self.data('minutes', minutes);
+      self.data('seconds', seconds);
+      
       self.data('interval', setInterval(function () {
-        self.data('time', self.data('time') - 1);
-        console.log('time', self.data('time'));
-        console.log('diff', total - self.data('time'));
-        timer.load({
+        self.data('seconds', self.data('seconds') - 1);
+        
+        if (self.data('seconds') < 0) {
+          self.data('seconds', 59);
+          self.data('minutes', self.data('minutes') - 1);
+        }
+        
+        console.log('min', self.data('minutes'));
+        console.log('sec', self.data('seconds'));
+        console.log('minStart', minutes);
+        console.log('secStart', seconds);
+        timerMin.load({
           columns: [
-            ['data2', total - self.data('time')],
-            ['data1', self.data('time')]
+            ['remaining', minutes - self.data('minutes')],
+            ['elapsed', self.data('minutes')]
           ]
         });
-        if (self.data('time') === 0) {
+        timerSec.load({
+          columns: [
+            ['remaining', 60 - self.data('seconds')],
+            ['elapsed', self.data('seconds')]
+          ]
+        });
+        if (self.data('minutes') === 0 && self.data('seconds') === 0) {
           clearInterval(self.data('interval'));
         }
       }, 1000));
