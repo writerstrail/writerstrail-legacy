@@ -4,14 +4,14 @@ function timerSetup($, c3) {
       bindto: '#timer-min',
       data: {
         columns: [
-          ['remaining', 0],
-          ['elapsed', 100]
+          ['elapsed', 45],
+          ['remaining', 15]
         ],
         type : 'donut',
         order: null,
         colors: {
-          remaining: 'gray',
-          elapsed: '#337AB7'
+          remaining: '#337AB7',
+          elapsed: 'gray'
         }
       },
       donut: {
@@ -33,6 +33,10 @@ function timerSetup($, c3) {
     var timerMin = c3.generate(options);
     options.donut.title = 'Seconds';
     options.bindto = '#timer-sec';
+    options.data.columns = [
+      ['elapsed', 60],
+      ['remaining', 0]
+    ];
     var timerSec = c3.generate(options);
     $('#timerpause').data('away', false).data('time', 0).click(function () {
       var self = $(this);
@@ -79,16 +83,16 @@ function timerSetup($, c3) {
             }
             timerMin.load({
               columns: [
-                ['remaining', minutes - self.data('minutes')],
-                ['elapsed', self.data('minutes')]
+                ['elapsed', 60 - self.data('minutes')],
+                ['remaining', self.data('minutes')]
               ],
               order: null
             });
             $("#rem-min").html(self.data('minutes'));
             timerSec.load({
               columns: [
-                ['remaining', 60 - self.data('seconds')],
-                ['elapsed', self.data('seconds')]
+                ['elapsed', 60 - self.data('seconds')],
+                ['remaining', self.data('seconds')]
               ]
             });
             $("#rem-sec").html(self.data('seconds'));
