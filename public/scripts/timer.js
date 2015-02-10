@@ -65,12 +65,20 @@ function timerSetup($, c3) {
       if (self.data('running')) {
         onstop();
       } else {
+        var minutes = Math.min(60, Math.max(0, parseInt($('#min').val(), 10)));
+        var seconds = Math.min(59, Math.max(0, parseInt($('#sec').val(), 10)));
+        
+        if (isNaN(minutes) || isNaN(seconds) || (minutes === 0 && seconds === 0)) {
+          return this;
+        }
+        
+        $('#min').val(minutes);
+        $('#sec').val(seconds);
+        
+        
         self.html('Stop').removeClass('btn-primary').addClass('btn-danger');
         self.data('running', true);
         pause.html("I'm away").data('time', 0).prop('disabled', false);
-
-        var minutes = Math.max(0, parseInt($('#min').val(), 10));
-        var seconds = Math.max(0, parseInt($('#sec').val(), 10));
         
         var loop = function () {
             self.data('seconds', self.data('seconds') - 1);
