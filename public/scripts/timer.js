@@ -1,5 +1,15 @@
-function timerSetup($, c3) {
+function timerSetup($, c3, ion) {
   $(function () {
+    ion.sound({
+      sounds: [
+        {
+          name: 'timer'
+        }
+      ],
+      path: '/sounds/',
+      preload: true
+    });
+    
     var options = {
       bindto: '#timer-min',
       data: {
@@ -106,6 +116,7 @@ function timerSetup($, c3) {
             $("#rem-sec").html(self.data('seconds'));
             if (self.data('minutes') === 0 && self.data('seconds') === 0) {
               clearInterval(self.data('interval'));
+              ion.sound.play('timer');
               onstop();
             }
           };
