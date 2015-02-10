@@ -1,8 +1,8 @@
-function buildChart(targetId, $, c3, d3, chartType, showRem, showPond) {
-  linkChart('/targets/' + targetId + '/data.json', $, c3, d3, chartType, showRem, showPond);
+function buildChart(targetId, $, c3, d3, chartType, showRem, showAdjusted) {
+  linkChart('/targets/' + targetId + '/data.json', $, c3, d3, chartType, showRem, showAdjusted);
 }
 
-function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
+function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
   $(function () {
     var isAcc = chartType === 'cumulative',
       chart = c3.generate({
@@ -14,7 +14,7 @@ function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
         types: {
           wordcount: 'bar',
           daily: 'bar',
-          remaining: 'area'
+          remaining: 'line'
         },
         names: {
           date: 'Date',
@@ -22,7 +22,7 @@ function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
           target: 'Target',
           daily: 'Daily writing',
           dailytarget: 'Daily target',
-          ponddailytarget: 'Adjusted daily target',
+          adjusteddailytarget: 'Adjusted daily target',
           remaining: 'Remaining wordcount'
         },
         colors: {
@@ -31,7 +31,7 @@ function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
         },
         hide: (isAcc ? ['daily', 'dailytarget'] : ['wordcount', 'target'])
             .concat(showRem ? [] : ['remaining'])
-            .concat(showPond ? [] : ['ponddailytarget'])
+            .concat(showAdjusted ? [] : ['adjusteddailytarget'])
       },
       axis: {
         x: {
@@ -71,6 +71,8 @@ function linkChart(link, $, c3, d3, chartType, showRem, showPond) {
         }
       }
     });
+    
+    $('#chart').data('chart', chart);
     
     $('#target-change')
       .data('acc', isAcc)

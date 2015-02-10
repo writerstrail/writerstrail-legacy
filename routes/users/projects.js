@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
@@ -307,6 +308,91 @@ router.get('/:id', sendflash, function (req, res, next) {
     
   }).catch(function (err) {
     next(err);
+  });
+});
+
+router.get('/:id/data.json', function (req, res, next) {
+  var daysToLook = 30;
+  var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
+  var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
+  var hasStartQuery = true, hasEndQuery = true;
+  
+  if (!start.isValid() || start.isAfter(end)) {
+    start = moment.utc().startOf('day').subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes');
+    hasStartQuery = false;
+  }
+  if (!end.isValid() || start.isAfter(end)) {
+    end = moment.utc().endOf('day').subtract(req.query.zoneOffset || 0, 'minutes');
+    hasEndQuery = false;
+  }
+  daysToLook = end.diff(start, 'days') + 1;
+  
+  models.Project.findAll({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    },
+    include: [
+      {
+        model: models.Session,
+        as: 'sessions',
+        where: {
+          start: {
+            gte: start.toDate(),
+            lte: end.toDate()
+          }
+        },
+        attributes: [
+          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'), models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`')
+        ],
+        required: true
+      }
+    ],
+    order: [models.Sequelize.literal('`date` ASC')],
+    group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
+  }, {
+    raw: true
+  }).then(function (sessions) {
+    
+    var daysRange = [];
+    var daily = [];
+    var wordcount = [], accWc = 0;
+    
+    var j = 0;
+    
+    if (!hasStartQuery) {
+      start.add(req.query.zoneOffset || 0, 'minutes');
+    }
+    if (!hasEndQuery) {
+      end.add(req.query.zoneOffset || 0, 'minutes');
+    }
+        
+    for (var i = 0; i < daysToLook; i++) {
+      var workingDate = moment(start).add(i, 'days');
+      var currentWc = 0;
+      if (sessions[j] && moment.utc(sessions[j]['sessions.start']).diff(workingDate, 'days') === 0) {
+        daily.push(sessions[j].dailyCount);
+        accWc += sessions[j].dailyCount;
+        currentWc = sessions[j].dailyCount;
+        j++;
+      } else {
+        daily.push(0);
+      }
+      daysRange.push(workingDate.format('YYYY-MM-DD'));
+      wordcount.push(accWc);
+    }
+    
+    var result = {
+      date: daysRange,
+      wordcount: wordcount,
+      daily: daily
+    };
+    res.json(result).end();
+  }).catch(function (err) {
+    if (process.env.NODE_ENV === 'development') {
+      return next(err);
+    }
+    res.json({error: err});
   });
 });
 
