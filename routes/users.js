@@ -134,4 +134,11 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
   });
 });
 
+router.get('/timer', isactivated, function (req, res) {
+  res.render('user/timer', {
+    title: 'Timer',
+    section: 'timer'
+  });
+});
+
 module.exports = router;

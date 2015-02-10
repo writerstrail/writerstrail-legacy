@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  h1 Timer and chronometer
+  
+  .row
+    .col-sm-6: .panel.panel-default
+      .panel-heading
+        h3.panel-title Timer
+      .panel-body
+        .row: .col-sm-12: .form-inline.time-fields
+          .form-group
+            label.control-label(for='min') Minutes   
+            | &nbsp;
+            input#min.form-control(type='number' placeholder='Minutes' value='15')
+            | &nbsp;
+          .form-group
+            label.control-label(for='sec')  Seconds
+            | &nbsp;
+            input#sec.form-control(type='number' placeholder='Seconds' value='0')
+            | &nbsp;
+          .form-group
+            | &nbsp;
+            button#timerstart.btn.btn-primary(type='button') Start
+        .row
+          .col-sm-12
+            #timer
+      
+      
+  
+append styles
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/stylesheets/timer.css')
+
+append scripts  
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/scripts/timer.js')
+  script.
+    timerSetup(jQuery, c3, d3, '#timer');
