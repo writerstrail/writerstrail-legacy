@@ -3,6 +3,7 @@
 ## V0.2.5
 
 * Fixed error with password hashing upon sign up.
+* Locking up node modules versions.
 
 ## v0.2.4
 
