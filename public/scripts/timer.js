@@ -1,4 +1,4 @@
-function timerSetup($, c3, ion, min, sec) {
+function timerSetup(document, $, c3, ion, min, sec) {
   $(function () {
     ion.sound({
       sounds: [
@@ -17,7 +17,7 @@ function timerSetup($, c3, ion, min, sec) {
           ['remaining', 60 - min],
           ['elapsed', min]
         ],
-        type : 'donut',
+        type: 'donut',
         order: null,
         colors: {
           remaining: 'gray',
@@ -128,5 +128,71 @@ function timerSetup($, c3, ion, min, sec) {
         self.data('interval', setInterval(loop, 1000));
       }
     });
+    chronometerSetup($, document);
+  });
+}
+
+function chronometerSetup($, document) {
+  var hour = 0, min = 0, sec = 0;
+  var hourHand = document.getElementById('hourHand'),
+    minHand = document.getElementById('minHand'),
+    secHand = document.getElementById('secHand');
+  var clockHour = $('#clockHour'),
+    clockMinutes = $('#clockMinutes'),
+    clockSeconds = $('#clockSeconds'),
+    startButton = $('#clockstart');
+  
+  function digitFormatter(digit) {
+    if (digit < 10) {
+      return '0' + digit;
+    }
+    return '' + digit;
+  }
+  
+  function rotate(el, deg) {
+    el.setAttribute('transform', 'rotate(' + deg + ' 50 50)');
+  }
+  
+  function increaseSecond() {
+    sec += 1;
+    if (sec === 60) {
+      sec = 0;
+      min += 1;
+    }
+    if (min === 60) {
+      min = 0;
+      hour += 1;
+    }
+  }
+  
+  startButton.data('running', false);
+  startButton.click(function () {
+    if (startButton.data('running')) {
+      clearInterval(startButton.data('interval'));
+      startButton
+        .data('running', false)
+        .html('Start')
+        .removeClass('btn-danger')
+        .addClass('btn-primary');
+      console.log('stopped');
+    } else {
+      startButton
+        .data('running', true)
+        .html('Stop')
+        .removeClass('btn-primary')
+        .addClass('btn-danger')
+        .data('interval', setInterval(function () {
+          increaseSecond();
+
+          rotate(secHand, 6 * sec);
+          rotate(minHand, (6 * min) + (sec / 10));
+          rotate(hourHand, (30 * (hour % 12)) + (min / 2));
+
+          clockHour.html(hour);
+          clockMinutes.html(digitFormatter(min));
+          clockSeconds.html(digitFormatter(sec));
+        }, 1000));
+      console.log('started', startButton.data('running'));
+    }
   });
 }

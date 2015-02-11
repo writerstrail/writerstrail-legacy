@@ -31,6 +31,25 @@ block content
           .col-sm-6
             h2.text-center: big: strong#rem-sec= seconds
             #timer-sec
+            
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Chronometer
+        .panel-body
+          .center-block.text-center
+            button#clockstart.btn.btn-lg.btn-primary(type='button') Start
+          h2.text-center: big: strong#clock-time
+            span#clockHour 0
+            | :
+            span#clockMinutes 00
+            | :
+            span#clockSeconds 00
+          .row
+            .col-sm-offset-3.col-sm-6
+              include ../includes/clock.svg
+              
+            
       
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
@@ -42,4 +61,4 @@ append scripts
   script(type='text/javascript', src='/bower_components/ionsound/js/ion.sound.min.js')
   script(type='text/javascript', src='/scripts/timer.js')
   script
-    | timerSetup(jQuery, c3, ion, !{minutes}, !{seconds});
+    | timerSetup(document, jQuery, c3, ion, !{minutes}, !{seconds});
