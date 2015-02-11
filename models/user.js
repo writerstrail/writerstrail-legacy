@@ -151,7 +151,8 @@ module.exports = function (sequelize, DataTypes) {
           as: 'votes',
           foreignKey: 'voterId'
         });
-        User.beforeUpdate(function (user, options, done) {
+        
+        var passHook = function (user, options, done) {
           if (!user.password || !user.changed('password')) {
             return done(null, user);
           }
@@ -160,7 +161,10 @@ module.exports = function (sequelize, DataTypes) {
             user.password = hash;
             done(null, user);
           });
-        });
+        };
+        
+        User.beforeUpdate(passHook);
+        User.beforeCreate(passHook);
         User.afterCreate(function (user, options, done) {
           var userGenres = _.map(genres, function (g) { 
             g.ownerId = user.id;
