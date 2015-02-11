@@ -71,6 +71,7 @@ function timerSetup(document, $, c3, ion, min, sec) {
     $("#timerstart").data('running', false).click(function () {
       var self = $(this);
       var pause = $('#timerpause');
+      var awayTimer = $('#timeraway');
       
       if (self.data('running')) {
         onstop();
@@ -89,11 +90,13 @@ function timerSetup(document, $, c3, ion, min, sec) {
         self.html('Stop').removeClass('btn-primary').addClass('btn-danger');
         self.data('running', true);
         pause.html("I'm away").data('time', 0).prop('disabled', false);
+        awayTimer.html(durationSplitter(pause.data('time')));
         
         var loop = function () {
             self.data('seconds', self.data('seconds') - 1);
             if (pause.data('away')) {
               pause.data('time', pause.data('time') + 1);
+              awayTimer.html(durationSplitter(pause.data('time')));
             }
             if (self.data('seconds') < 0) {
               self.data('seconds', 59);
@@ -132,6 +135,18 @@ function timerSetup(document, $, c3, ion, min, sec) {
   });
 }
 
+function digitFormatter(digit) {
+  return (digit < 10 ? '0' : '') + digit;
+}
+
+function durationSplitter(dur) {
+  var hour = Math.floor(dur / 3600),
+    min = Math.floor((dur - (hour * 3600)) / 60),
+    sec = dur - (hour * 3600) - (min * 60);
+  
+  return hour + ':' + digitFormatter(min) + ':' + digitFormatter(sec);
+}
+
 function chronometerSetup($, document) {
   var hour = 0, min = 0, sec = 0;
   var hourHand = document.getElementById('hourHand'),
@@ -140,14 +155,9 @@ function chronometerSetup($, document) {
   var clockHour = $('#clockHour'),
     clockMinutes = $('#clockMinutes'),
     clockSeconds = $('#clockSeconds'),
-    startButton = $('#clockstart');
-  
-  function digitFormatter(digit) {
-    if (digit < 10) {
-      return '0' + digit;
-    }
-    return '' + digit;
-  }
+    startButton = $('#clockstart'),
+    pauseButton = $('#clockpause'),
+    awayTimer = $('#clockaway');
   
   function rotate(el, deg) {
     el.setAttribute('transform', 'rotate(' + deg + ' 50 50)');
@@ -174,8 +184,16 @@ function chronometerSetup($, document) {
     clockMinutes.html(digitFormatter(min));
     clockSeconds.html(digitFormatter(sec));
   }
-  
   startButton.data('running', false);
+  pauseButton.data('time', 0).data('paused', false).click(function (){
+    if (startButton.data('running')) {
+      if (pauseButton.data('paused')) {
+        pauseButton.data('paused', false).html("I'm away");
+      } else {
+        pauseButton.data('paused', true).html("I'm back");
+      }
+    }
+  });
   startButton.click(function () {
     if (startButton.data('running')) {
       clearInterval(startButton.data('interval'));
@@ -184,6 +202,7 @@ function chronometerSetup($, document) {
         .html('Start')
         .removeClass('btn-danger')
         .addClass('btn-primary');
+      pauseButton.prop('disabled', true).data('paused', false).html("I'm away");
     } else {
       startButton
         .data('running', true)
@@ -193,11 +212,18 @@ function chronometerSetup($, document) {
         .data('interval', setInterval(function () {
           increaseSecond();
           renderClock();
+          if (pauseButton.data('paused')) {
+            pauseButton.data('time', pauseButton.data('time') + 1);
+            awayTimer.html(durationSplitter(pauseButton.data('time')));
+          }
         }, 1000));
+      pauseButton.prop('disabled', false);
     }
   });
   $('#clockreset').click(function () {
     hour = min = sec = 0;
+    pauseButton.data('time', 0);
+    awayTimer.html(durationSplitter(0));
     renderClock();
   });
 }

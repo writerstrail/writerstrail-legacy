@@ -31,6 +31,10 @@ block content
           .col-sm-6
             h2.text-center: big: strong#rem-sec= seconds
             #timer-sec
+        .row
+          .col-sm-12.text-center
+            p: big Time away: 
+              span#timeraway 0:00:00
             
     .col-sm-6
       .panel.panel-default
@@ -40,7 +44,7 @@ block content
           .center-block.text-center
             button#clockstart.btn.btn-lg.btn-primary(type='button') Start
             |   
-            button#clockpause.btn.btn-lg.btn-warning(type='button') I'm away
+            button#clockpause.btn.btn-lg.btn-warning(type='button' disabled=true) I'm away
             |   
             button#clockreset.btn.btn-lg.btn-default(type='button') Reset
           h2.text-center: big: strong#clock-time
@@ -52,6 +56,10 @@ block content
           .row
             .col-sm-offset-3.col-sm-6
               include ../includes/clock.svg
+          .row
+            .col-sm-12.text-center
+              p: big Time away: 
+                span#clockaway 0:00:00
               
             
       
