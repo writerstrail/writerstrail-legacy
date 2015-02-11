@@ -9,7 +9,8 @@ var router = require('express').Router(),
   tour = require('./users/tour'),
   isactivated = require('../utils/middlewares/isactivated'),
   models = require('../models'),
-  sendflash = require('../utils/middlewares/sendflash');
+  sendflash = require('../utils/middlewares/sendflash'),
+  durationformatter = require('../utils/functions/durationformatter');
 
 function durationFormatterAlt(dur) {
   var min = Math.floor(dur / 60),
@@ -135,9 +136,12 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
 });
 
 router.get('/timer', isactivated, function (req, res) {
+  var timer = durationformatter(req.user.settings.defaultTimer).split(':');
   res.render('user/timer', {
     title: 'Timer',
-    section: 'timer'
+    section: 'timer',
+    minutes: parseInt(timer[0], 10),
+    seconds: parseInt(timer[1], 10)
   });
 });
 

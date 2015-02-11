@@ -1,4 +1,4 @@
-function timerSetup($, c3, ion) {
+function timerSetup($, c3, ion, min, sec) {
   $(function () {
     ion.sound({
       sounds: [
@@ -14,14 +14,14 @@ function timerSetup($, c3, ion) {
       bindto: '#timer-min',
       data: {
         columns: [
-          ['elapsed', 45],
-          ['remaining', 15]
+          ['remaining', 60 - min],
+          ['elapsed', min]
         ],
         type : 'donut',
         order: null,
         colors: {
-          remaining: '#337AB7',
-          elapsed: 'gray'
+          remaining: 'gray',
+          elapsed: '#337AB7'
         }
       },
       donut: {
@@ -44,8 +44,8 @@ function timerSetup($, c3, ion) {
     options.donut.title = 'Seconds';
     options.bindto = '#timer-sec';
     options.data.columns = [
-      ['elapsed', 60],
-      ['remaining', 0]
+      ['remaining', 60 - sec],
+      ['elapsed', sec]
     ];
     var timerSec = c3.generate(options);
     $('#timerpause').data('away', false).data('time', 0).click(function () {
@@ -101,16 +101,16 @@ function timerSetup($, c3, ion) {
             }
             timerMin.load({
               columns: [
-                ['elapsed', 60 - self.data('minutes')],
-                ['remaining', self.data('minutes')]
+                ['remaining', 60 - self.data('minutes')],
+                ['elapsed', self.data('minutes')]
               ],
               order: null
             });
             $("#rem-min").html(self.data('minutes'));
             timerSec.load({
               columns: [
-                ['elapsed', 60 - self.data('seconds')],
-                ['remaining', self.data('seconds')]
+                ['remaining', 60 - self.data('seconds')],
+                ['elapsed', self.data('seconds')]
               ]
             });
             $("#rem-sec").html(self.data('seconds'));

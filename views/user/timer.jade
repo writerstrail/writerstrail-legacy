@@ -12,12 +12,12 @@ block content
           .form-group
             label.control-label(for='min') Minutes   
             | &nbsp;
-            input#min.form-control(type='number' placeholder='Minutes' value='15')
+            input#min.form-control(type='number' placeholder='Minutes' value=minutes)
             | &nbsp;
           .form-group
             label.control-label(for='sec')  Seconds
             | &nbsp;
-            input#sec.form-control(type='number' placeholder='Seconds' value='0')
+            input#sec.form-control(type='number' placeholder='Seconds' value=seconds)
             | &nbsp;
           .form-group
             button#timerstart.btn.btn-primary(type='button') Start
@@ -26,10 +26,10 @@ block content
             
         .row
           .col-sm-6
-            h2.text-center: big: strong#rem-min 15
+            h2.text-center: big: strong#rem-min= minutes
             #timer-min
           .col-sm-6
-            h2.text-center: big: strong#rem-sec 0
+            h2.text-center: big: strong#rem-sec= seconds
             #timer-sec
       
 append styles
@@ -41,5 +41,5 @@ append scripts
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/bower_components/ionsound/js/ion.sound.min.js')
   script(type='text/javascript', src='/scripts/timer.js')
-  script.
-    timerSetup(jQuery, c3, ion);
+  script
+    | timerSetup(jQuery, c3, ion, !{minutes}, !{seconds});
