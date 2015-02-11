@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## V0.2.5
+
+* Fixed error with password hashing upon sign up.
+
 ## v0.2.4
 
 * Fixed bug where updating sessions did not reflected into project wordcount.
