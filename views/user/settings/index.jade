@@ -10,7 +10,7 @@ block content
       .col-sm-10
         select#dateformat.form-control(name='dateformat' aria-describedby='datehelp')
           for format, i in dateFormats.data
-            option(value=format selected=format == user.settings.dateFormat)= dateFormats.labels[i]
+            option(value=format selected=format == settings.dateFormat)= dateFormats.labels[i]
               | &nbsp;(
               = moment.utc().format(format)
               | )
@@ -20,7 +20,7 @@ block content
       .col-sm-10
         select#timeformat.form-control(name='timeformat' aria-describedby='timehelp')
           for format, i in timeFormats.data
-            option(value=format selected=format == user.settings.timeFormat)= timeFormats.labels[i]
+            option(value=format selected=format == settings.timeFormat)= timeFormats.labels[i]
               | &nbsp;(
               = moment.utc().format(format)
               | )
@@ -29,10 +29,10 @@ block content
       label.col-sm-2.control-label(for='charttype') Preferred target chart type:
       .col-sm-10
         label.radio-inline
-          input#charttype(type='radio' name='charttype' value='cumulative' checked='cumulative' == user.settings.chartType aria-describedby='charttypehelp')
+          input#charttype(type='radio' name='charttype' value='cumulative' checked='cumulative' == settings.chartType aria-describedby='charttypehelp')
           | Cumulative writing/target
         label.radio-inline
-          input#charttype(type='radio' name='charttype' value='daily' checked='daily' == user.settings.chartType aria-describedby='charttypehelp')
+          input#charttype(type='radio' name='charttype' value='daily' checked='daily' == settings.chartType aria-describedby='charttypehelp')
           | Daily writing/target
         span#charttypehelp.help-block Show cumulative or daily wordcount by default on targets' charts.
     .form-group
@@ -45,12 +45,18 @@ block content
           input(type='checkbox' name='showAdjusted' checked=user.settings.showAdjusted aria-describedby='extrahelp')
           | Adjusted daily target
         span#extrahelp.help-block Show in targets' charts remaining wordcount and/or adjusted daily target to achieve on time.
+    - var timerErr = _.find(validate, function(err) { return err.path === 'defaultTimer' }) || ''
+    .form-group(class=timerErr ? 'has-error' : '')
+      label.col-sm-2.control-label(for='defaultTimer') Default timer (min:sec)
+      .col-sm-10
+        input#defaultTimer.form-control(type='text' name='defaultTimer' placeholder='Default timer' required=true aria-describedby='timerhelp' value=durationformatter(settings.defaultTimer))
+        span#timerhelp.help-block= timerErr ? timerErr.message : 'The default value for the timer in mm:ss format.'
     .form-group
       label.col-sm-2.control-label Show tour:
       .col-sm-10
         .checkbox
           label
-            input(type='checkbox' name='showTour' checked=user.settings.showTour aria-describedby='tourhelp')
+            input(type='checkbox' name='showTour' checked=settings.showTour aria-describedby='tourhelp')
             | Show application tour next time you visit the dashboard
           span#tourhelp.help-block Start the tour again when you visit the dashboard.
     .form-group

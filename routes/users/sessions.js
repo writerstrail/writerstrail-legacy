@@ -3,27 +3,11 @@ var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
-  promise = require('sequelize').Promise;
+  promise = require('sequelize').Promise,
+  durationparser = require('../../utils/functions/durationparser'),
+  durationformatter = require('../../utils/functions/durationformatter');
 
-function durationParser(dur) {
-  var parts = dur.split(':', 2),
-    min = parts[0] ? parseInt(parts[0], 10) : 0,
-    sec = parts[1] ? parseInt(parts[1], 10) : 0,
-    result = (min * 60) + sec;
-  if (isNaN(result)) {
-    return 0;
-  }
-  return result;
-}
-
-function durationFormatter(dur) {
-  var min = Math.floor(dur / 60),
-    sec = dur - min * 60;
-  
-  return (min.toString() +  ':' + (sec < 10 ? '0' + sec : sec));
-}
-
-function durationFormatterAlt(dur) {
+function durationformatterAlt(dur) {
   var min = Math.floor(dur / 60),
     sec = dur - min * 60;
   
@@ -119,8 +103,8 @@ router.post('/new', isverified, function (req, res, next) {
       wordcount: req.body.wordcount,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
       zoneOffset: req.body.zoneOffset || 0,
-      duration: durationParser(req.body.duration),
-      pausedTime: durationParser(req.body.pausedTime),
+      duration: durationparser(req.body.duration),
+      pausedTime: durationparser(req.body.pausedTime),
       isCountdown: !!req.body.isCountdown,
       projectId: project.id
     });
@@ -152,8 +136,8 @@ router.post('/new', isverified, function (req, res, next) {
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
-          pausedTime: durationFormatter(durationParser(req.body.pausedTime)),
-          duration: durationFormatter(durationParser(req.body.duration)),
+          pausedTime: durationformatter(durationparser(req.body.pausedTime)),
+          duration: durationformatter(durationparser(req.body.duration)),
           isCountdown: !!req.body.isCountdown,
           'project.id': req.body.project
         },
@@ -200,8 +184,8 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
       raw: true
     }).then(function (projects) {
       session.start = moment.utc(session.start).format(req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat);
-      session.duration = durationFormatter(session.duration);
-      session.pausedTime = durationFormatter(session.pausedTime);
+      session.duration = durationformatter(session.duration);
+      session.pausedTime = durationformatter(session.pausedTime);
       res.render('user/sessions/form', {
         title: req.__('Session edit'),
         section: 'sessionedit',
@@ -268,8 +252,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         session.set('notes', req.body.notes);
         session.set('wordcount', req.body.wordcount);
         session.set('start', start.toDate());
-        session.set('duration', durationParser(req.body.duration));
-        session.set('pausedTime', durationParser(req.body.pausedTime));
+        session.set('duration', durationparser(req.body.duration));
+        session.set('pausedTime', durationparser(req.body.pausedTime));
         session.set('isCountdown', !!req.body.isCountdown);
         session.set('projectId', parseInt(req.body.project, 10));
         session.set('zoneOffset', session.zoneOffset || (req.body.zoneOffset || 0));
@@ -311,8 +295,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
-          duration: durationFormatter(durationParser(req.body.duration)),
-          pausedTime: durationFormatter(durationParser(req.body.pausedTime)),
+          duration: durationformatter(durationparser(req.body.duration)),
+          pausedTime: durationformatter(durationparser(req.body.pausedTime)),
           isCountdown: !!req.body.isCountdown,
           'project.id': req.body.project
         },
@@ -365,7 +349,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       title: 'Session for ' + session.project.name,
       section: 'sessionsingle',
       session: session,
-      durFormat: durationFormatterAlt
+      durFormat: durationformatterAlt
     });
   }).catch(function (err) {
     next(err);
