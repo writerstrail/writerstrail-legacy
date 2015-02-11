@@ -165,6 +165,16 @@ function chronometerSetup($, document) {
     }
   }
   
+  function renderClock() {
+    rotate(secHand, 6 * sec);
+    rotate(minHand, (6 * min) + (sec / 10));
+    rotate(hourHand, (30 * (hour % 12)) + (min / 2));
+
+    clockHour.html(hour);
+    clockMinutes.html(digitFormatter(min));
+    clockSeconds.html(digitFormatter(sec));
+  }
+  
   startButton.data('running', false);
   startButton.click(function () {
     if (startButton.data('running')) {
@@ -174,7 +184,6 @@ function chronometerSetup($, document) {
         .html('Start')
         .removeClass('btn-danger')
         .addClass('btn-primary');
-      console.log('stopped');
     } else {
       startButton
         .data('running', true)
@@ -183,16 +192,12 @@ function chronometerSetup($, document) {
         .addClass('btn-danger')
         .data('interval', setInterval(function () {
           increaseSecond();
-
-          rotate(secHand, 6 * sec);
-          rotate(minHand, (6 * min) + (sec / 10));
-          rotate(hourHand, (30 * (hour % 12)) + (min / 2));
-
-          clockHour.html(hour);
-          clockMinutes.html(digitFormatter(min));
-          clockSeconds.html(digitFormatter(sec));
+          renderClock();
         }, 1000));
-      console.log('started', startButton.data('running'));
     }
+  });
+  $('#clockreset').click(function () {
+    hour = min = sec = 0;
+    renderClock();
   });
 }
