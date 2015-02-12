@@ -9,7 +9,8 @@ var router = require('express').Router(),
   tour = require('./users/tour'),
   isactivated = require('../utils/middlewares/isactivated'),
   models = require('../models'),
-  sendflash = require('../utils/middlewares/sendflash');
+  sendflash = require('../utils/middlewares/sendflash'),
+  durationformatter = require('../utils/functions/durationformatter');
 
 function durationFormatterAlt(dur) {
   var min = Math.floor(dur / 60),
@@ -130,6 +131,28 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
     };
   promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
   .catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/timer', isactivated, sendflash, function (req, res, next) {
+  models.Project.findAll({
+    where: {
+      ownerId: req.user.id
+    }
+  }).then(function (projects) {
+    var timer = durationformatter(req.user.settings.defaultTimer).split(':');
+    if (projects.length === 0) {
+      res.locals.errorMessage.push('No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.');
+    }
+    res.render('user/timer', {
+      title: 'Timer',
+      section: 'timer',
+      minutes: parseInt(timer[0], 10),
+      seconds: parseInt(timer[1], 10),
+      projects: projects
+    });
+  }).catch(function (err) {
     next(err);
   });
 });
