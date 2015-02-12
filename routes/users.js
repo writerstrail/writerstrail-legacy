@@ -56,6 +56,23 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         raw: true
       });
     },
+    getTodaySessions = function () {
+      return models.Session.findOne({
+        where: models.Sequelize.literal('DATE(`Session`.`start` + INTERVAL `Session`.`zoneOffset` MINUTE) = CURDATE()'),
+        attributes: ['id'],
+        include: [{
+          model: models.Project,
+          as: 'project',
+          where: {
+            ownerId: req.user.id
+          },
+          required: true,
+          attributes: []
+        }]
+      }, {
+        raw: true
+      });
+    },
     getTarget = function () {
       return models.Target.findOne({
         where: [
@@ -110,9 +127,12 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         raw: true
       });
     },
-    renderer = function (projects, target, totalWordcount, dailyCounts, perfPeriod, perfSession, largestProject) {
+    renderer = function (projects, todaySessions, target, totalWordcount, dailyCounts, perfPeriod, perfSession, largestProject) {
       var totalDailyCounts = _.reduce(dailyCounts, function (acc, d) { return acc + d.dailyCount; }, 0),
         totalDuration = _.reduce(dailyCounts, function (acc, d) { return acc + d.totalDuration; }, 0);
+      if (!todaySessions || todaySessions.length === 0) {
+        res.locals.errorMessage.push('You didn\'t write anything today. <a href="/timer" class="alert-link">Fix this and write now</a>.');
+      }
       res.render('user/dashboard', {
         title: 'Dashboard',
         section: 'dashboard',
@@ -129,7 +149,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         durationFormatter: durationFormatterAlt
       });
     };
-  promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
+  promise.join(getProjects(), getTodaySessions(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
   .catch(function (err) {
     next(err);
   });
