@@ -158,6 +158,11 @@ function modalSetup() {
   $('#sessionSave').click(function () {
     $('#sessionFormFields').submit();
   });
+  $('.sessionForm').keypress(function (e) {
+    if (e.which === 13) {
+      $('#sessionFormFields').submit();
+    }
+  });
   $('#sessionForm').on('shown.bs.modal', function () {
     $('#wordcount').focus();
   });

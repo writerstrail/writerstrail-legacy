@@ -74,34 +74,34 @@ block preoutside
         .form-group
           label.col-sm-2(for='wordcount') Words written
           .col-sm-10
-            input#wordcount.form-control(type='text' name='wordcount' placeholder='Words written')
+            input#wordcount.form-control.sessionForm(type='text' name='wordcount' placeholder='Words written')
         .form-group
           label.col-sm-2(for='summary') Summary
           .col-sm-10
-            input#summary.form-control(type='text' name='summary' placeholder='Summary')
+            input#summary.form-control.sessionForm(type='text' name='summary' placeholder='Summary')
         .form-group
           label.col-sm-2(for='project') Project
           .col-sm-10
-            select#project.form-control(name='project')
+            select#project.form-control.sessionForm(name='project')
               for project in projects
                 option(value=project.id)= project.name
         .form-group
           label.col-sm-2(for='start') Start
           .col-sm-10
-            input#start.form-control(type='text' name='start' placeholder='Start')
+            input#start.form-control.sessionForm(type='text' name='start' placeholder='Start')
         .form-group
           label.col-sm-2(for='duration') Duration (min:sec)
           .col-sm-10
-            input#duration.form-control(type='text' name='duration' placeholder='Duration')
+            input#duration.form-control.sessionForm(type='text' name='duration' placeholder='Duration')
         .form-group
           label.col-sm-2(for='pausedTime') Time not writing (min:sec)
           .col-sm-10
-            input#pausedTime.form-control(type='text' name='pausedTime' placeholder='Time not writing')
+            input#pausedTime.form-control(.sessionFormtype='text' name='pausedTime' placeholder='Time not writing')
         .form-group
           .col-sm-offset-2.col-sm-10
             .checkbox
               label
-                input#countdown(type='checkbox' name='isCountdown')
+                input#countdown.sessionForm(type='checkbox' name='isCountdown')
                 | Countdown session
         .form-group
           label.col-sm-2(for='notes') Notes
