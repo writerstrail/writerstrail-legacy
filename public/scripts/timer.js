@@ -79,8 +79,18 @@ function timerSetup(min, sec) {
       self.html('Start').removeClass('btn-danger').addClass('btn-primary');
       self.data('running', false);
       $('#timerpause').html("I'm away").data('away', false).prop('disabled', true);
+      var realSeconds = (self.data('setSeconds') - self.data('seconds')),
+        realMinutes = self.data('setMinutes') - self.data('minutes');
+      
+      if (realSeconds < 0) {
+        realMinutes -= 1;
+        realSeconds += 60;
+      }
+      
       modalShow({
-        hour: 0, min: self.data('setMinutes'), sec: self.data('setSeconds')
+        hour: 0,
+        min: realMinutes,
+        sec: realSeconds
       }, durationSplitter($('#timerpause').data('time')), self.data('start'), true);
     };
     
