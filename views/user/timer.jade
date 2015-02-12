@@ -71,6 +71,7 @@ block preoutside
     .modal-body
       form#sessionFormFields.form-horizontal(action='/sessions/new' method='post')
         input(type='hidden' name='_csrf' value=csrf)
+        input#zoneOffset(type='hidden' name='zoneOffset' value='0')
         .form-group
           label.col-sm-2(for='wordcount') Words written
           .col-sm-10
