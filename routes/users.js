@@ -112,10 +112,10 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
       });
     },
     getPerformancePeriod = function () {
-      return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " LIMIT 1;");
+      return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY `performance` DESC LIMIT 1;");
     },
     getPerformanceSession = function () {
-      return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " LIMIT 1;");
+      return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " ORDER BY `performance` DESC LIMIT 1;");
     },
     getLargestProject = function () {
       return models.Project.findOne({

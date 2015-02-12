@@ -86,6 +86,10 @@ block content
               |  period, achieving an average of 
               strong= stats.period.performance.toFixed(2)
               |  words per minute.
+              if stats.period.performance.toFixed(2) !== stats.period.realPerformance.toFixed(2)
+                |  (
+                strong= stats.period.realPerformance.toFixed(2)
+                |   words per minute excluding time not writing).
           else
             li.list-group-item You don't have enough sessions to calculate the most productive period.
           if stats.session
@@ -95,7 +99,11 @@ block content
               strong= stats.session.direction
               |  sessions, achieving an average of 
               strong= stats.session.performance.toFixed(2)
-              |  words per minute.
+              |  words per minute.  
+              if stats.session.performance.toFixed(2) !== stats.session.realPerformance.toFixed(2)
+                |  (
+                strong= stats.session.realPerformance.toFixed(2)
+                |   words per minute excluding time not writing).
           else
             li.list-group-item You don't have enough sessions to calculate the most productive session type.
           if stats.largestProject
