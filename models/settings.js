@@ -57,6 +57,12 @@ module.exports = function (sequelize, DataTypes) {
           msg: 'The default timer can\'t be longer than 60:59.'
         }
       }
+    },
+    performanceMetric: {
+      type: DataTypes.ENUM,
+      values: ['total', 'real'],
+      allowNull: false,
+      defaultValue: 'total'
     }
   }, {
     tableName: 'settings',

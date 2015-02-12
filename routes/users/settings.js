@@ -26,7 +26,8 @@ router.post('/', isverified, function (req, res, next) {
     dateFormat = req.body.dateformat,
     timeFormat = req.body.timeformat,
     chartType = req.body.charttype,
-    defaultTimer = req.body.defaultTimer = durationparser(req.body.defaultTimer);
+    defaultTimer = req.body.defaultTimer = durationparser(req.body.defaultTimer),
+    performanceMetric = req.body.performanceMetric;
   if (_.contains(dateFormats.data, dateFormat)) {
     settings.dateFormat = dateFormat;
   }
@@ -40,6 +41,7 @@ router.post('/', isverified, function (req, res, next) {
   settings.showAdjusted = !!req.body.showAdjusted;
   settings.showTour = !!req.body.showTour;
   settings.defaultTimer = defaultTimer;
+  settings.performanceMetric = performanceMetric;
   console.log('-----val', defaultTimer);
   req.user.settings.save().then(function () {
     req.flash('success', 'Your settings were successfully saved');

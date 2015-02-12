@@ -52,6 +52,16 @@ block content
         input#defaultTimer.form-control(type='text' name='defaultTimer' placeholder='Default timer' required=true aria-describedby='timerhelp' value=durationformatter(settings.defaultTimer))
         span#timerhelp.help-block= timerErr ? timerErr.message : 'The default value for the timer in mm:ss format.'
     .form-group
+      label.col-sm-2.control-label(for='performanceMetric') Performance metric:
+      .col-sm-10
+        label.radio-inline
+          input#performanceMetric(type='radio' name='performanceMetric' value='total' checked='total' == settings.performanceMetric aria-describedby='performanceMetrichelp')
+          | Words per minute in the whole session
+        label.radio-inline
+          input#performanceMetric(type='radio' name='performanceMetric' value='real' checked='real' == settings.performanceMetric aria-describedby='performanceMetrichelp')
+          | Words per minute only in the time writing
+        span#performanceMetrichelp.help-block Show best performance based on whole session or exclude the time not writing.
+    .form-group
       label.col-sm-2.control-label Show tour:
       .col-sm-10
         .checkbox
