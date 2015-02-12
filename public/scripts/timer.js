@@ -79,10 +79,9 @@ function timerSetup(min, sec) {
       self.html('Start').removeClass('btn-danger').addClass('btn-primary');
       self.data('running', false);
       $('#timerpause').html("I'm away").data('away', false).prop('disabled', true);
-      modalFill({
+      modalShow({
         hour: 0, min: self.data('setMinutes'), sec: self.data('setSeconds')
       }, durationSplitter($('#timerpause').data('time')), self.data('start'), true);
-      $('#sessionForm').modal();
     };
     
     $('#timer-min').data('c3', timerMin);
@@ -164,7 +163,7 @@ function modalSetup() {
   });
 }
 
-function modalFill(duration, pausedDuration, start, countdown) {
+function modalShow(duration, pausedDuration, start, countdown) {
   function durationFormatter(dur) {
     return ((dur.hour || 0) * 60 + dur.min) + ':' + digitFormatter(dur.sec);
   }
@@ -174,7 +173,8 @@ function modalFill(duration, pausedDuration, start, countdown) {
   $('#start').val(start.format(settings.dateFormat + ' ' + settings.timeFormat));
   $('#duration').val(durationFormatter(duration));
   $('#pausedTime').val(durationFormatter(pausedDuration));
-  $('#isCountdown').prop('checked', countdown);
+  $('#countdown').prop('checked', countdown);
+  $('#sessionForm').modal();
 }
 
 function digitFormatter(digit) {
@@ -255,10 +255,14 @@ function chronometerSetup() {
         .removeClass('btn-danger')
         .addClass('btn-primary');
       pauseButton.prop('disabled', true).data('paused', false).html("I'm away");
+      modalShow({
+        hour: hour, min: min, sec: sec
+      }, durationSplitter(pauseButton.data('time')), startButton.data('start'), false);
     } else {
       startButton
         .data('running', true)
         .html('Stop')
+        .data('start', moment())
         .removeClass('btn-primary')
         .addClass('btn-danger')
         .data('interval', setInterval(function () {

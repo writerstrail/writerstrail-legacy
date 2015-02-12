@@ -135,13 +135,25 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
   });
 });
 
-router.get('/timer', isactivated, function (req, res) {
-  var timer = durationformatter(req.user.settings.defaultTimer).split(':');
-  res.render('user/timer', {
-    title: 'Timer',
-    section: 'timer',
-    minutes: parseInt(timer[0], 10),
-    seconds: parseInt(timer[1], 10)
+router.get('/timer', isactivated, sendflash, function (req, res, next) {
+  models.Project.findAll({
+    where: {
+      ownerId: req.user.id
+    }
+  }).then(function (projects) {
+    var timer = durationformatter(req.user.settings.defaultTimer).split(':');
+    if (projects.length === 0) {
+      res.locals.errorMessage.push('No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.');
+    }
+    res.render('user/timer', {
+      title: 'Timer',
+      section: 'timer',
+      minutes: parseInt(timer[0], 10),
+      seconds: parseInt(timer[1], 10),
+      projects: projects
+    });
+  }).catch(function (err) {
+    next(err);
   });
 });
 

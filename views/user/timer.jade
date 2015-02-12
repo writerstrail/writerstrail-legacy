@@ -62,7 +62,6 @@ block content
                 span#clockaway 0:00:00
               
 block preoutside
-  //-button.btn.btn-success.btn-lg(type='button' data-toggle='modal' data-target='#sessionForm') Open modal
   .modal.fade#sessionForm(role='dialog' aria-labelledby='sessionFormTitle' aria-hidden='true'): .modal-dialog: .modal-content
     .modal-header
       button.close(type='button' data-dismiss='modal' aria-label='close')
@@ -84,6 +83,8 @@ block preoutside
           label.col-sm-2(for='project') Project
           .col-sm-10
             select#project.form-control(name='project')
+              for project in projects
+                option(value=project.id)= project.name
         .form-group
           label.col-sm-2(for='start') Start
           .col-sm-10

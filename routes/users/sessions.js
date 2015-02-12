@@ -111,7 +111,7 @@ router.post('/new', isverified, function (req, res, next) {
   }).then(function (session) {      
     req.flash('success', req.__('Session "%s" successfully created',
                                   req.body.summary.length > 0 ? req.body.summary : req.body.start));
-    if (req.body.create) { return res.redirect('/sessions/' + session.id); }
+    if (!req.body.createadd) { return res.redirect('/sessions/' + session.id); }
     res.redirect('/sessions/new');
   }).catch(function (err) {
     if (err.message !== 'Validation error') { return next(err); }
