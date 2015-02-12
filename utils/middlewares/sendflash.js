@@ -3,5 +3,6 @@ module.exports = function sendflash(req, res, next) {
   res.locals.successMessage = req.flash('success');
   res.locals.warningMessage = req.flash('warning');
   res.locals.maintenanceMessage = req.flash('maintenance');
+  res.locals.isSendingFlash = true;
   next();
 };
