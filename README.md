@@ -1,6 +1,6 @@
 # [Writer's Trail](http://writerstrail.georgemarques.com.br)
 
-v0.2.5
+v0.3.0
 
 ### Now you can keep track of your writings statistics!
 
