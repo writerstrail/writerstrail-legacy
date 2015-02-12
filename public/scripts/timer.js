@@ -1,4 +1,18 @@
-function timerSetup(document, $, c3, ion, min, sec) {
+var document, $, c3, ion, moment, settings;
+
+function setup(d, j, c, i, m, s, min, sec) {
+  document = d;
+  $ = j;
+  c3 = c;
+  ion = i;
+  moment = m;
+  settings = s;
+  timerSetup(min, sec);
+  chronometerSetup();
+  modalSetup();
+}
+
+function timerSetup(min, sec) {
   $(function () {
     ion.sound({
       sounds: [
@@ -65,6 +79,10 @@ function timerSetup(document, $, c3, ion, min, sec) {
       self.html('Start').removeClass('btn-danger').addClass('btn-primary');
       self.data('running', false);
       $('#timerpause').html("I'm away").data('away', false).prop('disabled', true);
+      modalFill({
+        hour: 0, min: self.data('setMinutes'), sec: self.data('setSeconds')
+      }, durationSplitter($('#timerpause').data('time')), self.data('start'), true);
+      $('#sessionForm').modal();
     };
     
     $('#timer-min').data('c3', timerMin);
@@ -78,6 +96,9 @@ function timerSetup(document, $, c3, ion, min, sec) {
       } else {
         var minutes = Math.min(60, Math.max(0, parseInt($('#min').val(), 10)));
         var seconds = Math.min(59, Math.max(0, parseInt($('#sec').val(), 10)));
+        self.data('start', moment());
+        self.data('setMinutes', minutes);
+        self.data('setSeconds', seconds);
         
         if (isNaN(minutes) || isNaN(seconds) || (minutes === 0 && seconds === 0)) {
           return this;
@@ -90,13 +111,13 @@ function timerSetup(document, $, c3, ion, min, sec) {
         self.html('Stop').removeClass('btn-primary').addClass('btn-danger');
         self.data('running', true);
         pause.html("I'm away").data('time', 0).prop('disabled', false);
-        awayTimer.html(durationSplitter(pause.data('time')));
+        awayTimer.html(durationFormatterComplete(pause.data('time')));
         
         var loop = function () {
             self.data('seconds', self.data('seconds') - 1);
             if (pause.data('away')) {
               pause.data('time', pause.data('time') + 1);
-              awayTimer.html(durationSplitter(pause.data('time')));
+              awayTimer.html(durationFormatterComplete(pause.data('time')));
             }
             if (self.data('seconds') < 0) {
               self.data('seconds', 59);
@@ -131,8 +152,29 @@ function timerSetup(document, $, c3, ion, min, sec) {
         self.data('interval', setInterval(loop, 1000));
       }
     });
-    chronometerSetup($, document);
   });
+}
+
+function modalSetup() {
+  $('#sessionSave').click(function () {
+    $('#sessionFormFields').submit();
+  });
+  $('#sessionForm').on('shown.bs.modal', function () {
+    $('#wordcount').focus();
+  });
+}
+
+function modalFill(duration, pausedDuration, start, countdown) {
+  function durationFormatter(dur) {
+    return ((dur.hour || 0) * 60 + dur.min) + ':' + digitFormatter(dur.sec);
+  }
+  $('#wordcount').val('');
+  $('#summary').val('');
+  $('#notes').val('');
+  $('#start').val(start.format(settings.dateFormat + ' ' + settings.timeFormat));
+  $('#duration').val(durationFormatter(duration));
+  $('#pausedTime').val(durationFormatter(pausedDuration));
+  $('#isCountdown').prop('checked', countdown);
 }
 
 function digitFormatter(digit) {
@@ -144,10 +186,20 @@ function durationSplitter(dur) {
     min = Math.floor((dur - (hour * 3600)) / 60),
     sec = dur - (hour * 3600) - (min * 60);
   
-  return hour + ':' + digitFormatter(min) + ':' + digitFormatter(sec);
+  return {
+    hour: hour,
+    min: min,
+    sec: sec
+  };
 }
 
-function chronometerSetup($, document) {
+function durationFormatterComplete(dur) {
+  var d = durationSplitter(dur);
+  
+  return d.hour + ':' + digitFormatter(d.min) + ':' + digitFormatter(d.sec);
+}
+
+function chronometerSetup() {
   var hour = 0, min = 0, sec = 0;
   var hourHand = document.getElementById('hourHand'),
     minHand = document.getElementById('minHand'),
@@ -214,7 +266,7 @@ function chronometerSetup($, document) {
           renderClock();
           if (pauseButton.data('paused')) {
             pauseButton.data('time', pauseButton.data('time') + 1);
-            awayTimer.html(durationSplitter(pauseButton.data('time')));
+            awayTimer.html(durationFormatterComplete(pauseButton.data('time')));
           }
         }, 1000));
       pauseButton.prop('disabled', false);
@@ -223,7 +275,7 @@ function chronometerSetup($, document) {
   $('#clockreset').click(function () {
     hour = min = sec = 0;
     pauseButton.data('time', 0);
-    awayTimer.html(durationSplitter(0));
+    awayTimer.html(durationFormatterComplete(0));
     renderClock();
   });
 }
