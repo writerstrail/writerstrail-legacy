@@ -69,7 +69,7 @@ router.get('/example/targetdata.json', isactivated, function (req, res) {
     target: targetAcc,
     daily: daily,
     dailytarget: dailytarget,
-    ponddailytarget: pondDailyTarget,
+    adjusteddailytarget: pondDailyTarget,
     remaining: remaining
   };
   res.json(result).end();
