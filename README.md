@@ -65,7 +65,6 @@ If you want to set genres as formats (novel, short story, essay, etc.) that's fi
 ### Timer and chronometer
 
 ![Timer](http://writerstrail.georgemarques.com.br/images/timer.png)
-![Chronometer](http://writerstrail.georgemarques.com.br/images/chrono.png)
 
 Time your sessions on the web page and have the fields filled for you. If you see yourself using always the same session length, you can also define a default timer in your settings.
 
