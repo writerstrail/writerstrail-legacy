@@ -12,7 +12,7 @@ Writers's Trail is a tool designed by a writer for writers so they can see chart
 
 ### Custom targets with progress charts
 
-![Target]('http://writerstrail.georgemarques.com.br/images/target.png')
+![Target](http://writerstrail.georgemarques.com.br/images/target.png)
 
 Now you can have that [NaNoWriMo](http://nanowrimo.org) feel any time in the year. Create targets for any amount of words and time you want.
 
