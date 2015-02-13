@@ -1,9 +1,15 @@
-var router = require("express").Router();
+var router = require("express").Router(),
+  models = require('../../models'),
+  templates = require('../../utils/data/admin/sgtemplates');
 
 router.get('/', function (req, res) {
-  res.render('admin/mail', {
-    title: 'Mail',
-    section: 'adminmail'
+  models.User.findAll().then(function (users) {
+    res.render('admin/mail', {
+      title: 'Mail',
+      section: 'adminmail',
+      users: users,
+      templates: templates
+    });
   });
 });
 
