@@ -7,7 +7,7 @@ block content
     input(type='hidden' name='_csrf' value=csrf)
     .form-group
       label.control-label Users
-      select.form-control(name='users' multiple=true size=20)
+      select.form-control(name='users[]' multiple=true size=20)
         for u in users
           option(value=u.id)= u.name + ' <' + u.email + '>'
     .form-group
