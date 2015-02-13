@@ -12,7 +12,6 @@ module.exports = function sendmail(to, subject, body, template, sub, done) {
     html: body,
     smtpapi: new sendgrid.smtpapi({
       to: to.addresses,
-      toname: to.names,
       filters: {
         templates: {
           settings: {

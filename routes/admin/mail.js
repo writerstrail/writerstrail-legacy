@@ -27,7 +27,7 @@ router.post('/', function (req, res) {
     console.log(users);
     var to = { addresses: [], names: [] };
     _.forEach(users, function (user) {
-      to.addresses.push(user.email);
+      to.addresses.push(user.name + ' <' + user.email + '>');
       to.names.push(user.name);
     });
     sendmail(to, req.body.subject, req.body.body, req.body.template, {
