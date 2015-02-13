@@ -286,6 +286,22 @@ function tour($, hopscotch, steps) {
           content: "Here you can see information about the project you just created."
         },
         {
+          target: '#chart',
+          placement: 'bottom',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Progress',
+          content: 'Here is a chart showing your daily progress, though it should now be empty.'
+        },
+        {
+          target: '#select-range',
+          placement: 'top',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Range',
+          content: 'And you can select the date range this chart shows. It defaults to the last 30 days.'
+        },
+        {
           target: '#create-target',
           placement: 'right',
           yOffset: 'center',
@@ -423,7 +439,9 @@ function tour($, hopscotch, steps) {
     if (!steps) { return false; }
 
     for (var i = 0; i < steps.length; i++) {
-      if ((hopscotch.getState() === null && steps[i] === 0) || hopscotch.getState() === "wt-tour:" + steps[i]) {
+      var state = hopscotch.getState(),
+        pieces = state ? state.split(':') : [0, 0];
+      if ((hopscotch.getState() === null && steps[i] === 0) || (pieces[0] === "wt-tour" && pieces[1] === steps[i].toString())) {
         hopscotch.startTour(tourDef);
         return true;
       }
