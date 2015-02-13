@@ -112,7 +112,7 @@ router.post('/new', isverified, function (req, res, next) {
       name: req.body.name,
       start: start,
       end: end,
-      wordcount: req.body.wordcount,
+      wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
       notes: req.body.notes,
       ownerId: req.user.id,
       zoneOffset: req.body.zoneOffset || 0,
@@ -150,14 +150,16 @@ router.post('/new', isverified, function (req, res, next) {
           start: start ? req.body.start : '',
           end: end ? req.body.end : '',
           zoneOffset: req.body.zoneOffset || 0,
-          wordcount: req.body.wordcount,
+          wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
           notes: req.body.notes,
-          Projects: filterIds(projects, req.body.projects)
+          projects: filterIds(projects, req.body.projects)
         },
         validate: err.errors,
         errorMessage: [req.__('There are invalid values')],
         projects: chunk(projects, 3)
       });
+    }).catch(function (err) {
+      next(err);
     });
   });
 });
@@ -247,7 +249,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       savedTarget = target;
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
-      target.set('wordcount', req.body.wordcount);
+      target.set('wordcount', req.body.notarget ? null : (req.body.wordcount || 0));
       target.set('start', start);
       target.set('end', end);
       target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));
@@ -291,7 +293,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         target: {
           name: req.body.name,
           notes: req.body.notes,
-          wordcount: req.body.wordcount,
+          wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
           start: req.body.start,
           end: req.body.end,
           projects: filterIds(projects, req.body.projects)
@@ -300,6 +302,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         validate: err.errors,
         errorMessage: [req.__('There are invalid values')]
       });
+    }).catch(function (err) {
+      next(err);
     });
   });
 });
@@ -324,7 +328,8 @@ router.get('/:id', sendflash, function (req, res, next) {
              models.Sequelize.literal('`Target`.`start`'),
              models.Sequelize.literal('`Target`.`end`')
             ]
-          }
+          },
+          deletedAt: null
         },
         order: [['start', 'DESC']]
       }]
@@ -365,7 +370,8 @@ router.get('/:id/data.json', function (req, res) {
              models.Sequelize.literal('`Target`.`start`'),
              models.Sequelize.literal('`Target`.`end`')
             ]
-          }
+          },
+          deletedAt: null
         },
         order: [['start', 'DESC']]
       }]
@@ -423,12 +429,14 @@ router.get('/:id/data.json', function (req, res) {
     var result = {
       date: daysRange,
       wordcount: wordcount,
-      target: targetAcc,
-      daily: daily,
-      dailytarget: dailytarget,
-      ponddailytarget: pondDailyTarget,
-      remaining: remaining
+      daily: daily
     };
+    if (target.wordcount !== null) {
+      result.target = targetAcc;
+      result.dailytarget = dailytarget;
+      result.adjusteddailytarget = pondDailyTarget;
+      result.remaining = remaining;
+    }
     res.json(result).end();
   });
 });

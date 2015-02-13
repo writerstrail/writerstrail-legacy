@@ -22,6 +22,9 @@ html
       block preoutside
       
       .container
+        - if(isSendingFlash)
+          noscript
+            .alert.alert-danger You need Javascript to use this web application. Please enable it.
         - if(maintenanceMessage && maintenanceMessage.length > 0)
           .alert.alert-warning!= maintenanceMessage[0]
         - if(successMessage && successMessage.length > 0)

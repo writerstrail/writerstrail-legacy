@@ -37,7 +37,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     wordcount: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       validate: {
         min: {
           args: 1,

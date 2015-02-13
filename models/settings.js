@@ -42,6 +42,27 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true
+    },
+    defaultTimer: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 900,
+      validate: {
+        min: {
+          args: 1,
+          msg: 'The default timer must be set to at least one second.'
+        },
+        max: {
+          args: 3659,
+          msg: 'The default timer can\'t be longer than 60:59.'
+        }
+      }
+    },
+    performanceMetric: {
+      type: DataTypes.ENUM,
+      values: ['total', 'real'],
+      allowNull: false,
+      defaultValue: 'total'
     }
   }, {
     tableName: 'settings',

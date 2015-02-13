@@ -141,22 +141,11 @@ app.use(function (err, req, res, next) {
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
-
-  res.locals.csrf = req.csrfToken();
-  if (req.isAuthenticated()) {
-    res.locals.user = req.user;
-  }
-  res.locals.navlist = navlist(req);
-
-  res.locals._ = _;
-  res.locals.moment = moment;
+  console.log(err);
 
   res.render('error/500', {
-    title: req.__('Server error - 500'),
-    section: '505',
-    errorMessage: req.flash('error'),
-    warningMessage: req.flash('warning'),
-    successMessage: req.flash('success')
+    title: 'Server error - 500',
+    section: '505'
   });
 });
 

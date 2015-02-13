@@ -17,8 +17,8 @@ router.get('/example/dashboard', isactivated, sendflash, function (req, res) {
       totalWordcount: 123456,
       dailyAverage: 733.42,
       wpm: 36.32,
-      period: { period: 'night', start: '21:00:00', end: '04:59:59', performance: 43.98},
-      session: { minuteDuration: 20, direction: 'countdown', performance: 45.38 },
+      period: { period: 'night', start: '21:00:00', end: '04:59:59', performance: 43.98, realPerformance: 45.69},
+      session: { minuteDuration: 20, direction: 'countdown', performance: 45.38, realPerformance: 50.02 },
       largestProject: {
         id: 0,
         name: 'Moby Dick',
@@ -69,7 +69,7 @@ router.get('/example/targetdata.json', isactivated, function (req, res) {
     target: targetAcc,
     daily: daily,
     dailytarget: dailytarget,
-    ponddailytarget: pondDailyTarget,
+    adjusteddailytarget: pondDailyTarget,
     remaining: remaining
   };
   res.json(result).end();

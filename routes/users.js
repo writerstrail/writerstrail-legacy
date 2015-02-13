@@ -9,7 +9,8 @@ var router = require('express').Router(),
   tour = require('./users/tour'),
   isactivated = require('../utils/middlewares/isactivated'),
   models = require('../models'),
-  sendflash = require('../utils/middlewares/sendflash');
+  sendflash = require('../utils/middlewares/sendflash'),
+  durationformatter = require('../utils/functions/durationformatter');
 
 function durationFormatterAlt(dur) {
   var min = Math.floor(dur / 60),
@@ -37,7 +38,8 @@ router.use('/settings', isactivated, settings);
 router.use('/', tour);
 
 router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
-  var getProjects = function () {  
+  var performanceOrder = (req.user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance',
+    getProjects = function () {  
       return models.Project.findAll({
         where: {
           ownerId: req.user.id,
@@ -55,12 +57,29 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         raw: true
       });
     },
+    getTodaySessions = function () {
+      return models.Session.findOne({
+        where: models.Sequelize.literal('DATE(`Session`.`start` - INTERVAL `Session`.`zoneOffset` MINUTE) = CURDATE()'),
+        attributes: ['id'],
+        include: [{
+          model: models.Project,
+          as: 'project',
+          where: {
+            ownerId: req.user.id
+          },
+          required: true,
+          attributes: []
+        }]
+      }, {
+        raw: true
+      });
+    },
     getTarget = function () {
       return models.Target.findOne({
         where: [
           { ownerId: req.user.id },
           models.Sequelize.literal(
-              '`Target`.`end` >= DATE_SUB(NOW(), INTERVAL `Target`.`zoneOffset` MINUTE)')
+              '`Target`.`end` >= DATE_ADD(CURDATE(), INTERVAL `Target`.`zoneOffset` MINUTE)')
         ],
         order: [['end', 'ASC']]
       }, {
@@ -94,10 +113,10 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
       });
     },
     getPerformancePeriod = function () {
-      return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " LIMIT 1;");
+      return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;");
     },
     getPerformanceSession = function () {
-      return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " LIMIT 1;");
+      return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;");
     },
     getLargestProject = function () {
       return models.Project.findOne({
@@ -109,9 +128,12 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         raw: true
       });
     },
-    renderer = function (projects, target, totalWordcount, dailyCounts, perfPeriod, perfSession, largestProject) {
+    renderer = function (projects, todaySessions, target, totalWordcount, dailyCounts, perfPeriod, perfSession, largestProject) {
       var totalDailyCounts = _.reduce(dailyCounts, function (acc, d) { return acc + d.dailyCount; }, 0),
         totalDuration = _.reduce(dailyCounts, function (acc, d) { return acc + d.totalDuration; }, 0);
+      if (!todaySessions || todaySessions.length === 0) {
+        res.locals.errorMessage.push('You didn\'t write anything today. <a href="/timer" class="alert-link">Fix this and write now</a>.');
+      }
       res.render('user/dashboard', {
         title: 'Dashboard',
         section: 'dashboard',
@@ -128,8 +150,30 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         durationFormatter: durationFormatterAlt
       });
     };
-  promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
+  promise.join(getProjects(), getTodaySessions(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
   .catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/timer', isactivated, sendflash, function (req, res, next) {
+  models.Project.findAll({
+    where: {
+      ownerId: req.user.id
+    }
+  }).then(function (projects) {
+    var timer = durationformatter(req.user.settings.defaultTimer).split(':');
+    if (projects.length === 0) {
+      res.locals.errorMessage.push('No project to make a session for. <strong><a href="/projects/new" class="alert-link">Create a new one now</a></strong>.');
+    }
+    res.render('user/timer', {
+      title: 'Timer',
+      section: 'timer',
+      minutes: parseInt(timer[0], 10),
+      seconds: parseInt(timer[1], 10),
+      projects: projects
+    });
+  }).catch(function (err) {
     next(err);
   });
 });
