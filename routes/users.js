@@ -59,7 +59,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
     },
     getTodaySessions = function () {
       return models.Session.findOne({
-        where: models.Sequelize.literal('DATE(`Session`.`start` + INTERVAL `Session`.`zoneOffset` MINUTE) = CURDATE()'),
+        where: models.Sequelize.literal('DATE(`Session`.`start` - INTERVAL `Session`.`zoneOffset` MINUTE) = CURDATE()'),
         attributes: ['id'],
         include: [{
           model: models.Project,
@@ -79,7 +79,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         where: [
           { ownerId: req.user.id },
           models.Sequelize.literal(
-              '`Target`.`end` >= DATE_SUB(NOW(), INTERVAL `Target`.`zoneOffset` MINUTE)')
+              '`Target`.`end` >= DATE_ADD(CURDATE(), INTERVAL `Target`.`zoneOffset` MINUTE)')
         ],
         order: [['end', 'ASC']]
       }, {
