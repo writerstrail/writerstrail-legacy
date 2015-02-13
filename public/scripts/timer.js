@@ -182,6 +182,7 @@ function modalShow(duration, pausedDuration, start, countdown) {
   function durationFormatter(dur) {
     return ((dur.hour || 0) * 60 + dur.min) + ':' + digitFormatter(dur.sec);
   }
+  $('#zoneOffset').val(moment().utcOffset());
   $('#wordcount').val('');
   $('#summary').val('');
   $('#notes').val('');

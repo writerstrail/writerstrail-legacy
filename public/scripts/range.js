@@ -1,4 +1,4 @@
-function range($, moment, selector, format, chartSelector, link) {
+function chartRange($, moment, selector, format, chartSelector, link) {
   $(function (){
     var chart = $(chartSelector).data('chart');
     var start = moment().subtract('days', 29);

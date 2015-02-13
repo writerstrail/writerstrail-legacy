@@ -1,6 +1,16 @@
 # Writer's Trail change log
 
-## V0.2.5
+## v0.3.0
+
+* Added option to create a target without a wordcount.
+* Added chart to project page.
+* Show alert if the user didn't write today.
+* New page with timer and chronometer that fills session form.
+* Now performance can be measured by real time or session time (user's choice).
+* Fixed and issue with nearest target and timezone.
+* Fixed some minor design issues.
+
+## v0.2.5
 
 * Fixed error with password hashing upon sign up.
 * Locking up node modules versions.

@@ -124,8 +124,8 @@ append scripts
   script
     | var link = '/projects/#{project.id}/data.json';
     | linkChart(link, jQuery, c3, d3, 'daily', !{user.settings.showRemaining}, !{user.settings.showAdjusted});
-    | range(jQuery, moment, '#select-range', '#{user.settings.dateFormat}', '#chart', link);
+    | chartRange(jQuery, moment, '#select-range', '#{user.settings.dateFormat}', '#chart', link);
     
   if user.settings.showTour
     script
-      | tour(jQuery, hopscotch, range(24, 27));
+      | tour(jQuery, hopscotch, range(26, 30));
