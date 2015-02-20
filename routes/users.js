@@ -1,6 +1,5 @@
 var router = require('express').Router(),
   promise = require('sequelize').Promise,
-  _ = require('lodash'),
   genres = require('./users/genres'),
   projects = require('./users/projects'),
   targets = require('./users/targets'),
@@ -93,30 +92,36 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         }
       });
     },
-    getDailyCounts = function () {
+    getDailyAverage = function () {
+      return models.sequelize.query("SELECT AVG(`average` * `total`) AS `dailyAverage` FROM dailyAverages WHERE ownerId = " + req.user.id + " LIMIT 1;", null, { raw: true });
+    },
+    getWpm = function () {
       return models.Session.findAll({
         attributes: [
-          models.Sequelize.literal('SUM(`Session`.`wordcount`) AS `dailyCount`'),
-          models.Sequelize.literal('(SUM(`Session`.`duration`) / 60) AS `totalDuration`'),
-          models.Sequelize.literal('DATE(`Session`.`start`) AS `date`')
+          models.Sequelize.literal('AVG(`Session`.`wordcount` / (`Session`.`duration` / 60)) AS `wpm`'),
         ],
         include: [{
           model: models.Project,
           as: 'project',
           where: {
             ownerId: req.user.id
-          }
+          },
+          attributes: []
         }],
-        group: [models.Sequelize.literal('DATE(`Session`.`start`)')]
+        where: {
+          duration: {
+            ne: null
+          }
+        }
       }, {
         raw: true
       });
     },
     getPerformancePeriod = function () {
-      return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;");
+      return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;", null, { raw: true });
     },
     getPerformanceSession = function () {
-      return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;");
+      return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;", null, { raw: true });
     },
     getLargestProject = function () {
       return models.Project.findOne({
@@ -128,9 +133,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         raw: true
       });
     },
-    renderer = function (projects, todaySessions, target, totalWordcount, dailyCounts, perfPeriod, perfSession, largestProject) {
-      var totalDailyCounts = _.reduce(dailyCounts, function (acc, d) { return acc + d.dailyCount; }, 0),
-        totalDuration = _.reduce(dailyCounts, function (acc, d) { return acc + d.totalDuration; }, 0);
+    renderer = function (projects, todaySessions, target, totalWordcount, dailyAverage, wpm, perfPeriod, perfSession, largestProject) {
       if (!todaySessions || todaySessions.length === 0) {
         res.locals.errorMessage.push('You didn\'t write anything today. <a href="/timer" class="alert-link">Fix this and write now</a>.');
       }
@@ -141,8 +144,8 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         target: target,
         stats: {
           totalWordcount: totalWordcount,
-          dailyAverage: dailyCounts.length > 0 ? totalDailyCounts / dailyCounts.length : 0,
-          wpm: dailyCounts.length > 0 ? totalDailyCounts / totalDuration : 0,
+          dailyAverage: dailyAverage.length > 0 ? dailyAverage[0].dailyAverage : 0,
+          wpm: wpm.length > 0 ? wpm[0].wpm : 0,
           period: perfPeriod.length > 0 ? perfPeriod[0] : null,
           session: perfSession.length > 0 ? perfSession[0] : null,
           largestProject: largestProject
@@ -150,7 +153,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         durationFormatter: durationFormatterAlt
       });
     };
-  promise.join(getProjects(), getTodaySessions(), getTarget(), getTotalWordcount(), getDailyCounts(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
+  promise.join(getProjects(), getTodaySessions(), getTarget(), getTotalWordcount(), getDailyAverage(), getWpm(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), renderer)
   .catch(function (err) {
     next(err);
   });
