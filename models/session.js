@@ -30,7 +30,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     duration: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       comment: 'Duration of session in seconds',
       validate: {
         min: {
@@ -41,7 +41,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     pausedTime: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       defaultValue: 0,
       comment: 'Paused time of session in seconds'
     },
