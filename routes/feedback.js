@@ -46,14 +46,23 @@ router.get('/', sendflash, function (req, res, next) {
       ]
     };
     
-    if (_.includes(stati.concat(['All']), req.query.status) || !(req.query.status)) {
+    if (_.includes(stati.concat(['All']), req.query.status)) {
       if (req.query.status !== 'All') {
-        var statusSearch = req.query.status || 'New';
+        var statusSearch = req.query.status;
         filters.push('Only feedbacks with status "' + statusSearch + '"are shown.');
         config.where.push ({
           status: statusSearch
         });
       }
+    }
+    if (!req.query.status) {
+      filters.push('Only feedbacks not completed nor dismissed are shown.');
+      var orFilter = [];
+      
+      _.forEach(['New', 'Reviewing', 'On hold', 'Accepted', 'Developing'], function (s) {
+        orFilter.push({ status: s });
+      });
+      config.where.push(models.Sequelize.or.apply(global, orFilter));
     }
     if (req.query.deleted) {
       filters.push('Including deleted feedbacks.');
