@@ -30,7 +30,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     duration: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       comment: 'Duration of session in seconds',
       validate: {
         min: {
@@ -41,7 +41,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     pausedTime: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       defaultValue: 0,
       comment: 'Paused time of session in seconds'
     },
@@ -127,7 +127,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     validate: {
       pausedLessThanDuration: function () {
-        if (this.pausedTime >= this.duration) {
+        if (this.duration !== null && this.pausedTime >= this.duration) {
           throw new Error('The paused time must be less than the duration');
         }
       }

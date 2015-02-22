@@ -33,7 +33,9 @@ module.exports = function (req) {
           { 'href': '/admin', 'key': 'admin', 'label': 'Admin', 'title': 'Admin page' },
           { 'href': '/admin/users', 'key': 'adminusers', 'label': 'Users', 'title': 'User administration' },
           { 'key': 'divider' },
-          { 'href': '/admin/feedback', 'key': 'adminfeedback', 'label': 'Feedback', 'title': 'Feedback administration' }
+          { 'href': '/admin/feedback', 'key': 'adminfeedback', 'label': 'Feedback', 'title': 'Feedback administration' },
+          { 'key': 'divider' },
+          { 'href': '/admin/mail', 'key': 'adminmail', 'label': 'Mail', 'title': 'Send email to users' }
         ]
       });
     }

@@ -1,6 +1,6 @@
 # [Writer's Trail](http://writerstrail.georgemarques.com.br)
 
-v0.3.0
+v0.4.0
 
 [![Join the chat at https://gitter.im/flikore/writerstrail](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/flikore/writerstrail?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -12,7 +12,7 @@ Writers's Trail is a tool designed by a writer for writers so they can see chart
 
 ### Custom targets with progress charts
 
-![Target]('http://writerstrail.georgemarques.com.br/images/target.png')
+![Target](http://writerstrail.georgemarques.com.br/images/target.png)
 
 Now you can have that [NaNoWriMo](http://nanowrimo.org) feel any time in the year. Create targets for any amount of words and time you want.
 

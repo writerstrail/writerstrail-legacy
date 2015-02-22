@@ -1,4 +1,5 @@
 module.exports = function durationParser(dur) {
+  if (!dur) { return 0; }
   var parts = dur.split(':', 2),
     min = parts[0] ? parseInt(parts[0], 10) : 0,
     sec = parts[1] ? parseInt(parts[1], 10) : 0,
