@@ -5,6 +5,7 @@
 * Mandatory password for those who login with social network.
 * Allow sessions without duration.
 * Showing feedbacks in progress by default.
+* Tooltips on toolbars.
 
 ## v0.3.0
 
