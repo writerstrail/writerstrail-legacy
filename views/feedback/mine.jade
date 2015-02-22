@@ -7,6 +7,11 @@ block content
   p.text-muted For better usability, you can't edit the feedbacks. If anything, delete and create another or contact us at 
     strong writerstrail@georgemarques.com.br
     | .
+    
+  .btn-group
+    a.btn.btn-success(href='/feedback/new' title='New feedback')
+      span.fa.fa-lg.fa-plus
+      |  Add feedback/bug/suggestion
   
   if feedbacks.length === 0
     h3 You haven't provided any feedback.
