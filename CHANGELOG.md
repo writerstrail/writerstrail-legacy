@@ -1,5 +1,12 @@
 # Writer's Trail change log
 
+## v0.4.0
+
+* Mandatory password for those who login with social network.
+* Allow sessions without duration.
+* Showing feedbacks in progress by default.
+* Tooltips on toolbars.
+
 ## v0.3.0
 
 * Added option to create a target without a wordcount.
