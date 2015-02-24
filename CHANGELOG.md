@@ -1,5 +1,10 @@
 # Writer's Trail change log
 
+
+## v0.4.1
+
+* Fix a bug where dashboard did not render if there were no sessions.
+
 ## v0.4.0
 
 * Mandatory password for those who login with social network.
