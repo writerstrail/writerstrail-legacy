@@ -137,6 +137,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
       if (!todaySessions || todaySessions.length === 0) {
         res.locals.errorMessage.push('You didn\'t write anything today. <a href="/timer" class="alert-link">Fix this and write now</a>.');
       }
+      console.log('---daily', dailyAverage.length > 0 && dailyAverage[0].dailyAverage ? dailyAverage[0].dailyAverage : 0);
       res.render('user/dashboard', {
         title: 'Dashboard',
         section: 'dashboard',
@@ -144,8 +145,8 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         target: target,
         stats: {
           totalWordcount: totalWordcount,
-          dailyAverage: dailyAverage.length > 0 ? dailyAverage[0].dailyAverage : 0,
-          wpm: wpm.length > 0 ? wpm[0].wpm : 0,
+          dailyAverage: dailyAverage.length > 0 && dailyAverage[0].dailyAverage ? dailyAverage[0].dailyAverage : 0,
+          wpm: wpm.length > 0 && wpm[0].wpm ? wpm[0].wpm : 0,
           period: perfPeriod.length > 0 ? perfPeriod[0] : null,
           session: perfSession.length > 0 ? perfSession[0] : null,
           largestProject: largestProject
