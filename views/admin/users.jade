@@ -1,46 +1,36 @@
 extends ../layout
 
 block content
+    include ../mixins/paginate
     - var pageLink = '?page=' + page
     - var deletedLink = deleted ? '&deleted=true' : ''
-    - var orderByLink = orderBy ? '&orderby=' + orderBy : ''
-    - var orderDirLink = orderDir ? '&orderdir=' + orderDir : ''
-    - var orderByReal = orderBy || 'createdAt'
-    - var orderDirReal = orderDir || 'DESC'
-    - var orderDirClass = orderDir === 'ASC' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'
-    - var orderHref = function(id) {
-    -   if(id === orderByReal) {
-    -       return '&orderby=' + id + '&orderdir=' + (orderDirReal == 'ASC' ? 'DESC' : 'ASC')
+    - var orderbyLink = orderby ? '&orderby=' + orderby : ''
+    - var orderdirLink = orderdir ? '&orderdir=' + orderdir : ''
+    - var orderbyReal = orderby || 'createdAt'
+    - var orderdirReal = orderdir || 'DESC'
+    - var orderdirClass = orderdir === 'ASC' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'
+    - var orderDirHref = function(id) {
+    -   if(id === orderbyReal) {
+    -       return (orderdirReal == 'ASC' ? 'DESC' : 'ASC')
     -   } else {
-    -       return '&orderby=' + id + '&orderdir=ASC'
+    -       return 'ASC'
     -   }
     - }
 
     mixin orderLink(id, name)
-        a(href=pageLink + deletedLink + orderHref(id), title='Order by "' + name + '"', role='link')
-            != name + '&nbsp;'
-            - if(orderByReal === id)
-                span(class=orderDirClass)
+        a(href=paginate.href({ orderby: id, orderdir: orderDirHref(id) }), title='Order by "' + name + '"', role='link')
+            if block
+              block
+            else
+              != name
+            if(orderbyReal === id)
+                | &nbsp;
+                span(class=orderdirClass)
 
     h1 User administration
-    - if(totalPages > 1)
-        nav
-            ul.pagination
-                - if(page > 1)
-                    li
-                        a(href=('/admin/users?page=1' + deletedLink + orderByLink + orderDirLink) title='First') &#8810;
-                    li
-                        a(href=('/admin/users?page=' + (page - 1) + deletedLink + orderByLink + orderDirLink), title='Previous') &lt;
-                - for(var i = 1; i <= totalPages; i++)
-                    - var active = (page == i ? 'active' : '')
-                    li(class=active)
-                        a(href='/admin/users?page=' + i + deletedLink + orderByLink + orderDirLink)= i
-                - if(page < totalPages)
-                    li
-                        a(href=('/admin/users?page=' + (page + 1) + deletedLink + orderByLink + orderDirLink), title='Next') &gt;
-                    li
-                        a(href=('/admin/users?page=' + totalPages + deletedLink + orderByLink + orderDirLink), title='Last') &#8811;
-            
+
+    +paginate(paginate, totalPages, page)
+
     form(method='post' action='/admin/user/edit')
         input(type='hidden' name='_csrf' value=csrf)
         table#users.table.table-condensed.table-hover
@@ -57,9 +47,14 @@ block content
                     +orderLink('id', 'Id')
                 th
                     +orderLink('name', 'Name')
-                th Invitation
-                th(title=__('Activated')): span.fa.fa-check
-                th(title= __('Verified')): span.fa.fa-envelope-o
+                th
+                    +orderLink('invitationCode', 'Invitation')
+                th
+                    +orderLink('activated', 'Activated')
+                        span.fa.fa-check
+                th
+                    +orderLink('verified', 'Verified')
+                        span.fa.fa-envelope-o
                 th(title='Facebook'): span.fa.fa-facebook
                 th(title='Google'): span.fa.fa-google
                 th(title='LinkedIn'): span.fa.fa-linkedin
@@ -101,11 +96,11 @@ block content
         .well.well-sm
             .btn-toolbar(role='toolbar')
                 .btn-group(role='group')
-                    a.btn.btn-default(title=__('Refresh') href=pageLink + orderByLink + orderDirLink + deletedLink)
+                    a.btn.btn-default(title=__('Refresh') href=paginate.href)
                         span.fa.fa-2x.fa-refresh
                 .btn-group(role='group')
                     - var hideButtonTitle = deleted ? __('Hide deleted') : __('Show deleted')
-                    a.btn.btn-info(href=pageLink + orderByLink + orderDirLink + (deleted ? '' : '&deleted=true') role='button' title=hideButtonTitle)
+                    a.btn.btn-info(href=paginate.href({ deleted: deleted ? '' : 'true' }) role='button' title=hideButtonTitle)
                         - if(deleted)
                             span.fa.fa-2x.fa-toggle-on
                         - else
