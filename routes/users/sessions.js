@@ -103,18 +103,13 @@ router.post('/new', isverified, function (req, res, next) {
       notes: req.body.notes,
       wordcount: req.body.wordcount,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
-      duration: null,
-      pausedTime: null,
+      duration: durationparser(req.body.duration),
+      pausedTime: durationparser(req.body.duration) ? durationparser(req.body.pausedTime) || 0 : null,
       zoneOffset: req.body.zoneOffset || 0,
       isCountdown: !!req.body.isCountdown,
       projectId: project.id
     };
-    
-    if (!req.body.noduration) {
-      data.duration = durationparser(req.body.duration);
-      data.pausedTime =  durationparser(req.body.pausedTime);
-    }
-    
+
     return models.Session.create(data);
   }).then(function (session) {      
     req.flash('success', req.__('Session "%s" successfully created',
@@ -260,12 +255,13 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         session.set('notes', req.body.notes);
         session.set('wordcount', req.body.wordcount);
         session.set('start', start.toDate());
-        if (req.body.noduration) {
+        var duration = durationparser(req.body.duration);
+        if (duration) {
+          session.set('duration', duration);
+          session.set('pausedTime', durationparser(req.body.pausedTime) || 0);
+        } else {
           session.set('duration', null);
           session.set('pausedTime', null);
-        } else {
-          session.set('duration', durationparser(req.body.duration));
-          session.set('pausedTime', durationparser(req.body.pausedTime));
         }
         session.set('isCountdown', !!req.body.isCountdown);
         session.set('projectId', parseInt(req.body.project, 10));
