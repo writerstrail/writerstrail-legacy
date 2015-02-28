@@ -272,5 +272,6 @@
 	"Sorry, your account is still not activated. You can activate your account now if you have an invitation code for beta.": "Sorry, your account is still not activated. You can activate your account now if you have an invitation code for beta.",
 	"Send email to users": "Send email to users",
 	"Mail": "Mail",
-	"How much time you spent writing (leave blank if you don't know).": "How much time you spent writing (leave blank if you don't know)."
+	"How much time you spent writing (leave blank if you don't know).": "How much time you spent writing (leave blank if you don't know).",
+	"The amount of words you want to have by the end of the target period (may be blank).": "The amount of words you want to have by the end of the target period (may be blank)."
 }
