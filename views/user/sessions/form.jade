@@ -62,22 +62,15 @@ block content
       .col-sm-10
         .row
           .col-sm-12
-            input#duration.form-control(type='texts' name='duration' placeholder=__('Session duration') value=session.duration aria-describedby='durationhelp' disabled=session.duration === null)
-            span#durationhelp.help-block= __(durErr ? durErr.message : 'How much time you spent writing.')
-        .row
-          .col-sm-12
-            .checkbox
-              label
-                input#noduration(type='checkbox' name='noduration' checked=session.duration === null aria-describedby="nodurationhelp")
-                | I don't know
-            span#nodurationhelp.help-block Check if you didn't measure the session time.
+            input#duration.form-control(type='texts' name='duration' placeholder=__('Session duration') value=session.duration aria-describedby='durationhelp')
+            span#durationhelp.help-block= __(durErr ? durErr.message : 'How much time you spent writing (leave blank if you don\'t know).')
         
     - var pausedErr = _.find(validate, function(err) { return err.path === 'pausedTime' || err.path === 'pausedLessThanDuration'; }) || ''
 
     .form-group(class=(pausedErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
       .col-sm-10
-        input#pausedTime.form-control(type='texts' name='pausedTime' placeholder=__('Time not writing') value=session.pausedTime aria-describedby='pausedTimehelp' disabled=session.pausedTime === null)
+        input#pausedTime.form-control(type='texts' name='pausedTime' placeholder=__('Time not writing') value=session.pausedTime aria-describedby='pausedTimehelp')
         span#pausedTimehelp.help-block= __(pausedErr ? pausedErr.message : 'How much of the time from the field above was wasted not writing.')
         
     - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
@@ -114,10 +107,6 @@ append scripts
         defaultDate: moment()
       });
       $('#zoneOffset').val(moment().utcOffset());
-      $("#noduration").change(function (e) {
-        $("#duration").prop('disabled', $(this).prop('checked'));
-        $("#pausedTime").prop('disabled', $(this).prop('checked'));
-      });
     })
   if user.settings.showTour
     script
