@@ -106,6 +106,26 @@ block content
                 |   words per minute excluding time not writing).
           else
             li.list-group-item You don't have enough sessions to calculate the most productive session type.
+          if stats.highestWpm
+            li.list-group-item Your best performance was
+              if user.settings.performanceMetric === 'total'
+                strong= stats.highestWpm.performance
+              else
+                strong= stats.highestWpm.realPerformance
+              |  words per minute in a
+              a(href='/sessions/' + stats.highestWpm.sessionId title='Link to session')
+                strong!= '&#x2248;' +  stats.highestWpm.minuteDuration
+                |  minutes
+                strong= stats.highestWpm.direction
+                |  session
+              |  increasing
+              strong= stats.highestWpm.sessionWordcount
+              |  words for project
+              a(href='/projects/' + stats.highestWpm.projectId title='Project ' + stats.highestWpm.projectName)
+                = stats.highestWpm.projectName
+              | .
+          else
+            li.list-group-item You don't have enough sessions to calculate the highest wordcount per minute.
           if stats.largestProject
             li.list-group-item Your largest project is 
               strong= stats.largestProject.name
