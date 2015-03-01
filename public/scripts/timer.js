@@ -1,6 +1,17 @@
-var document, $, c3, ion, moment, settings;
+/*jshint unused:false*/
+/*global window */
+var document, $, c3, ion, moment, settings, isRunning = false;
 
 function setup(d, j, c, i, m, s, min, sec) {
+  window.addEventListener('beforeunload', function (e) {
+    if (isRunning) {
+      var msg = 'Your timer is still running.';
+      (e || window.event).returnValue = msg;
+      return msg;
+    }
+    return null;
+  });
+
   document = d;
   $ = j;
   c3 = c;
@@ -74,6 +85,7 @@ function timerSetup(min, sec) {
     });
     
     var onstop = function (){
+      isRunning = false;
       var self = $('#timerstart');
       clearInterval(self.data('interval'));
       self.html('Start').removeClass('btn-danger').addClass('btn-primary');
@@ -103,6 +115,7 @@ function timerSetup(min, sec) {
       if (self.data('running')) {
         onstop();
       } else {
+        isRunning = true;
         var minutes = Math.min(60, Math.max(0, parseInt($('#min').val(), 10)));
         var seconds = Math.min(59, Math.max(0, parseInt($('#sec').val(), 10)));
         self.data('start', moment());
@@ -264,6 +277,7 @@ function chronometerSetup() {
   });
   startButton.click(function () {
     if (startButton.data('running')) {
+      isRunning = false;
       clearInterval(startButton.data('interval'));
       startButton
         .data('running', false)
@@ -275,6 +289,7 @@ function chronometerSetup() {
         hour: hour, min: min, sec: sec
       }, durationSplitter(pauseButton.data('time')), startButton.data('start'), false);
     } else {
+      isRunning = true;
       startButton
         .data('running', true)
         .html('Stop')
