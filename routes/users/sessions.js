@@ -254,7 +254,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       }).then(function () {
         session.set('summary', req.body.summary);
         session.set('notes', req.body.notes);
-        session.set('wordcount', req.body.wordcount);
+        session.set('wordcount', wordcounter(req.body.text) || req.body.wordcount);
         session.set('start', start.toDate());
         var duration = durationparser(req.body.duration);
         if (duration) {
