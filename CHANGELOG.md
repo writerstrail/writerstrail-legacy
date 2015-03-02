@@ -1,5 +1,12 @@
 # Writer's Trail change log
 
+## v0.5.0
+
+* Fix Facebook language in home page.
+* Remove checkboxes from sessions/targets in favor of blank textboxes.
+* Show highest wpm in dashboard stats.
+* Show a message if the user tries to leave page while running a timer.
+* Add a text area for sessions so the system can count it.
 
 ## v0.4.1
 
