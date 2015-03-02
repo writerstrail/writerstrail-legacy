@@ -84,22 +84,28 @@ module.exports = function (sequelize, DataTypes) {
         Project.belongsTo(models.User, {
           as: 'owner',
           foreignKey: 'ownerId',
-          onDelete: 'CASCADE'
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Project.hasMany(models.Session, {
           as: 'sessions',
           foreignKey: 'projectId',
-          onDelete: 'CASCADE'
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Project.belongsToMany(models.Genre, {
           as: 'genres',
           through: 'projectsGenres',
-          foreignKey: 'projectId'
+          foreignKey: 'projectId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Project.belongsToMany(models.Target, {
           as: 'targets',
           through: 'projectsTargets',
-          foreignKey: 'projectId'
+          foreignKey: 'projectId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Project.beforeCreate(function (project) {
           project.currentWordcount = project.wordcount;

@@ -58,12 +58,16 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Target.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'ownerId'
+          foreignKey: 'ownerId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Target.belongsToMany(models.Project, {
           as: 'projects',
           through: 'projectsTargets',
-          foreignKey: 'targetId'
+          foreignKey: 'targetId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
       }
     },

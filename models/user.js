@@ -125,15 +125,21 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         User.hasMany(models.Genre, {
           as: 'genres',
-          foreignKey: 'ownerId'
+          foreignKey: 'ownerId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         User.hasMany(models.Project, {
           as: 'projects',
-          foreignKey: 'ownerId'
+          foreignKey: 'ownerId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         User.hasMany(models.Target, {
           as: 'targets',
-          foreignKey: 'ownerId'
+          foreignKey: 'ownerId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         User.hasOne(models.Settings, {
           as: 'settings',
@@ -143,15 +149,21 @@ module.exports = function (sequelize, DataTypes) {
         });
         User.hasMany(models.Token, {
           as: 'tokens',
-          foreignKey: 'ownerId'
+          foreignKey: 'ownerId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         User.hasMany(models.Feedback, {
           as: 'feedbacks',
-          foreignKey: 'authorId'
+          foreignKey: 'authorId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         User.hasMany(models.Vote, {
           as: 'votes',
-          foreignKey: 'voterId'
+          foreignKey: 'voterId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         
         var passHook = function (user, options, done) {

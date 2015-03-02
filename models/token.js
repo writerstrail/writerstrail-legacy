@@ -27,7 +27,9 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Token.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'ownerId'
+          foreignKey: 'ownerId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
       }
     }

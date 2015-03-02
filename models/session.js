@@ -78,7 +78,8 @@ module.exports = function (sequelize, DataTypes) {
         Session.belongsTo(models.Project, {
           as: 'project',
           foreignKey: 'projectId',
-          onDelete: 'CASCADE'
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         
         Session.afterCreate(function (session, options, done){

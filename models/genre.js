@@ -26,12 +26,16 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Genre.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'ownerId'
+          foreignKey: 'ownerId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Genre.belongsToMany(models.Project, {
           as: 'projects',
           through: 'projectsGenres',
-          foreignKey: 'genreId'
+          foreignKey: 'genreId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
       }
     },
