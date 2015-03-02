@@ -112,7 +112,7 @@ router.post('/new', isverified, function (req, res, next) {
       name: req.body.name,
       start: start,
       end: end,
-      wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
+      wordcount: req.body.wordcount || null,
       notes: req.body.notes,
       ownerId: req.user.id,
       zoneOffset: req.body.zoneOffset || 0,
@@ -249,7 +249,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       savedTarget = target;
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
-      target.set('wordcount', req.body.notarget ? null : (req.body.wordcount || 0));
+      target.set('wordcount', req.body.wordcount || null);
       target.set('start', start);
       target.set('end', end);
       target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));

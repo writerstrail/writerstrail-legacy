@@ -1,6 +1,6 @@
 # [Writer's Trail](http://writerstrail.georgemarques.com.br)
 
-v0.4.1
+v0.5.0
 
 [![Join the chat at https://gitter.im/flikore/writerstrail](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/flikore/writerstrail?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 

@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  querystring = require('querystring'),
   models = require('../models'),
   _ = require('lodash'),
   feedbackRoutes = require('./admin/feedback'),
@@ -32,33 +33,42 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/users', function (req, res, next) {
-  var regex = /^\d+$/;
-  var pageSize = 20;
-  var deleted = req.query.deleted === 'true';
-  var orderBy = req.query.orderby;
-  var orderDir = req.query.orderdir;
-  var currentPage = 1;
+  var regex = /^\d+$/,
+    filter = {
+      limit: req.query.limit,
+      deleted: req.query.deleted === 'true',
+      orderby: req.query.orderby,
+      orderdir: req.query.orderdir,
+      page: 1
+    };
   if (regex.test(req.query.page)) {
-    currentPage = Math.max(1, parseInt(req.query.page));
+    filter.page = Math.max(1, parseInt(req.query.page));
   }
   
-  if (!_.contains(['id', 'name', 'createdAt', 'lastAccess'], orderBy)) {
-    orderBy = 'createdAt';
+  if (!_.contains(['id', 'name', 'createdAt', 'lastAccess', 'invitationCode', 'verified', 'activated'], filter.orderby)) {
+    filter.orderby = 'createdAt';
   }
-  if (!_.contains(['ASC', 'DESC'], orderDir)) {
-    orderDir = 'DESC';
+  if (!_.contains(['ASC', 'DESC'], filter.orderdir)) {
+    filter.orderdir = 'DESC';
   }
   
   models.User.findAndCount({
-    limit: pageSize,
-    offset: (currentPage - 1) * pageSize,
-    order: [[orderBy, orderDir]],
-    paranoid: !deleted
+    limit: filter.limit,
+    offset: (filter.page - 1) * filter.limit,
+    order: [[filter.orderby, filter.orderdir]],
+    paranoid: !filter.deleted
   }).success(function (result) {
-    var totalPages = Math.ceil(result.count / pageSize);
+    var totalPages = Math.ceil(result.count / filter.limit);
     
-    if (currentPage > totalPages) {
-      return res.redirect('/admin/users?page=' + totalPages + (deleted ? '&deleted=true' : ''));
+    if (filter.page > totalPages) {
+      var newFilter = _.clone(filter),
+        query;
+
+      newFilter.page = totalPages;
+
+      query = querystring.stringify(newFilter);
+
+      return res.redirect('/admin/users?' + query);
     }
     
     res.locals.roleName = function (role) {
@@ -90,12 +100,12 @@ router.get('/users', function (req, res, next) {
     res.render('admin/users', {
       title: 'User administration',
       section: 'adminusers',
-      page: currentPage,
+      page: filter.page,
       totalPages: totalPages,
       users: result.rows,
-      deleted: deleted,
-      orderBy: orderBy === 'createdAt' ? null : orderBy,
-      orderDir: orderDir === 'DESC' ? null : orderDir,
+      deleted: filter.deleted,
+      orderby: filter.orderby === 'createdAt' ? null : filter.orderby,
+      orderdir: filter.orderdir === 'DESC' ? null : filter.orderdir,
       actlist: actlist,
       successMessage: req.flash('success'),
       errorMessage: req.flash('error'),

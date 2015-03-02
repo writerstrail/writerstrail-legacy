@@ -1,6 +1,6 @@
 {
   "name": "WritersTrail",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
@@ -42,5 +42,8 @@
     "sequelize": "^2.0.0-rc4",
     "serve-favicon": "~2.1.3",
     "stylus": "0.42.3"
+  },
+  "devDependencies": {
+    "jscs": "~1.11.3"
   }
 }

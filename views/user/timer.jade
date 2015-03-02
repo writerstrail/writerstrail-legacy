@@ -62,7 +62,7 @@ block content
                 span#clockaway 0:00:00
               
 block preoutside
-  .modal.fade#sessionForm(role='dialog' aria-labelledby='sessionFormTitle' aria-hidden='true'): .modal-dialog: .modal-content
+  .modal.fade#sessionForm(role='dialog' aria-labelledby='sessionFormTitle' aria-hidden='true'): .modal-dialog.modal-lg: .modal-content
     .modal-header
       button.close(type='button' data-dismiss='modal' aria-label='close')
         span(aria-hidden='true')
@@ -73,7 +73,11 @@ block preoutside
         input(type='hidden' name='_csrf' value=csrf)
         input#zoneOffset(type='hidden' name='zoneOffset' value='0')
         .form-group
-          label.col-sm-2(for='wordcount') Words written
+          label.col-sm-2(for='text') Paste your text so I can count it
+          .col-sm-10
+            textarea#text.form-control(name='text' placeholder='Text')
+        .form-group
+          label.col-sm-2(for='wordcount') Or just insert the amount here
           .col-sm-10
             input#wordcount.form-control.sessionForm(type='text' name='wordcount' placeholder='Words written')
         .form-group
