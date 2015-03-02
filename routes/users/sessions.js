@@ -5,7 +5,8 @@ var router = require('express').Router(),
   isverified = require('../../utils/middlewares/isverified'),
   promise = require('sequelize').Promise,
   durationparser = require('../../utils/functions/durationparser'),
-  durationformatter = require('../../utils/functions/durationformatter');
+  durationformatter = require('../../utils/functions/durationformatter'),
+  wordcounter = require('../../utils/functions/wordcounter');
 
 function durationformatterAlt(dur) {
   if (dur === null) { return 'No duration set'; }
@@ -101,7 +102,7 @@ router.post('/new', isverified, function (req, res, next) {
     var data = {
       summary: req.body.summary || null,
       notes: req.body.notes,
-      wordcount: req.body.wordcount,
+      wordcount: wordcounter(req.body.text) || req.body.wordcount,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
       duration: durationparser(req.body.duration),
       pausedTime: durationparser(req.body.duration) ? durationparser(req.body.pausedTime) || 0 : null,
