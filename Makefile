@@ -14,7 +14,7 @@ BIN = node
 test: $(MOCHA)
 	@NODE_ENV=$(NODE_ENV) \
 		$(BIN) $(FLAGS) \
-		$(MOCHA) \
+		$(MOCHA) $(MOCHA_FLAGS) \
 		--timeout $(TIMEOUT) \
 		--reporter $(REPORTER) \
 		test/globals.js $(TESTS) \

@@ -7,7 +7,7 @@ describe('User model', function () {
   
   before(function (done) {
     id = 1000;
-    now = new Date();
+    now = moment(now).set('milliseconds', 0).toDate();
     done();
   });
   
@@ -89,6 +89,7 @@ describe('User model', function () {
       });
     }).then(function (genres) {
       try {
+        
         expect(genres).to.be.an('array');
         expect(genres).to.have.length.of.at.least(1);
         done();
@@ -889,5 +890,5 @@ describe('User model', function () {
     });
   });
   
-  cleanJunk(junk, after);
+  //cleanJunk(junk, after);
 });
