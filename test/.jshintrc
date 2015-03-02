@@ -1,0 +1,25 @@
+{
+  "camelcase": true,
+  "undef": true,
+  "unused": true,
+  "esnext": true,
+  "expr": true,
+  "noyield": true,
+  "node": true,
+  "mocha": true,
+  "indent": 2,
+  "globals": {
+    "chai": false,
+    "sinon": false,
+    "expect": false,
+    "genString": false, 
+    "cleanJunk": false, 
+    "models": false, 
+    "_": false, 
+    "moment": false, 
+    "config": false, 
+    "api": false, 
+    "request": false, 
+    "agent": false
+  }
+}

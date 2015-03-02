@@ -70,10 +70,14 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Settings.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'id'
+          foreignKey: 'id',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
       }
-    }
+    },
+    charset: 'utf8',
+    collate: 'utf8_bin'
   });
   
   return Settings;

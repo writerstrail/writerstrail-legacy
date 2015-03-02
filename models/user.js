@@ -137,7 +137,9 @@ module.exports = function (sequelize, DataTypes) {
         });
         User.hasOne(models.Settings, {
           as: 'settings',
-          foreignKey: 'id'
+          foreignKey: 'id',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         User.hasMany(models.Token, {
           as: 'tokens',
