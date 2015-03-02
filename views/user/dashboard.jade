@@ -107,20 +107,20 @@ block content
           else
             li.list-group-item You don't have enough sessions to calculate the most productive session type.
           if stats.highestWpm
-            li.list-group-item Your best performance was
+            li.list-group-item Your best performance was&nbsp;
               if user.settings.performanceMetric === 'total'
-                strong= stats.highestWpm.performance
+                strong(title='Total performance (per settings)')= stats.highestWpm.performance.toFixed(2)
               else
-                strong= stats.highestWpm.realPerformance
-              |  words per minute in a
+                strong(title='Real performance (per settings)')= stats.highestWpm.realPerformance.toFixed(2)
+              |  words per minute in a&#x0020;
               a(href='/sessions/' + stats.highestWpm.sessionId title='Link to session')
                 strong!= '&#x2248;' +  stats.highestWpm.minuteDuration
-                |  minutes
+                |  minutes&#x0020;
                 strong= stats.highestWpm.direction
                 |  session
-              |  increasing
+              |  increasing&#x0020;
               strong= stats.highestWpm.sessionWordcount
-              |  words for project
+              |  words for project&#x0020;
               a(href='/projects/' + stats.highestWpm.projectId title='Project ' + stats.highestWpm.projectName)
                 = stats.highestWpm.projectName
               | .
