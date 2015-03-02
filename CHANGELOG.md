@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## v0.5.1
+
+* Fix formatting in highest wpm stat in dashboard.
+
 ## v0.5.0
 
 * Fix Facebook language in home page.
