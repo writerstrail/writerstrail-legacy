@@ -26,22 +26,20 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Genre.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'ownerId',
+          foreignKey:  { name: 'ownerId', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
         Genre.belongsToMany(models.Project, {
           as: 'projects',
           through: 'projectsGenres',
-          foreignKey: 'genreId',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
+          foreignKey: 'genreId'
         });
       }
     },
     indexes: [
       {
-        name: 'name',
+        name: 'genres_name',
         unique: true,
         fields: ['name', 'ownerId']
       }

@@ -44,7 +44,7 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: true
     },
     defaultTimer: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 900,
       validate: {
@@ -75,9 +75,7 @@ module.exports = function (sequelize, DataTypes) {
           onUpdate: 'CASCADE'
         });
       }
-    },
-    charset: 'utf8',
-    collate: 'utf8_bin'
+    }
   });
   
   return Settings;

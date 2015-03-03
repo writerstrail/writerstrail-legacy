@@ -15,18 +15,26 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: {
-          args: [1, 255],
+        notEmpty: {
           msg: 'You must provide a name'
+        }
+      },
+      set: function (value) {
+        if (value) {
+          this.setDataValue('name', value.toString().slice(0, 255));
         }
       }
     },
     email: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         isEmail: {
           args: true,
           msg: 'The email address must be valid'
+        },
+        notEmpty: {
+          msg: 'You must provide an email address'
         }
       }
     },
@@ -125,43 +133,31 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         User.hasMany(models.Genre, {
           as: 'genres',
-          foreignKey: 'ownerId',
+          foreignKey:  { name: 'ownerId', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
         User.hasMany(models.Project, {
           as: 'projects',
-          foreignKey: 'ownerId',
+          foreignKey:  { name: 'ownerId', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
         User.hasMany(models.Target, {
           as: 'targets',
-          foreignKey: 'ownerId',
+          foreignKey:  { name: 'ownerId', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
         User.hasOne(models.Settings, {
           as: 'settings',
-          foreignKey: 'id',
+          foreignKey:  { name: 'id', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
         User.hasMany(models.Token, {
           as: 'tokens',
-          foreignKey: 'ownerId',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
-        });
-        User.hasMany(models.Feedback, {
-          as: 'feedbacks',
-          foreignKey: 'authorId',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
-        });
-        User.hasMany(models.Vote, {
-          as: 'votes',
-          foreignKey: 'voterId',
+          foreignKey:  { name: 'ownerId', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
@@ -171,15 +167,42 @@ module.exports = function (sequelize, DataTypes) {
             return done(null, user);
           }
           bcrypt.hash(user.password, 10, function (err, hash) {
+            /*istanbul ignore if*/
             if (err) { return done(err); }
             user.password = hash;
             done(null, user);
           });
         };
         
-        User.beforeUpdate(passHook);
-        User.beforeCreate(passHook);
-        User.afterCreate(function (user, options, done) {
+        User.hook('beforeUpdate', passHook);
+        User.hook('beforeCreate', passHook);
+        User.hook('beforeBulkCreate', function (users, options, done) {
+          if (!options.individualHooks) {
+            _.forEach(users, function (user) {
+              if (user.password) {
+                user.password = bcrypt.hashSync(user.password, 10);
+              }
+            });
+          }
+          done(null, users);
+        });
+        User.hook('beforeBulkUpdate', function (options, done) {
+          if (!options.individualHooks) {
+            if (typeof options.attributes.password !== 'undefined') {
+              bcrypt.hash(options.attributes.password, 10, function (err, hash) {
+                /*istanbul ignore if*/
+                if (err) { return done(err); }
+                options.attributes.password = hash;
+                done(null);
+              });
+            } else {
+              done();
+            }
+          } else {
+            done();
+          }
+        });
+        User.hook('afterCreate', function (user, options, done) {
           var userGenres = _.map(genres, function (g) { 
             g.ownerId = user.id;
             return g;
@@ -209,15 +232,14 @@ module.exports = function (sequelize, DataTypes) {
     paranoid: true,
     indexes: [
       {
-        name: 'name',
+        name: 'users_name',
         unique: false,
         fields: ['name']
       },
       {
-        name: 'email',
+        name: 'users_email',
         unique: false,
         fields: ['email']
-
       }
     ]
   });

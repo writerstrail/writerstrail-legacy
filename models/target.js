@@ -2,6 +2,15 @@
 
 var moment = require('moment');
 
+function zeroTime(date) {
+  return !date ? null : moment(date).set({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  }).toDate();
+}
+
 module.exports = function (sequelize, DataTypes) {
   var Target = sequelize.define("Target", {
     id: {
@@ -24,11 +33,17 @@ module.exports = function (sequelize, DataTypes) {
     },
     start: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      set: function (value) {
+        this.setDataValue('start', zeroTime(value));
+      }
     },
     end: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      set: function (value) {
+        this.setDataValue('end', zeroTime(value));
+      }
     },
     zoneOffset: {
       type: DataTypes.INTEGER,
@@ -36,7 +51,7 @@ module.exports = function (sequelize, DataTypes) {
       comment: 'User timezone offset in minutes'
     },
     wordcount: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: true,
       validate: {
         min: {
@@ -58,14 +73,14 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Target.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'ownerId',
+          foreignKey: { name: 'ownerId', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
         Target.belongsToMany(models.Project, {
           as: 'projects',
           through: 'projectsTargets',
-          foreignKey: 'targetId',
+          foreignKey: { name: 'TargetId', allowNull: false },
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
@@ -73,14 +88,14 @@ module.exports = function (sequelize, DataTypes) {
     },
     indexes: [
       {
-        name: 'name',
+        name: 'targets_name',
         unique: true,
         fields: ['name', 'ownerId']
       }
     ],
     validate: {
       startBeforeEnd: function () {
-        if (!(moment.utc(this.start).isBefore(this.end))) {
+        if (this.start && this.end && !(moment.utc(this.start).isBefore(this.end))) {
           throw new Error('The start date must be before the end date and both must be valid');
         }
       }

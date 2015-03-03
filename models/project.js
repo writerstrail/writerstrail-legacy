@@ -21,7 +21,7 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.TEXT
     },
     wordcount: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
       validate: {
@@ -45,7 +45,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
     targetwc: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
       validate: {
@@ -73,9 +73,12 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: false
     },
     currentWordcount: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: {
+        min: 0
+      }
     }
   }, {
     tableName: 'projects',
@@ -83,9 +86,8 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Project.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'ownerId',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
+          foreignKey: { name: 'ownerId', allowNull: false },
+          onDelete: 'CASCADE'
         });
         Project.hasMany(models.Session, {
           as: 'sessions',
@@ -96,21 +98,26 @@ module.exports = function (sequelize, DataTypes) {
         Project.belongsToMany(models.Genre, {
           as: 'genres',
           through: 'projectsGenres',
-          foreignKey: 'projectId',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
+          foreignKey: 'projectId'
         });
         Project.belongsToMany(models.Target, {
           as: 'targets',
           through: 'projectsTargets',
-          foreignKey: 'projectId',
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE'
+          foreignKey: 'ProjectId'
         });
-        Project.beforeCreate(function (project) {
+        
+        Project.hook('beforeCreate', function (project) {
           project.currentWordcount = project.wordcount;
         });
-        Project.beforeDestroy(function (project, options, done) {
+        
+        Project.hook('beforeBulkCreate', function (projects, options, done) {
+          projects.forEach(function (p) {
+            p.currentWordcount = p.wordcount;
+          });
+          done();
+        });
+        
+        Project.hook('beforeDestroy', function (project, options, done) {
           project.setTargets([], {}, {}).then(function () {
             return models.Session.destroy({
               where: {
@@ -148,7 +155,18 @@ module.exports = function (sequelize, DataTypes) {
         }
         next();
       } 
-    }
+    },
+    indexes: [
+      {
+        name: 'projects_name',
+        unique: false,
+        fields: ['name', 'ownerId']
+      },
+      {
+        name: 'projects_deletedAt',
+        fields: ['deletedAt']
+      }
+    ]
   });
 
   return Project;
