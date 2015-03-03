@@ -764,7 +764,7 @@ describe('User model', function () {
     });
   });
   
-  //projects, genres, targets, settings, tokens, oauth models
+  //projects, genres, targets, settings, tokens
   it('should associate with related models', function (done) {
     var hasMany = sinon.stub(User, 'hasMany'),
       hasOne = sinon.stub(User, 'hasOne'),
@@ -779,15 +779,11 @@ describe('User model', function () {
     try {
       expect(hasOne).to.have.been.calledOnce;
       expect(hasOne).to.have.been.calledWith(models.Settings);
-      expect(hasMany).to.have.been.callCount(8);
+      expect(hasMany).to.have.been.callCount(4);
       expect(hasMany).to.have.been.calledWith(models.Project);
       expect(hasMany).to.have.been.calledWith(models.Genre);
       expect(hasMany).to.have.been.calledWith(models.Target);
       expect(hasMany).to.have.been.calledWith(models.Token);
-      expect(hasMany).to.have.been.calledWith(models.OauthClient);
-      expect(hasMany).to.have.been.calledWith(models.OauthAccessToken);
-      expect(hasMany).to.have.been.calledWith(models.OauthAuthCode);
-      expect(hasMany).to.have.been.calledWith(models.OauthRefreshToken);
       done();
     } catch (e) {
       done(e);
@@ -890,5 +886,5 @@ describe('User model', function () {
     });
   });
   
-  //cleanJunk(junk, after);
+  cleanJunk(junk, after);
 });
