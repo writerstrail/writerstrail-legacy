@@ -1,0 +1,6 @@
+node_modules
+coverage
+validate-commit-message.js
+.*
+bower_components
+public/vendor
