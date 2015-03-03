@@ -1,51 +1,71 @@
  var App = models.App;
 
 describe('App model', function () {
-  var junk = [];
+  var id, junk = [];
   
+  before(function () {
+    id = 1000;
+  });
+
   it('should allow "off" maintenance status', function (done) {
+    id += 1;
+
     App.create({
-      id: 1000,
+      id: id,
       maintenance: 'off'
     }).then(function () {
-      return App.findOne(1000);
+      return App.findOne(id);
     }).then(function (app) {
       junk.push(app);
-      expect(app).to.exist;
-      expect(app).to.have.property('maintenance', 'off');
-      done();
-    }).catch(function (err) {
-      done(err);
-    });
+      try {
+        expect(app).to.exist;
+        expect(app).to.have.property('maintenance', 'off');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    }).catch(done);
   });
   
   it('should allow "soft" maintenance status', function (done) {
+    id += 1;
+
     App.create({
-      id: 1001,
+      id: id,
       maintenance: 'soft'
     }).then(function () {
-      return App.findOne(1001);
+      return App.findOne(id);
     }).then(function (app) {
       junk.push(app);
-      expect(app).to.exist;
-      expect(app).to.have.property('maintenance', 'soft');
-      done();
+      try {
+        expect(app).to.exist;
+        expect(app).to.have.property('maintenance', 'soft');
+        done();
+      } catch (e) {
+        done(e);
+      }
     }).catch(function (err) {
       done(err);
     });
   });
   
   it('should allow "hard" maintenance status', function (done) {
+    id += 1;
+
     App.create({
-      id: 1002,
+      id: id,
       maintenance: 'hard'
     }).then(function () {
-      return App.findOne(1002);
+      return App.findOne(id);
     }).then(function (app) {
       junk.push(app);
-      expect(app).to.exist;
-      expect(app).to.have.property('maintenance', 'hard');
-      done();
+      try {
+        expect(app).to.exist;
+        expect(app).to.have.property('maintenance', 'hard');
+        done();
+      } catch (e) {
+        done(e);
+      }
     }).catch(function (err) {
       done(err);
     });
@@ -53,41 +73,53 @@ describe('App model', function () {
   
   it('should not allow "different" maintenance status', function (done) {
     var err, app;
+    id += 1;
+
     App.create({
-      id: 1003,
+      id: id,
       maintenance: 'different'
     }).then(function () {
-      return App.findOne(1003);
+      return App.findOne(id);
     }).then(function (a) {
       app = a;
       junk.push(app);
     }).catch(function (e) {
       err = e;
     }).finally(function () {
-      expect(app).to.not.exist;
-      expect(err).to.exist;
-      expect(err).to.have.property('message', 'Validation error');
-      done();
+      try {
+        expect(app).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
   
   it('should not allow `null` maintenance status', function (done) {
     var err, app;
+    id += 1;
+
     App.create({
-      id: 1004,
+      id: id,
       maintenance: null
     }).then(function () {
-      return App.findOne(1004);
+      return App.findOne(id);
     }).then(function (a) {
       app = a;
       junk.push(app);
     }).catch(function (e) {
       err = e;
     }).finally(function () {
-      expect(app).to.not.exist;
-      expect(err).to.exist;
-      expect(err).to.have.property('message', 'Validation error');
-      done();
+      try {
+        expect(app).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
   
