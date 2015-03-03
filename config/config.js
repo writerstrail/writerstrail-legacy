@@ -36,34 +36,35 @@ module.exports =
   "test": {
     "username": "nwt",
     "password": "123123",
-    "database": "nwt",
+    "database": "nwttest",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
+    "logging": null,
     "facebook": {
-      "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
-      "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
+      "appid": "dummy",
+      "secret": "dummy",
+      "callback": "dummy",
     },
     "google": {
-      "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
-      "secret": process.env.WRITERSTRAIL_GOOGLE_SECRET,
-      "callback": process.env.WRITERSTRAIL_GOOGLE_CALLBACK
+      "appid": "dummy",
+      "secret": "dummy",
+      "callback": "dummy"
     },
     "linkedin": {
-      "appid": process.env.WRITERSTRAIL_LINKEDIN_ID,
-      "secret": process.env.WRITERSTRAIL_LINKEDIN_SECRET,
-      "callback": process.env.WRITERSTRAIL_LINKEDIN_CALLBACK
+      "appid": "dummy",
+      "secret": "dummy",
+      "callback": "dummy"
     },
     "wordpress": {
-      "appid": process.env.WRITERSTRAIL_WORDPRESS_ID,
-      "secret": process.env.WRITERSTRAIL_WORDPRESS_SECRET,
-      "callback": process.env.WRITERSTRAIL_WORDPRESS_CALLBACK
+      "appid": "dummy",
+      "secret": "dummy",
+      "callback": "dummy"
     },
     "sendgrid": {
-      "user": process.env.WRITERSTRAIL_SENDGRID_USER,
-      "key": process.env.WRITERSTRAIL_SENDGRID_KEY
+      "user": "dummy",
+      "key": "dummy"
     }
   },
   "production": {

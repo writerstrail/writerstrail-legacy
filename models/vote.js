@@ -25,11 +25,15 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Vote.belongsTo(models.User, {
           as: 'voter',
-          foreignKey: 'voterId'
+          foreignKey: 'voterId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Vote.belongsTo(models.Feedback, {
           as: 'feedback',
-          foreignKey: 'feedbackId'
+          foreignKey: 'feedbackId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
       }
     },
