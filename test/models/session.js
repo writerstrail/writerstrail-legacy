@@ -1,9 +1,10 @@
 var Session = models.Session;
 
 describe('Session model', function () {
-  var junk = [];
+  var now, junk = [];
   
   before(function createTestProjects(done) {
+    now = moment().set('milliseconds', 0).toDate();
     models.Project.bulkCreate([
       {
         id: 9000,
@@ -49,7 +50,6 @@ describe('Session model', function () {
   });
   
   it('should save correctly a session', function (done) {
-    var now = new Date();
     Session.create({
       id: 1000,
       summary: 'test summary',
@@ -83,7 +83,6 @@ describe('Session model', function () {
   });
   
   it('should allow null summary', function (done) {
-    var now = new Date();
     Session.create({
       id: 1001,
       summary: null,
@@ -111,7 +110,6 @@ describe('Session model', function () {
   
   it('should not allow empty summary', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1005,
       summary: '',
@@ -145,7 +143,6 @@ describe('Session model', function () {
   
   it('should not allow summary over 255 characters', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1006,
       summary: genString(256),
@@ -211,7 +208,6 @@ describe('Session model', function () {
   });
   
   it('should allow null duration', function (done) {
-    var now = new Date();
     Session.create({
       id: 1002,
       summary: 'test summary',
@@ -239,7 +235,6 @@ describe('Session model', function () {
   
   it('should not allow zero duration', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1008,
       summary: 'test summary',
@@ -273,7 +268,6 @@ describe('Session model', function () {
   
   it('should not allow negative duration', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1008,
       summary: 'test summary',
@@ -307,7 +301,6 @@ describe('Session model', function () {
   
   it('should not allow duration over 23:59', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1009,
       summary: 'test summary',
@@ -340,7 +333,6 @@ describe('Session model', function () {
   });
   
   it('should allow zero paused time', function (done) {
-    var now = new Date();
     Session.create({
       id: 1003,
       summary: 'test summary',
@@ -368,7 +360,6 @@ describe('Session model', function () {
   
   it('should not allow null paused time', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1010,
       summary: 'test summary',
@@ -402,7 +393,6 @@ describe('Session model', function () {
   
   it('should not allow negative paused time', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1011,
       summary: 'test summary',
@@ -436,7 +426,6 @@ describe('Session model', function () {
   
   it('should not allow paused time greater than or equal to duration', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1012,
       summary: 'test summary',
@@ -470,7 +459,6 @@ describe('Session model', function () {
   
   it('should not allow null wordcount', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1013,
       summary: 'test summary',
@@ -504,7 +492,6 @@ describe('Session model', function () {
   
   it('should not allow zero wordcount', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1014,
       summary: 'test summary',
@@ -538,7 +525,6 @@ describe('Session model', function () {
   
   it('should not allow negative wordcount', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1015,
       summary: 'test summary',
@@ -572,7 +558,6 @@ describe('Session model', function () {
   
   it('should not allow wordcount over a billion', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1016,
       summary: 'test summary',
@@ -605,7 +590,6 @@ describe('Session model', function () {
   });
   
   it('should allow null notes', function (done) {
-    var now = new Date();
     Session.create({
       id: 1004,
       summary: 'test summary',
@@ -633,7 +617,6 @@ describe('Session model', function () {
   
   it('should not allow null project', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1017,
       summary: 'test summary',
@@ -667,7 +650,6 @@ describe('Session model', function () {
   
   it('should not allow no project', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1018,
       summary: 'test summary',
@@ -717,7 +699,6 @@ describe('Session model', function () {
   });
   
   it('should increment the project wordcount on creation', function (done) {
-    var now = new Date();
     var starting = 0;
     
     models.Project.findOne(9001).then(function (p) {
@@ -756,7 +737,6 @@ describe('Session model', function () {
   });
   
   it('should increment the project wordcount on bulk creation', function (done) {
-    var now = new Date();
     var starting = 0;
     
     models.Project.findOne(9001).then(function (p) {
@@ -795,7 +775,6 @@ describe('Session model', function () {
   });
   
   it('should increment the project wordcount on bulk creation with individual hooks', function (done) {
-    var now = new Date();
     var starting = 0;
     
     models.Project.findOne(9001).then(function (p) {
@@ -834,7 +813,6 @@ describe('Session model', function () {
   });
   
   it('should increment/decrement the projects\' wordcount on update', function (done) {
-    var now = new Date();
     var starting1 = 0, starting2 = 0;
     
     models.Project.findOne(9001).then(function (p1) {
@@ -887,7 +865,6 @@ describe('Session model', function () {
   // Maybe go to database triggers
   it('should not allow bulk update', function (done) {
     var session, err;
-    var now = new Date();
     Session.create({
       id: 1023,
       summary: 'Summary',
@@ -928,7 +905,6 @@ describe('Session model', function () {
   });
   
   it('should decrement the project wordcount on destroy', function (done) {
-    var now = new Date();
     var starting = 0;
     
     models.Project.findOne(9001).then(function (p) {
@@ -963,7 +939,6 @@ describe('Session model', function () {
   });
   
   it('should decrement the project wordcount on bulk destroy', function (done) {
-    var now = new Date();
     var starting = 0;
     
     models.Project.findOne(9001).then(function (p) {
@@ -1002,7 +977,6 @@ describe('Session model', function () {
   });
   
   it('should decrement the project wordcount on bulk destroy with individual hooks', function (done) {
-    var now = new Date();
     var starting = 0;
     
     models.Project.findOne(9001).then(function (p) {

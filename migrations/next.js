@@ -8,6 +8,12 @@ module.exports = {
         indicesType: 'UNIQUE'
       });
     }).then(function () {
+      return migration.changeColumn('projects', 'currentWordcount', {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      });
+    }).then(function () {
       done();
     });
   },
@@ -16,6 +22,12 @@ module.exports = {
     migration.removeIndex('invitations', 'code').then(function () {
       return migration.addIndex('invitations', ['code'], {
         indexName: 'code'
+      });
+    }).then(function () {
+      return migration.changeColumn('projects', 'currentWordcount', {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0
       });
     }).then(function () {
       done();
