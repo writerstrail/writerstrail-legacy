@@ -1,3 +1,4 @@
+/*jshint unused:false*/
 function chartRange($, moment, selector, format, chartSelector, link) {
   $(function (){
     var chart = $(chartSelector).data('chart');
