@@ -5,7 +5,7 @@ describe('Token model', function () {
   var now;
   
   before(function (done) {
-    now = new Date();
+    now = moment().set('milliseconds', 0).toDate();
     done();
   });
   
@@ -83,7 +83,7 @@ describe('Token model', function () {
       try {
         expect(token2).to.not.exist;
         expect(err).to.exist;
-        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'token');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'PRIMARY');
         expect(err).to.have.property('errors').that.contain.an.item.with.property('type', 'unique violation');
         done();
       } catch (e) {
@@ -162,7 +162,7 @@ describe('Token model', function () {
       try {
         expect(token2).to.not.exist;
         expect(err).to.exist;
-        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'token');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'PRIMARY');
         expect(err).to.have.property('errors').that.contain.an.item.with.property('type', 'unique violation');
         done();
       } catch (e) {
