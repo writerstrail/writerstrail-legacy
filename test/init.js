@@ -6,7 +6,11 @@ before(function buildDb(done) {
   console.log('Building database...');
   exec('make migrate NODE_ENV=' + process.env.NODE_ENV, function () {
     console.log('Database built.');
-    done();
+    console.log('Creating users...');
+    models.User.bulkCreate(require('../utils/data/test/users')).then(function () {
+      console.log('Users created.');
+      done();
+    });
   });
 });
 
