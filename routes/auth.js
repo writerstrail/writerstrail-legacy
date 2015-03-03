@@ -361,7 +361,7 @@ module.exports = function (passport) {
     }
     req.session.referrer = '/password/create';
     res.redirect('/signin');
-  }
+  };
   
   router.get('/password/create', createAuth, sendflash, function (req, res) {
     var validate = req.flash('valerror');
