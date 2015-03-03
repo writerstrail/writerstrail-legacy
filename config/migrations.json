@@ -3,7 +3,7 @@
     "use_env_variable": "WRITERSTRAIL_DATABASE_URL"
   },
   "test": {
-    "use_env_variable": "WRITERSTRAIL_DATABASE_URL"
+    "use_env_variable": "WRITERSTRAIL_TEST_DATABASE_URL"
   },
   "production": {
     "use_env_variable": "WRITERSTRAIL_DATABASE_URL"

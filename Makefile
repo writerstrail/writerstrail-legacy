@@ -1,6 +1,9 @@
 MOCHA = node_modules/.bin/_mocha
 ISTANBUL = node_modules/.bin/istanbul
 ISTANBUL_COMMAND = cover
+SEQUELIZE = node_modules/.bin/sequelize
+SEQUELIZE_UP = db:migrate
+SEQUELIZE_DOWN = db:migrate:undo
 JSHINT = node_modules/.bin/jshint
 JSHINT_REPORTER = unix
 JSCS = node_modules/.bin/jscs
@@ -56,4 +59,19 @@ jscs:
 
 lint: jshint jscs
 
-.PHONY: test test-cov test-travis jshint jscs lint
+migrate:
+	@NODE_ENV=$(NODE_ENV) \
+		$(BIN) $(FLAGS) \
+		$(SEQUELIZE) $(SEQUELIZE_UP) \
+		--env $(NODE_ENV)
+
+undomigrate:
+	@for file in $(shell ls migrations); \
+		do \
+			NODE_ENV=$(NODE_ENV) \
+			$(BIN) $(FLAGS) \
+			$(SEQUELIZE) $(SEQUELIZE_DOWN) \
+			--env $(NODE_ENV); \
+		done
+
+.PHONY: test test-cov test-travis jshint jscs lint migrate undomigrate

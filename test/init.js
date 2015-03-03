@@ -1,19 +1,12 @@
-process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = process.env.NODE_ENV || 'test';
+var exec = require('child_process').exec;
 
 before(function buildDb(done) {
-  models.sequelize.sync({ force: true }).then(function () { 
-    return models.User.bulkCreate(require('../utils/data/test/users'));
-  }).then(function () {
-    done();
-  }).catch(function (err) {
-    done(err);
-  });
+  this.timeout(20000);
+  exec('make migrate NODE_ENV=' + process.env.NODE_ENV, done);
 });
 
-/*after(function dropDb(done) {
-  models.sequelize.drop().then(function () {
-    done();
-  }).catch(function (err) {
-    done(err);
-  });
-});*/
+after(function dropDb(done) {
+  this.timeout(20000);
+  exec('make undomigrate NODE_ENV=' + process.env.NODE_ENV, done);
+});
