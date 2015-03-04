@@ -134,6 +134,8 @@ if (app.get('env') === 'development') {
 app.use(function (err, req, res, next) {
   if (404 !== err.status) { return next(err); }
 
+  res.status(404);
+
   res.render('error/404', {
     title: req.__('Page not found - 404'),
     section: '404'
