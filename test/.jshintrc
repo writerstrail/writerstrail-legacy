@@ -19,6 +19,6 @@
     "moment": false,
     "server": false,
     "request": false, 
-    "agent": false
+    "app": false
   }
 }

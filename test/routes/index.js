@@ -1,4 +1,10 @@
 describe('Index routes', function () {
+  var agent;
+
+  beforeEach(function () {
+    agent = request(app);
+  });
+
   it('should get the home page', function (done) {
     agent
     .get('/')

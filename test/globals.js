@@ -8,7 +8,6 @@ global._ = require('lodash');
 global.moment = require('moment');
 global.app = require('../app');
 global.request = require('supertest');
-global.agent = global.request(global.app);
 
 if (typeof Promise === 'undefined') {
   global.Promise = require('bluebird');
