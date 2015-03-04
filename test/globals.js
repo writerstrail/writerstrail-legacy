@@ -6,6 +6,8 @@ global.cleanJunk = require('../utils/functions/test/clean-junk');
 global.models = require('../models');
 global._ = require('lodash');
 global.moment = require('moment');
+global.app = require('../app');
+global.request = require('supertest');
 
 if (typeof Promise === 'undefined') {
   global.Promise = require('bluebird');

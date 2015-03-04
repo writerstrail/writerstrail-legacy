@@ -53,7 +53,9 @@ require('./config/passport')(passport);
 
 // uncomment after placing your favicon in /public
 app.use(favicon(__dirname + '/public/favicon.png'));
-app.use(logger('dev'));
+if (app.get('env') !== 'test') {
+  app.use(logger('dev'));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -131,6 +133,8 @@ if (app.get('env') === 'development') {
 // 404 error handler
 app.use(function (err, req, res, next) {
   if (404 !== err.status) { return next(err); }
+
+  res.status(404);
 
   res.render('error/404', {
     title: req.__('Page not found - 404'),

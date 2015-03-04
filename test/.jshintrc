@@ -16,10 +16,9 @@
     "cleanJunk": false, 
     "models": false, 
     "_": false, 
-    "moment": false, 
-    "config": false, 
-    "api": false, 
+    "moment": false,
+    "server": false,
     "request": false, 
-    "agent": false
+    "app": false
   }
 }
