@@ -185,4 +185,11 @@ router.get('/timer', isactivated, sendflash, function (req, res, next) {
   });
 });
 
+router.get('/stats', isactivated, sendflash, function (req, res) {
+  res.render('user/stats', {
+    title: 'Statistics',
+    section: 'stats'
+  });
+});
+
 module.exports = router;
