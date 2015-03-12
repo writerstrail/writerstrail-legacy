@@ -8,7 +8,9 @@ describe('Project model', function () {
       name: 'First test',
       description: 'Description',
       wordcount: 500,
+      charcount: 4000,
       targetwc: 1500,
+      targetcc: 10000,
       active: true,
       finished: false,
       ownerId: 1
@@ -19,7 +21,9 @@ describe('Project model', function () {
         expect(project).to.have.property('name', 'First test');
         expect(project).to.have.property('description', 'Description');
         expect(project).to.have.property('wordcount', 500);
+        expect(project).to.have.property('charcount', 4000);
         expect(project).to.have.property('targetwc', 1500);
+        expect(project).to.have.property('targetcc', 10000);
         expect(project).to.have.property('active', true);
         expect(project).to.have.property('finished', false);
         done();
@@ -144,6 +148,94 @@ describe('Project model', function () {
     });
   });
   
+  it('should set the current charcount as the starting charcount upon creation', function (done) {
+    Project.create({
+      name: 'Test starting -> current charcount',
+      description: 'Description',
+      wordcount: 500,
+      charcount: 4000,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('currentCharcount', 4000);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
+  it('should set the current charcount as the starting charcount upon bulk creation', function (done) {
+    Project.bulkCreate([{
+      name: 'Test starting -> current charcount on bulk create',
+      description: 'Description',
+      wordcount: 500,
+      charcount: 4000,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }], {
+      individualHooks: false
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          name: 'Test starting -> current charcount on bulk create'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('currentCharcount', 4000);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
+  it('should set the current charcount as the starting charcount upon bulk creation with individual hooks', function (done) {
+    Project.bulkCreate([{
+      name: 'Test starting -> current charcount on bulk create with individual hooks',
+      description: 'Description',
+      wordcount: 500,
+      charcount: 4000,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }], {
+      individualHooks: true
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          name: 'Test starting -> current charcount on bulk create with individual hooks'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('currentCharcount', 4000);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
   it('should not allow no owner', function (done) {
     var project, err;
       
@@ -468,11 +560,69 @@ describe('Project model', function () {
     });
   });
   
+  it('should not allow a starting charcount with less than zero', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test less than zero starting charcount',
+      description: 'Description',
+      wordcount: 500,
+      charcount: -1,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should not allow a starting wordcount with more than three billion', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test starting charcount over a billion',
+      description: 'Description',
+      wordcount: 0,
+      charcount: 3000000001,
+      targetwc: 0,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
   it('should not allow a target wordcount with less than zero', function (done) {
     var project, err;
       
     Project.create({
-      name: 'Test less than zero starting',
+      name: 'Test less than zero target',
       description: 'Description',
       wordcount: 0,
       targetwc: -1,
@@ -524,6 +674,65 @@ describe('Project model', function () {
     });
   });
   
+  it('should not allow a target charcount with less than zero', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test less than zero target charcount',
+      description: 'Description',
+      wordcount: 0,
+      charcount: 400,
+      targetwc: 5000,
+      targetcc: -1,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should not allow a target charcount with more than three billion', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test target charcount over three billion',
+      description: 'Description',
+      wordcount: 500,
+      targetwc: 0,
+      targetcc: 3000000001,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
   it('should allow a start wordcount higher than zero if the target is zero', function (done) {
     Project.create({
       name: 'Test starting with target zero',
@@ -613,6 +822,101 @@ describe('Project model', function () {
     });
   });
   
+  it('should allow a start charcount higher than zero if the target is zero', function (done) {
+    Project.create({
+      name: 'Test starting charcount with target zero',
+      description: 'Description',
+      wordcount: 1,
+      targetwc: 500,
+      charcount: 1,
+      targetc: 0,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          ownerId: 1,
+          name: 'Test starting charcount with target zero'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('wordcount', 1);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
+  it('should not allow a starting charcount higher than the target charcount', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test starting charcount over target',
+      description: 'Description',
+      wordcount: 1,
+      targetwc: 500,
+      charcount: 501,
+      targetcc: 500,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should allow a starting charcount equal to the target charcount', function (done) {
+    Project.create({
+      name: 'Test starting charcount equal target',
+      description: 'Description',
+      wordcount: 1000,
+      targetwc: 1000,
+      charcount: 4000,
+      targetcc: 4000,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          ownerId: 1,
+          name: 'Test starting charcount equal target'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('charcount', 4000);
+        expect(project).to.have.property('targetcc', 4000);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
   it('should not allow null current wordcount', function (done) {
     var project, err;
       
@@ -646,7 +950,7 @@ describe('Project model', function () {
     var project, err;
       
     Project.create({
-      name: 'Test null current wordcount',
+      name: 'Test lower than zero current wordcount',
       description: 'Description',
       wordcount: 500,
       targetwc: 1500,
@@ -671,6 +975,64 @@ describe('Project model', function () {
     });
   });
   
+  it('should not allow null current charcount', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test null current charcount',
+      description: 'Description',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1,
+      currentCharcount: null
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should not allow current charcount lower than zero', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test lower than zero current charcount',
+      description: 'Description',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1,
+      currentCharcount: -1
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
   it('should destroy the sessions associated at soft delete', function (done) {
     var project;
     var now = new Date();
