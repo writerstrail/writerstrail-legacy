@@ -77,6 +77,8 @@ router.post('/new', isverified, function (req, res, next) {
     description: req.body.description,
     wordcount: req.body.wordcount,
     targetwc: req.body.targetwc,
+    charcount: req.body.charcount || 0,
+    targetcc: req.body.targetcc || 0,
     active: !!req.body.active,
     finished: !!req.body.finished,
     ownerId: req.user.id
@@ -115,6 +117,8 @@ router.post('/new', isverified, function (req, res, next) {
           description: req.body.description,
           wordcount: req.body.wordcount,
           targetwc: req.body.targetwc,
+          charcount: req.body.charcount,
+          targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
           genres: filterIds(genres, req.body.genres)
@@ -185,6 +189,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       project.set('description', req.body.description);
       project.set('wordcount', req.body.wordcount);
       project.set('targetwc', req.body.targetwc);
+      project.set('charcount', req.body.charcount || 0);
+      project.set('targetcc', req.body.targetcc || 0);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
       return project.save().then(function () {
@@ -230,6 +236,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           description: req.body.description,
           wordcount: req.body.wordcount,
           targetwc: req.body.targetwc,
+          charcount: req.body.charcount,
+          targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
           genres: filterIds(genres, req.body.genres)
