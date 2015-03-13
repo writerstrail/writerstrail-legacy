@@ -188,53 +188,86 @@ router.get('/timer', isactivated, sendflash, function (req, res, next) {
 });
 
 router.get('/stats', isactivated, sendflash, function (req, res, next) {
-  models.Session.findAll({
-    where: {
-      start: {
-        gte: moment().subtract(1, 'year').toDate()
-      }
-    },
-    attributes: [
-      models.Sequelize.literal('SUM(`Session`.`wordcount`) AS dailyCount'),
-      models.Sequelize.literal('DATE(`Session`.`start`) AS day'),
-      'zoneOffset'
-    ],
-    include: [{
-      model: models.Project,
-      as: 'project',
-      where: {
-        ownerId: req.user.id
-      }
-    }],
-    group: [models.Sequelize.literal('DATE(`Session`.`start`)')]
-  }, {
-    raw: true
-  }).then(function (sessions) {
-    console.log(sessions);
+  var getYearSummary = function () {
+        return models.Session.findAll({
+          where: {
+            start: {
+              gte: moment().subtract(1, 'year').toDate()
+            }
+          },
+          attributes: [
+            models.Sequelize.literal('SUM(`Session`.`wordcount`) AS dailyCount'),
+            models.Sequelize.literal('DATE(`Session`.`start`) AS day'),
+            'zoneOffset'
+          ],
+          include: [{
+            model: models.Project,
+            as: 'project',
+            where: {
+              ownerId: req.user.id
+            }
+          }],
+          group: [models.Sequelize.literal('DATE(`Session`.`start`)')]
+        }, {
+          raw: true
+        });
+      },
+      getTotalWordcount = function () {
+        return models.Project.sum('currentWordcount', {
+          where: {
+            ownerId: req.user.id
+          }
+        });
+      },
+      getEarliestSession = function () {
+        return models.Session.findOne({
+          include: [{
+            model: models.Project,
+            as: 'project',
+            where: {
+              ownerId: req.user.id
+            }
+          }],
+          order: [['start', 'ASC']]
+        });
+      },
+      getLargestProject = function () {
+        return models.Project.findOne({
+          where: {
+            ownerId: req.user.id
+          },
+          order: [['currentWordcount', 'DESC']]
+        });
+      },
+      renderer = function (yearSessions, totalWordcount, earliestSession, largestProject) {
+        var yearly = {}, larger = 0;
 
-    var yearly = {}, larger = 0;
+        _.forEach(yearSessions, function (session) {
+          yearly[((+session.day / 1000) - (session.zoneOffset * 60)).toString()] = session.dailyCount;
+          larger = session.dailyCount > larger ? session.dailyCount : larger;
+        });
 
-    _.forEach(sessions, function (session) {
-      yearly[((+session.day / 1000) - (session.zoneOffset * 60)).toString()] = session.dailyCount;
-      larger = session.dailyCount > larger ? session.dailyCount : larger;
-    });
-
-    res.render('user/stats', {
-      title: 'Statistics',
-      section: 'stats',
-      data: {
-        sessions: yearly,
-        legend: [
-          Math.round(larger * 1 / 5),
-          Math.round(larger * 2 / 5),
-          Math.round(larger * 3 / 5),
-          Math.round(larger * 4 / 5),
-        ]
-      }
-    });
-  }).catch(function (err) {
-    next(err);
-  });
+        res.render('user/stats', {
+          title: 'Statistics',
+          section: 'stats',
+          data: {
+            sessions: yearly,
+            legend: [
+              Math.round(larger * 1 / 5),
+              Math.round(larger * 2 / 5),
+              Math.round(larger * 3 / 5),
+              Math.round(larger * 4 / 5),
+            ]
+          },
+          tops: {
+            totalWordcount: totalWordcount,
+            since: earliestSession.start,
+            largestProject: largestProject
+          }
+        });
+      };
+  promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), renderer)
+  .catch(next);
 });
 
 module.exports = router;
