@@ -2,3 +2,22 @@ extends ../layout
 
 block content
   h1 Statistics
+
+  .row: .col-sm-12
+    .panel.panel-success
+      .panel-heading
+        h3.panel-title Your year in writing
+      .panel-body
+        div#heatmap
+
+append styles
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/bower_components/cal-heatmap/cal-heatmap.css')
+
+append scripts
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/bower_components/cal-heatmap/cal-heatmap.min.js')
+  script(type='text/javascript', src='/scripts/stats.js')
+  script(type='text/javascript')
+    | setupYearly(CalHeatMap, !{JSON.stringify(data.sessions)}, !{JSON.stringify(data.legend)});
