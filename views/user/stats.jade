@@ -16,16 +16,23 @@ block content
         .panel-heading
           h3.panel-title Tops
         ul.list-group
-          li.list-group-item You've written a total of&#x0020;
-            strong= tops.totalWordcount
-            |  words since&#x0020;
-            strong= moment(tops.since).format(user.settings.dateFormat)
-            | .
-          li.list-group-item Your largest project is&#x0020;
-            a(href='/projects/' + tops.largestProject.id): strong= tops.largestProject.name
-            |  with&#x0020;
-            strong= tops.largestProject.currentWordcount
-            |  words.
+          li.list-group-item
+            if tops.since
+              | You've written a total of&#x0020;
+              strong= tops.totalWordcount
+              |  words since&#x0020;
+              strong= moment(tops.since).format(user.settings.dateFormat)
+              | .
+            else
+              | You don't have any writing session registered.
+          if tops.largestProject
+            li.list-group-item Your largest project is&#x0020;
+              a(href='/projects/' + tops.largestProject.id): strong= tops.largestProject.name
+              |  with&#x0020;
+              strong= tops.largestProject.currentWordcount
+              |  words.
+          else
+            li.list-group-item You don't have any project.
           li.list-group-item Your best performance was of&#x0020;
             strong X
             |  words per minute in a&#x0020;
