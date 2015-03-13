@@ -188,7 +188,8 @@ router.get('/timer', isactivated, sendflash, function (req, res, next) {
 });
 
 router.get('/stats', isactivated, sendflash, function (req, res, next) {
-  var getYearSummary = function () {
+  var performanceOrder = (req.user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance',
+      getYearSummary = function () {
         return models.Session.findAll({
           where: {
             start: {
@@ -239,7 +240,13 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
           order: [['currentWordcount', 'DESC']]
         });
       },
-      renderer = function (yearSessions, totalWordcount, earliestSession, largestProject) {
+      getPerformancePeriod = function () {
+        return models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;", null, { raw: true });
+      },
+      getPerformanceSession = function () {
+        return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;", null, { raw: true });
+      },
+      renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession) {
         var yearly = {}, larger = 0;
 
         _.forEach(yearSessions, function (session) {
@@ -262,11 +269,13 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
           tops: {
             totalWordcount: totalWordcount,
             since: earliestSession.start,
-            largestProject: largestProject
+            largestProject: largestProject,
+            period: performancePeriod.length > 0 ? performancePeriod[0] : null,
+            session: performanceSession.length > 0 ? performanceSession[0] : null
           }
         });
       };
-  promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), renderer)
+  promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(), getPerformanceSession(), renderer)
   .catch(next);
 });
 

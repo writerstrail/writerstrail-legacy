@@ -1,6 +1,7 @@
 extends ../layout
 
 block content
+  - var performanceOrder = (user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance'
   h1 Statistics
 
   .row: .col-sm-12
@@ -39,6 +40,24 @@ block content
             |  words to project&#x0020;
             a(href='#'): strong PROJECT
             | .
+          if tops.period
+            li.list-group-item You are most productive at&#x0020;
+              strong(title!=tops.period.start + '&mdash;' + tops.period.end style='border-bottom: 1px dashed #999')= tops.period.period
+              |  period, achieving an average of&#x0020;
+              strong= tops.period[performanceOrder].toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive period.
+          if tops.session
+            li.list-group-item You are most productive at&#x0020;
+              strong!= '&#x2248;' + tops.session.minuteDuration
+              | -minute&#x0020;
+              strong= tops.session.direction
+              |  sessions, achieving an average of&#x0020;
+              strong= tops.session[performanceOrder].toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive session type.
           li.list-group-item Your best day was&#x0020;
             strong DATE
             | , in which you wrote&#x0020;
