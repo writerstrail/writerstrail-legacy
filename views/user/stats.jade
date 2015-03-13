@@ -9,6 +9,69 @@ block content
         h3.panel-title Your year in writing
       .panel-body
         div#heatmap
+  .row
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Tops
+        ul.list-group
+          li.list-group-item You've written a total of&#x0020;
+            strong X
+            |  words since&#x0020;
+            strong DATE
+            | .
+          li.list-group-item Your largest project is&#x0020;
+            a(href='#'): strong PROJECT
+            |  with&#x0020;
+            strong X
+            |  words.
+          li.list-group-item Your best performance was of&#x0020;
+            strong X
+            |  words per minute in a&#x0020;
+            a(href='#')
+              | &#x2248;
+              strong X
+              |-minute&#x0020;
+              strong DIRECTION
+              |  session
+            | , increasing&#x0020;
+            strong X
+            |  words to project&#x0020;
+            a(href='#'): strong PROJECT
+            | .
+          li.list-group-item Your best day was&#x0020;
+            strong DATE
+            | , in which you wrote&#x0020;
+            strong X
+            |  words.
+          li.list-group-item You perform best at&#x0020;
+            strong PERIOD
+            |  period, achieving an average of&#x0020;
+            strong X
+            |  words per minute.
+
+
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Averages and modes
+        ul.list-group
+          li.list-group-item You have an average of&#x0020;
+            strong X
+            |  words per project.
+          li.list-group-item Your average performance is&#x0020;
+            strong X
+            |  words per minute;
+          li.list-group-item You have written an average of&#x0020;
+            strong X
+            |  words per day.
+          li.list-group-item You wrote more at&#x0020;
+            strong PERIOD
+            |  period.
+          li.list-group-item You had more writing sessions for the&#x0020;
+            strong PROJECT
+            |  project.
+
 
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
