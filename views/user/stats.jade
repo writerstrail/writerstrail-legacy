@@ -85,13 +85,13 @@ block content
           h3.panel-title Averages and modes
         ul.list-group
           li.list-group-item You have an average of&#x0020;
-            strong X
+            strong= avgs.avgPerProject.toFixed(2)
             |  words per project.
           li.list-group-item Your average performance is&#x0020;
-            strong X
+            strong= avgs.avgPerMinute.toFixed(2)
             |  words per minute;
           li.list-group-item You have written an average of&#x0020;
-            strong X
+            strong= avgs.avgPerDay.toFixed(2)
             |  words per day.
           li.list-group-item You wrote more at&#x0020;
             strong PERIOD
