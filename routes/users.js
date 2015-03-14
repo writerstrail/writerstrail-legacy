@@ -249,8 +249,32 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
       getHighestWpm = function () {
         return models.sequelize.query("SELECT `s`.`id` AS `sessionId`, (`s`.`wordcount` / (`s`.`duration` / 60)) as `performance`, (`s`.`wordcount` / ((`s`.`duration` - `s`.`pausedTime`) / 60)) as `realPerformance`,  ROUND(`s`.`duration` / 60) AS  `minuteDuration`, `s`.`wordcount` AS `sessionWordcount`, CASE WHEN `s`.`isCountdown` = 1 THEN 'countdown' ELSE 'forward' END AS `direction`, `p`.`id` AS `projectId`, `p`.`name` AS `projectName` FROM `writingSessions` `s` INNER JOIN `projects` `p` ON `p`.`deletedAt` IS NULL AND `p`.`id` = `s`.`projectId` WHERE `s`.`deletedAt` IS NULL AND `s`.`duration` IS NOT NULL AND ROUND(`s`.`duration` / 60) > 0 AND  `p`.`ownerId` = " + req.user.id + " ORDER BY " + performanceOrder + " DESC LIMIT 1");
       },
+      getBestDate = function () {
+        return models.Session.findOne({
+          attributes: [
+            models.Sequelize.literal('DATE(`Session`.`start`) AS `bestDate`'),
+            models.Sequelize.literal('SUM(`Session`.`wordcount`) AS `dailyWordcount`')
+          ],
+          include: [{
+            model: models.Project,
+            as: 'project',
+            where: {
+              ownerId: req.user.id
+            },
+            attributes: []
+          }],
+          group: [
+            models.Sequelize.literal('DATE(`Session`.`start`)')
+          ],
+          order: [
+            models.Sequelize.literal('`dailyWordcount` DESC')
+          ]
+        }, {
+          raw: true
+        });
+      },
       renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
-                           highestWpm) {
+                           highestWpm, bestDate) {
         var yearly = {}, larger = 5;
 
         _.forEach(yearSessions, function (session) {
@@ -276,12 +300,13 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
             largestProject: largestProject,
             highestWpm: highestWpm.length > 0 ? highestWpm[0] : null,
             period: performancePeriod.length > 0 ? performancePeriod[0] : null,
-            session: performanceSession.length > 0 ? performanceSession[0] : null
+            session: performanceSession.length > 0 ? performanceSession[0] : null,
+            bestDate: bestDate
           }
         });
       };
   promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(),
-               getPerformanceSession(), getHighestWpm(), renderer)
+               getPerformanceSession(), getHighestWpm(), getBestDate(), renderer)
   .catch(next);
 });
 
