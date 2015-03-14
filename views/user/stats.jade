@@ -30,7 +30,7 @@ block content
               a(href='/projects/' + tops.largestProject.id): strong= tops.largestProject.name
               |  with&#x0020;
               strong= tops.largestProject.currentWordcount
-              |  words.
+              |  total words.
           else
             li.list-group-item You don't have any project.
           li.list-group-item Your best performance was of&#x0020;
@@ -75,7 +75,6 @@ block content
             |  period, achieving an average of&#x0020;
             strong X
             |  words per minute.
-
 
     .col-sm-6
       .panel.panel-default
