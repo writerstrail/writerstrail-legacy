@@ -246,7 +246,11 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
       getPerformanceSession = function () {
         return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " ORDER BY `" + performanceOrder + "` DESC LIMIT 1;", null, { raw: true });
       },
-      renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession) {
+      getHighestWpm = function () {
+        return models.sequelize.query("SELECT `s`.`id` AS `sessionId`, (`s`.`wordcount` / (`s`.`duration` / 60)) as `performance`, (`s`.`wordcount` / ((`s`.`duration` - `s`.`pausedTime`) / 60)) as `realPerformance`,  ROUND(`s`.`duration` / 60) AS  `minuteDuration`, `s`.`wordcount` AS `sessionWordcount`, CASE WHEN `s`.`isCountdown` = 1 THEN 'countdown' ELSE 'forward' END AS `direction`, `p`.`id` AS `projectId`, `p`.`name` AS `projectName` FROM `writingSessions` `s` INNER JOIN `projects` `p` ON `p`.`deletedAt` IS NULL AND `p`.`id` = `s`.`projectId` WHERE `s`.`deletedAt` IS NULL AND `s`.`duration` IS NOT NULL AND ROUND(`s`.`duration` / 60) > 0 AND  `p`.`ownerId` = " + req.user.id + " ORDER BY " + performanceOrder + " DESC LIMIT 1");
+      },
+      renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
+                           highestWpm) {
         var yearly = {}, larger = 5;
 
         _.forEach(yearSessions, function (session) {
@@ -268,14 +272,16 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
           },
           tops: {
             totalWordcount: totalWordcount,
-            since: earliestSession ?  earliestSession.start : null,
+            since: earliestSession ? earliestSession.start : null,
             largestProject: largestProject,
+            highestWpm: highestWpm.length > 0 ? highestWpm[0] : null,
             period: performancePeriod.length > 0 ? performancePeriod[0] : null,
             session: performanceSession.length > 0 ? performanceSession[0] : null
           }
         });
       };
-  promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(), getPerformanceSession(), renderer)
+  promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(),
+               getPerformanceSession(), getHighestWpm(), renderer)
   .catch(next);
 });
 

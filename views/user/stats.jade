@@ -33,20 +33,24 @@ block content
               |  total words.
           else
             li.list-group-item You don't have any project.
-          li.list-group-item Your best performance was of&#x0020;
-            strong X
-            |  words per minute in a&#x0020;
-            a(href='#')
-              | &#x2248;
-              strong X
-              |-minute&#x0020;
-              strong DIRECTION
-              |  session
-            | , increasing&#x0020;
-            strong X
-            |  words to project&#x0020;
-            a(href='#'): strong PROJECT
-            | .
+          li.list-group-item
+            if tops.highestWpm
+              | Your best performance was of&#x0020;
+              strong= tops.highestWpm[performanceOrder].toFixed(2)
+              |  words per minute in a&#x0020;
+              a(href='/sessions/' + tops.highestWpm.sessionId)
+                | &#x2248;
+                strong= tops.highestWpm.minuteDuration
+                |-minute&#x0020;
+                strong= tops.highestWpm.direction
+                |  session
+              | , increasing&#x0020;
+              strong= tops.highestWpm.sessionWordcount
+              |  words to project&#x0020;
+              a(href='/projects/' + tops.highestWpm.projectId): strong= tops.highestWpm.projectName
+              | .
+            else
+              | You don't have any writing session.
           if tops.period
             li.list-group-item You are most productive at&#x0020;
               strong(title!=tops.period.start + '&mdash;' + tops.period.end style='border-bottom: 1px dashed #999')= tops.period.period
