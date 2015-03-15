@@ -1,0 +1,182 @@
+extends ../layout
+
+block content
+  - var performanceOrder = (user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance'
+  h1 Statistics
+
+  .row: .col-sm-12
+    .panel.panel-success
+      .panel-heading
+        h3.panel-title Your year in writing
+      .panel-body
+        div#heatmap
+  .row
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Tops
+        ul.list-group
+          li.list-group-item
+            if tops.since
+              | You've written a total of&#x0020;
+              strong= tops.totalWordcount
+              |  words since&#x0020;
+              strong= moment(tops.since).format(user.settings.dateFormat)
+              | .
+            else
+              | You don't have any writing session registered.
+          if tops.largestProject
+            li.list-group-item Your largest project is&#x0020;
+              a(href='/projects/' + tops.largestProject.id): strong= tops.largestProject.name
+              |  with&#x0020;
+              strong= tops.largestProject.currentWordcount
+              |  total words.
+          else
+            li.list-group-item You don't have any project.
+          li.list-group-item
+            if tops.highestWpm
+              | Your best performance was of&#x0020;
+              strong= tops.highestWpm[performanceOrder].toFixed(2)
+              |  words per minute in a&#x0020;
+              a(href='/sessions/' + tops.highestWpm.sessionId)
+                | &#x2248;
+                strong= tops.highestWpm.minuteDuration
+                |-minute&#x0020;
+                strong= tops.highestWpm.direction
+                |  session
+              | , increasing&#x0020;
+              strong= tops.highestWpm.sessionWordcount
+              |  words to project&#x0020;
+              a(href='/projects/' + tops.highestWpm.projectId): strong= tops.highestWpm.projectName
+              | .
+            else
+              | You don't have any writing session.
+          if tops.period
+            li.list-group-item You are most productive at&#x0020;
+              strong(title!=tops.period.start + '&mdash;' + tops.period.end style='border-bottom: 1px dashed #999')= tops.period.period
+              |  period, achieving an average of&#x0020;
+              strong= tops.period[performanceOrder].toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive period.
+          if tops.session
+            li.list-group-item You are most productive at&#x0020;
+              strong!= '&#x2248;' + tops.session.minuteDuration
+              | -minute&#x0020;
+              strong= tops.session.direction
+              |  sessions, achieving an average of&#x0020;
+              strong= tops.session[performanceOrder].toFixed(2)
+              |  words per minute.
+          else
+            li.list-group-item You don't have enough sessions to calculate the most productive session type.
+          li.list-group-item
+            if tops.bestDate
+              | Your best day was&#x0020;
+              strong= moment.utc(tops.bestDate.bestDate).format(user.settings.dateFormat)
+              | , in which you wrote&#x0020;
+              strong= tops.bestDate.dailyWordcount
+              |  words.
+            else
+              | You don't have a best day yet.
+
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          h3.panel-title Averages and modes
+        ul.list-group
+          li.list-group-item You have an average of&#x0020;
+            strong= avgs.avgPerProject.toFixed(2)
+            |  words per project.
+          li.list-group-item Your average performance is&#x0020;
+            strong= avgs.avgPerMinute.toFixed(2)
+            |  words per minute;
+          li.list-group-item You have written an average of&#x0020;
+            strong= avgs.avgPerDay.toFixed(2)
+            |  words per day.
+
+          li.list-group-item
+            if avgs.modePeriod
+              | You wrote more frequently at&#x0020;
+              strong(title!=avgs.modePeriod.start + '&mdash;' + avgs.modePeriod.end style='border-bottom: 1px dashed #999')= avgs.modePeriod.period
+              |  period, making a total of&#x0020;
+              strong= avgs.modePeriod.totalWordcount
+              |  words in &#x0020;
+              strong= avgs.modePeriod.totalSessions
+              if avgs.modePeriod.totalSessions === 1
+                |  writing session.
+              else
+                |  writing sessions.
+            else
+              | You don't have a most common period yet.
+
+          li.list-group-item
+            if avgs.modeSession
+              | You prefer&#x0020;
+              strong!= '&#x2248;' + avgs.modeSession.minuteDuration
+              | -minute&#x0020;
+              strong= avgs.modeSession.direction
+              |  sessions, with a total of of&#x0020;
+              strong= avgs.modeSession.totalWordcount
+              |  words in&#x0020;
+              strong= avgs.modeSession.totalSessions
+              if avgs.modeSession.totalSessions === 1
+                |  session.
+              else
+                |  sessions.
+            else
+              | You don't have a most common session yet.
+
+          li.list-group-item
+            if avgs.modeProject
+              | You had more writing sessions for the&#x0020;
+              a(href='/projects/' + avgs.modeProject['project.id']): strong= avgs.modeProject['project.name']
+              |  project, with a count of &#x0020;
+              strong= avgs.modeProject.totalSessions
+              if avgs.modeProject.totalSessions === 1
+                |  session.
+              else
+                |  sessions.
+            else
+              | You don't have a most common project yet.
+
+  .row
+    .col-sm-12
+      .panel.panel-primary
+        .panel-heading
+          h3.panel-title Performance per period
+        .panel-body: .row
+          .col-sm-6
+            #perperiod
+          .col-sm-3
+            #periodsessionsdist
+          .col-sm-3
+            #periodwordsdist
+
+    .col-sm-12
+      .panel.panel-primary
+        .panel-heading
+          h3.panel-title Performance per session duration
+        .panel-body: .row
+          .col-sm-6
+            #persession
+          .col-sm-3
+            #durationsessionsdist
+          .col-sm-3
+            #durationwordsdist
+
+
+
+append styles
+  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
+  link(rel='stylesheet', href='/bower_components/cal-heatmap/cal-heatmap.css')
+  link(rel='stylesheet', href='/stylesheets/chart.css')
+
+append scripts
+  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
+  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+  script(type='text/javascript', src='/bower_components/cal-heatmap/cal-heatmap.min.js')
+  script(type='text/javascript', src='/scripts/stats.js')
+  script(type='text/javascript')
+    | setupYearly(CalHeatMap, !{JSON.stringify(data.sessions)}, !{JSON.stringify(data.legend)});
+    | setupPerPeriod(c3, '!{user.settings.performanceMetric}');
+    | setupPerSession(c3);
