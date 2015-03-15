@@ -489,4 +489,46 @@ router.get('/periodwordsdist.json', isactivated, function (req, res) {
   });
 });
 
+router.get('/durationsessionsdist.json', isactivated, function (req, res) {
+  models.sequelize.query("SELECT SUM(`totalSessions`) AS `totalSessions`, SUM(`totalWordcount`) AS `totalWordcount`, (ROUND(`minuteDuration` / 5) * 5) AS `aproxTime`, `direction`, AVG(`minuteDuration`) AS `averageDuration`, AVG(`performance`) AS `averagePerformance`, AVG(`realPerformance`) AS `averageRealPerformance` FROM `sessionPerformance` WHERE `ownerId`= " + req.user.id + " GROUP BY round(`minuteDuration` / 5) ORDER BY `aproxTime`ASC, `direction` ASC;", null, { raw: true })
+    .then(function (sessions) {
+    var result = {
+    };
+
+    _.forEach(sessions, function (session) {
+      result['~' + session.aproxTime + 'min'] = session.totalSessions;
+    });
+
+    res.json(result);
+
+  }).catch(function (err) {
+    console.log(err);
+    res.status(500);
+    res.json({
+      error: 'There was a server error;'
+    });
+  });
+});
+
+router.get('/durationwordsdist.json', isactivated, function (req, res) {
+  models.sequelize.query("SELECT SUM(`totalSessions`) AS `totalSessions`, SUM(`totalWordcount`) AS `totalWordcount`, (ROUND(`minuteDuration` / 5) * 5) AS `aproxTime`, `direction`, AVG(`minuteDuration`) AS `averageDuration`, AVG(`performance`) AS `averagePerformance`, AVG(`realPerformance`) AS `averageRealPerformance` FROM `sessionPerformance` WHERE `ownerId`= " + req.user.id + " GROUP BY round(`minuteDuration` / 5) ORDER BY `aproxTime`ASC, `direction` ASC;", null, { raw: true })
+    .then(function (sessions) {
+    var result = {
+    };
+
+    _.forEach(sessions, function (session) {
+      result['~' + session.aproxTime + 'min'] = session.totalWordcount;
+    });
+
+    res.json(result);
+
+  }).catch(function (err) {
+    console.log(err);
+    res.status(500);
+    res.json({
+      error: 'There was a server error;'
+    });
+  });
+});
+
 module.exports = router;

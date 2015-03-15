@@ -190,4 +190,38 @@ function setupPerSession(c3, metric) {
       }
     }
   });
+
+  var pieSessions = c3.generate({
+    bindto: '#durationsessionsdist',
+    data: {
+      url: '/durationsessionsdist.json',
+      mimeType: 'json',
+      type: 'donut'
+    },
+    donut: {
+      title: 'Sessions per duration',
+      label: {
+        format: function (value) {
+          return value;
+        }
+      }
+    }
+  });
+
+  var pieWords = c3.generate({
+    bindto: '#durationwordsdist',
+    data: {
+      url: '/durationwordsdist.json',
+      mimeType: 'json',
+      type: 'donut'
+    },
+    donut: {
+      title: 'Words per duration',
+      label: {
+        format: function (value) {
+          return value;
+        }
+      }
+    }
+  });
 }
