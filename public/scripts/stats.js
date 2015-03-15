@@ -96,3 +96,64 @@ function setupPerPeriod(c3, metric) {
     }
   });
 }
+
+function setupPerSession(c3, metric) {
+  var chart = c3.generate({
+    bindto: '#persession',
+    data: {
+      url: '/persession.json',
+      mimeType: 'json',
+      x: 'duration',
+      names: {
+        countdownWordcount: 'Countdown wordcount',
+        forwardWordcount: 'Forward wordcount',
+        countdownPerformance: 'Countdown perf. (whole session)',
+        countdownRealPerformance: 'Countdown perf. (exclude paused)',
+        forwardPerformance: 'Forward perf. (whole session)',
+        forwardRealPerformance: 'Forward perf. (exclude paused)'
+      },
+      types: {
+        countdownWordcount: 'line',
+        forwardWordcount: 'line',
+        countdownPerformance: 'bar',
+        countdownRealPerformance: 'bar',
+        forwardPerformance: 'bar',
+        forwardRealPerformance: 'bar'
+      },
+      hide: metric === 'real' ? ['countdownPerformance', 'forwardPerfomance'] : ['countdownRealPerformance', 'forwardRealPerformance'],
+      axes: {
+        countdownWordcount: 'y2',
+        forwardWordcount: 'y2',
+        countdownPerformance: 'y',
+        countdownRealPerformance: 'y',
+        forwardPerformance: 'y',
+        forwardRealPerformance: 'y'
+      }
+    },
+    axis: {
+      x: {
+        label: 'Duration (~5min)'
+      },
+      y: {
+        label: 'Words per minute'
+      },
+      y2: {
+        show: true,
+        label: 'Words'
+      }
+    },
+    tooltip: {
+      format: {
+        title: function (value) {
+          return '~' + value + ' minutes';
+        },
+        value: function (value, ratio, id) {
+          if (id.indexOf('Wordcount') >= 0) {
+            return value + ' words';
+          }
+          return value.toFixed(2) + ' wpm';
+        }
+      }
+    }
+  });
+}

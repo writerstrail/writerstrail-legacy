@@ -407,4 +407,50 @@ router.get('/perperiod.json', isactivated, function (req, res) {
   });
 });
 
+router.get('/persession.json', isactivated, function (req, res) {
+  models.sequelize.query("SELECT SUM(`totalSessions`) AS `totalSessions`, SUM(`totalWordcount`) AS `totalWordcount`, (ROUND(`minuteDuration` / 5) * 5) AS `aproxTime`, `direction`, AVG(`minuteDuration`) AS `averageDuration`, AVG(`performance`) AS `averagePerformance`, AVG(`realPerformance`) AS `averageRealPerformance` FROM `sessionPerformance` WHERE `ownerId`= " + req.user.id + " GROUP BY round(`minuteDuration` / 5), `direction` ORDER BY `aproxTime`ASC, `direction` ASC;", null, { raw: true })
+    .then(function (sessions) {
+    var result = {
+      duration: _.map(_.uniq(sessions, true, 'aproxTime'), 'aproxTime'),
+      countdownWordcount: [],
+      forwardWordcount: [],
+      countdownPerformance: [],
+      countdownRealPerformance: [],
+      forwardPerformance: [],
+      forwardRealPerformance: []
+    };
+
+    _.forEach(sessions, function (session) {
+      if (session.direction === 'countdown') {
+        while (result.countdownWordcount.length < result.duration.indexOf(session.aproxTime)) {
+          result.countdownWordcount.push(0);
+          result.countdownPerformance.push(0);
+          result.countdownRealPerformance.push(0);
+        }
+        result.countdownWordcount.push(session.totalWordcount);
+        result.countdownPerformance.push(session.averagePerformance);
+        result.countdownRealPerformance.push(session.averageRealPerformance);
+      } else {
+        while (result.forwardWordcount.length < result.duration.indexOf(session.aproxTime)) {
+          result.forwardWordcount.push(0);
+          result.forwardPerformance.push(0);
+          result.forwardRealPerformance.push(0);
+        }
+        result.forwardWordcount.push(session.totalWordcount);
+        result.forwardPerformance.push(session.averagePerformance);
+        result.forwardRealPerformance.push(session.averageRealPerformance);
+      }
+    });
+
+    res.json(result);
+
+  }).catch(function (err) {
+    console.log(err);
+    res.status(500);
+    res.json({
+      error: 'There was a server error;'
+    });
+  });
+});
+
 module.exports = router;

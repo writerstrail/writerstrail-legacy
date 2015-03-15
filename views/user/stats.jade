@@ -146,6 +146,12 @@ block content
           h3.panel-title Performance per period
         .panel-body
           #perperiod
+    .col-sm-6
+      .panel.panel-primary
+        .panel-heading
+          h3.panel-title Performance per session duration
+        .panel-body
+          #persession
 
 
 append styles
@@ -160,4 +166,5 @@ append scripts
   script(type='text/javascript', src='/scripts/stats.js')
   script(type='text/javascript')
     | setupYearly(CalHeatMap, !{JSON.stringify(data.sessions)}, !{JSON.stringify(data.legend)});
-    | setupPerPeriod(c3, '!{user.settings.performanceMetric}')
+    | setupPerPeriod(c3, '!{user.settings.performanceMetric}');
+    | setupPerSession(c3);
