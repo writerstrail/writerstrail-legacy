@@ -93,9 +93,39 @@ block content
           li.list-group-item You have written an average of&#x0020;
             strong= avgs.avgPerDay.toFixed(2)
             |  words per day.
-          li.list-group-item You wrote more at&#x0020;
-            strong PERIOD
-            |  period.
+
+          li.list-group-item
+            if avgs.modePeriod
+              | You wrote more frequently at&#x0020;
+              strong(title!=avgs.modePeriod.start + '&mdash;' + avgs.modePeriod.end style='border-bottom: 1px dashed #999')= avgs.modePeriod.period
+              |  period, making a total of&#x0020;
+              strong= avgs.modePeriod.totalWordcount
+              |  words in &#x0020;
+              strong= avgs.modePeriod.totalSessions
+              if avgs.modePeriod.totalSessions === 1
+                |  writing session.
+              else
+                |  writing sessions.
+            else
+              | You don't have a most common period yet.
+
+          li.list-group-item
+            if avgs.modeSession
+              | You prefer&#x0020;
+              strong!= '&#x2248;' + avgs.modeSession.minuteDuration
+              | -minute&#x0020;
+              strong= avgs.modeSession.direction
+              |  sessions, with a total of of&#x0020;
+              strong= avgs.modeSession.totalWordcount
+              |  words in&#x0020;
+              strong= avgs.modeSession.totalSessions
+              if avgs.modeSession.totalSessions === 1
+                |  session.
+              else
+                |  sessions.
+            else
+              | You don't have a most common session yet.
+
           li.list-group-item You had more writing sessions for the&#x0020;
             strong PROJECT
             |  project.
