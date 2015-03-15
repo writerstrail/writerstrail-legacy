@@ -37,12 +37,22 @@ function setupPerPeriod(c3, metric) {
       x: 'period',
       types: {
         performance: 'bar',
-        realPerformance: 'bar'
+        realPerformance: 'bar',
+        totalWordcount: 'line'
       },
       hide: [metric === 'real' ? 'performance' : 'realPerformance'],
       names: {
-        performance: 'Total time',
-        realPerformance: 'Exclude paused time'
+        performance: 'Whole session',
+        realPerformance: 'Exclude paused time',
+        totalWordcount: 'Wordcount'
+      },
+      axes: {
+        performance: 'y',
+        realPerformance: 'y',
+        totalWordcount: 'y2'
+      },
+      colors: {
+        realPerformance: '#9467BD'
       }
     },
     axis: {
@@ -53,6 +63,21 @@ function setupPerPeriod(c3, metric) {
             return chart.categories()[x].split('!')[0];
           }
         }
+      },
+      y: {
+        label: 'Words per minute',
+        min: 0,
+        padding: {
+          bottom: 0
+        },
+      },
+      y2: {
+        show: true,
+        label: 'Words',
+        min: 0,
+        padding: {
+          bottom: 0
+        },
       }
     },
     tooltip: {
@@ -60,6 +85,12 @@ function setupPerPeriod(c3, metric) {
         title: function (x) {
           var pieces = chart.categories()[x].split('!');
           return pieces[0] + ' (' + pieces[1] + '—' + pieces[2] + ')';
+        },
+        value: function (value, ratio, id) {
+          if (id === 'totalWordcount') {
+            return value + ' words';
+          }
+          return value.toFixed(2) + ' wpm';
         }
       }
     }

@@ -380,7 +380,8 @@ router.get('/perperiod.json', isactivated, function (req, res) {
     var result = {
       period: [],
       performance: [],
-      realPerformance: []
+      realPerformance: [],
+      totalWordcount: []
     };
 
     _.forEach(periods, function (period) {
@@ -392,6 +393,7 @@ router.get('/perperiod.json', isactivated, function (req, res) {
       result.period.push(titleCase(period.name) + '!' + start + '!' + end);
       result.performance.push(entry ? entry.performance : 0);
       result.realPerformance.push(entry ? entry.realPerformance : 0);
+      result.totalWordcount.push(entry ? entry.totalWordcount : 0);
     });
 
     res.json(result);
