@@ -354,7 +354,7 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
             bestDate: bestDate
           },
           avgs: {
-            avgPerProject: projectAvg ? projectAvg.wordcountAverage : 0,
+            avgPerProject: projectAvg && projectAvg.wordcountAverage ? projectAvg.wordcountAverage : 0,
             avgPerMinute: performanceAvg.length > 0 && performanceAvg[0].wpmAverage ? performanceAvg[0].wpmAverage : 0,
             avgPerDay: dailyAvg.length > 0 && dailyAvg[0].dailyAverage ? dailyAvg[0].dailyAverage : 0,
             modePeriod: modePeriod.length > 0 ? modePeriod[0] : null,
