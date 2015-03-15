@@ -453,4 +453,40 @@ router.get('/persession.json', isactivated, function (req, res) {
   });
 });
 
+router.get('/periodsessionsdist.json', isactivated, function (req, res) {
+  models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY period ASC", null, { raw: true })
+  .then(function (periods) {
+    var result = {};
+
+    _.forEach(periods, function (period) {
+      result[titleCase(period.period)] = period.totalSessions;
+    });
+
+    res.json(result);
+  }).catch(function (err) {
+    console.log(err);
+    res.json({
+      error: 'Internal server error'
+    });
+  });
+});
+
+router.get('/periodwordsdist.json', isactivated, function (req, res) {
+  models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY period ASC", null, { raw: true })
+  .then(function (periods) {
+    var result = {};
+
+    _.forEach(periods, function (period) {
+      result[titleCase(period.period)] = period.totalWordcount;
+    });
+
+    res.json(result);
+  }).catch(function (err) {
+    console.log(err);
+    res.json({
+      error: 'Internal server error'
+    });
+  });
+});
+
 module.exports = router;

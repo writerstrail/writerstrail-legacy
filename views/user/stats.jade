@@ -140,12 +140,18 @@ block content
               | You don't have a most common project yet.
 
   .row
-    .col-sm-6
+    .col-sm-12
       .panel.panel-primary
         .panel-heading
           h3.panel-title Performance per period
-        .panel-body
-          #perperiod
+        .panel-body: .row
+          .col-sm-6
+            #perperiod
+          .col-sm-3
+            #periodsessionsdist
+          .col-sm-3
+            #periodwordsdist
+
     .col-sm-6
       .panel.panel-primary
         .panel-heading

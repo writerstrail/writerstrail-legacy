@@ -95,6 +95,40 @@ function setupPerPeriod(c3, metric) {
       }
     }
   });
+
+  var pieSessions = c3.generate({
+    bindto: '#periodsessionsdist',
+    data: {
+      url: '/periodsessionsdist.json',
+      mimeType: 'json',
+      type: 'donut'
+    },
+    donut: {
+      title: 'Sessions per period',
+      label: {
+        format: function (value) {
+          return value;
+        }
+      }
+    }
+  });
+
+  var pieWords = c3.generate({
+    bindto: '#periodwordsdist',
+    data: {
+      url: '/periodwordsdist.json',
+      mimeType: 'json',
+      type: 'donut'
+    },
+    donut: {
+      title: 'Words per period',
+      label: {
+        format: function (value) {
+          return value;
+        }
+      }
+    }
+  });
 }
 
 function setupPerSession(c3, metric) {
