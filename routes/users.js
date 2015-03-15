@@ -297,8 +297,27 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
       getModeSession = function () {
         return models.sequelize.query("SELECT * FROM sessionPerformance WHERE ownerId = " + req.user.id + " ORDER BY `totalSessions` DESC LIMIT 1;", null, { raw: true });
       },
+      getModeProject = function () {
+        return models.Session.findOne({
+          include: [{
+            model: models.Project,
+            as: 'project',
+            where: {
+              ownerId: req.user.id
+            }
+          }],
+          attributes: [
+            models.Sequelize.literal('COUNT(`Session`.`id`) AS `totalSessions`')
+          ],
+          group: [
+            models.Sequelize.literal('`project`.`id`')
+          ]
+        }, {
+          raw: true
+        });
+      },
       renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
-                           highestWpm, bestDate, projectAvg, performanceAvg, dailyAvg, modePeriod, modeSession) {
+                           highestWpm, bestDate, projectAvg, performanceAvg, dailyAvg, modePeriod, modeSession, modeProject) {
         var yearly = {}, larger = 5;
 
         _.forEach(yearSessions, function (session) {
@@ -332,13 +351,14 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
             avgPerMinute: performanceAvg.length > 0 && performanceAvg[0].wpmAverage ? performanceAvg[0].wpmAverage : 0,
             avgPerDay: dailyAvg.length > 0 && dailyAvg[0].dailyAverage ? dailyAvg[0].dailyAverage : 0,
             modePeriod: modePeriod.length > 0 ? modePeriod[0] : null,
-            modeSession: modeSession.length > 0 ? modeSession[0] : null
+            modeSession: modeSession.length > 0 ? modeSession[0] : null,
+            modeProject: modeProject
           }
         });
       };
   promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(),
                getPerformanceSession(), getHighestWpm(), getBestDate(), getProjectAvg(), getPerformanceAvg(),
-               getDailyAverage(), getModePeriod(), getModeSession(), renderer)
+               getDailyAverage(), getModePeriod(), getModeSession(), getModeProject(), renderer)
   .catch(next);
 });
 

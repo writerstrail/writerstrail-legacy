@@ -126,9 +126,18 @@ block content
             else
               | You don't have a most common session yet.
 
-          li.list-group-item You had more writing sessions for the&#x0020;
-            strong PROJECT
-            |  project.
+          li.list-group-item
+            if avgs.modeProject
+              | You had more writing sessions for the&#x0020;
+              a(href='/projects/' + avgs.modeProject['project.id']): strong= avgs.modeProject['project.name']
+              |  project, with a count of &#x0020;
+              strong= avgs.modeProject.totalSessions
+              if avgs.modeProject.totalSessions === 1
+                |  session.
+              else
+                |  sessions.
+            else
+              | You don't have a most common project yet.
 
 
 append styles
