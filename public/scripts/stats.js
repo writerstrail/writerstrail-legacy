@@ -1,3 +1,4 @@
+/* jshint unused:false */
 function setupYearly(CalHeatMap, yearData, legend) {
   var cal = new CalHeatMap(),
       today = new Date(),
@@ -24,5 +25,43 @@ function setupYearly(CalHeatMap, yearData, legend) {
     highlight: today,
     domainLabelFormat: '%b-%y',
     cellSize: 11
+  });
+}
+
+function setupPerPeriod(c3, metric) {
+  var chart = c3.generate({
+    bindto: '#perperiod',
+    data: {
+      url: '/perperiod.json',
+      mimeType: 'json',
+      x: 'period',
+      types: {
+        performance: 'bar',
+        realPerformance: 'bar'
+      },
+      hide: [metric === 'real' ? 'performance' : 'realPerformance'],
+      names: {
+        performance: 'Total time',
+        realPerformance: 'Exclude paused time'
+      }
+    },
+    axis: {
+      x: {
+        type: 'category',
+        tick: {
+          format: function (x) {
+            return chart.categories()[x].split('!')[0];
+          }
+        }
+      }
+    },
+    tooltip: {
+      format: {
+        title: function (x) {
+          var pieces = chart.categories()[x].split('!');
+          return pieces[0] + ' (' + pieces[1] + '—' + pieces[2] + ')';
+        }
+      }
+    }
   });
 }

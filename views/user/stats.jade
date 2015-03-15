@@ -139,6 +139,14 @@ block content
             else
               | You don't have a most common project yet.
 
+  .row
+    .col-sm-6
+      .panel.panel-primary
+        .panel-heading
+          h3.panel-title Performance per period
+        .panel-body
+          #perperiod
+
 
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
@@ -151,3 +159,4 @@ append scripts
   script(type='text/javascript', src='/scripts/stats.js')
   script(type='text/javascript')
     | setupYearly(CalHeatMap, !{JSON.stringify(data.sessions)}, !{JSON.stringify(data.legend)});
+    | setupPerPeriod(c3, '!{user.settings.performanceMetric}')

@@ -20,6 +20,13 @@ function durationFormatterAlt(dur) {
   return (min.toString() +  'm' + (sec < 10 ? '0' + sec : sec)) + 's';
 }
 
+function titleCase(string) {
+  var pieces = string.split(' ').map(function (piece) {
+    return piece.charAt(0).toUpperCase() + piece.substring(1);
+  });
+  return pieces.join(' ');
+}
+
 router.param('id', function (req, res, next, id) {
   var regex = /\d+/;
   if (regex.test(id)) {
@@ -360,6 +367,42 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
                getPerformanceSession(), getHighestWpm(), getBestDate(), getProjectAvg(), getPerformanceAvg(),
                getDailyAverage(), getModePeriod(), getModeSession(), getModeProject(), renderer)
   .catch(next);
+});
+
+router.get('/perperiod.json', isactivated, function (req, res) {
+  var perfs = null;
+  models.sequelize.query("SELECT * FROM periodPerformance WHERE ownerId = " + req.user.id + " ORDER BY period ASC;", null, { raw: true })
+  .then(function (periods) {
+    perfs = periods;
+
+    return models.sequelize.query('SELECT * FROM periods ORDER BY start ASC;', null, { raw: true });
+  }).then(function (periods) {
+    var result = {
+      period: [],
+      performance: [],
+      realPerformance: []
+    };
+
+    _.forEach(periods, function (period) {
+      console.log(period);
+      var entry = _.findWhere(perfs, { period: period.name}),
+          start = moment.utc(period.start, 'hh:mm:ss').format(req.user.settings.timeFormat),
+          end = moment.utc(period.end, 'hh:mm:ss').format(req.user.settings.timeFormat);
+
+      result.period.push(titleCase(period.name) + '!' + start + '!' + end);
+      result.performance.push(entry ? entry.performance : 0);
+      result.realPerformance.push(entry ? entry.realPerformance : 0);
+    });
+
+    res.json(result);
+
+  }).catch(function (err) {
+    console.log(err);
+    res.status(500);
+    res.json({
+      error: 'There was a server error;'
+    });
+  });
 });
 
 module.exports = router;
