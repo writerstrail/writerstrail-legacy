@@ -207,7 +207,7 @@ models.User.destroy({
         minute: 59,
         second: 59,
         millisecond: 999
-      });
+      }).add(today.utcOffset(), 'minutes');
 
   function selectProject() {
     return _.findWhere(_.shuffle(projectsData), function (p) {
