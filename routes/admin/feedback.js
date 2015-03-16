@@ -31,19 +31,19 @@ router.get('/', sendflash, function (req, res, next) {
     };
   if (_.includes(stati.concat(['All']), req.query.status)) {
     if (req.query.status !== 'All') {
-      filters.push('Only feedbacks with status "' + req.query.status + '"are shown.');
+      filters.push('Only feedback with status "' + req.query.status + '" are shown.');
       config.where.push ({
         status: req.query.status
       });
     }
   } else if (!req.query.all) {
-    filters.push('Only new feedbacks are shown.');
+    filters.push('Only new feedback are shown.');
     config.where.push ({
       status: 'New'
     });
   }
   if (req.query.deleted) {
-    filters.push('Including deleted feedbacks.');
+    filters.push('Including deleted feedback.');
     config.paranoid = false;
   }
   if (_.includes(['Votes', 'Creation'], req.query.order || null)) {
@@ -67,12 +67,12 @@ router.get('/', sendflash, function (req, res, next) {
   }
   models.Feedback.findAll(config, {
     raw: true
-  }).then(function (feedbacks) {
+  }).then(function (feedback) {
     res.render('admin/feedback/list', {
       title: 'Admin feedback list',
       section: 'adminfeedback',
       filters: filters,
-      feedbacks: feedbacks,
+      feedback: feedback,
       stati: stati,
       query: req.query
     });

@@ -49,14 +49,14 @@ router.get('/', sendflash, function (req, res, next) {
     if (_.includes(stati.concat(['All']), req.query.status)) {
       if (req.query.status !== 'All') {
         var statusSearch = req.query.status;
-        filters.push('Only feedbacks with status "' + statusSearch + '"are shown.');
+        filters.push('Only feedback with status "' + statusSearch + '" are shown.');
         config.where.push ({
           status: statusSearch
         });
       }
     }
     if (!req.query.status) {
-      filters.push('Only feedbacks not completed nor dismissed are shown.');
+      filters.push('Only feedback not completed nor dismissed are shown.');
       var orFilter = [];
       
       _.forEach(['New', 'Reviewing', 'On hold', 'Accepted', 'Developing'], function (s) {
@@ -65,18 +65,18 @@ router.get('/', sendflash, function (req, res, next) {
       config.where.push(models.Sequelize.or.apply(global, orFilter));
     }
     if (req.query.deleted) {
-      filters.push('Including deleted feedbacks.');
+      filters.push('Including deleted feedback.');
       config.paranoid = false;
     }
     
     return models.Feedback.findAll(config, {
       raw: true
     });
-  }).then(function (feedbacks) {
+  }).then(function (feedback) {
     res.render('feedback/index', {
       title: 'Feedback list',
       section: 'feedback',
-      feedbacks: feedbacks,
+      feedback: feedback,
       votes: userVotes,
       filters: filters,
       stati: stati,
@@ -141,20 +141,20 @@ router.get('/mine', islogged, sendflash, function (req, res) {
     };
   if (_.includes(stati.concat(['All']), req.query.status)) {
     if (req.query.status !== 'All') {
-      filters.push('Only feedbacks with status "' + req.query.status + '" are shown.');
+      filters.push('Only feedback with status "' + req.query.status + '" are shown.');
       config.where.push ({
         status: req.query.status
       });
     }
   }
   if (req.query.deleted) {
-    filters.push('Including deleted feedbacks.');
+    filters.push('Including deleted feedback.');
     config.paranoid = false;
   }
-  models.Feedback.findAll(config).then(function (feedbacks) {
+  models.Feedback.findAll(config).then(function (feedback) {
     res.render('feedback/mine', {
-      title: 'Your feedbacks',
-      feedbacks: feedbacks,
+      title: 'Your feedback',
+      feedback: feedback,
       filters: filters,
       stati: stati,
       query: req.query
