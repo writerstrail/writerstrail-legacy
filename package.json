@@ -56,6 +56,7 @@
     "superagent": "~0.21.0",
     "mocha": "~2.1.0",
     "jshint": "~2.6.3",
-    "istanbul": "~0.3.6"
+    "istanbul": "~0.3.6",
+    "faker": "~2.1.2"
   }
 }
