@@ -38,7 +38,7 @@ function setupYearly(CalHeatMap, yearData, legend) {
   });
 }
 
-function setupPerPeriod(c3, metric) {
+function setupPerPeriod($, c3, metric) {
   var chart = c3.generate({
     bindto: '#perperiod',
     data: {
@@ -140,9 +140,15 @@ function setupPerPeriod(c3, metric) {
       }
     }
   });
+
+  $('#flushperiod').on('click', function () {
+    chart.flush();
+    pieSessions.flush();
+    pieWords.flush();
+  });
 }
 
-function setupPerSession(c3, metric) {
+function setupPerSession($, c3, metric) {
   var chart = c3.generate({
     bindto: '#persession',
     data: {
@@ -243,5 +249,11 @@ function setupPerSession(c3, metric) {
         format: formatWords
       }
     }
+  });
+
+  $('#flushsession').on('click', function () {
+    chart.flush();
+    pieSessions.flush();
+    pieWords.flush();
   });
 }

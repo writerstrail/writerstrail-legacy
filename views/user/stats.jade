@@ -152,6 +152,9 @@ block content
             #periodsessionsdist
           .col-sm-3
             #periodwordsdist
+        ul.list-group
+          li.list-group-item.text-center
+            button#flushperiod.btn.btn-lg.btn-default Refresh charts
 
     .col-sm-12
       .panel.panel-primary
@@ -164,6 +167,9 @@ block content
             #durationsessionsdist
           .col-sm-3
             #durationwordsdist
+        ul.list-group
+          li.list-group-item.text-center
+            button#flushsession.btn.btn-lg.btn-default Refresh charts
 
 
 
@@ -178,6 +184,8 @@ append scripts
   script(type='text/javascript', src='/bower_components/cal-heatmap/cal-heatmap.min.js')
   script(type='text/javascript', src='/scripts/stats.js')
   script(type='text/javascript')
+    | $(function() {
     | setupYearly(CalHeatMap, !{JSON.stringify(data.sessions)}, !{JSON.stringify(data.legend)});
-    | setupPerPeriod(c3, '!{user.settings.performanceMetric}');
-    | setupPerSession(c3);
+    | setupPerPeriod(jQuery, c3, '!{user.settings.performanceMetric}');
+    | setupPerSession(jQuery, c3, '!{user.settings.performanceMetric}');
+    | });
