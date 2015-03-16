@@ -2,6 +2,7 @@ extends ../layout
 
 block content
   - var performanceOrder = (user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance'
+  - function formatThousands(v) { return v.toString().replace(/\d(?=(\d{3})+(\.\d+)?$)/g, '$&,'); }
   h1 Statistics
 
   .row: .col-sm-12
@@ -19,7 +20,7 @@ block content
           li.list-group-item
             if tops.since
               | You've written a total of&#x0020;
-              strong= tops.totalWordcount
+              strong= formatThousands(tops.totalWordcount)
               |  words since&#x0020;
               strong= moment(tops.since).format(user.settings.dateFormat)
               | .
@@ -29,7 +30,7 @@ block content
             li.list-group-item Your largest project is&#x0020;
               a(href='/projects/' + tops.largestProject.id): strong= tops.largestProject.name
               |  with&#x0020;
-              strong= tops.largestProject.currentWordcount
+              strong= formatThousands(tops.largestProject.currentWordcount)
               |  total words.
           else
             li.list-group-item You don't have any project.
@@ -45,7 +46,7 @@ block content
                 strong= tops.highestWpm.direction
                 |  session
               | , increasing&#x0020;
-              strong= tops.highestWpm.sessionWordcount
+              strong= formatThousands(tops.highestWpm.sessionWordcount)
               |  words to project&#x0020;
               a(href='/projects/' + tops.highestWpm.projectId): strong= tops.highestWpm.projectName
               | .
@@ -74,7 +75,7 @@ block content
               | Your best day was&#x0020;
               strong= moment.utc(tops.bestDate.bestDate).format(user.settings.dateFormat)
               | , in which you wrote&#x0020;
-              strong= tops.bestDate.dailyWordcount
+              strong= formatThousands(tops.bestDate.dailyWordcount)
               |  words.
             else
               | You don't have a best day yet.
@@ -85,13 +86,13 @@ block content
           h3.panel-title Averages and modes
         ul.list-group
           li.list-group-item You have an average of&#x0020;
-            strong= avgs.avgPerProject.toFixed(2)
+            strong= formatThousands(avgs.avgPerProject.toFixed(2))
             |  words per project.
           li.list-group-item Your average performance is&#x0020;
-            strong= avgs.avgPerMinute.toFixed(2)
+            strong= formatThousands(avgs.avgPerMinute.toFixed(2))
             |  words per minute;
           li.list-group-item You have written an average of&#x0020;
-            strong= avgs.avgPerDay.toFixed(2)
+            strong= formatThousands(avgs.avgPerDay.toFixed(2))
             |  words per day.
 
           li.list-group-item
@@ -99,7 +100,7 @@ block content
               | You wrote more frequently at&#x0020;
               strong(title!=avgs.modePeriod.start + '&mdash;' + avgs.modePeriod.end style='border-bottom: 1px dashed #999')= avgs.modePeriod.period
               |  period, making a total of&#x0020;
-              strong= avgs.modePeriod.totalWordcount
+              strong= formatThousands(avgs.modePeriod.totalWordcount)
               |  words in &#x0020;
               strong= avgs.modePeriod.totalSessions
               if avgs.modePeriod.totalSessions === 1
@@ -116,7 +117,7 @@ block content
               | -minute&#x0020;
               strong= avgs.modeSession.direction
               |  sessions, with a total of of&#x0020;
-              strong= avgs.modeSession.totalWordcount
+              strong= formatThousands(avgs.modeSession.totalWordcount)
               |  words in&#x0020;
               strong= avgs.modeSession.totalSessions
               if avgs.modeSession.totalSessions === 1
