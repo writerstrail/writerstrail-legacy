@@ -1,4 +1,14 @@
 /* jshint unused:false */
+function formatWords(value) {
+  if (value < 10000) {
+    return value;
+  }
+  if (value < 1000000) {
+    return parseFloat((value / 1000).toFixed(1)) + 'k';
+  }
+  return parseFloat((value / 1000000).toFixed(2)) + 'm';
+}
+
 function setupYearly(CalHeatMap, yearData, legend) {
   var cal = new CalHeatMap(),
       today = new Date(),
@@ -78,6 +88,9 @@ function setupPerPeriod(c3, metric) {
         padding: {
           bottom: 0
         },
+        tick: {
+          format: formatWords
+        }
       }
     },
     tooltip: {
@@ -88,7 +101,7 @@ function setupPerPeriod(c3, metric) {
         },
         value: function (value, ratio, id) {
           if (id === 'totalWordcount') {
-            return value + ' words';
+            return formatWords(value) + ' words';
           }
           return value.toFixed(2) + ' wpm';
         }
@@ -123,9 +136,7 @@ function setupPerPeriod(c3, metric) {
     donut: {
       title: 'Words per period',
       label: {
-        format: function (value) {
-          return value;
-        }
+        format: formatWords
       }
     }
   });
@@ -169,11 +180,22 @@ function setupPerSession(c3, metric) {
         label: 'Duration (~5min)'
       },
       y: {
-        label: 'Words per minute'
+        label: 'Words per minute',
+        min: 0,
+        padding: {
+          bottom: 0
+        }
       },
       y2: {
         show: true,
-        label: 'Words'
+        label: 'Words',
+        min: 0,
+        padding: {
+          bottom: 0
+        },
+        tick: {
+          format: formatWords
+        }
       }
     },
     tooltip: {
@@ -183,7 +205,7 @@ function setupPerSession(c3, metric) {
         },
         value: function (value, ratio, id) {
           if (id.indexOf('Wordcount') >= 0) {
-            return value + ' words';
+            return formatWords(value) + ' words';
           }
           return value.toFixed(2) + ' wpm';
         }
@@ -218,9 +240,7 @@ function setupPerSession(c3, metric) {
     donut: {
       title: 'Words per duration',
       label: {
-        format: function (value) {
-          return value;
-        }
+        format: formatWords
       }
     }
   });
