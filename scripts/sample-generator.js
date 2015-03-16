@@ -246,7 +246,7 @@ models.User.destroy({
           pausedTime: randomIntBetween(0, Math.floor(duration / 6)),
           wordcount: wordcount,
           projectId: project.id,
-          isCountdown: !!randomIntBetween(0, 1),
+          isCountdown: !!faker.random.number(),
           zoneOffset: today.utcOffset()
         }));
       }
