@@ -76,7 +76,7 @@ app.use(i18n.init);
 app.use(csrf());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(paginate.middleware(10, 50));
+app.use(paginate.middleware(30, 100));
 
 var maintenance = require('./utils/middlewares/maintenance');
 var routes = require('./routes/index');
