@@ -52,7 +52,7 @@ var promise = require('bluebird'),
     wordcountRange = [90000, 30000], // min, variation
     durationRange = [300, 1200], // min, max
     wpmRange = [30, 50], // min, max
-    today = moment.utc().subtract({ year: 1, day: 1 }).set({
+    today = moment().subtract({ year: 1, day: 1 }).set({
       hour: 0,
       minute: 0,
       second: 0,
@@ -202,7 +202,7 @@ models.User.destroy({
   return promise.all(promises);
 }).then(function () {
   // Generate sessions
-  var now = moment.utc().set({
+  var now = moment().set({
         hour: 23,
         minute: 59,
         second: 59,
@@ -247,7 +247,7 @@ models.User.destroy({
           wordcount: wordcount,
           projectId: project.id,
           isCountdown: !!randomIntBetween(0, 1),
-          zoneOffset: 0
+          zoneOffset: today.utcOffset()
         }));
       }
 
