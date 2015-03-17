@@ -2,10 +2,10 @@ extends ../layout
 
 block content
   include ../mixins/filters
-  h1 Your feedbacks
+  h1 Your feedback
   
-  p.text-muted For better usability, you can't edit the feedbacks. If anything, delete and create another or contact us at 
-    strong writerstrail@georgemarques.com.br
+  p.text-muted For better usability, you can't edit any feedback. If anything, delete and create another or contact us at
+    strong  writerstrail@georgemarques.com.br
     | .
     
   .btn-group
@@ -13,7 +13,7 @@ block content
       span.fa.fa-lg.fa-plus
       |  Add feedback/bug/suggestion
   
-  if feedbacks.length === 0
+  if feedback.length === 0
     h3 You haven't provided any feedback.
   else
     +filters(filters, '/feedback/mine')
@@ -38,7 +38,7 @@ block content
     p  
     
     ul.list-group
-      for fb in feedbacks
+      for fb in feedback
         li.list-group-item
           if user.id === fb.authorId
             unless fb.deletedAt

@@ -20,7 +20,7 @@
 
 * Mandatory password for those who login with social network.
 * Allow sessions without duration.
-* Showing feedbacks in progress by default.
+* Showing feedback in progress by default.
 * Tooltips on toolbars.
 
 ## v0.3.0
@@ -54,8 +54,8 @@
 
 ## v0.2.1
 
-* Fixing a bug that not allowed unlogged users to view single feedbacks.
-* Showing only new feedbacks by default.
+* Fixing a bug that not allowed unlogged users to view single feedback.
+* Showing only new feedback by default.
 
 ## v0.2.0
 

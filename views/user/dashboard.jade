@@ -95,7 +95,7 @@ block content
           if stats.session
             li.list-group-item You are most productive at 
               strong!= '&#x2248;' + stats.session.minuteDuration
-              |  minutes 
+              | -minute&#x0020;
               strong= stats.session.direction
               |  sessions, achieving an average of 
               strong= stats.session.performance.toFixed(2)
@@ -115,7 +115,7 @@ block content
               |  words per minute in a&#x0020;
               a(href='/sessions/' + stats.highestWpm.sessionId title='Link to session')
                 strong!= '&#x2248;' +  stats.highestWpm.minuteDuration
-                |  minutes&#x0020;
+                | -minute&#x0020;
                 strong= stats.highestWpm.direction
                 |  session
               |  increasing&#x0020;
