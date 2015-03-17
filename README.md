@@ -12,7 +12,7 @@ Writers's Trail is a tool designed by a writer for writers so they can see chart
 
 ### Custom targets with progress charts
 
-![Target](http://writerstrail.georgemarques.com.br/images/target.png)
+![Target](public/images/target.png)
 
 Now you can have that [NaNoWriMo](http://nanowrimo.org) feel any time in the year. Create targets for any amount of words and time you want.
 
@@ -22,7 +22,7 @@ Or increase the target word count if it got too easy.
 
 ### Register your writing sessions
 
-![Session](http://writerstrail.georgemarques.com.br/images/session.png)
+![Session](public/images/session.png)
 
 Know all the time you have written. Keep notes for yourself about how you felt in that session.
 
@@ -30,7 +30,7 @@ You can make a summary to make it easier to find a specific session later on.
 
 ### Visualize your progress
 
-![Projects](http://writerstrail.georgemarques.com.br/images/projects.png)
+![Projects](public/images/projects.png)
 
 Individual progress bars for each project, unrelated to defined targets.
 
@@ -40,7 +40,7 @@ Mark projects as finished and/or inactive. Inactive projects will be hidden from
 
 ### A dashboard with statistics
 
-![Stats](http://writerstrail.georgemarques.com.br/images/stats.png)
+![Stats](public/images/stats.png)
 
 You can see a summary of your statistics and know what are the best session length for you.
 
@@ -50,7 +50,7 @@ Know how much you have written and the period of day you are most productive.
 
 ### Application settings
 
-![Settings](http://writerstrail.georgemarques.com.br/images/settings.png)
+![Settings](public/images/settings.png)
 
 Choose your preferred date and time format and select which data you'll see in your targets charts by default.
 
@@ -58,7 +58,7 @@ Reset the application tour or cancel it any time you want.
 
 ### Custom genres
 
-![Genres](http://writerstrail.georgemarques.com.br/images/genres.png)
+![Genres](public/images/genres.png)
 
 Classify your projects in any way you want. A default set is provided but you can add, remove or change them at your will.
 
@@ -66,13 +66,13 @@ If you want to set genres as formats (novel, short story, essay, etc.) that's fi
 
 ### Timer and chronometer
 
-![Timer](http://writerstrail.georgemarques.com.br/images/timer.png)
+![Timer](public/images/timer.png)
 
 Time your sessions on the web page and have the fields filled for you. If you see yourself using always the same session length, you can also define a default timer in your settings.
 
 ### Statistics about your writing
 
-![Full writing statistics](http://writerstrail.georgemarques.com.br/images/statistics.png)
+![Full writing statistics](public/images/statistics.png)
 
 A lot of information about your writing habits condensed in a single page. Things that you didn't know that you wanted to now are now available.
 
@@ -80,7 +80,7 @@ See your best performance and try to beat it. See also your average and modes an
 
 ### More charts
 
-![Charts](http://writerstrail.georgemarques.com.br/images/charts.png)
+![Charts](public/images/charts.png)
 
 A neat way to compare your writing habits. See at one glance if you are a person of the day or like to pass your nights by the keyboard.
 
