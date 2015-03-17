@@ -38,13 +38,15 @@ See how close you are of finishing that pet project of yours.
 
 Mark projects as finished and/or inactive. Inactive projects will be hidden from the main dashboard.
 
-### See your writing habits
+### A dashboard with statistics
 
 ![Stats](http://writerstrail.georgemarques.com.br/images/stats.png)
 
 You can see a summary of your statistics and know what are the best session length for you.
 
 Know how much you have written and the period of day you are most productive.
+
+ All that without leaving your main dashboard.
 
 ### Application settings
 
@@ -67,6 +69,23 @@ If you want to set genres as formats (novel, short story, essay, etc.) that's fi
 ![Timer](http://writerstrail.georgemarques.com.br/images/timer.png)
 
 Time your sessions on the web page and have the fields filled for you. If you see yourself using always the same session length, you can also define a default timer in your settings.
+
+### Statistics about your writing
+
+![Full writing statistics](http://writerstrail.georgemarques.com.br/images/statistics.png)
+
+A lot of information about your writing habits condensed in a single page. Things that you didn't know that you wanted to now are now available.
+
+See your best performance and try to beat it. See also your average and modes and try to change (or keep) them. It's your call!
+
+### More charts
+
+![Charts](http://writerstrail.georgemarques.com.br/images/charts.png)
+
+A neat way to compare your writing habits. See at one glance if you are a person of the day or like to pass your nights by the keyboard.
+
+Those are just a peak. There are a few more charts and also some more yet to come! Provide [some feedback](http://writerstrail.georgemarques.com.br/feedback)
+if you want to see something else.
 
 ## Issues and contribution
 
