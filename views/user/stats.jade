@@ -5,14 +5,14 @@ block content
   - function formatThousands(v) { return v.toString().replace(/\d(?=(\d{3})+(\.\d+)?$)/g, '$&,'); }
   h1 Statistics
 
-  .row: .col-sm-12
+  .row: .col-md-12
     .panel.panel-success
       .panel-heading
         h3.panel-title Your year in writing
       .panel-body
         div#heatmap
   .row
-    .col-sm-6
+    .col-md-6
       .panel.panel-default
         .panel-heading
           h3.panel-title Tops
@@ -80,7 +80,7 @@ block content
             else
               | You don't have a best day yet.
 
-    .col-sm-6
+    .col-md-6
       .panel.panel-default
         .panel-heading
           h3.panel-title Averages and modes
@@ -141,31 +141,31 @@ block content
               | You don't have a most common project yet.
 
   .row
-    .col-sm-12
+    .col-md-12
       .panel.panel-primary
         .panel-heading
           h3.panel-title Performance per period
         .panel-body: .row
-          .col-sm-6
+          .col-md-6
             #perperiod
-          .col-sm-3
+          .col-md-3
             #periodsessionsdist
-          .col-sm-3
+          .col-md-3
             #periodwordsdist
         ul.list-group
           li.list-group-item.text-center
             button#flushperiod.btn.btn-lg.btn-default Refresh charts
 
-    .col-sm-12
+    .col-md-12
       .panel.panel-primary
         .panel-heading
           h3.panel-title Performance per session duration
         .panel-body: .row
-          .col-sm-6
+          .col-md-6
             #persession
-          .col-sm-3
+          .col-md-3
             #durationsessionsdist
-          .col-sm-3
+          .col-md-3
             #durationwordsdist
         ul.list-group
           li.list-group-item.text-center

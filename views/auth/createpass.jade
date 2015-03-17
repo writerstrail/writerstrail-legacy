@@ -8,17 +8,17 @@ block content
     input(type='hidden' name='_csrf', value=csrf)
     - var passErr = _.find(validate, function(err) { return err.path === 'password' }) || ''
     .form-group(class=passErr ? 'has-error' : '')
-      label.col-sm-2.control-label(for='password') Password
-      .col-sm-10
+      label.col-md-2.control-label(for='password') Password
+      .col-md-10
         input#password.form-control(type='password' name='password' placeholder='Password' aria-describedby='passwordhelp')
         span#passwordhelp.help-block= passErr ? passErr.message : 'An easy to remember hard to guess password.'
         
     - var confErr = _.find(validate, function(err) { return err.path === 'passwordConfirm' }) || ''
     .form-group(class=confErr ? 'has-error' : '')
-      label.col-sm-2.control-label(for='passwordConfirm') Confirm
-      .col-sm-10
+      label.col-md-2.control-label(for='passwordConfirm') Confirm
+      .col-md-10
         input#passwordConfirm.form-control(type='password' name='passwordConfirm' placeholder='Confirm' aria-describedby='passwordConfirmhelp')
         span#passwordConfirmhelp.help-block= confErr ? confErr.message : 'The same thing you typed above, just to be sure.'
     .form-groupl
-      .col-sm-offset-2.col-sm-10
+      .col-md-offset-2.col-md-10
         button.btn.btn-primary(type='submit') Save

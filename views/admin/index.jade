@@ -3,25 +3,25 @@ extends ../layout
 block content
   h1 Administration page
   .row
-    .col-sm-6
+    .col-md-6
       .well
         h3 New invitation code
         form#invitations.form-horizontal(method='post' action='/admin/invitation')
           .form-group
-            label.col-sm-2.control-label(for='invitation_code')= __('Invitation code')
-            .col-sm-10
+            label.col-md-2.control-label(for='invitation_code')= __('Invitation code')
+            .col-md-10
               input#invitation_code.form-control(type='text' placeholder=__('Code') name='invCode' autofocus=true)
             input(type='hidden' name='_csrf' value=csrf)
           .form-group
-            label.col-sm-2.control-label(for='invitation_admount')= __('Amount')
-            .col-sm-10
+            label.col-md-2.control-label(for='invitation_admount')= __('Amount')
+            .col-md-10
               input#invitation_amount.form-control(type='number' placeholder=__('Amount') name='invAmount' value='1')
           .form-group
-            .col-sm-12
+            .col-md-12
               button#gen_code.btn.btn-default(type='button')= __('Generate')
               | &nbsp;
               button.btn.btn-primary(type='submit')= __('Create code')
-    .col-sm-6
+    .col-md-6
       .well
         h3= __('Available invitation codes:')
         - if (!codes || codes.length == 0)
@@ -46,19 +46,19 @@ block content
                         != code.code + '&nbsp;'
                         span.badge= code.amount
   .row
-    .col-sm-12
+    .col-md-12
       .well
         h3 Maintenance mode
         form.form-horizontal(action='/admin/maintenance', method='post')
           input(type='hidden' name='_csrf' value=csrf)
           .form-group
-            label.col-sm-2.control-label(for='maintenance') Maintenance mode
-            .col-sm-10
+            label.col-md-2.control-label(for='maintenance') Maintenance mode
+            .col-md-10
               select#maintenance.form-control(name='maintenance')
                 for i in ['off', 'soft', 'hard']
                   option(selected=i===app.maintenance)= i
           .form-group
-            .col-sm-offset-2.col-sm-10
+            .col-md-offset-2.col-md-10
               button.btn.btn-warning(type='submit' name='maintenanceButton' value='ok') Update
 
 append scripts

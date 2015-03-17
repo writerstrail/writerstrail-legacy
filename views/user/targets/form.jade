@@ -29,24 +29,24 @@ block content
     - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
     
     .form-group(class=(nameErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='name')= __('Name')
-      .col-sm-10
+      label.col-md-2.control-label(for='name')= __('Name')
+      .col-md-10
         input#name.form-control(type='text' name='name' placeholder=__('Name') value=target.name aria-describedby='namehelp')
         span#namehelp.help-block= __(nameErr ? nameErr.message : 'A unique name for this target so you can find it later.')
         
     - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
 
     .form-group(class=(wcErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='wordcount')= __('Target word count')
-      .col-sm-10
+      label.col-md-2.control-label(for='wordcount')= __('Target word count')
+      .col-md-10
         input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp')
         span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you want to have by the end of the target period (may be blank).')
         
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     
     .form-group(class=(startErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='start')= __('Start date')
-      .col-sm-10
+      label.col-md-2.control-label(for='start')= __('Start date')
+      .col-md-10
         .input-group.date#startpicker
           span.input-group-addon
             span.fa.fa-fw.fa-calendar
@@ -56,8 +56,8 @@ block content
     - var endErr = _.find(validate, function(err) { return err.path === 'end' || err.path === 'startBeforeEnd'; }) || ''
     
     .form-group(class=(endErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='end')= __('End date')
-      .col-sm-10
+      label.col-md-2.control-label(for='end')= __('End date')
+      .col-md-10
         .input-group.date#endpicker
           span.input-group-addon
               span.fa.fa-fw.fa-calendar
@@ -65,43 +65,43 @@ block content
         span#endhelp.help-block= __(endErr ? endErr.message : 'When will (or did) this target\'s period end.')
     
     .form-group
-      label.col-sm-2.control-label Total days
-      .col-sm-10
+      label.col-md-2.control-label Total days
+      .col-md-10
         - var totalDays = moment.utc(target.end, user.settings.dateFormat).diff(moment.utc(target.start, user.settings.dateFormat), 'days') + 1
         p#totaldays.control-static= isNaN(totalDays) ? 'Invalid date' : totalDays
         span#help.help-block The total of days selected (including the start and end).
         
     .form-group
-      label.col-sm-2.control-label(for='notes')= __('Notes')
-      .col-sm-10
+      label.col-md-2.control-label(for='notes')= __('Notes')
+      .col-md-10
         textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes') aria-describedby='noteshelp')= target.notes
         span#noteshelp.help-block Any notes you want to keep for yourself about this target.
         
     .form-group#projects
-      .col-sm-12
+      .col-md-12
         for chunk, i in projects
           .row
             if i === 0
-              label.col-sm-2.control-label Projects
-            .col-sm-3(class= i !== 0 ? 'col-sm-offset-2' : '')
+              label.col-md-2.control-label Projects
+            .col-md-3(class= i !== 0 ? 'col-md-offset-2' : '')
               .checkbox
                 label
                   input(type='checkbox', name='projects[]' value=chunk[0].id checked=checkProject(chunk[0].id))
                   = chunk[0].name
             if chunk[1]
-              .col-sm-3
+              .col-md-3
                 .checkbox
                   label
                     input(type='checkbox', name='projects[]' value=chunk[1].id checked=checkProject(chunk[1].id))
                     = chunk[1].name
             if chunk[2]
-              .col-sm-3
+              .col-md-3
                 .checkbox
                   label
                     input(type='checkbox', name='projects[]' value=chunk[2].id checked=checkProject(chunk[2].id))
                     = chunk[2].name
         .row
-          .col-sm-offset-2.col-sm-10
+          .col-md-offset-2.col-md-10
             span#projectshelp.help-block Select the projects that will count as fulfilling this target.
     include ../../mixins/single-form-buttons
     

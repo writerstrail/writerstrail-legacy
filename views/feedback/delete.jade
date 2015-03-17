@@ -7,19 +7,19 @@ block content
   
   p  
   
-  .row: .col-sm-12: .panel.panel-success
+  .row: .col-md-12: .panel.panel-success
     .panel-heading
       h3.panel-title Deleted feedback was:
     ul.list-group
       li.list-group-item: .row
-        .col-sm-2
+        .col-md-2
           strong Summary
-        .col-sm-10
+        .col-md-10
           = feedback.summary
       li.list-group-item: .row
-        .col-sm-2
+        .col-md-2
           strong Description
-        .col-sm-10
+        .col-md-10
           unless feedback.description
             | No description provided.
           else

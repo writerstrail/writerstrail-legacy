@@ -24,19 +24,19 @@ block content
   
   .list-group
     .row.list-group-item
-      .col-sm-2
+      .col-md-2
         strong Vote score
-      .col-sm-10
+      .col-md-10
         span.badge= feedback.totalVotes || 0
     .row.list-group-item
-      .col-sm-2
+      .col-md-2
         strong Summary
-      .col-sm-10
+      .col-md-10
         = feedback.summary
     .row.list-group-item
-      .col-sm-2
+      .col-md-2
         strong Description
-      .col-sm-10
+      .col-md-10
         unless feedback.description
           | No description provided.
         else
@@ -46,14 +46,14 @@ block content
                 br
               = line
     .row.list-group-item
-      .col-sm-2
+      .col-md-2
         strong Status
-      .col-sm-10
+      .col-md-10
         = feedback.status
     .row.list-group-item
-      .col-sm-2
+      .col-md-2
         strong Response
-      .col-sm-10
+      .col-md-10
         unless feedback.response
           | No response yet.
         else

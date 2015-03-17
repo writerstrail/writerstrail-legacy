@@ -29,16 +29,16 @@ block content
     - var summaryErr = _.find(validate, { path: 'summary' }) || ''
     
     .form-group(class=(summaryErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='summary')= __('Summary')
-      .col-sm-10
+      label.col-md-2.control-label(for='summary')= __('Summary')
+      .col-md-10
         input#summary.form-control(type='text' name='summary' placeholder=__('Summary') value=session.summary aria-describedby='summaryhelp')
         span#summaryhelp.help-block= __(summaryErr ? summaryErr.message : 'A concise summary of this writing session (optional).')
         
     - var projectErr = _.find(validate, { path: 'project' }) || ''
         
     .form-group(class=(projectErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='project')= __('Project')
-      .col-sm-10
+      label.col-md-2.control-label(for='project')= __('Project')
+      .col-md-10
         select#project.form-control(name='project' aria-describedby='projecthelp')
           for proj in projects
             option(value=proj.id selected=proj.id == session['project.id'])= proj.name
@@ -47,8 +47,8 @@ block content
     - var startErr = _.find(validate, function(err) { return err.path === 'start'; }) || ''
     
     .form-group(class=(startErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='start')= __('Start time')
-      .col-sm-10
+      label.col-md-2.control-label(for='start')= __('Start time')
+      .col-md-10
         .input-group.date#startpicker
           span.input-group-addon
             span.fa.fa-fw.fa-clock-o
@@ -58,36 +58,36 @@ block content
     - var durErr = _.find(validate, { path: 'duration' }) || ''
 
     .form-group(class=(durErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='duration')= __('Session duration (min or min:sec)')
-      .col-sm-10
+      label.col-md-2.control-label(for='duration')= __('Session duration (min or min:sec)')
+      .col-md-10
         .row
-          .col-sm-12
+          .col-md-12
             input#duration.form-control(type='texts' name='duration' placeholder=__('Session duration') value=session.duration aria-describedby='durationhelp')
             span#durationhelp.help-block= __(durErr ? durErr.message : 'How much time you spent writing (leave blank if you don\'t know).')
         
     - var pausedErr = _.find(validate, function(err) { return err.path === 'pausedTime' || err.path === 'pausedLessThanDuration'; }) || ''
 
     .form-group(class=(pausedErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
-      .col-sm-10
+      label.col-md-2.control-label(for='pausedTime')= __('Time not writing (min or min:sec)')
+      .col-md-10
         input#pausedTime.form-control(type='texts' name='pausedTime' placeholder=__('Time not writing') value=session.pausedTime aria-describedby='pausedTimehelp')
         span#pausedTimehelp.help-block= __(pausedErr ? pausedErr.message : 'How much of the time from the field above was wasted not writing.')
         
     - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
 
     .form-group(class=(wcErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='wordcount')= __('Words written')
-      .col-sm-10
+      label.col-md-2.control-label(for='wordcount')= __('Words written')
+      .col-md-10
         input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Words written') value=session.wordcount aria-describedby='wchelp')
         span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you\'ve written during this session.')
     .form-group
-      label.col-sm-2.control-label(for='text') Or paste your text here to count it
-      .col-sm-10
+      label.col-md-2.control-label(for='text') Or paste your text here to count it
+      .col-md-10
         textarea#text.form-control(name='text' placeholder='Text' aria-describedby='texthelp')
         span#texthelp.help-block Paste your text so we can count the words (text won't be saved).
     
     .form-group
-      .col-sm-10.col-sm-offset-2
+      .col-md-10.col-md-offset-2
         .checkbox
           label
             input#isCountdown(type='checkbox' name='isCountdown' checked=!!session.isCountdown aria-describedby='countdownhelp')
@@ -95,8 +95,8 @@ block content
           span#countdownhelp.help-block Check if you used a timer to stop writing when it beeped.
         
     .form-group
-      label.col-sm-2.control-label(for='notes')= __('Notes')
-      .col-sm-10
+      label.col-md-2.control-label(for='notes')= __('Notes')
+      .col-md-10
         textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes') aria-describedby='noteshelp')= session.notes
         span#help.help-block Some notes about this session, if you want to record of something later.        
     
