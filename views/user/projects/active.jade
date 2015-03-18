@@ -25,19 +25,19 @@ block content
       for project in projects
         li.list-group-item
           .row
-            .col-sm-3.project-list-title
+            .col-md-3.project-list-title
               a(href='/projects/' + project.id title=project.description)= project.name
               |  
               a(href='/projects/' + project.id + '/edit' title='Edit')
                 span.fa.fa-edit
-            .col-sm-7
+            .col-md-7
               if project.targetwc > 0
                 +progressbar(project.currentWordcount, project.targetwc, project.percentage)
               else
                 | No target defined.&nbsp;
                 = project.currentWordcount
                 | &nbsp;written words.
-            .col-sm-2
+            .col-md-2
               a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
               
       if projects.length === 0

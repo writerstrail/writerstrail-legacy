@@ -47,15 +47,21 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Feedback.belongsTo(models.User, {
           as: 'author',
-          foreignKey: 'authorId'
+          foreignKey: 'authorId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Feedback.hasMany(models.Vote, {
           as: 'votes',
-          foreignKey: 'feedbackId'
+          foreignKey: 'feedbackId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Feedback.belongsTo(models.User, {
           as: 'originalAuthor',
-          foreignKey: 'originalAuthorId'
+          foreignKey: 'originalAuthorId',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
       }
     },

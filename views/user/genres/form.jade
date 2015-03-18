@@ -20,13 +20,13 @@ block content
     input(type='hidden' name='_csrf', value=csrf)
     - var nameErr = _.find(validate, { path: 'name' }) || ''
     .form-group(class=(nameErr ? 'has-error' : ''))
-      label.col-sm-2.control-label(for='name')= __('Name')
-      .col-sm-10
+      label.col-md-2.control-label(for='name')= __('Name')
+      .col-md-10
         input#name.form-control(type='text' name='name' placeholder=__('Name') value=genre.name aria-describedby='namehelp')
         span#namehelp.help-block= __(nameErr ? nameErr.message : 'A meaningful name helps you find this genre later and classify your projects better.')
     .form-group
-      label.col-sm-2.control-label(for='Description')= __('Description')
-      .col-sm-10
+      label.col-md-2.control-label(for='Description')= __('Description')
+      .col-md-10
         textarea#name.form-control(rows='3' name='description' placeholder=__('Description') aria-describedby='deschelp')= genre.description
         span#deschelp.help-block Explain what this genre is about. It's shown as the mouseover text on the list.
     include ../../mixins/single-form-buttons

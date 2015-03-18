@@ -44,7 +44,7 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: true
     },
     defaultTimer: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 900,
       validate: {
@@ -70,7 +70,9 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Settings.belongsTo(models.User, {
           as: 'owner',
-          foreignKey: 'id'
+          foreignKey: 'id',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
       }
     }

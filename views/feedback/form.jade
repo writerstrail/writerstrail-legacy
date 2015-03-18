@@ -7,7 +7,7 @@ block content
     a(href='/feedback') feedback page
     | .
   p.text-muted You may see the status of the feedback you provided by looking 
-    a(href='/feedback/mine') your sent feedbacks
+    a(href='/feedback/mine') your sent feedback
     | . Wait for an answer before posting duplicates. For better conversation, send us an email at 
     strong writerstrail@georgemarques.com.br
   
@@ -16,8 +16,8 @@ block content
     
     - var typeErr = _.find(validate, { path: 'type' }) || ''
     .form-group(class=typeErr ? 'has-error' : '')
-      label.col-sm-2.control-label(for='type') Type
-      .col-sm-10
+      label.col-md-2.control-label(for='type') Type
+      .col-md-10
         select#type.form-control(name='type' aria-describedby='typehelp')
           for t in types
             option(selected=(feedback.type === t))= t
@@ -25,18 +25,18 @@ block content
         
     - var summaryErr = _.find(validate, { path: 'summary' }) || ''
     .form-group(class=summaryErr ? 'has-error' : '')
-      label.col-sm-2.control-label(for='summary') Summary
-      .col-sm-10
+      label.col-md-2.control-label(for='summary') Summary
+      .col-md-10
         input#summary.form-control(name='summary' type='text' required=false placeholder='Summary' value=feedback.summary aria-describedby='summaryhelp' autofocus=true)
         span#summaryhelp.help-block= summaryErr ? summaryErr.message : ''
         
     .form-group
-      label.col-sm-2.control-label(for='description') Description
-      .col-sm-10
+      label.col-md-2.control-label(for='description') Description
+      .col-md-10
         textarea#description.form-control(name='description' placeholder='Provide useful description and reproduction steps to make it easier to fix bugs')
           = feedback.description
     .form-group
-      .col-sm-offset-2.col-sm-10
+      .col-md-offset-2.col-md-10
         button.btn.btn-primary(type='submit')
           span.fa.fa-check
           |  Send

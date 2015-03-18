@@ -15,6 +15,7 @@
   "disallowSpaceAfterObjectKeys": true,
   "requireSpaceBeforeObjectValues": true,
   "excludeFiles": [
+    "server.js",
     "node_modules/**",
     "bower_components/**",
     "coverage/**",

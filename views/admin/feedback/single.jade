@@ -18,8 +18,8 @@ block content
     
     - var typeErr = _.find(validate, { path: 'type' }) || ''
     .form-group(class=typeErr ? 'has-error' : '')
-      label.col-sm-2.control-label(for='type') Type
-      .col-sm-10
+      label.col-md-2.control-label(for='type') Type
+      .col-md-10
         select#type.form-control(name='type' aria-describedby='typehelp')
           for t in types
             option(selected=(feedback.type === t))= t
@@ -27,14 +27,14 @@ block content
         
     - var summaryErr = _.find(validate, { path: 'summary' }) || ''
     .form-group(class=summaryErr ? 'has-error' : '')
-      label.col-sm-2.control-label(for='summary') Summary
-      .col-sm-10
+      label.col-md-2.control-label(for='summary') Summary
+      .col-md-10
         input#summary.form-control(name='summary' type='text' required=false placeholder='Summary' value=feedback.summary aria-describedby='summaryhelp' autofocus=true)
         span#summaryhelp.help-block= summaryErr ? summaryErr.message : ''
         
     .form-group
-      label.col-sm-2.control-label(for='description') Description
-      .col-sm-10
+      label.col-md-2.control-label(for='description') Description
+      .col-md-10
         textarea#description.form-control(name='description' placeholder='Provide useful description and reproduction steps to make it easier to fix bugs')
           = feedback.description
     hr
@@ -43,21 +43,21 @@ block content
     
     - var statusErr = _.find(validate, { path: 'status' }) || ''
     .form-group(class=statusErr ? 'has-error' : '')
-      label.col-sm-2.control-label(for='status') Status
-      .col-sm-10
+      label.col-md-2.control-label(for='status') Status
+      .col-md-10
         select#status.form-control(name='status' aria-describedby='statushelp')
           for s in stati
             option(selected=(feedback.status === s))= s
         span#statushelp.help-block= statusErr ? statusErr.message : ''
         
     .form-group
-      label.col-sm-2.control-label(for='response') Response
-      .col-sm-10
+      label.col-md-2.control-label(for='response') Response
+      .col-md-10
         textarea#description.form-control(name='response' placeholder='Response')
           = feedback.response
     
     .form-group
-      .col-sm-offset-2.col-sm-10
+      .col-md-offset-2.col-md-10
         .checkbox
           label(title='Avoid author from removing it')
             input(type='checkbox' name='lock' checked=((feedback.authorId !== feedback.originalAuthorId) && (feedback.authorId === user.id)))
@@ -69,8 +69,8 @@ block content
               p.text-muted (Locked by <a href="/admin/user/#{feedback.authorId}">#{feedback.authorId}</a>)
     
     .form-group
-      label.col-sm-2.control-label Original author
-      .col-sm-10
+      label.col-md-2.control-label Original author
+      .col-md-10
         p.control-static: a(href='/admin/user/' + feedback.originalAuthorId)= feedback.originalAuthorId
         input(type='hidden' name='authorId' value=feedback.authorId)
         input(type='hidden' name='originalAuthorId' value=feedback.originalAuthorId)

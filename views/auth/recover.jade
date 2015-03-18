@@ -5,9 +5,9 @@ block content
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf' value=csrf)
     .form-group
-      label.col-sm-2.control-label(for="email") Type your email address
-      .col-sm-10
+      label.col-md-2.control-label(for="email") Type your email address
+      .col-md-10
         input#email.form-control(type='email' name='email' placeholder='Email' autofocus=true required=true)
     .form-group
-      .col-sm-offset-2.col-sm-offset-10
+      .col-md-offset-2.col-md-offset-10
         button.btn.btn-primary(type='submit') Send recovery

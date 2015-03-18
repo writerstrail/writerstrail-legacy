@@ -11,7 +11,7 @@ block content
         |  Add feedback/bug/suggestion
       a.btn.btn-default(href='/feedback/mine' title='Your feedback')
         span.fa.fa-lg.fa-list
-        |  See feedbacks you provided
+        |  See feedback you provided
   p  
   
   +filters(filters, '/feedback?status=All')
@@ -36,12 +36,12 @@ block content
   p  
   
   .row
-    .col-sm-8
+    .col-md-8
       ul.list-group
-        if feedbacks.length === 0
-          h3 No feedbacks to show.
+        if feedback.length === 0
+          h3 No feedback to show.
         else
-          for fb in feedbacks
+          for fb in feedback
             - var itemclass = fb.type === 'Bug' ? 'danger' : (fb.type === 'Suggestion' ? 'success' : (fb.type === 'Feedback' ? 'info': 'warning'))
             li.list-group-item(class='list-group-item-' + itemclass)
               span.badge= fb.totalVotes || 0
@@ -57,4 +57,4 @@ block content
                   s= fb.summary
                 else
                   = fb.summary
-              span.text-muted.pull-right: small (#{fb.status}) 
+              span.text-muted.pull-right: small (#{fb.status})

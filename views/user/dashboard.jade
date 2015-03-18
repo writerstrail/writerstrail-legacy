@@ -8,7 +8,7 @@ block content
     = title
   
   .row
-    .col-sm-12
+    .col-md-12
       #active-projects.panel.panel-primary
         .panel-heading
           h3.panel-title
@@ -18,32 +18,32 @@ block content
           if projects.length === 0
             li.list-group-item
               .row
-                .col-sm-12
+                .col-md-12
                   h3.text-center No current active project
                   p.text-center
                     a.btn.btn-primary(href='/projects/new' title='New project') Create a new one now
           for project in projects
             li.list-group-item
               .row
-                .col-sm-3.project-list-title
+                .col-md-3.project-list-title
                   a.project-list-title(href='/projects/' + project.id title=project.description)= project.name
                   |  
                   a(href='/projects/' + project.id + '/edit' title='Edit')
                     span.fa.fa-edit
-                .col-sm-7
+                .col-md-7
                   if project.targetwc === 0
                     p No target defined. 
                       = project.currentWordcount
                       |  written words.
                   else
                     +progressbar(project.currentWordcount, project.targetwc, project.percentage)
-                .col-sm-2
+                .col-md-2
                   a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
           li.list-group-item.text-center
             a#see-projects(href='/projects/active') See all active projects
             
   .row
-    .col-sm-6
+    .col-md-6
       #latest-target.panel.panel-default
         .panel-heading
           h3.panel-title
@@ -64,12 +64,12 @@ block content
           li.list-group-item.text-center
             a(href='/targets') See all targets
             
-    .col-sm-6
+    .col-md-6
       #stats.panel.panel-default
         .panel-heading
           h3.panel-title
             span.fa.fa-calculator
-            |  Writing stats
+            a(href='/stats' title='See all stats')  Writing stats
         ul.list-group
           li.list-group-item You have written a total of 
             strong= isNaN(stats.totalWordcount) ? 0 : stats.totalWordcount
@@ -95,7 +95,7 @@ block content
           if stats.session
             li.list-group-item You are most productive at 
               strong!= '&#x2248;' + stats.session.minuteDuration
-              |  minutes 
+              | -minute&#x0020;
               strong= stats.session.direction
               |  sessions, achieving an average of 
               strong= stats.session.performance.toFixed(2)
@@ -115,7 +115,7 @@ block content
               |  words per minute in a&#x0020;
               a(href='/sessions/' + stats.highestWpm.sessionId title='Link to session')
                 strong!= '&#x2248;' +  stats.highestWpm.minuteDuration
-                |  minutes&#x0020;
+                | -minute&#x0020;
                 strong= stats.highestWpm.direction
                 |  session
               |  increasing&#x0020;
@@ -134,6 +134,8 @@ block content
               |  total words.
           else
             li.list-group-item You don't have any project.
+          li.list-group-item.text-center
+            a(href='/stats') See all stats
           
 append styles
   link(rel='stylesheet', href='/bower_components/c3/c3.min.css')

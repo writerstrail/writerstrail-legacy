@@ -13,6 +13,8 @@ module.exports = function (req) {
       { 'href': '/timer', 'key': 'timer', 'label': 'Timer', 'title': 'Track your writing sessions', icon: 'coffee' },
       {
         'dropdown': true, 'label': req.user.name, key: 'user', icon: 'user',  'list': [
+          { 'href': '/stats', 'key': 'stats', 'label': 'Statistics', 'title': 'Some information about your writing habits', icon: 'calculator' },
+          { 'key': 'divider' },
           { 'href': '/projects/active', 'key': 'projects', 'label': req.__('Projects'), 'title': req.__('Your active writing projects'), icon: 'fire' },
           { 'href': '/sessions', 'key': 'sessions', 'label': req.__('Sessions'), 'title': req.__('Your writing sessions'), icon: 'calendar' },
           { 'href': '/targets?current=true', 'key': 'targets', 'label': req.__('Targets'), 'title': req.__('Your current writing targets to achieve'), icon: 'bullseye' },

@@ -4,11 +4,11 @@ block content
   h1 Timer and chronometer
   
   .row
-    .col-sm-6: .panel.panel-default
+    .col-md-6: .panel.panel-default
       .panel-heading
         h3.panel-title Timer
       .panel-body
-        .row: .col-sm-12: .form-inline.time-fields
+        .row: .col-md-12: .form-inline.time-fields
           .form-group
             label.control-label(for='min') Minutes   
             | &nbsp;
@@ -25,18 +25,18 @@ block content
             button#timerpause.btn.btn-warning(type='button' disabled=true) I'm away
             
         .row
-          .col-sm-6
+          .col-md-6
             h2.text-center: big: strong#rem-min= minutes
             #timer-min
-          .col-sm-6
+          .col-md-6
             h2.text-center: big: strong#rem-sec= seconds
             #timer-sec
         .row
-          .col-sm-12.text-center
+          .col-md-12.text-center
             p: big Time away: 
               span#timeraway 0:00:00
             
-    .col-sm-6
+    .col-md-6
       .panel.panel-default
         .panel-heading
           h3.panel-title Chronometer
@@ -54,10 +54,10 @@ block content
             | :
             span#clockSeconds 00
           .row
-            .col-sm-offset-3.col-sm-6
+            .col-md-offset-3.col-md-6
               include ../includes/clock.svg
           .row
-            .col-sm-12.text-center
+            .col-md-12.text-center
               p: big Time away: 
                 span#clockaway 0:00:00
               
@@ -73,44 +73,44 @@ block preoutside
         input(type='hidden' name='_csrf' value=csrf)
         input#zoneOffset(type='hidden' name='zoneOffset' value='0')
         .form-group
-          label.col-sm-2(for='text') Paste your text so I can count it
-          .col-sm-10
+          label.col-md-2(for='text') Paste your text so I can count it
+          .col-md-10
             textarea#text.form-control(name='text' placeholder='Text')
         .form-group
-          label.col-sm-2(for='wordcount') Or just insert the amount here
-          .col-sm-10
+          label.col-md-2(for='wordcount') Or just insert the amount here
+          .col-md-10
             input#wordcount.form-control.sessionForm(type='text' name='wordcount' placeholder='Words written')
         .form-group
-          label.col-sm-2(for='summary') Summary
-          .col-sm-10
+          label.col-md-2(for='summary') Summary
+          .col-md-10
             input#summary.form-control.sessionForm(type='text' name='summary' placeholder='Summary')
         .form-group
-          label.col-sm-2(for='project') Project
-          .col-sm-10
+          label.col-md-2(for='project') Project
+          .col-md-10
             select#project.form-control.sessionForm(name='project')
               for project in projects
                 option(value=project.id)= project.name
         .form-group
-          label.col-sm-2(for='start') Start
-          .col-sm-10
+          label.col-md-2(for='start') Start
+          .col-md-10
             input#start.form-control.sessionForm(type='text' name='start' placeholder='Start')
         .form-group
-          label.col-sm-2(for='duration') Duration (min:sec)
-          .col-sm-10
+          label.col-md-2(for='duration') Duration (min:sec)
+          .col-md-10
             input#duration.form-control.sessionForm(type='text' name='duration' placeholder='Duration')
         .form-group
-          label.col-sm-2(for='pausedTime') Time not writing (min:sec)
-          .col-sm-10
+          label.col-md-2(for='pausedTime') Time not writing (min:sec)
+          .col-md-10
             input#pausedTime.form-control(.sessionFormtype='text' name='pausedTime' placeholder='Time not writing')
         .form-group
-          .col-sm-offset-2.col-sm-10
+          .col-md-offset-2.col-md-10
             .checkbox
               label
                 input#countdown.sessionForm(type='checkbox' name='isCountdown')
                 | Countdown session
         .form-group
-          label.col-sm-2(for='notes') Notes
-          .col-sm-10
+          label.col-md-2(for='notes') Notes
+          .col-md-10
             textarea#notes.form-control(name='notes' placeholder='Notes')
             
     .modal-footer

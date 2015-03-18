@@ -4,3 +4,7 @@ start.sh
 
 # Built css files
 public/stylesheets/*.css
+
+# Temp files
+*~
+/coverage/

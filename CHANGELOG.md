@@ -1,5 +1,17 @@
 # Writer's Trail change log
 
+## v0.6.0
+
+* Added tests for models and changed them to be more accurate.
+* Added statistics page with lots of information:
+  * Year summary of each day.
+  * Tops, averages and modes in some of the informations.
+  * Charts about periods and sessions preferences.
+* Fixed some grammatical mistakes.
+* Changed default items per page from 10 to 30 (and max from 50 to 100).
+* Changed some things in home page and features page to reflect the additions.
+* Changed layout to break into rows on small screens.
+
 ## v0.5.1
 
 * Fix formatting in highest wpm stat in dashboard.
@@ -20,7 +32,7 @@
 
 * Mandatory password for those who login with social network.
 * Allow sessions without duration.
-* Showing feedbacks in progress by default.
+* Showing feedback in progress by default.
 * Tooltips on toolbars.
 
 ## v0.3.0
@@ -54,8 +66,8 @@
 
 ## v0.2.1
 
-* Fixing a bug that not allowed unlogged users to view single feedbacks.
-* Showing only new feedbacks by default.
+* Fixing a bug that not allowed unlogged users to view single feedback.
+* Showing only new feedback by default.
 
 ## v0.2.0
 

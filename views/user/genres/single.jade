@@ -13,9 +13,9 @@ block content
   ul.list-group
     li.list-group-item
       .row
-        .col-sm-2
+        .col-md-2
           strong Description:  
-        .col-sm-10
+        .col-md-10
           unless genre.description
             | No description provided
           else
@@ -26,9 +26,9 @@ block content
               = desc
     li.list-group-item
       .row
-        .col-sm-2
+        .col-md-2
           strong Projects with this genre: 
-        .col-sm-10
+        .col-md-10
           for project, i in genre.projects
             if i > 0
               | ,&nbsp;

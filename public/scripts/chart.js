@@ -1,3 +1,4 @@
+/*jshint unused:false*/
 function buildChart(targetId, $, c3, d3, chartType, showRem, showAdjusted) {
   linkChart('/targets/' + targetId + '/data.json', $, c3, d3, chartType, showRem, showAdjusted);
 }

@@ -18,39 +18,56 @@ block preoutside
       h1 Sum up all the statistics of your writing
       h3 Sometimes it is not enough to feel that you wrote a lot. Sometimes you need to see it.
       h3 That's what Writer's Trail is here to do.
-      img.full(src='/images/dash.png')
+      a(href='/features'): img.full(src='/images/dash.png')
 
     .feature
       .row
-        .col-sm-6: .well
+        .col-md-6: .well
           h3
             span.fa.fa-eye
             |  Keep an eye on your progress
           p You can make any amount of projects and each one has its own individual progress bar. Archive them to avoid cluttering the list.
-        .col-sm-6: .well
+        .col-md-6: .well
           h3
             span.fa.fa-bullseye
             |  Create custom targets
-          p 50,000 words in 30 days (as is 
+          p 50,000 words in 30 days (as is&x#0020;
             a(href='http://nanowrimo.org' title='NaNoWriMo website') NaNoWriMo
             | )? 100,000 in 45 days? You can choose what you want and even change it midway.
       .row
-        .col-sm-6: .well
+        .col-md-6: .well
           h3
             span.fa.fa-clock-o
             |  Sessions of any length
           p There's no hard choice of writing sessions length. You can put minutes and seconds, set paused time, mark it as forward and as countdown.
-        .col-sm-6: .well
+        .col-md-6: .well
           h3
             span.fa.fa-calculator
             |  Writing habits
           p Ever wondered if you are more productive at evening or early morning? The best session length? Now you can know that for sure.
+      .row
+        .col-md-6: .well
+          h3
+            span.fa.fa-coffee
+            |  Timer and chronometer
+          p You can use our watches to keep track of your writing time. Use for your lonely wordsprints late at night (or as you wish).
+        .col-md-6: .well
+          h3
+            span.fa.fa-thumbs-o-up
+            |  New features being added
+          p We listen to our users and try to make everyone happy. If you provide&#x0020;
+            a(href='/feedback') feedback
+            | , you may wake up to see the new feature online!
   
-    h1.text-center Have a peek at 
+    h1.text-center Have a peek at&#x0020;
       a(href='/features' title='Features') Writer's Trail features
       | .
   
   .jumbotron.text-center
+    p If you like this tool, consider&#x0020;
+      a(href='/donations') donating
+      |  to keep it live and free.
+    include info/donatebutton.html
     h2 Eyes open for the closed beta test
     a.btn.btn-lg.btn-primary(href='/signin')
         span.fa.fa-lg.fa-sign-in

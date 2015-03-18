@@ -53,7 +53,9 @@ require('./config/passport')(passport);
 
 // uncomment after placing your favicon in /public
 app.use(favicon(__dirname + '/public/favicon.png'));
-app.use(logger('dev'));
+if (app.get('env') !== 'test') {
+  app.use(logger('dev'));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -74,7 +76,7 @@ app.use(i18n.init);
 app.use(csrf());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(paginate.middleware(10, 50));
+app.use(paginate.middleware(30, 100));
 
 var maintenance = require('./utils/middlewares/maintenance');
 var routes = require('./routes/index');
@@ -118,6 +120,7 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
+  /*jshint -W098*/
   app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
@@ -130,6 +133,8 @@ if (app.get('env') === 'development') {
 // 404 error handler
 app.use(function (err, req, res, next) {
   if (404 !== err.status) { return next(err); }
+
+  res.status(404);
 
   res.render('error/404', {
     title: req.__('Page not found - 404'),
