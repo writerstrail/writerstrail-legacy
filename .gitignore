@@ -8,3 +8,10 @@ public/stylesheets/*.css
 # Temp files
 *~
 /coverage/
+
+# IDE Files
+.brackets.json
+.idea
+
+# Locales tranlations
+locales
