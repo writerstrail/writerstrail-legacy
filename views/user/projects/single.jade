@@ -65,6 +65,18 @@ block content
     li.list-group-item
       .row
         .col-md-2.text-right
+          if project.targetwc > 0
+            strong Character count/Target:
+          else
+            strong Character count:
+        .col-sm-10
+          if project.targetwc > 0
+            = project.currentCharcount + '/' + project.targetcc
+          else
+            = project.currentCharcount
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
           strong Genres:
         .col-md-10
           if project.genres.length === 0
