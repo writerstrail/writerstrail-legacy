@@ -52,7 +52,13 @@ var promise = require('bluebird'),
     wordcountRange = [90000, 30000], // min, variation
     durationRange = [300, 1200], // min, max
     wpmRange = [30, 50], // min, max
-    today = moment().subtract({ year: 1, day: 1 }).set({
+    yearAgo = moment().subtract({ year: 1, day: 1 }).set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0
+    }),
+    today = moment().set({
       hour: 0,
       minute: 0,
       second: 0,
@@ -201,13 +207,8 @@ models.User.destroy({
 
   return promise.all(promises);
 }).then(function () {
+
   // Generate sessions
-  var now = moment().set({
-        hour: 23,
-        minute: 59,
-        second: 59,
-        millisecond: 999
-      }).add(today.utcOffset(), 'minutes');
 
   function selectProject() {
     return _.findWhere(_.shuffle(projectsData), function (p) {
@@ -228,7 +229,7 @@ models.User.destroy({
   return models.sequelize.transaction(function () {
     var promises = [];
 
-    while (today.isBefore(now)) {
+    while (today.isAfter(yearAgo)) {
       var amount = faker.random.number(6); // between 0 and 5
 
       for (var i = 0; i < amount; i++) {
@@ -251,7 +252,7 @@ models.User.destroy({
         }));
       }
 
-      today.add(1, 'day');
+      today.subtract(1, 'day');
     }
 
     return promise.all(promises);
