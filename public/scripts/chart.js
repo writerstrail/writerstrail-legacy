@@ -15,22 +15,30 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
         types: {
           wordcount: 'bar',
           daily: 'bar',
-          remaining: 'line'
+          remaining: 'line',
+          charcount: 'bar',
+          dailyChar: 'bar'
         },
         names: {
           date: 'Date',
           wordcount: 'Word count',
+          charcount: 'Character count',
           target: 'Target',
           daily: 'Daily writing',
           dailytarget: 'Daily target',
+          dailyChar: 'Daily characters',
           adjusteddailytarget: 'Adjusted daily target',
           remaining: 'Remaining wordcount'
+        },
+        axes: {
+          charcount: 'y2',
+          dailyChar: 'y2'
         },
         colors: {
           wordcount: '#674732',
           target: '#9e9e9e'
         },
-        hide: (isAcc ? ['daily', 'dailytarget'] : ['wordcount', 'target'])
+        hide: (isAcc ? ['daily', 'dailytarget', 'dailyChar'] : ['wordcount', 'charcount', 'target'])
             .concat(showRem ? [] : ['remaining'])
             .concat(showAdjusted ? [] : ['adjusteddailytarget'])
       },
@@ -52,6 +60,13 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
           },
           tick: {
             format: d3.format(',')
+          }
+        },
+        y2: {
+          show: true,
+          label: {
+            text: 'Character count',
+            position: 'inner-right'
           }
         }
       },
@@ -82,13 +97,13 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
         var self = $(this);
         if (self.data('acc')) {
           self.html('Show as cumulative count');
-          chart.hide(['wordcount', 'target'], { withLegend: false });
-          chart.show(['daily', 'dailytarget'], { withLegend: false });
+          chart.hide(['wordcount', 'target', 'charcount'], { withLegend: false });
+          chart.show(['daily', 'dailytarget', 'dailyChar'], { withLegend: false });
           self.data('acc', false);
         } else {
           self.html('Show as daily writing');
-          chart.hide(['dailytarget', 'daily'], { withLegend: false });
-          chart.show(['target', 'wordcount'], { withLegend: false });
+          chart.hide(['dailytarget', 'daily', 'dailyChar'], { withLegend: false });
+          chart.show(['target', 'wordcount', 'charcount'], { withLegend: false });
           self.data('acc', true);
         }
       });
