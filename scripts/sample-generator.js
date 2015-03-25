@@ -69,8 +69,16 @@ var promise = require('bluebird'),
     genres,
     projects;
 
+function randomRealBetween(min, max) {
+  return (Math.random() * max) + min;
+}
+
 function randomIntBetween(min, max) {
-  return Math.floor(Math.random() * max) + min;
+  return Math.floor(randomRealBetween(min, max));
+}
+
+function calcCharcount(wordcount) {
+  return Math.floor(wordcount * randomRealBetween(3.4, 6.1));
 }
 
 (function generateProjects() {
@@ -82,6 +90,7 @@ function randomIntBetween(min, max) {
       name: 'Ender\'s Game',
       wordcount: 0,
       targetwc: randomNumber(),
+      charcount: 0,
       totalWordcount: 0,
       active: true,
       finished: false
@@ -89,6 +98,7 @@ function randomIntBetween(min, max) {
     { // Not started 2
       name: 'The Hobbit',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 0,
       active: true,
@@ -97,6 +107,7 @@ function randomIntBetween(min, max) {
     { // Started, no session 1
       name: 'Pride and Prejudice',
       wordcount: 42342,
+      charcount: 223514,
       targetwc: randomNumber(),
       totalWordcount: 0,
       active: true,
@@ -105,6 +116,7 @@ function randomIntBetween(min, max) {
     { // Started, no session 2
       name: 'Brave New World',
       wordcount: 23434,
+      charcount: 113434,
       targetwc: randomNumber(),
       totalWordcount: 0,
       active: true,
@@ -113,6 +125,7 @@ function randomIntBetween(min, max) {
     { // With sessions 1
       name: 'The Adventures of Tom Sawyer',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 30, // percentage of target
       active: true,
@@ -121,6 +134,7 @@ function randomIntBetween(min, max) {
     { // With sessions 2
       name: 'Under the Dome',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 71, // percentage of target
       active: true,
@@ -129,6 +143,7 @@ function randomIntBetween(min, max) {
     { // Finished 1
       name: 'Fahrenheit 451',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 100, // percentage of target
       active: true,
@@ -137,6 +152,7 @@ function randomIntBetween(min, max) {
     { // Finished 2
       name: 'The Great Gatsby',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 155, // percentage of target
       active: true,
@@ -145,6 +161,7 @@ function randomIntBetween(min, max) {
     { // Archived 1
       name: 'The Picture of Dorian Gray',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: Infinity, // doesn't matter
       active: false,
@@ -153,6 +170,7 @@ function randomIntBetween(min, max) {
     { // Archived 2
       name: '20000 Leagues Under the Sea',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: Infinity, // doesn't matter
       active: false,
@@ -163,8 +181,9 @@ function randomIntBetween(min, max) {
   // Now generates the totalWordcount based on percentage
   projectsData.forEach(function (p) {
     p.description = faker.hacker.phrase();
+    p.targetcc = calcCharcount(p.targetwc);
     if (isFinite(p.totalWordcount)) {
-      p.totalWordcount = Math.floor((p.targetwc  / 100) * p.totalWordcount);
+      p.totalWordcount = Math.floor((p.targetwc / 100) * p.totalWordcount);
     }
   });
 
@@ -237,7 +256,8 @@ models.User.destroy({
         var project = selectProject(),
             wpm = (Math.random() * wpmRange[1]) + wpmRange[0],
             duration = (Math.random() * durationRange[1]) + durationRange[0],
-            wordcount = Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount);
+            wordcount = Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount),
+            charcount = calcCharcount(wordcount);
 
         project.totalWordcount -= wordcount;
 
@@ -247,6 +267,7 @@ models.User.destroy({
           duration: duration,
           pausedTime: randomIntBetween(0, Math.floor(duration / 6)),
           wordcount: wordcount,
+          charcount: charcount,
           projectId: project.id,
           isCountdown: !!faker.random.number(),
           zoneOffset: today.utcOffset()
