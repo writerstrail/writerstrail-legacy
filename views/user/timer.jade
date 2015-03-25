@@ -77,9 +77,13 @@ block preoutside
           .col-md-10
             textarea#text.form-control(name='text' placeholder='Text')
         .form-group
-          label.col-md-2(for='wordcount') Or just insert the amount here
+          label.col-md-2(for='wordcount') Or insert the amount of words here...
           .col-md-10
             input#wordcount.form-control.sessionForm(type='text' name='wordcount' placeholder='Words written')
+        .form-group
+          label.col-md-2(for='charcount') ...and (optionally) the amount of characters here
+          .col-md-10
+            input#charcount.form-control.sessionForm(type='text' name='charcount' placeholder='Characters typed')
         .form-group
           label.col-md-2(for='summary') Summary
           .col-md-10
