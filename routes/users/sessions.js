@@ -256,7 +256,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           return promise.resolve(project);
         }
       }).then(function () {
-        session.set('summary', req.body.summary);
+        session.set('summary', req.body.summary || null);
         session.set('notes', req.body.notes);
         session.set('wordcount', wordcounter(req.body.text) || req.body.wordcount);
         session.set('charcount', charcounter(req.body.text) || req.body.charcount || 0);
