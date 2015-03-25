@@ -256,6 +256,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'ownerId');
         done();
       } catch (e) {
         done(e);
@@ -284,6 +285,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'ownerId');
         done();
       } catch (e) {
         done(e);
@@ -369,6 +371,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'uniqueName');
         done();
       } catch (e) {
         done(e);
@@ -439,6 +442,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'name');
         done();
       } catch (e) {
         done(e);
@@ -467,6 +471,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'name');
         done();
       } catch (e) {
         done(e);
@@ -525,6 +530,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'wordcount');
         done();
       } catch (e) {
         done(e);
@@ -553,6 +559,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'wordcount');
         done();
       } catch (e) {
         done(e);
@@ -582,6 +589,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'charcount');
         done();
       } catch (e) {
         done(e);
@@ -589,14 +597,14 @@ describe('Project model', function () {
     });
   });
 
-  it('should not allow a starting wordcount with more than three billion', function (done) {
+  it('should not allow a starting wordcount with more than two billion', function (done) {
     var project, err;
 
     Project.create({
-      name: 'Test starting charcount over a billion',
+      name: 'Test starting charcount over two billion',
       description: 'Description',
       wordcount: 0,
-      charcount: 3000000001,
+      charcount: 2000000001,
       targetwc: 0,
       active: true,
       finished: false,
@@ -611,6 +619,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'charcount');
         done();
       } catch (e) {
         done(e);
@@ -639,6 +648,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetwc');
         done();
       } catch (e) {
         done(e);
@@ -667,6 +677,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetwc');
         done();
       } catch (e) {
         done(e);
@@ -697,6 +708,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetcc');
         done();
       } catch (e) {
         done(e);
@@ -704,15 +716,15 @@ describe('Project model', function () {
     });
   });
 
-  it('should not allow a target charcount with more than three billion', function (done) {
+  it('should not allow a target charcount with more than two billion', function (done) {
     var project, err;
 
     Project.create({
-      name: 'Test target charcount over three billion',
+      name: 'Test target charcount over two billion',
       description: 'Description',
       wordcount: 500,
       targetwc: 0,
-      targetcc: 3000000001,
+      targetcc: 2000000001,
       active: true,
       finished: false,
       ownerId: 1
@@ -726,6 +738,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetcc');
         done();
       } catch (e) {
         done(e);
@@ -784,6 +797,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetOverStart');
         done();
       } catch (e) {
         done(e);
@@ -877,6 +891,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetCharOverStart');
         done();
       } catch (e) {
         done(e);
@@ -939,6 +954,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'currentWordcount');
         done();
       } catch (e) {
         done(e);
@@ -968,6 +984,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'currentWordcount');
         done();
       } catch (e) {
         done(e);
@@ -997,6 +1014,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'currentCharcount');
         done();
       } catch (e) {
         done(e);
@@ -1026,6 +1044,7 @@ describe('Project model', function () {
         expect(project).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'currentCharcount');
         done();
       } catch (e) {
         done(e);
@@ -1105,9 +1124,7 @@ describe('Project model', function () {
       try {
         expect(err).to.exist;
         expect(err).to.have.property('message', 'Validation error');
-        expect(err.errors).to.exist;
-        expect(err.errors).to.have.length(1);
-        expect(err.errors[0]).to.have.property('path', 'uniqueName');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'uniqueName');
         done();
       } catch (e) {
         done(e);
