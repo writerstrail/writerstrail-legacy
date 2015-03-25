@@ -32,6 +32,12 @@ module.exports = {
         defaultValue: 0
       });
     }).then(function () {
+      return migration.addColumn('writingSessions', 'charcount', {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      });
+    }).then(function () {
       done();
     });
   },
@@ -41,6 +47,8 @@ module.exports = {
       return migration.addIndex('invitations', ['code'], {
         indexName: 'code'
       });
+    }).then(function () {
+      return migration.removeColumn('writingSessions', 'charcount');
     }).then(function () {
       return migration.removeColumn('projects', 'targetcc');
     }).then(function () {
