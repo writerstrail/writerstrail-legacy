@@ -62,7 +62,9 @@ router.get('/new', sendflash, function (req, res) {
       project: {
         active: true,
         wordcount: 0,
+        charcount: 0,
         targetwc: 50000,
+        targetcc: 0,
         genres: req.query.genreid ? [{id: req.query.genreid}] : []
       },
       genres: chunk(genres, 3)

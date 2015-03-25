@@ -64,13 +64,13 @@ block content
             = project.currentWordcount
     li.list-group-item
       .row
-        .col-md-2.text-right
-          if project.targetwc > 0
+        .col-sm-2.text-right
+          if project.targetcc > 0
             strong Character count/Target:
           else
             strong Character count:
         .col-sm-10
-          if project.targetwc > 0
+          if project.targetcc > 0
             = project.currentCharcount + '/' + project.targetcc
           else
             = project.currentCharcount
