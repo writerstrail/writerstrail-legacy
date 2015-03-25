@@ -105,7 +105,7 @@ router.post('/new', isverified, function (req, res, next) {
       summary: req.body.summary || null,
       notes: req.body.notes,
       wordcount: wordcounter(req.body.text) || req.body.wordcount,
-      charcount: charcounter(req.body.text) || req.body.charcount,
+      charcount: charcounter(req.body.text) || req.body.charcount || 0,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
       duration: durationparser(req.body.duration),
       pausedTime: durationparser(req.body.duration) ? durationparser(req.body.pausedTime) || 0 : null,
@@ -162,7 +162,7 @@ router.post('/new', isverified, function (req, res, next) {
 router.get('/:id/edit', sendflash, function (req, res, next) {
   models.Session.findOne({
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
     include: [{
       model: models.Project,
@@ -259,7 +259,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         session.set('summary', req.body.summary);
         session.set('notes', req.body.notes);
         session.set('wordcount', wordcounter(req.body.text) || req.body.wordcount);
-        session.set('charcount', charcounter(req.body.text) || req.body.charcount);
+        session.set('charcount', charcounter(req.body.text) || req.body.charcount || 0);
         session.set('start', start.toDate());
         var duration = durationparser(req.body.duration);
         if (duration) {
@@ -344,10 +344,10 @@ router.get('/:id', sendflash, function (req, res, next) {
             as: 'targets',
             where: {        
               start: {
-                lte: models.Sequelize.literal('`Session`.`start`'),
+                lte: models.Sequelize.literal('`Session`.`start`')
               },
               end: {
-                gte: models.Sequelize.literal('CASE WHEN `Session`.`duration` IS NOT NULL THEN (`Session`.`start` + INTERVAL `Session`.`duration` SECOND) ELSE `Session`.`start` END'),
+                gte: models.Sequelize.literal('CASE WHEN `Session`.`duration` IS NOT NULL THEN (`Session`.`start` + INTERVAL `Session`.`duration` SECOND) ELSE `Session`.`start` END')
               }
             },
             required: false
