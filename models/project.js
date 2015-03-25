@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
         len: {
           args: [3, 255],
           msg: 'The name of the project must have between 3 and 255 characters'
-        },
+        }
       }
     },
     description: {
@@ -57,8 +57,8 @@ module.exports = function (sequelize, DataTypes) {
           msg: 'The starting character count must be a non-negative integer'
         },
         max: {
-          args: 3000000000,
-          msg: 'I\'m not judging, but can\'t believe you wrote over three billion characters'
+          args: 2000000000,
+          msg: 'I\'m not judging, but can\'t believe you wrote over two billion characters'
         }
       },
       set: function (v) {
@@ -99,8 +99,8 @@ module.exports = function (sequelize, DataTypes) {
           msg: 'The target character count must be a non-negative integer'
         },
         max: {
-          args: 3000000000,
-          msg: 'I\'m not judging, but can\'t believe you want to write over three billion characters'
+          args: 2000000000,
+          msg: 'I\'m not judging, but can\'t believe you want to write over two billion characters'
         }
       }
     },
