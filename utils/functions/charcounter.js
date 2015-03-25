@@ -3,4 +3,4 @@ module.exports = function wordCounter(text) {
     return null;
   }
   return text.toString().trim().length;
-}
+};
