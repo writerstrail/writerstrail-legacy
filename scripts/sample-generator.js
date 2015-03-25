@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /********
 
 This script generates a bunch of random data into a new sample user.
