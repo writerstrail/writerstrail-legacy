@@ -37,7 +37,7 @@ block content
     - var wcErr = _.find(validate, { path: 'count' }) || ''
 
     .form-group(class=(wcErr ? 'has-error' : ''))
-      label.col-md-2.control-label(for='count')= __('Target word count')
+      label.col-md-2.control-label(for='count')= __('Target count')
       .col-md-10
         input#count.form-control(type='number' name='count' placeholder=__('Target count') value=target.count aria-describedby='wchelp')
         span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount you want to have by the end of the target period (may be blank).')
