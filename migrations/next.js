@@ -40,6 +40,12 @@ module.exports = {
     }).then(function () {
       return migration.renameColumn('targets', 'wordcount', 'count');
     }).then(function () {
+      return migration.addColumn('targets', 'unit', {
+        type: DataTypes.ENUM,
+        values: ['word', 'char'],
+        allowNull: false
+      });
+    }).then(function () {
       done();
     });
   },
@@ -49,6 +55,8 @@ module.exports = {
       return migration.addIndex('invitations', ['code'], {
         indexName: 'code'
       });
+    }).then(function () {
+      return migration.removeColumn('targets', 'unit');
     }).then(function () {
       return migration.renameColumn('targets', 'count', 'wordcount');
     }).then(function () {

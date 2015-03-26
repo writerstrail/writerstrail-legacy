@@ -33,6 +33,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -59,6 +60,7 @@ describe('Target model', function () {
         expect(target).to.have.property('end').that.is.equalTime(validEnd);
         expect(target).to.have.property('zoneOffset', -120);
         expect(target).to.have.property('count', 50000);
+        expect(target).to.have.property('unit', 'word');
         expect(target).to.have.property('notes', 'test notes');
         done();
       } catch (err) {
@@ -78,6 +80,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -112,6 +115,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -146,6 +150,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -180,6 +185,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -214,6 +220,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 0,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -246,6 +253,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: null,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -260,6 +268,162 @@ describe('Target model', function () {
       }
     }).catch(done);
   });
+
+  it('should allow word unit', function (done) {
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test word unit',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'word',
+      notes: 'test notes',
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (target) {
+      junk.push(target);
+      try {
+        expect(target).to.have.property('unit', 'word');
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(done);
+  });
+
+  it('should allow char unit', function (done) {
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test char unit',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'char',
+      notes: 'test notes',
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (target) {
+      junk.push(target);
+      try {
+        expect(target).to.have.property('unit', 'char');
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(done);
+  });
+
+  it('should not allow no unit', function (done) {
+    var target, err;
+
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test no unit',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      notes: 'test notes',
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (t) {
+      junk.push(t);
+      target = t;
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(target).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'unit');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should not allow null unit', function (done) {
+    var target, err;
+
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test null unit',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: null,
+      notes: 'test notes',
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (t) {
+      junk.push(t);
+      target = t;
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(target).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'unit');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should not allow invalid unit', function (done) {
+    var target, err;
+
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test invalid unit',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'invalid',
+      notes: 'test notes',
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (t) {
+      junk.push(t);
+      target = t;
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(target).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'unit');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
   
   it('should not allow no start', function (done) {
     var target, err;
@@ -272,6 +436,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -305,6 +470,7 @@ describe('Target model', function () {
       start: start.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -339,6 +505,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -373,6 +540,7 @@ describe('Target model', function () {
       end: null,
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -407,6 +575,7 @@ describe('Target model', function () {
       end: start.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -441,6 +610,7 @@ describe('Target model', function () {
       end: start.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -475,6 +645,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes'
     }).then(function () {
       return Target.findOne(id);
@@ -508,6 +679,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: null
     }).then(function () {
@@ -542,6 +714,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 456
     }).then(function () {
@@ -595,6 +768,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -609,6 +783,7 @@ describe('Target model', function () {
         end: end.toDate(),
         zoneOffset: -120,
         count: 50000,
+        unit: 'word',
         notes: 'test notes',
         ownerId: 1
       });
@@ -644,6 +819,7 @@ describe('Target model', function () {
       end: end.toDate(),
       zoneOffset: -120,
       count: 50000,
+      unit: 'word',
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -659,6 +835,7 @@ describe('Target model', function () {
         end: end.toDate(),
         zoneOffset: -120,
         count: 50000,
+        unit: 'word',
         notes: 'test notes',
         ownerId: 2
       });

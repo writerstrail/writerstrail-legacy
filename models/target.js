@@ -66,6 +66,11 @@ module.exports = function (sequelize, DataTypes) {
           msg: 'I\'m not judging, but can\'t believe you want to write over a billion words'
         }
       }
+    },
+    unit: {
+      type: DataTypes.ENUM,
+      values: require('../utils/data/targetunits'),
+      allowNull: false
     }
   }, {
     tableName: 'targets',
