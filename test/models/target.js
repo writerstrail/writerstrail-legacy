@@ -756,14 +756,14 @@ describe('Target model', function () {
     }
   });
   
-  it('should not allow same name to same user', function (done) {
-    var target, err;
-    
+  it('should allow same name to same user', function (done) {
+    var target1, target2, err;
+
     id += 1;
-    
+
     Target.create({
       id: id,
-      name: 'Test same name',
+      name: 'Test same name same user',
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
@@ -775,10 +775,11 @@ describe('Target model', function () {
       return Target.findOne(id);
     }).then(function (t) {
       junk.push(t);
+      target1 = t;
       id += 1;
       return Target.create({
         id: id,
-        name: 'Test same name',
+        name: 'Test same name same user',
         start: start.toDate(),
         end: end.toDate(),
         zoneOffset: -120,
@@ -791,15 +792,16 @@ describe('Target model', function () {
       return Target.findOne(id);
     }).then(function (t) {
       junk.push(t);
-      target = t;
+      target2 = t;
     }).catch(function (e) {
       err = e;
     }).finally(function () {
       try {
-        expect(target).to.not.exist;
-        expect(err).to.exist;
-        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
-        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'name');
+        expect(err).to.not.exist;
+        expect(target1).to.exist;
+        expect(target1).to.have.property('name', 'Test same name same user');
+        expect(target2).to.exist;
+        expect(target2).to.have.property('name', 'Test same name same user');
         done();
       } catch (e) {
         done(e);

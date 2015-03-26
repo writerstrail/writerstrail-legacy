@@ -94,7 +94,7 @@ module.exports = function (sequelize, DataTypes) {
     indexes: [
       {
         name: 'targets_name',
-        unique: true,
+        unique: false,
         fields: ['name', 'ownerId']
       }
     ],
