@@ -1,6 +1,7 @@
 doctype html
 html
   head
+    include includes/ga
     title!= (title ? title + ' &raquo; ' : '') + __('Writer\'s Trail')
     head(profile="http://www.w3.org/2005/10/profile")
     include includes/meta
@@ -54,7 +55,6 @@ html
         if user && user.settings && user.settings.showTour
           script(type='text/javascript', src='/bower_components/hopscotch/dist/js/hopscotch.min.js')
           script(type='text/javascript', src='/scripts/tour.js')
-        include includes/ga
         script(type='text/javascript').
           $(function () {
             $('.btn-group .btn').tooltip({
