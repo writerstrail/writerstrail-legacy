@@ -32,7 +32,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -58,7 +58,7 @@ describe('Target model', function () {
         expect(target).to.have.property('start').that.is.equalTime(validStart);
         expect(target).to.have.property('end').that.is.equalTime(validEnd);
         expect(target).to.have.property('zoneOffset', -120);
-        expect(target).to.have.property('wordcount', 50000);
+        expect(target).to.have.property('count', 50000);
         expect(target).to.have.property('notes', 'test notes');
         done();
       } catch (err) {
@@ -77,7 +77,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -111,7 +111,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -145,7 +145,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -179,7 +179,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -213,7 +213,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 0,
+      count: 0,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -228,7 +228,7 @@ describe('Target model', function () {
         expect(target).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('errors').that.have.length.of.at.least(1);
-        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'wordcount');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'count');
         done();
       } catch (e) {
         done(e);
@@ -245,7 +245,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: null,
+      count: null,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -253,7 +253,7 @@ describe('Target model', function () {
     }).then(function (target) {
       junk.push(target);
       try {
-        expect(target).to.have.property('wordcount', null);
+        expect(target).to.have.property('count', null);
         done();
       } catch (err) {
         done(err);
@@ -271,7 +271,7 @@ describe('Target model', function () {
       name: 'Test no start',
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -304,7 +304,7 @@ describe('Target model', function () {
       name: 'Test no end',
       start: start.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -338,7 +338,7 @@ describe('Target model', function () {
       start: null,
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -372,7 +372,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: null,
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -406,7 +406,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: start.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -440,7 +440,7 @@ describe('Target model', function () {
       start: end.toDate(),
       end: start.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -474,7 +474,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes'
     }).then(function () {
       return Target.findOne(id);
@@ -507,7 +507,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: null
     }).then(function () {
@@ -541,7 +541,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 456
     }).then(function () {
@@ -594,7 +594,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -608,7 +608,7 @@ describe('Target model', function () {
         start: start.toDate(),
         end: end.toDate(),
         zoneOffset: -120,
-        wordcount: 50000,
+        count: 50000,
         notes: 'test notes',
         ownerId: 1
       });
@@ -643,7 +643,7 @@ describe('Target model', function () {
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
-      wordcount: 50000,
+      count: 50000,
       notes: 'test notes',
       ownerId: 1
     }).then(function () {
@@ -658,7 +658,7 @@ describe('Target model', function () {
         start: start.toDate(),
         end: end.toDate(),
         zoneOffset: -120,
-        wordcount: 50000,
+        count: 50000,
         notes: 'test notes',
         ownerId: 2
       });

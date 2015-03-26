@@ -38,6 +38,8 @@ module.exports = {
         defaultValue: 0
       });
     }).then(function () {
+      return migration.renameColumn('targets', 'wordcount', 'count');
+    }).then(function () {
       done();
     });
   },
@@ -47,6 +49,8 @@ module.exports = {
       return migration.addIndex('invitations', ['code'], {
         indexName: 'code'
       });
+    }).then(function () {
+      return migration.renameColumn('targets', 'count', 'wordcount');
     }).then(function () {
       return migration.removeColumn('writingSessions', 'charcount');
     }).then(function () {
