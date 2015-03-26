@@ -105,7 +105,7 @@ router.post('/new', isverified, function (req, res, next) {
       wordcount: wordcounter(req.body.text) || req.body.wordcount,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
       duration: durationparser(req.body.duration),
-      pausedTime: durationparser(req.body.duration) ? durationparser(req.body.pausedTime) || 0 : null,
+      pausedTime: durationparser(req.body.duration) ? durationparser(req.body.pausedTime) || 0 : 0,
       zoneOffset: req.body.zoneOffset || 0,
       isCountdown: !!req.body.isCountdown,
       projectId: project.id
@@ -140,8 +140,8 @@ router.post('/new', isverified, function (req, res, next) {
           notes: req.body.notes,
           wordcount: req.body.wordcount,
           start: req.body.start,
-          duration: req.body.noduration ? null : durationformatter(durationparser(req.body.duration)),
-          pausedTime: req.body.noduration ? null : durationformatter(durationparser(req.body.pausedTime)),
+          duration: durationformatter(durationparser(req.body.duration)),
+          pausedTime: durationformatter(durationparser(req.body.pausedTime)),
           isCountdown: !!req.body.isCountdown,
           'project.id': req.body.project
         },
@@ -158,7 +158,7 @@ router.post('/new', isverified, function (req, res, next) {
 router.get('/:id/edit', sendflash, function (req, res, next) {
   models.Session.findOne({
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
     include: [{
       model: models.Project,
@@ -252,7 +252,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           return promise.resolve(project);
         }
       }).then(function () {
-        session.set('summary', req.body.summary);
+        session.set('summary', req.body.summary || null);
         session.set('notes', req.body.notes);
         session.set('wordcount', wordcounter(req.body.text) || req.body.wordcount);
         session.set('start', start.toDate());
@@ -262,7 +262,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           session.set('pausedTime', durationparser(req.body.pausedTime) || 0);
         } else {
           session.set('duration', null);
-          session.set('pausedTime', null);
+          session.set('pausedTime', 0);
         }
         session.set('isCountdown', !!req.body.isCountdown);
         session.set('projectId', parseInt(req.body.project, 10));
@@ -338,10 +338,10 @@ router.get('/:id', sendflash, function (req, res, next) {
             as: 'targets',
             where: {        
               start: {
-                lte: models.Sequelize.literal('`Session`.`start`'),
+                lte: models.Sequelize.literal('`Session`.`start`')
               },
               end: {
-                gte: models.Sequelize.literal('CASE WHEN `Session`.`duration` IS NOT NULL THEN (`Session`.`start` + INTERVAL `Session`.`duration` SECOND) ELSE `Session`.`start` END'),
+                gte: models.Sequelize.literal('CASE WHEN `Session`.`duration` IS NOT NULL THEN (`Session`.`start` + INTERVAL `Session`.`duration` SECOND) ELSE `Session`.`start` END')
               }
             },
             required: false
