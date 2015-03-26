@@ -34,12 +34,13 @@ block content
             strong Duration:
           .col-md-10
             = durFormat(session.duration)
-      li.list-group-item
-        .row
-          .col-md-2
-            strong Time not writing:
-          .col-md-10
-            = durFormat(session.pausedTime)
+      unless session.duration === null
+        li.list-group-item
+          .row
+            .col-md-2
+              strong Time not writing:
+            .col-md-10
+              = durFormat(session.pausedTime)
       li.list-group-item
         .row
           .col-md-2

@@ -3,6 +3,7 @@ html
   head
     title!= (title ? title + ' &raquo; ' : '') + __('Writer\'s Trail')
     head(profile="http://www.w3.org/2005/10/profile")
+    include includes/ga
     include includes/meta
     link(rel="icon" type="image/png" href="/favicon.png")
     link(rel="shortcut icon" type="image/png" href="/favicon.png")
@@ -54,7 +55,6 @@ html
         if user && user.settings && user.settings.showTour
           script(type='text/javascript', src='/bower_components/hopscotch/dist/js/hopscotch.min.js')
           script(type='text/javascript', src='/scripts/tour.js')
-        include includes/ga
         script(type='text/javascript').
           $(function () {
             $('.btn-group .btn').tooltip({

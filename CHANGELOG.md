@@ -1,5 +1,11 @@
 # Writer's Trail change log
 
+## v0.6.1
+
+* Fix a bug that didn't allow sessions with null duration.
+* Fix a bug that didn't allow saving sessions with no summary.
+* Fix Google Analytics script position.
+
 ## v0.6.0
 
 * Added tests for models and changed them to be more accurate.
