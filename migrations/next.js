@@ -46,6 +46,12 @@ module.exports = {
         allowNull: false
       });
     }).then(function () {
+      return migration.removeIndex('targets', 'name');
+    }).then(function () {
+      return migration.addIndex('targets', ['name', 'ownerId'], {
+        indexName: 'targets_name'
+      });
+    }).then(function () {
       done();
     });
   },
@@ -54,6 +60,13 @@ module.exports = {
     migration.removeIndex('invitations', 'code').then(function () {
       return migration.addIndex('invitations', ['code'], {
         indexName: 'code'
+      });
+    }).then(function () {
+      return migration.removeIndex('targets', 'targets_name');
+    }).then(function () {
+      return migration.addIndex('targets', ['name', 'ownerId'], {
+        indexName: 'name',
+        indicesType: 'UNIQUE'
       });
     }).then(function () {
       return migration.removeColumn('targets', 'unit');
