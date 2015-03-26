@@ -39,7 +39,6 @@ var promise = require('bluebird'),
     _ = require('lodash'),
     models = require('../models'),
     userData = {
-      id: 2147483647,
       name: 'Sample user',
       email: 'sampleuser@example.com',
       verifiedEmail: 'sampleuser@example.com',
