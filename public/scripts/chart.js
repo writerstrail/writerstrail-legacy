@@ -14,33 +14,42 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
         x: 'date',
         types: {
           wordcount: 'bar',
-          daily: 'bar',
-          remaining: 'line',
           charcount: 'bar',
-          dailyChar: 'bar'
+          worddaily: 'bar',
+          chardaily: 'bar',
+          wordremaining: 'line',
+          charremaining: 'line'
         },
         names: {
           date: 'Date',
           wordcount: 'Word count',
           charcount: 'Character count',
           target: 'Target',
-          daily: 'Daily writing',
-          dailytarget: 'Daily target',
-          dailyChar: 'Daily characters',
-          adjusteddailytarget: 'Adjusted daily target',
-          remaining: 'Remaining wordcount'
+          worddaily: 'Daily writing',
+          chardaily: 'Daily characters',
+          worddailytarget: 'Daily target',
+          chardailyTarget: 'Daily target',
+          wordadjusteddailytarget: 'Adjusted daily target',
+          charadjusteddailytarget: 'Adjusted daily target',
+          wordremaining: 'Remaining wordcount',
+          charremaining: 'Remaining character count'
         },
         axes: {
           charcount: 'y2',
-          dailyChar: 'y2'
+          chardaily: 'y2',
+          chardailyTarget: 'y2',
+          charadjusteddailytarget: 'y2',
+          charremaining: 'y2'
         },
         colors: {
           wordcount: '#674732',
-          target: '#9e9e9e'
+          wordtarget: '#9e9e9e',
+          charcount: '#674732',
+          chartarget: '#9e9e9e'
         },
-        hide: (isAcc ? ['daily', 'dailytarget', 'dailyChar'] : ['wordcount', 'charcount', 'target'])
-            .concat(showRem ? [] : ['remaining'])
-            .concat(showAdjusted ? [] : ['adjusteddailytarget'])
+        hide: (isAcc ? ['worddaily', 'chardailytarget', 'worddailyTarget', 'chardaily'] : ['wordcount', 'charcount', 'wordtarget', 'chartarget'])
+            .concat(showRem ? [] : ['wordremaining', 'charremaining'])
+            .concat(showAdjusted ? [] : ['wordadjusteddailytarget', 'charadjusteddailytarget'])
       },
       axis: {
         x: {
@@ -97,13 +106,13 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
         var self = $(this);
         if (self.data('acc')) {
           self.html('Show as cumulative count');
-          chart.hide(['wordcount', 'target', 'charcount'], { withLegend: false });
-          chart.show(['daily', 'dailytarget', 'dailyChar'], { withLegend: false });
+          chart.hide(['wordcount', 'wordtarget', 'charcount', 'chartarget'], { withLegend: false });
+          chart.show(['worddaily', 'worddailytarget', 'chardaily', 'chardailyTarget'], { withLegend: false });
           self.data('acc', false);
         } else {
           self.html('Show as daily writing');
-          chart.hide(['dailytarget', 'daily', 'dailyChar'], { withLegend: false });
-          chart.show(['target', 'wordcount', 'charcount'], { withLegend: false });
+          chart.hide(['worddaily', 'worddailytarget', 'chardaily', 'chardailyTarget'], { withLegend: false });
+          chart.show(['wordcount', 'wordtarget', 'charcount', 'chartarget'], { withLegend: false });
           self.data('acc', true);
         }
       });

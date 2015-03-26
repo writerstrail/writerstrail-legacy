@@ -408,8 +408,8 @@ router.get('/:id/data.json', function (req, res, next) {
       date: daysRange,
       wordcount: wordcount,
       charcount: charcount,
-      daily: daily,
-      dailyChar: dailyChar
+      worddaily: daily,
+      chardaily: dailyChar
     };
     res.json(result).end();
   }).catch(function (err) {
