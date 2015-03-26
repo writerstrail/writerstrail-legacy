@@ -73,6 +73,24 @@ module.exports = function (sequelize, DataTypes) {
         }
       }
     },
+    charcount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: {
+          args: 0,
+          msg: 'The written character count must be a non-negative integer'
+        },
+        isInt: {
+          msg: 'The written character count must be a non-negative integer'
+        },
+        max: {
+          args: 2000000000,
+          msg: 'I\'m not judging, but can\'t believe you wrote over two billion characters'
+        }
+      }
+    },
     isCountdown: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -96,7 +114,8 @@ module.exports = function (sequelize, DataTypes) {
         Session.hook('afterCreate', function (session, options, done){
           models.Project.findOne(session.projectId).then(function (project) {
             return project.increment({
-              currentWordcount: session.wordcount
+              currentWordcount: session.wordcount,
+              currentCharcount: session.charcount
             });
           }).then(function () {
             done(null, session);
@@ -115,7 +134,8 @@ module.exports = function (sequelize, DataTypes) {
               promises.push(models.Project.findOne(session.projectId).then(function (project) {
                 if (!project) { return promise.resolve(null); }
                 return project.increment({
-                  currentWordcount: session.wordcount
+                  currentWordcount: session.wordcount,
+                  currentCharcount: session.charcount
                 });
               }));
             });
@@ -136,12 +156,14 @@ module.exports = function (sequelize, DataTypes) {
           var promises = [];
           promises.push(models.Project.findOne(session._previousDataValues.projectId).then(function (project) {
             return project.decrement({
-              currentWordcount: session._previousDataValues.wordcount 
+              currentWordcount: session._previousDataValues.wordcount,
+              currentCharcount: session._previousDataValues.charcount
             });
           }));
           promises.push(models.Project.findOne(session.projectId).then(function (project) {
             return project.increment({
-              currentWordcount: session.wordcount
+              currentWordcount: session.wordcount,
+              currentCharcount: session.charcount
             });
           }));
           promise.all(promises).then(function () {
@@ -161,7 +183,8 @@ module.exports = function (sequelize, DataTypes) {
           models.Project.findOne(session.projectId).then(function (project) {
             if (project) {
               return project.decrement({
-                currentWordcount: session.wordcount
+                currentWordcount: session.wordcount,
+                currentCharcount: session.charcount
               }, { transaction: options.transaction });
             }
             return false;
@@ -184,7 +207,8 @@ module.exports = function (sequelize, DataTypes) {
               var p = models.Project.findOne(s.projectId).then(function (project) {
                 if (!project) { return null; }
                 return project.decrement({
-                  currentWordcount: s.wordcount
+                  currentWordcount: s.wordcount,
+                  currentCharcount: s.charcount
                 });
               });
               promises.push(p);

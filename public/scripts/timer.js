@@ -197,6 +197,7 @@ function modalShow(duration, pausedDuration, start, countdown) {
   }
   $('#zoneOffset').val(moment().utcOffset());
   $('#wordcount').val('');
+  $('#charcount').val('');
   $('#summary').val('');
   $('#notes').val('');
   $('#start').val(start.format(settings.dateFormat + ' ' + settings.timeFormat));

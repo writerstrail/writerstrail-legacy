@@ -50,22 +50,27 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true,
       comment: 'User timezone offset in minutes'
     },
-    wordcount: {
+    count: {
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: {
         min: {
           args: 1,
-          msg: 'The target wordcount must be a positive integer'
+          msg: 'The target count must be a positive integer'
         },
         isInt: {
-          msg: 'The target wordcount must be a positive integer'
+          msg: 'The target count must be a positive integer'
         },
         max: {
           args: 1000000000,
           msg: 'I\'m not judging, but can\'t believe you want to write over a billion words'
         }
       }
+    },
+    unit: {
+      type: DataTypes.ENUM,
+      values: require('../utils/data/targetunits'),
+      allowNull: false
     }
   }, {
     tableName: 'targets',

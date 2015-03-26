@@ -275,5 +275,11 @@
 	"How much time you spent writing (leave blank if you don't know).": "How much time you spent writing (leave blank if you don't know).",
 	"The amount of words you want to have by the end of the target period (may be blank).": "The amount of words you want to have by the end of the target period (may be blank).",
 	"Some information about your writing habits": "Some information about your writing habits",
-	"Statistics": "Statistics"
+	"Statistics": "Statistics",
+	"Starting character count": "Starting character count",
+	"If you already started it, put the current character count in here (optional).": "If you already started it, put the current character count in here (optional).",
+	"Target character count": "Target character count",
+	"The amount of characters you intend to write to finish this project (optional).": "The amount of characters you intend to write to finish this project (optional).",
+	"The target character count must be a non-negative integer": "The target character count must be a non-negative integer",
+	"The target can't be less than the starting character count": "The target can't be less than the starting character count"
 }
