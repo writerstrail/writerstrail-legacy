@@ -34,13 +34,23 @@ block content
         input#name.form-control(type='text' name='name' placeholder=__('Name') value=target.name aria-describedby='namehelp')
         span#namehelp.help-block= __(nameErr ? nameErr.message : 'A unique name for this target so you can find it later.')
         
-    - var wcErr = _.find(validate, { path: 'wordcount' }) || ''
+    - var wcErr = _.find(validate, { path: 'count' }) || ''
 
     .form-group(class=(wcErr ? 'has-error' : ''))
-      label.col-md-2.control-label(for='wordcount')= __('Target word count')
+      label.col-md-2.control-label(for='count')= __('Target word count')
       .col-md-10
-        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Target word count') value=target.wordcount aria-describedby='wchelp')
-        span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you want to have by the end of the target period (may be blank).')
+        input#count.form-control(type='number' name='count' placeholder=__('Target count') value=target.count aria-describedby='wchelp')
+        span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount you want to have by the end of the target period (may be blank).')
+
+    - var unitErr = _.find(validate, { path: 'unit' }) || ''
+
+    .form-group(class=(unitErr ? 'has-error' : ''))
+      label.col-md-2.control-label(for='unit')= 'Unit'
+      .col-md-10
+        select#unit.form-control(name='unit' aria-describedby='unithelp')
+          for unit, key in targetunits
+            option(value=key selected=key == target.unit)= unit
+        span#unithelp.help-block= unitErr ? unitErr.message : 'The unit you want to track (words or characters).'
         
     - var startErr = _.find(validate, function(err) { return err.path === 'start' || err.path === 'startBeforeEnd'; }) || ''
     
@@ -138,9 +148,6 @@ append scripts
         startPicker.maxDate(moment.utc(e.date).subtract('1', 'day'));
         var totalDays = (moment.utc(e.date).diff(moment.utc(startPicker.date()), 'days') + 1);
         $('#totaldays').html(isNaN(totalDays) ? 'Invalid date' : totalDays.toString());
-      });
-      $("#notarget").change(function (e) {
-        $("#wordcount").prop('disabled', $(this).prop('checked'));
       });
     })
   if user.settings.showTour

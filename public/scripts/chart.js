@@ -1,9 +1,10 @@
 /*jshint unused:false*/
-function buildChart(targetId, $, c3, d3, chartType, showRem, showAdjusted) {
-  linkChart('/targets/' + targetId + '/data.json', $, c3, d3, chartType, showRem, showAdjusted);
+
+function buildChart(targetId, $, c3, d3, chartType, showRem, showAdjusted, unit) {
+  linkChart('/targets/' + targetId + '/data.json', $, c3, d3, chartType, showRem, showAdjusted, unit);
 }
 
-function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
+function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted, unit) {
   $(function () {
     var isAcc = chartType === 'cumulative',
       chart = c3.generate({
@@ -24,11 +25,12 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
           date: 'Date',
           wordcount: 'Word count',
           charcount: 'Character count',
-          target: 'Target',
+          wordtarget: 'Target',
+          chartarget: 'Target',
           worddaily: 'Daily writing',
           chardaily: 'Daily characters',
           worddailytarget: 'Daily target',
-          chardailyTarget: 'Daily target',
+          chardailytarget: 'Daily target',
           wordadjusteddailytarget: 'Adjusted daily target',
           charadjusteddailytarget: 'Adjusted daily target',
           wordremaining: 'Remaining wordcount',
@@ -36,20 +38,25 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
         },
         axes: {
           charcount: 'y2',
+          chartarget: 'y2',
           chardaily: 'y2',
-          chardailyTarget: 'y2',
+          chardailytarget: 'y2',
           charadjusteddailytarget: 'y2',
           charremaining: 'y2'
         },
         colors: {
           wordcount: '#674732',
           wordtarget: '#9e9e9e',
-          charcount: '#674732',
+          charcount: unit ? '#674732' : null,
           chartarget: '#9e9e9e'
         },
-        hide: (isAcc ? ['worddaily', 'chardailytarget', 'worddailyTarget', 'chardaily'] : ['wordcount', 'charcount', 'wordtarget', 'chartarget'])
+        hide: (isAcc ? ['worddaily', 'chardaily', 'worddailytarget', 'chardailytarget'] : ['wordcount', 'charcount', 'wordtarget', 'chartarget'])
             .concat(showRem ? [] : ['wordremaining', 'charremaining'])
             .concat(showAdjusted ? [] : ['wordadjusteddailytarget', 'charadjusteddailytarget'])
+            .concat(['unit'])
+      },
+      legend: {
+        hide: ['unit']
       },
       axis: {
         x: {
@@ -59,6 +66,7 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
           }
         },
         y: {
+          show: unit !== 'char',
           label: {
             text: 'Word count',
             position: 'inner-right'
@@ -72,7 +80,7 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
           }
         },
         y2: {
-          show: true,
+          show: unit !== 'word',
           label: {
             text: 'Character count',
             position: 'inner-right'
@@ -107,11 +115,11 @@ function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted) {
         if (self.data('acc')) {
           self.html('Show as cumulative count');
           chart.hide(['wordcount', 'wordtarget', 'charcount', 'chartarget'], { withLegend: false });
-          chart.show(['worddaily', 'worddailytarget', 'chardaily', 'chardailyTarget'], { withLegend: false });
+          chart.show(['worddaily', 'worddailytarget', 'chardaily', 'chardailytarget'], { withLegend: false });
           self.data('acc', false);
         } else {
           self.html('Show as daily writing');
-          chart.hide(['worddaily', 'worddailytarget', 'chardaily', 'chardailyTarget'], { withLegend: false });
+          chart.hide(['worddaily', 'worddailytarget', 'chardaily', 'chardailytarget'], { withLegend: false });
           chart.show(['wordcount', 'wordtarget', 'charcount', 'chartarget'], { withLegend: false });
           self.data('acc', true);
         }
