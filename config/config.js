@@ -8,10 +8,15 @@ module.exports =
     "dialect": "mysql",
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
+    "pool": {
+      max: 15,
+      min: 0,
+      idle: 10000
+    },
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
+      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
@@ -41,11 +46,16 @@ module.exports =
     "dialect": "mysql",
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
+    "pool": {
+      max: 15,
+      min: 0,
+      idle: 10000
+    },
     "logging": null,
     "facebook": {
       "appid": "dummy",
       "secret": "dummy",
-      "callback": "dummy",
+      "callback": "dummy"
     },
     "google": {
       "appid": "dummy",
@@ -76,10 +86,15 @@ module.exports =
     "dialect": "mysql",
     "timezone": "+00:00",
     "baseurl": process.env.WRITERSTRAIL_BASE_URL,
+    "pool": {
+      max: 15,
+      min: 0,
+      idle: 30000
+    },
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
+      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
