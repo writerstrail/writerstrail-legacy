@@ -80,6 +80,15 @@ block content
       .col-md-10
         input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Words written') value=session.wordcount aria-describedby='wchelp')
         span#wchelp.help-block= __(wcErr ? wcErr.message : 'The amount of words you\'ve written during this session.')
+
+    - var ccErr = _.find(validate, { path: 'charcount' }) || ''
+
+    .form-group(class=(ccErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='charcount')= __('Characters typed')
+      .col-sm-10
+        input#charcount.form-control(type='number' name='charcount' placeholder=__('Characters typed') value=session.charcount aria-describedby='cchelp')
+        span#cchelp.help-block= __(ccErr ? ccErr.message : 'The amount of characters you\'ve typed during this session.')
+
     .form-group
       label.col-md-2.control-label(for='text') Or paste your text here to count it
       .col-md-10
@@ -121,7 +130,7 @@ append scripts
   if user.settings.showTour
     script
       unless edit
-        | tour(jQuery, hopscotch, range(36, 37));
+        | tour(jQuery, hopscotch, range(43, 53));
     
 append styles
   link(rel='stylesheet', href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')

@@ -6,7 +6,16 @@ var router = require('express').Router(),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
   chunk = require('../../utils/functions/chunk'),
-  filterIds = require('../../utils/functions/filterids');
+  filterIds = require('../../utils/functions/filterids'),
+  targetunits = {
+    word: 'words',
+    char: 'characters'
+  };
+
+router.use('*', function (req, res, next) {
+  res.locals.targetunits = targetunits;
+  next();
+});
 
 router.get('/', sendflash, function (req, res, next) {
   var filters = [],
@@ -67,7 +76,8 @@ router.get('/new', sendflash, function (req, res, next) {
       title: req.__('New target'),
       edit: false,
       target: {
-        wordcount: 50000,
+        count: 50000,
+        unit: 'word',
         start: moment.utc().add(1, 'day').format(req.user.settings.dateFormat),
         end: moment.utc().add(30, 'days').format(req.user.settings.dateFormat),
         projects: [{ id: req.query.projectid }]
@@ -112,10 +122,11 @@ router.post('/new', isverified, function (req, res, next) {
       name: req.body.name,
       start: start,
       end: end,
-      wordcount: req.body.wordcount || null,
+      count: req.body.count || null,
+      unit: req.body.unit,
       notes: req.body.notes,
       ownerId: req.user.id,
-      zoneOffset: req.body.zoneOffset || 0,
+      zoneOffset: req.body.zoneOffset || 0
     });
   }).then(function (target) {
     savedTarget = target;
@@ -150,7 +161,8 @@ router.post('/new', isverified, function (req, res, next) {
           start: start ? req.body.start : '',
           end: end ? req.body.end : '',
           zoneOffset: req.body.zoneOffset || 0,
-          wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
+          count: req.body.count || null,
+          unit: req.body.unit,
           notes: req.body.notes,
           projects: filterIds(projects, req.body.projects)
         },
@@ -249,7 +261,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       savedTarget = target;
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
-      target.set('wordcount', req.body.wordcount || null);
+      target.set('count', req.body.count || null);
+      target.set('unit', req.body.unit);
       target.set('start', start);
       target.set('end', end);
       target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));
@@ -293,7 +306,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         target: {
           name: req.body.name,
           notes: req.body.notes,
-          wordcount: req.body.notarget ? null : (req.body.wordcount || 0),
+          count: req.body.count || null,
+          unit: req.body.unit,
           start: req.body.start,
           end: req.body.end,
           projects: filterIds(projects, req.body.projects)
@@ -384,7 +398,7 @@ router.get('/:id/data.json', function (req, res) {
     var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
     var daysRange = [];
     var daily = [];
-    var wordcount = [], accWc = 0;
+    var count = [], accWc = 0;
     var targetAcc = [], accTgt = 0;
     var dailytarget = [];
     var pondDailyTarget = [];
@@ -402,40 +416,41 @@ router.get('/:id/data.json', function (req, res) {
     for (var i = 1; i <= totalDays; i++) {
       var workingDate = moment.utc(target.start).add(i - 1, 'days');
       var today = workingDate.format('YYYY-MM-DD');
-      var diffWc = target.wordcount - accWc;
+      var diffWc = target.count - accWc;
       var diffDays = totalDays - i + 1;
       var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
       pondDailyTarget.push(Math.max(0, pondTarget));
       daysRange.push(today);
       if (a[today]) {
-        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues.wordcount; }, 0);
+        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues[target.unit + 'count']; }, 0);
         accWc += todayWc;
         daily.push(todayWc);
       } else {
         daily.push(0);
       }
       if (moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
-        wordcount.push(accWc);
+        count.push(accWc);
       } else {
-        wordcount.push(null);
+        count.push(null);
       }
-      var incTarget = Math.floor(target.wordcount / totalDays) + (target.wordcount % totalDays < i ? 0 : 1);
+      var incTarget = Math.floor(target.count / totalDays) + (target.count % totalDays < i ? 0 : 1);
       dailytarget.push(incTarget);
       accTgt += incTarget;
       targetAcc.push(accTgt);
-      remaining.push(Math.max(0, target.wordcount - accWc));
+      remaining.push(Math.max(0, target.count - accWc));
     }
     
     var result = {
-      date: daysRange,
-      wordcount: wordcount,
-      daily: daily
+      date: daysRange
     };
-    if (target.wordcount !== null) {
-      result.target = targetAcc;
-      result.dailytarget = dailytarget;
-      result.adjusteddailytarget = pondDailyTarget;
-      result.remaining = remaining;
+    result[target.unit + 'count'] = count;
+    result[target.unit + 'daily'] = daily;
+
+    if (target.count !== null) {
+      result[target.unit + 'target'] = targetAcc;
+      result[target.unit + 'dailytarget'] = dailytarget;
+      result[target.unit + 'adjusteddailytarget'] = pondDailyTarget;
+      result[target.unit + 'remaining'] = remaining;
     }
     res.json(result).end();
   });

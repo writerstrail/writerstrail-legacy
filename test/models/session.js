@@ -1,17 +1,20 @@
 var Session = models.Session;
 
 describe('Session model', function () {
-  var now, junk = [];
+  var now, id, junk = [];
   
   before(function createTestProjects(done) {
     now = moment().set('milliseconds', 0).toDate();
+    id = 1000;
     models.Project.bulkCreate([
       {
         id: 9000,
         name: 'Test project for sessions 1',
         description: 'Description',
         wordcount: 500,
+        charcount: 1000,
         targetwc: 1500,
+        targetc: 3000,
         active: true,
         finished: false,
         ownerId: 1
@@ -21,7 +24,9 @@ describe('Session model', function () {
         name: 'Test project for sessions 2',
         description: 'Description',
         wordcount: 500,
+        charcount: 1000,
         targetwc: 1500,
+        targetcc: 3000,
         active: true,
         finished: false,
         ownerId: 1
@@ -31,7 +36,9 @@ describe('Session model', function () {
         name: 'Test project for sessions 3',
         description: 'Description',
         wordcount: 500,
+        charcount: 1000,
         targetwc: 1500,
+        targetcc: 3000,
         active: true,
         finished: false,
         ownerId: 1
@@ -48,21 +55,26 @@ describe('Session model', function () {
       done();
     }).catch(done);
   });
-  
+
+  beforeEach(function () {
+    id++;
+  });
+
   it('should save correctly a session', function (done) {
     Session.create({
-      id: 1000,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
       duration: 500,
       pausedTime: 2,
       wordcount: 5000,
+      charcount: 30000,
       isCountdown: true,
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1000);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
@@ -73,6 +85,7 @@ describe('Session model', function () {
         expect(session).to.have.property('duration', 500);
         expect(session).to.have.property('pausedTime', 2);
         expect(session).to.have.property('wordcount', 5000);
+        expect(session).to.have.property('charcount', 30000);
         expect(session).to.have.property('isCountdown', true);
         expect(session).to.have.property('notes', 'test notes');
         done();
@@ -84,7 +97,7 @@ describe('Session model', function () {
   
   it('should allow null summary', function (done) {
     Session.create({
-      id: 1001,
+      id: id,
       summary: null,
       start: now,
       zoneOffset: -120,
@@ -95,7 +108,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1001);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
@@ -111,7 +124,7 @@ describe('Session model', function () {
   it('should not allow empty summary', function (done) {
     var session, err;
     Session.create({
-      id: 1005,
+      id: id,
       summary: '',
       start: now,
       zoneOffset: -120,
@@ -122,7 +135,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1005);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -133,7 +146,7 @@ describe('Session model', function () {
         expect(session).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('errors').that.have.length.of.at.least(1);
-        expect(err).to.have.deep.property('errors[0].path', 'summary');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'summary');
         done();
       } catch (e) {
         done(e);
@@ -144,7 +157,7 @@ describe('Session model', function () {
   it('should not allow summary over 255 characters', function (done) {
     var session, err;
     Session.create({
-      id: 1006,
+      id: id,
       summary: genString(256),
       start: now,
       zoneOffset: -120,
@@ -155,7 +168,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1006);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -166,7 +179,7 @@ describe('Session model', function () {
         expect(session).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('errors').that.have.length.of.at.least(1);
-        expect(err).to.have.deep.property('errors[0].path', 'summary');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'summary');
         done();
       } catch (e) {
         done(e);
@@ -177,7 +190,7 @@ describe('Session model', function () {
   it('should not allow null start', function (done) {
     var session, err;
     Session.create({
-      id: 1007,
+      id: id,
       summary: 'summary',
       start: null,
       zoneOffset: -120,
@@ -188,7 +201,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1007);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -199,7 +212,7 @@ describe('Session model', function () {
         expect(session).to.not.exist;
         expect(err).to.exist;
         expect(err).to.have.property('errors').that.have.length.of.at.least(1);
-        expect(err).to.have.deep.property('errors[0].path', 'start');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'start');
         done();
       } catch (e) {
         done(e);
@@ -209,7 +222,7 @@ describe('Session model', function () {
   
   it('should allow null duration', function (done) {
     Session.create({
-      id: 1002,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -220,7 +233,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1002);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
@@ -236,7 +249,7 @@ describe('Session model', function () {
   it('should not allow zero duration', function (done) {
     var session, err;
     Session.create({
-      id: 1008,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -247,7 +260,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1008);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -269,7 +282,7 @@ describe('Session model', function () {
   it('should not allow negative duration', function (done) {
     var session, err;
     Session.create({
-      id: 1008,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -280,7 +293,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1008);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -302,7 +315,7 @@ describe('Session model', function () {
   it('should not allow duration over 23:59', function (done) {
     var session, err;
     Session.create({
-      id: 1009,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -313,7 +326,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1009);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -334,7 +347,7 @@ describe('Session model', function () {
   
   it('should allow zero paused time', function (done) {
     Session.create({
-      id: 1003,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -345,7 +358,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1003);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
@@ -361,7 +374,7 @@ describe('Session model', function () {
   it('should not allow null paused time', function (done) {
     var session, err;
     Session.create({
-      id: 1010,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -372,7 +385,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1010);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -394,7 +407,7 @@ describe('Session model', function () {
   it('should not allow negative paused time', function (done) {
     var session, err;
     Session.create({
-      id: 1011,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -405,7 +418,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1011);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -427,7 +440,7 @@ describe('Session model', function () {
   it('should not allow paused time greater than or equal to duration', function (done) {
     var session, err;
     Session.create({
-      id: 1012,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -438,7 +451,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1012);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -460,7 +473,7 @@ describe('Session model', function () {
   it('should not allow null wordcount', function (done) {
     var session, err;
     Session.create({
-      id: 1013,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -471,7 +484,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1013);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -493,7 +506,7 @@ describe('Session model', function () {
   it('should not allow zero wordcount', function (done) {
     var session, err;
     Session.create({
-      id: 1014,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -504,7 +517,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1014);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -526,7 +539,7 @@ describe('Session model', function () {
   it('should not allow negative wordcount', function (done) {
     var session, err;
     Session.create({
-      id: 1015,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -537,7 +550,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1015);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -559,7 +572,7 @@ describe('Session model', function () {
   it('should not allow wordcount over a billion', function (done) {
     var session, err;
     Session.create({
-      id: 1016,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -570,7 +583,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1016);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -588,10 +601,139 @@ describe('Session model', function () {
       }
     });
   });
+
+  it('should not allow null charcount', function (done) {
+    var session, err;
+    Session.create({
+      id: id,
+      summary: 'test summary',
+      start: now,
+      zoneOffset: -120,
+      duration: 500,
+      pausedTime: 0,
+      wordcount: 500,
+      charcount: null,
+      isCountdown: true,
+      notes: 'test notes',
+      projectId: 9000
+    }).then(function () {
+      return Session.findOne(id);
+    }).then(function (s) {
+      session = s;
+      junk.push(session);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(session).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'charcount');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should allow zero charcount', function (done) {
+    Session.create({
+      id: id,
+      summary: 'test summary',
+      start: now,
+      zoneOffset: -120,
+      duration: 500,
+      pausedTime: 2,
+      wordcount: 5000,
+      charcount: 0,
+      isCountdown: true,
+      notes: null,
+      projectId: 9000
+    }).then(function () {
+      return Session.findOne(id);
+    }).then(function (session) {
+      junk.push(session);
+      try {
+        expect(session).to.exist;
+        expect(session).to.have.property('charcount').that.is.equal(0);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(done);
+  });
+
+  it('should not allow negative charcount', function (done) {
+    var session, err;
+    Session.create({
+      id: id,
+      summary: 'test summary',
+      start: now,
+      zoneOffset: -120,
+      duration: 500,
+      pausedTime: 0,
+      wordcount: 500,
+      charcount: -1,
+      isCountdown: true,
+      notes: 'test notes',
+      projectId: 9000
+    }).then(function () {
+      return Session.findOne(id);
+    }).then(function (s) {
+      session = s;
+      junk.push(session);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(session).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'charcount');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should not allow charcount over two billion', function (done) {
+    var session, err;
+    Session.create({
+      id: id,
+      summary: 'test summary',
+      start: now,
+      zoneOffset: -120,
+      duration: 500,
+      pausedTime: 0,
+      wordcount: 500,
+      charcount: 2000000001,
+      isCountdown: true,
+      notes: 'test notes',
+      projectId: 9000
+    }).then(function () {
+      return Session.findOne(id);
+    }).then(function (s) {
+      session = s;
+      junk.push(session);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(session).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'charcount');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
   
   it('should allow null notes', function (done) {
     Session.create({
-      id: 1004,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -602,7 +744,7 @@ describe('Session model', function () {
       notes: null,
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1004);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
@@ -618,7 +760,7 @@ describe('Session model', function () {
   it('should not allow null project', function (done) {
     var session, err;
     Session.create({
-      id: 1017,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -629,7 +771,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: null
     }).then(function () {
-      return Session.findOne(1017);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -651,7 +793,7 @@ describe('Session model', function () {
   it('should not allow no project', function (done) {
     var session, err;
     Session.create({
-      id: 1018,
+      id: id,
       summary: 'test summary',
       start: now,
       zoneOffset: -120,
@@ -661,7 +803,7 @@ describe('Session model', function () {
       isCountdown: true,
       notes: 'test notes'
     }).then(function () {
-      return Session.findOne(1018);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -698,37 +840,42 @@ describe('Session model', function () {
     }
   });
   
-  it('should increment the project wordcount on creation', function (done) {
-    var starting = 0;
+  it('should increment the project wordcount and charcount on creation', function (done) {
+    var startingWordcount = 0,
+        startingCharcount = 0;
     
     models.Project.findOne(9001).then(function (p) {
-      starting = p.currentWordcount;
+      startingWordcount = p.currentWordcount;
+      startingCharcount = p.currentCharcount;
       return Session.create({
-        id: 1019,
+        id: id,
         summary: 'test summary',
         start: now,
         zoneOffset: -120,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
+        charcount: 10000,
         isCountdown: true,
         notes: 'test notes',
         projectId: 9001
       });
     }).then(function () {
-      return Session.findOne(1019);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
         expect(session).to.exist;
         expect(session).to.have.property('wordcount', 5000);
+        expect(session).to.have.property('charcount', 10000);
       } catch (err) {
         done(err);
       }
       return models.Project.findOne(9001);
     }).then(function (project) {
       try {
-        expect(project).to.have.property('currentWordcount', starting + 5000);
+        expect(project).to.have.property('currentWordcount', startingWordcount + 5000);
+        expect(project).to.have.property('currentCharcount', startingCharcount + 10000);
         done();
       } catch (err) {
         done(err);
@@ -736,37 +883,42 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should increment the project wordcount on bulk creation', function (done) {
-    var starting = 0;
+  it('should increment the project wordcount and charcount on bulk creation', function (done) {
+    var startingWordcount = 0,
+        startingCharcount = 0;
     
     models.Project.findOne(9001).then(function (p) {
-      starting = p.currentWordcount;
+      startingWordcount = p.currentWordcount;
+      startingCharcount = p.currentCharcount;
       return Session.bulkCreate([{
-        id: 1020,
+        id: id,
         summary: 'test summary',
         start: now,
         zoneOffset: -120,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
+        charcount: 10000,
         isCountdown: true,
         notes: 'test notes',
         projectId: 9001
       }], { individualHooks: false });
     }).then(function () {
-      return Session.findOne(1020);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
         expect(session).to.exist;
         expect(session).to.have.property('wordcount', 5000);
+        expect(session).to.have.property('charcount', 10000);
       } catch (err) {
         done(err);
       }
       return models.Project.findOne(9001);
     }).then(function (project) {
       try {
-        expect(project).to.have.property('currentWordcount', starting + 5000);
+        expect(project).to.have.property('currentWordcount', startingWordcount + 5000);
+        expect(project).to.have.property('currentCharcount', startingCharcount + 10000);
         done();
       } catch (err) {
         done(err);
@@ -774,37 +926,42 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should increment the project wordcount on bulk creation with individual hooks', function (done) {
-    var starting = 0;
+  it('should increment the project wordcount and charcount on bulk creation with individual hooks', function (done) {
+    var startingWordcount = 0,
+        startingCharcount = 0;
     
     models.Project.findOne(9001).then(function (p) {
-      starting = p.currentWordcount;
+      startingWordcount = p.currentWordcount;
+      startingCharcount = p.currentCharcount;
       return Session.bulkCreate([{
-        id: 1021,
+        id: id,
         summary: 'test summary',
         start: now,
         zoneOffset: -120,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
+        charcount: 10000,
         isCountdown: true,
         notes: 'test notes',
         projectId: 9001
       }], { individualHooks: true });
     }).then(function () {
-      return Session.findOne(1021);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       try {
         expect(session).to.exist;
         expect(session).to.have.property('wordcount', 5000);
+        expect(session).to.have.property('charcount', 10000);
       } catch (err) {
         done(err);
       }
       return models.Project.findOne(9001);
     }).then(function (project) {
       try {
-        expect(project).to.have.property('currentWordcount', starting + 5000);
+        expect(project).to.have.property('currentWordcount', startingWordcount + 5000);
+        expect(project).to.have.property('currentCharcount', startingCharcount + 10000);
         done();
       } catch (err) {
         done(err);
@@ -812,32 +969,39 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should increment/decrement the projects\' wordcount on update', function (done) {
-    var starting1 = 0, starting2 = 0;
+  it('should increment/decrement the projects\' wordcount and wordcount on update', function (done) {
+    var startingWordcount1 = 0,
+        startingWordcount2 = 0,
+        startingCharcount1 = 0,
+        startingCharcount2 = 0;
     
     models.Project.findOne(9001).then(function (p1) {
-      starting1 = p1.currentWordcount;
+      startingWordcount1 = p1.currentWordcount;
+      startingCharcount1 = p1.currentCharcount;
       return models.Project.findOne(9002);
     }).then(function (p2) {
-      starting2 = p2.currentWordcount;
+      startingWordcount2 = p2.currentWordcount;
+      startingCharcount2 = p2.currentCharcount;
       return Session.create({
-        id: 1022,
+        id: id,
         summary: 'test summary',
         start: now,
         zoneOffset: -120,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
+        charcount: 10000,
         isCountdown: true,
         notes: 'test notes',
         projectId: 9001
       });
     }).then(function () {
-      return Session.findOne(1022);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       
       session.wordcount = 1000;
+      session.charcount = 3000;
       session.projectId = 9002;
       
       return session.save();
@@ -845,14 +1009,16 @@ describe('Session model', function () {
       return models.Project.findOne(9001);
     }).then(function (project1) {
       try {
-        expect(project1).to.have.property('currentWordcount', starting1);
+        expect(project1).to.have.property('currentWordcount', startingWordcount1);
+        expect(project1).to.have.property('currentCharcount', startingCharcount1);
         return models.Project.findOne(9002);
       } catch (err) {
         done(err);
       }
     }).then(function (project2) {
       try {
-        expect(project2).to.have.property('currentWordcount', starting2 + 1000);
+        expect(project2).to.have.property('currentWordcount', startingWordcount2 + 1000);
+        expect(project2).to.have.property('currentCharcount', startingCharcount2 + 3000);
         done();
       } catch (err) {
         done(err);
@@ -866,18 +1032,19 @@ describe('Session model', function () {
   it('should not allow bulk update', function (done) {
     var session, err;
     Session.create({
-      id: 1023,
+      id: id,
       summary: 'Summary',
       start: now,
       zoneOffset: -120,
       duration: 500,
       pausedTime: 2,
       wordcount: 5000,
+      charcount: 10000,
       isCountdown: true,
       notes: 'test notes',
       projectId: 9000
     }).then(function () {
-      return Session.findOne(1023);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -885,7 +1052,7 @@ describe('Session model', function () {
         summary: 'Nope'
       }, {
         where: {
-          id: 1023
+          id: id
         }
       });
     }).catch(function (e) {
@@ -904,25 +1071,28 @@ describe('Session model', function () {
     });
   });
   
-  it('should decrement the project wordcount on destroy', function (done) {
-    var starting = 0;
+  it('should decrement the project wordcount and charcount on destroy', function (done) {
+    var startingWordcount = 0,
+        startingCharcount = 0;
     
     models.Project.findOne(9001).then(function (p) {
-      starting = p.currentWordcount;
+      startingWordcount = p.currentWordcount;
+      startingCharcount = p.currentCharcount;
       return Session.create({
-        id: 1024,
+        id: id,
         summary: 'test summary',
         start: now,
         zoneOffset: -120,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
+        charcount: 10000,
         isCountdown: true,
         notes: 'test notes',
         projectId: 9001
       });
     }).then(function () {
-      return Session.findOne(1024);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       return session.destroy();
@@ -930,7 +1100,8 @@ describe('Session model', function () {
       return models.Project.findOne(9001);
     }).then(function (project) {
       try {
-        expect(project).to.have.property('currentWordcount', starting);
+        expect(project).to.have.property('currentWordcount', startingWordcount);
+        expect(project).to.have.property('currentCharcount', startingCharcount);
         done();
       } catch (err) {
         done(err);
@@ -938,37 +1109,41 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should decrement the project wordcount on bulk destroy', function (done) {
-    var starting = 0;
+  it('should decrement the project wordcount and charcount on bulk destroy', function (done) {
+    var startingWordcount = 0,
+        startingCharcount = 0;
     
     models.Project.findOne(9001).then(function (p) {
-      starting = p.currentWordcount;
+      startingWordcount = p.currentWordcount;
+      startingCharcount = p.currentCharcount;
       return Session.create({
-        id: 1025,
+        id: id,
         summary: 'test summary',
         start: now,
         zoneOffset: -120,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
+        charcount: 10000,
         isCountdown: true,
         notes: 'test notes',
         projectId: 9001
       });
     }).then(function () {
-      return Session.findOne(1025);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       return Session.destroy({
         where: {
-          id: 1025
+          id: id
         }
       });
     }).then(function () {
       return models.Project.findOne(9001);
     }).then(function (project) {
       try {
-        expect(project).to.have.property('currentWordcount', starting);
+        expect(project).to.have.property('currentWordcount', startingWordcount);
+        expect(project).to.have.property('currentCharcount', startingCharcount);
         done();
       } catch (err) {
         done(err);
@@ -976,37 +1151,41 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should decrement the project wordcount on bulk destroy with individual hooks', function (done) {
-    var starting = 0;
+  it('should decrement the project wordcount and charcount on bulk destroy with individual hooks', function (done) {
+    var startingWordcount = 0,
+        startingCharcount = 0;
     
     models.Project.findOne(9001).then(function (p) {
-      starting = p.currentWordcount;
+      startingWordcount = p.currentWordcount;
+      startingCharcount = p.currentCharcount;
       return Session.create({
-        id: 1026,
+        id: id,
         summary: 'test summary',
         start: now,
         zoneOffset: -120,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
+        charcount: 10000,
         isCountdown: true,
         notes: 'test notes',
         projectId: 9001
       });
     }).then(function () {
-      return Session.findOne(1026);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       return Session.destroy({
         where: {
-          id: 1026
+          id: id
         }
       }, { individualHooks: true });
     }).then(function () {
       return models.Project.findOne(9001);
     }).then(function (project) {
       try {
-        expect(project).to.have.property('currentWordcount', starting);
+        expect(project).to.have.property('currentWordcount', startingWordcount);
+        expect(project).to.have.property('currentCharcount', startingCharcount);
         done();
       } catch (err) {
         done(err);
@@ -1020,7 +1199,7 @@ describe('Session model', function () {
     projectFindOne.returns(Promise.resolve(null));
     
     Session.bulkCreate([{
-      id: 1031,
+      id: id,
       summary: 'test summary',
       start: new Date(),
       zoneOffset: -120,
@@ -1031,7 +1210,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9001
     }]).then(function () {
-      return Session.findOne(1031);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -1053,7 +1232,7 @@ describe('Session model', function () {
     var projectFindOne;
     
     Session.bulkCreate([{
-      id: 1032,
+      id: id,
       summary: 'test summary',
       start: new Date(),
       zoneOffset: -120,
@@ -1064,7 +1243,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9001
     }]).then(function () {
-      return Session.findOne(1032);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       
@@ -1092,7 +1271,7 @@ describe('Session model', function () {
     projectFindOne.throws();
     
     Session.create({
-      id: 1029,
+      id: id,
       summary: 'test summary',
       start: new Date(),
       zoneOffset: -120,
@@ -1103,7 +1282,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9001
     }).then(function () {
-      return Session.findOne(1029);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -1128,7 +1307,7 @@ describe('Session model', function () {
     projectFindOne.throws();
     
     Session.bulkCreate([{
-      id: 1027,
+      id: id,
       summary: 'test summary',
       start: new Date(),
       zoneOffset: -120,
@@ -1139,7 +1318,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9001
     }]).then(function () {
-      return Session.findOne(1027);
+      return Session.findOne(id);
     }).then(function (s) {
       session = s;
       junk.push(session);
@@ -1163,7 +1342,7 @@ describe('Session model', function () {
     var projectFindOne;
     
     Session.create({
-      id: 1030,
+      id: id,
       summary: 'test summary',
       start: new Date(),
       zoneOffset: -120,
@@ -1174,7 +1353,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9001
     }).then(function () {
-      return Session.findOne(1030);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       
@@ -1203,7 +1382,7 @@ describe('Session model', function () {
     var projectFindOne;
     
     Session.bulkCreate([{
-      id: 1028,
+      id: id,
       summary: 'test summary',
       start: new Date(),
       zoneOffset: -120,
@@ -1214,7 +1393,7 @@ describe('Session model', function () {
       notes: 'test notes',
       projectId: 9001
     }]).then(function () {
-      return Session.findOne(1028);
+      return Session.findOne(id);
     }).then(function (session) {
       junk.push(session);
       

@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
         len: {
           args: [3, 255],
           msg: 'The name of the project must have between 3 and 255 characters'
-        },
+        }
       }
     },
     description: {
@@ -44,6 +44,30 @@ module.exports = function (sequelize, DataTypes) {
         this.setDataValue('wordcount', v);
       }
     },
+    charcount: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0,
+      validate: {
+        min: {
+          args: 0,
+          msg: 'The starting character count must be a non-negative integer'
+        },
+        isInt: {
+          msg: 'The starting character count must be a non-negative integer'
+        },
+        max: {
+          args: 2000000000,
+          msg: 'I\'m not judging, but can\'t believe you wrote over two billion characters'
+        }
+      },
+      set: function (v) {
+        var old = this.getDataValue('charcount');
+        var diff = v - old;
+        this.setDataValue('currentCharcount', this.getDataValue('currentCharcount') + diff);
+        this.setDataValue('charcount', v);
+      }
+    },
     targetwc: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -62,6 +86,24 @@ module.exports = function (sequelize, DataTypes) {
         }
       }
     },
+    targetcc: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: {
+          args: 0,
+          msg: 'The target character count must be a non-negative integer'
+        },
+        isInt: {
+          msg: 'The target character count must be a non-negative integer'
+        },
+        max: {
+          args: 2000000000,
+          msg: 'I\'m not judging, but can\'t believe you want to write over two billion characters'
+        }
+      }
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -73,6 +115,14 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: false
     },
     currentWordcount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: 0
+      }
+    },
+    currentCharcount: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
@@ -108,11 +158,13 @@ module.exports = function (sequelize, DataTypes) {
         
         Project.hook('beforeCreate', function (project) {
           project.currentWordcount = project.wordcount;
+          project.currentCharcount = project.charcount;
         });
         
         Project.hook('beforeBulkCreate', function (projects, options, done) {
           projects.forEach(function (p) {
             p.currentWordcount = p.wordcount;
+            p.currentCharcount = p.charcount;
           });
           done();
         });
@@ -154,7 +206,13 @@ module.exports = function (sequelize, DataTypes) {
           return next(new Error('The target can\'t be less than the starting wordcount'));
         }
         next();
-      } 
+      },
+      targetCharOverStart: function (next) {
+        if (this.targetcc > 0 && parseInt(this.targetcc, 10) < parseInt(this.charcount, 10)){
+          return next(new Error('The target can\'t be less than the starting character count'));
+        }
+        next();
+      }
     },
     indexes: [
       {

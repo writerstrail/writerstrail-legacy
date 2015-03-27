@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /********
 
 This script generates a bunch of random data into a new sample user.
@@ -51,7 +52,13 @@ var promise = require('bluebird'),
     wordcountRange = [90000, 30000], // min, variation
     durationRange = [300, 1200], // min, max
     wpmRange = [30, 50], // min, max
-    today = moment().subtract({ year: 1, day: 1 }).set({
+    yearAgo = moment().subtract({ year: 1, day: 1 }).set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0
+    }),
+    today = moment().set({
       hour: 0,
       minute: 0,
       second: 0,
@@ -61,8 +68,16 @@ var promise = require('bluebird'),
     genres,
     projects;
 
+function randomRealBetween(min, max) {
+  return (Math.random() * max) + min;
+}
+
 function randomIntBetween(min, max) {
-  return Math.floor(Math.random() * max) + min;
+  return Math.floor(randomRealBetween(min, max));
+}
+
+function calcCharcount(wordcount) {
+  return Math.floor(wordcount * randomRealBetween(3.4, 6.1));
 }
 
 (function generateProjects() {
@@ -74,6 +89,7 @@ function randomIntBetween(min, max) {
       name: 'Ender\'s Game',
       wordcount: 0,
       targetwc: randomNumber(),
+      charcount: 0,
       totalWordcount: 0,
       active: true,
       finished: false
@@ -81,6 +97,7 @@ function randomIntBetween(min, max) {
     { // Not started 2
       name: 'The Hobbit',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 0,
       active: true,
@@ -89,6 +106,7 @@ function randomIntBetween(min, max) {
     { // Started, no session 1
       name: 'Pride and Prejudice',
       wordcount: 42342,
+      charcount: 223514,
       targetwc: randomNumber(),
       totalWordcount: 0,
       active: true,
@@ -97,6 +115,7 @@ function randomIntBetween(min, max) {
     { // Started, no session 2
       name: 'Brave New World',
       wordcount: 23434,
+      charcount: 113434,
       targetwc: randomNumber(),
       totalWordcount: 0,
       active: true,
@@ -105,6 +124,7 @@ function randomIntBetween(min, max) {
     { // With sessions 1
       name: 'The Adventures of Tom Sawyer',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 30, // percentage of target
       active: true,
@@ -113,6 +133,7 @@ function randomIntBetween(min, max) {
     { // With sessions 2
       name: 'Under the Dome',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 71, // percentage of target
       active: true,
@@ -121,6 +142,7 @@ function randomIntBetween(min, max) {
     { // Finished 1
       name: 'Fahrenheit 451',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 100, // percentage of target
       active: true,
@@ -129,6 +151,7 @@ function randomIntBetween(min, max) {
     { // Finished 2
       name: 'The Great Gatsby',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: 155, // percentage of target
       active: true,
@@ -137,6 +160,7 @@ function randomIntBetween(min, max) {
     { // Archived 1
       name: 'The Picture of Dorian Gray',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: Infinity, // doesn't matter
       active: false,
@@ -145,6 +169,7 @@ function randomIntBetween(min, max) {
     { // Archived 2
       name: '20000 Leagues Under the Sea',
       wordcount: 0,
+      charcount: 0,
       targetwc: randomNumber(),
       totalWordcount: Infinity, // doesn't matter
       active: false,
@@ -155,8 +180,9 @@ function randomIntBetween(min, max) {
   // Now generates the totalWordcount based on percentage
   projectsData.forEach(function (p) {
     p.description = faker.hacker.phrase();
+    p.targetcc = calcCharcount(p.targetwc);
     if (isFinite(p.totalWordcount)) {
-      p.totalWordcount = Math.floor((p.targetwc  / 100) * p.totalWordcount);
+      p.totalWordcount = Math.floor((p.targetwc / 100) * p.totalWordcount);
     }
   });
 
@@ -200,13 +226,8 @@ models.User.destroy({
 
   return promise.all(promises);
 }).then(function () {
+
   // Generate sessions
-  var now = moment().set({
-        hour: 23,
-        minute: 59,
-        second: 59,
-        millisecond: 999
-      }).add(today.utcOffset(), 'minutes');
 
   function selectProject() {
     return _.findWhere(_.shuffle(projectsData), function (p) {
@@ -227,14 +248,15 @@ models.User.destroy({
   return models.sequelize.transaction(function () {
     var promises = [];
 
-    while (today.isBefore(now)) {
+    while (today.isAfter(yearAgo)) {
       var amount = faker.random.number(6); // between 0 and 5
 
       for (var i = 0; i < amount; i++) {
         var project = selectProject(),
             wpm = (Math.random() * wpmRange[1]) + wpmRange[0],
             duration = (Math.random() * durationRange[1]) + durationRange[0],
-            wordcount = Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount);
+            wordcount = Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount),
+            charcount = calcCharcount(wordcount);
 
         project.totalWordcount -= wordcount;
 
@@ -244,13 +266,14 @@ models.User.destroy({
           duration: duration,
           pausedTime: randomIntBetween(0, Math.floor(duration / 6)),
           wordcount: wordcount,
+          charcount: charcount,
           projectId: project.id,
           isCountdown: !!faker.random.number(),
           zoneOffset: today.utcOffset()
         }));
       }
 
-      today.add(1, 'day');
+      today.subtract(1, 'day');
     }
 
     return promise.all(promises);

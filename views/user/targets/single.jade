@@ -9,11 +9,13 @@ block content
   - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true)))) 
   - var daysRem = totalDays - daysPast
   - var allSessions = []
-  - var totalWordcount = 0
+  - var totalCount = 0
   - _.forEach(target.projects, function(proj) { allSessions = allSessions.concat(proj.sessions) })
   for sessions, day in _.groupBy(allSessions, function(sess) { return moment.utc(sess.dataValues.start).format(user.settings.dateFormat) })
-    - totalWordcount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues.wordcount }, 0)
-  - var remainingWordcount = Math.max(0, target.wordcount - totalWordcount)
+    - totalCount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues[target.unit + 'count'] }, 0)
+  - var remainingCount = Math.max(0, target.count - totalCount)
+  - var unit = target.unit === 'word' ? 'words' : 'characters'
+  - var unitCaps = unit.charAt(0).toLocaleUpperCase() + unit.substring(1);
 
   h1 Target 
     em= target.name 
@@ -27,39 +29,39 @@ block content
     include toolbar
   p
   
-  if target.wordcount
+  if target.count
     .row
       .col-md-12
-        - var percentage = Math.min(100, Math.max(0, Math.floor((totalWordcount / target.wordcount) * 100)))
-        +progressbar(totalWordcount, target.wordcount, percentage)
+        - var percentage = Math.min(100, Math.max(0, Math.floor((totalCount / target.count) * 100)))
+        +progressbar(totalCount, target.count, percentage)
   if daysRem == 0        
     .row
       .col-md-2: strong This target is already overdue.
-      .col-md-10(class=(totalWordcount === 0 ? 'alert-danger' : (!target.wordcount ? 'alert-info' : (totalWordcount >= target.wordcount ? 'alert-success' : 'alert-warning'))))
-        if target.wordcount
-          if totalWordcount >= target.wordcount
+      .col-md-10(class=(totalCount === 0 ? 'alert-danger' : (!target.count ? 'alert-info' : (totalCount >= target.count ? 'alert-success' : 'alert-warning'))))
+        if target.count
+          if totalCount >= target.count
             p 
               span.fa.fa-smile-o &nbsp;
               | Congratulations, you achieved it! Take a donut and relax! Or maybe you want to keep the momentum and 
               a.alert-link(href='/targets/new' title='New target'): strong start a new target
               | ! 
-          else if totalWordcount > 0
+          else if totalCount > 0
             p
               span.fa.fa-meh-o &nbsp;
-              | Oops, it wasn't this time. But be glad that you wrote #{totalWordcount} words! What do you think about  
+              | Oops, it wasn't this time. But be glad that you wrote #{totalCount} #{unit}! What do you think about
               a.alert-link(href='/targets/new' title='New target'): strong starting a new target
               | ?
         else
-          if totalWordcount > 0
+          if totalCount > 0
             p
               span.fa.fa-question-circle &nbsp;
-              | You didn't set up a target wordcount, so I can't tell how you went. But you can always  
+              | You didn't set up a target count, so I can't tell how you went. But you can always
               a.alert-link(href='/targets/new' title='New target'): strong start a new target
               | .
-        if totalWordcount === 0
+        if totalCount === 0
           p
             span.fa.fa-frown-o &nbsp;
-            | You didn't write a single word. Make a 
+            | You didn't write a single #{unit}. Make a
             a.alert-link(href='/targets/new' title='New target'): strong new target 
             | and this time get over the blank page!
       
@@ -95,9 +97,9 @@ block content
     li.list-group-item
       .row
         .col-md-2
-          strong Target wordcount:
+          strong Target count:
         .col-md-10
-          = target.wordcount || 'No target set.'
+          = target.count || 'No target set.'
     li.list-group-item
       .row
         .col-md-2
@@ -137,29 +139,29 @@ block content
                 | ,&nbsp;
                 a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
                 | )
-    if target.wordcount
+    if target.count
       li.list-group-item
         .row
           .col-md-2: strong Target count per day:
-          .col-md-10= Math.ceil(target.wordcount / totalDays)
-            | &nbsp;words
+          .col-md-10= Math.ceil(target.count / totalDays)
+            | &nbsp;#{unit}
     li.list-group-item
       .row
-        .col-md-2: strong Words written:
-        .col-md-10= totalWordcount
-          | &nbsp;words
+        .col-md-2: strong #{unitCaps} written:
+        .col-md-10= totalCount
+          | &nbsp;#{unit}
     if daysRem > 0 && hasStarted
       li.list-group-item
         .row
           .col-md-2: strong Days past:
           .col-md-10= daysPast
             | &nbsp;days
-      if target.wordcount
+      if target.count
         li.list-group-item
           .row
-            .col-md-2: strong Words remaining:
-            .col-md-10= remainingWordcount
-              | &nbsp;words
+            .col-md-2: strong #{unitCaps} remaining:
+            .col-md-10= remainingCount
+              | &nbsp;#{unit}
       li.list-group-item
         .row
           .col-md-2: strong Days remaining:
@@ -167,23 +169,23 @@ block content
             | &nbsp;days
       li.list-group-item
         .row
-          .col-md-2: strong Average words per day:
-          .col-md-10= Math.round(totalWordcount / (daysPast + 1))
-            | &nbsp;words
-      if target.wordcount
+          .col-md-2: strong Average #{unit} per day:
+          .col-md-10= Math.round(totalCount / (daysPast + 1))
+            | &nbsp;#{unit}
+      if target.count
         li.list-group-item
           .row
             .col-md-2: strong Predicted finish by this rate:
             .col-md-10
-              if totalWordcount === 0
+              if totalCount === 0
                 | Never
               else
-                = now.add(Math.ceil((remainingWordcount) / (totalWordcount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
+                = now.add(Math.ceil((remainingCount) / (totalCount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
         li.list-group-item
           .row
             .col-md-2: strong Daily target to finish on time:
-            .col-md-10= Math.ceil(remainingWordcount / (daysRem - 1))
-              | &nbsp;words
+            .col-md-10= Math.ceil(remainingCount / (daysRem - 1))
+              | &nbsp;#{unit}
       
   p &nbsp;
 
@@ -196,7 +198,7 @@ append scripts
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/scripts/chart.js')    
   script(type='text/javascript').
-    buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted});
+    buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted}, '!{target.unit}');
   if user.settings.showTour
     script
-      | tour(jQuery, hopscotch, range(34, 35));
+      | tour(jQuery, hopscotch, range(41, 42));

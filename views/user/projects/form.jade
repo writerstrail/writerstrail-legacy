@@ -53,6 +53,22 @@ block content
         input#targetwc.form-control(type='text' name='targetwc' placeholder=__('Target word count') value=project.targetwc aria-describedby='twchelp')
         span#twchelp.help-block= __(twcErr ? twcErr.message : 'The amount of words you intend to write to finish this project.')
         
+    - var ccErr = _.find(validate, { path: 'charcount'}) || ''
+
+    .form-group(class=(ccErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='charcount')= __('Starting character count')
+      .col-sm-10
+        input#charcount.form-control(type='text' name='charcount' placeholder=__('Starting character count') value=project.charcount aria-describedby='cchelp')
+        span#cchelp.help-block= __(ccErr ? ccErr.message : 'If you already started it, put the current character count in here (optional).')
+
+    - var tccErr = _.find(validate, function(err) { return err.path === 'targetcc' || err.path === 'targetCharOverStart'; }) || ''
+
+    .form-group(class=(tccErr ? 'has-error' : ''))
+      label.col-sm-2.control-label(for='targetcc')= __('Target character count')
+      .col-sm-10
+        input#targetcc.form-control(type='text' name='targetcc' placeholder=__('Target character count') value=project.targetcc aria-describedby='tcchelp')
+        span#tcchelp.help-block= __(tccErr ? tccErr.message : 'The amount of characters you intend to write to finish this project (optional).')
+
     .form-group
       label.col-md-2.control-label(for='Description')= __('Description')
       .col-md-10
@@ -107,4 +123,4 @@ append scripts
   if user.settings.showTour
     script
       unless edit
-        | tour(jQuery, hopscotch, range(17, 25));
+        | tour(jQuery, hopscotch, range(17, 27));

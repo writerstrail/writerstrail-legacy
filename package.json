@@ -1,9 +1,10 @@
 {
   "name": "writerstrail",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "make test"
   },
   "main": "server.js",
   "description": "Writer's progress charts a la NaNoWriMo",

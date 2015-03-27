@@ -6,7 +6,8 @@ var router = require('express').Router(),
   promise = require('sequelize').Promise,
   durationparser = require('../../utils/functions/durationparser'),
   durationformatter = require('../../utils/functions/durationformatter'),
-  wordcounter = require('../../utils/functions/wordcounter');
+  wordcounter = require('../../utils/functions/wordcounter'),
+  charcounter = require('../../utils/functions/charcounter');
 
 function durationformatterAlt(dur) {
   if (dur === null) { return 'No duration set'; }
@@ -69,6 +70,7 @@ router.get('/new', sendflash, function (req, res) {
       edit: false,
       session: {
         wordcount: 0,
+        charcount: 0,
         duration: '15:00',
         pausedTime: '0:00',
         'project.id': req.query.projectid || 0
@@ -103,6 +105,7 @@ router.post('/new', isverified, function (req, res, next) {
       summary: req.body.summary || null,
       notes: req.body.notes,
       wordcount: wordcounter(req.body.text) || req.body.wordcount,
+      charcount: charcounter(req.body.text) || req.body.charcount || 0,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
       duration: durationparser(req.body.duration),
       pausedTime: durationparser(req.body.duration) ? durationparser(req.body.pausedTime) || 0 : 0,
@@ -139,6 +142,7 @@ router.post('/new', isverified, function (req, res, next) {
           zoneOffset: req.body.zoneOffset || 0,
           notes: req.body.notes,
           wordcount: req.body.wordcount,
+          charcount: req.body.charcount,
           start: req.body.start,
           duration: durationformatter(durationparser(req.body.duration)),
           pausedTime: durationformatter(durationparser(req.body.pausedTime)),
@@ -255,6 +259,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         session.set('summary', req.body.summary || null);
         session.set('notes', req.body.notes);
         session.set('wordcount', wordcounter(req.body.text) || req.body.wordcount);
+        session.set('charcount', charcounter(req.body.text) || req.body.charcount || 0);
         session.set('start', start.toDate());
         var duration = durationparser(req.body.duration);
         if (duration) {
@@ -304,6 +309,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           summary: req.body.summary,
           notes: req.body.notes,
           wordcount: req.body.wordcount,
+          charcount: req.body.charcount,
           start: req.body.start,
           duration: durationformatter(durationparser(req.body.duration)),
           pausedTime: durationformatter(durationparser(req.body.pausedTime)),

@@ -64,7 +64,19 @@ block content
             = project.currentWordcount
     li.list-group-item
       .row
-        .col-md-2.text-right
+        .col-sm-2.text-right
+          if project.targetcc > 0
+            strong Character count/Target:
+          else
+            strong Character count:
+        .col-sm-10
+          if project.targetcc > 0
+            = project.currentCharcount + '/' + project.targetcc
+          else
+            = project.currentCharcount
+    li.list-group-item
+      .row
+        .col-sm-2.text-right
           strong Genres:
         .col-md-10
           if project.genres.length === 0
@@ -123,9 +135,9 @@ append scripts
   script(type='text/javascript', src='/scripts/range.js')
   script
     | var link = '/projects/#{project.id}/data.json';
-    | linkChart(link, jQuery, c3, d3, 'daily', !{user.settings.showRemaining}, !{user.settings.showAdjusted});
+    | linkChart(link, jQuery, c3, d3, 'daily', false, false);
     | chartRange(jQuery, moment, '#select-range', '#{user.settings.dateFormat}', '#chart', link);
     
   if user.settings.showTour
     script
-      | tour(jQuery, hopscotch, range(26, 30));
+      | tour(jQuery, hopscotch, range(28, 32));

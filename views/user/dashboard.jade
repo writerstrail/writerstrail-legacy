@@ -148,13 +148,13 @@ append scripts
   if target
     script(type='text/javascript')
       unless example
-        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted});
+        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted}, '!{target.unit}');
       else
-        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false);
+        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false, 'word');
   script
     unless example
       if user.settings.showTour
-        | tour(jQuery, hopscotch, range(0, 1).concat(range(40, 42)));
+        | tour(jQuery, hopscotch, range(0, 1).concat(range(56, 57)).concat(range(58, 70)));
     else
       | $(function() { $('a').click(function(e) { e.preventDefault(); }) });
       if user.settings.showTour

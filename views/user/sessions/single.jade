@@ -48,6 +48,13 @@ block content
           .col-md-10
             = session.wordcount
             | &nbsp;words
+            if session.charcount > 0
+              |  and&#x0020;
+              = session.charcount
+              | &nbsp;characters.
+            else
+              | .
+
       li.list-group-item
         .row
           .col-md-2
@@ -89,4 +96,4 @@ append scripts
   if user.settings.showTour
     script
       unless edit
-        | tour(jQuery, hopscotch, range(38, 39));
+        | tour(jQuery, hopscotch, range(54, 55));

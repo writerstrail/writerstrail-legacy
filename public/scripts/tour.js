@@ -8,7 +8,21 @@ function range(start, finish) {
 }
 
 function tour($, hopscotch, steps) {
-  $(function () { 
+  $(function () {
+    $(document).on('keypress', function (e) {
+      switch (e.key) {
+        case 'Left':
+        case 'ArrowLeft': {
+          hopscotch.prevStep();
+          break;
+        }
+        case 'Right':
+        case 'ArrowRight': {
+          hopscotch.nextStep();
+          break;
+        }
+      }
+    });
     var endTour = function () {
       window.location = '/tour/ended';
     };
@@ -23,7 +37,8 @@ function tour($, hopscotch, steps) {
           target: 'h1',
           placement: 'bottom',
           title: 'Dashboard',
-          content: "Welcome to Writer's Trail! I'll guide you around the site. This is your dashboard.<br><br>You may dismiss this tour and go to your setting to reenable it."
+          content: "Welcome to Writer's Trail! I'll guide you around the site. This is your dashboard.<br><br>" +
+          "You may dismiss this tour and go to <a href=\"/settings\">your settings page</a> to reenable it."
         },
         {
           target: '#active-projects',
@@ -31,7 +46,8 @@ function tour($, hopscotch, steps) {
           xOffset: 'center',
           arrowOffset: 'center',
           title: 'Active projects',
-          content: "These are your active projects. Since you're new here, it might be a little empty. So let me take you to an example dashboard. Click on 'Next' button to go there.",
+          content: "These are your active projects. Since you're new here, it might be a little empty. " +
+          "So let me take you to an example dashboard. Click on 'Next' button to go there.",
           multipage: true,
           onNext: function () {
             window.location = '/example/dashboard';
@@ -212,9 +228,39 @@ function tour($, hopscotch, steps) {
           xOffset: 0,
           arrowOffset: 0,
           title: 'Project target',
-          content: "This is how much you intend to write in this project. It has no relation to the target chart you saw on the dashboard, this is only for the progress bars.",
+          content: "This is how much you intend to write in this project. It has no relation to the target chart you" +
+          " saw on the dashboard, this is only for the progress bars and is completely optional.",
           showNextButton: false,
           ctaLabel: 'I put the target',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#charcount',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 0,
+          title: 'Starting character count',
+          content: "This is the same as the starting wordcount, only it's characters instead. This is optional.",
+          showNextButton: false,
+          ctaLabel: 'I put the character count',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#targetcc',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 0,
+          title: 'Project character target',
+          content: "This is also a target, but for characters. It is optional, but the progress bar will always count" +
+          " in words.",
+          showNextButton: false,
+          ctaLabel: 'I put the character target',
           showCTAButton: true,
           onCTA: function () {
             hopscotch.nextStep();
@@ -318,17 +364,93 @@ function tour($, hopscotch, steps) {
           xOffset: 120,
           arrowOffset: 120,
           title: 'Selected projects',
-          content: "Note that the project you just were is already selected. This is because of the shortcut button. You may select many projects for a single target."
+          content: "Note that the project you just created is already selected. This is because of the shortcut button. You may select many projects for a single target."
         },
         {
           target: '#name',
           placement: 'top',
           xOffset: 0,
           arrowOffset: 0,
-          title: 'Target form',
-          content: "This is the form to create a new target. It should be easy to understand what is every field for.",
+          title: 'Target name',
+          content: "This is a name for reference. You can set many targets with the same name.",
           showNextButton: false,
-          ctaLabel: 'I\'ve filled the form',
+          ctaLabel: 'I\'ve set the name',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#count',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 0,
+          title: 'Target count',
+          content: "How much you intend to have achieved by the end of the period. The unit (words or characters) can " +
+          "be selected in the next field.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the target',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#unit',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 0,
+          title: 'Count unit',
+          content: "What kind of unit you are tracking for this target. This reflects how the charts are shown.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the unit',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#start',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 0,
+          title: 'Start date',
+          content: "When you will (or did) start this target's tracking. It's usually set to the next day, but I set " +
+          "it to five days ago so you can have a feel of an ongoing target.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the start date',
+          showCTAButton: true,
+          onShow: function () {
+            $('#start').val(moment().subtract(5, 'days').format(window.format));
+          },
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#end',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 0,
+          title: 'End date',
+          content: "And here is when the target's period will end. Date and time formatting can be altered in your " +
+          "<a href=\"/settings\">settings page</a>.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the end date',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#notes',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 0,
+          title: 'Extra notes',
+          content: "You can use this field to keep any notes for yourself about the target.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve added the notes',
           showCTAButton: true,
           onCTA: function () {
             hopscotch.nextStep();
@@ -367,12 +489,135 @@ function tour($, hopscotch, steps) {
         {
           target: '#summary',
           placement: 'top',
-          xOffset: 'center',
+          xOffset: 0,
           arrowOffset: 'center',
-          title: 'Session form',
-          content: "Here is the form to input a new writing session. From now on, start timing your work sessions and take note so you put them here.",
+          title: 'Session summary',
+          content: "This is an optional summary to help you find sessions.",
           showNextButton: false,
-          ctaLabel: 'I\'ve filled the form',
+          ctaLabel: 'I\'ve filled the summary',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#project',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Project',
+          content: "To which project this writing session was for.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the project',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#start',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Start time',
+          content: "When you did start to write.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the time',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#duration',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Session duration',
+          content: "How much time you spent writing. This can be left blank if you don't know",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the duration',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#pausedTime',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Time not writing',
+          content: "How much time during the session you were not actually writing. This can't be set if there's no duration.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the time',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#wordcount',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Words written',
+          content: "Here you put the amount of words you wrote in this session. It'll be tracked in the project and " +
+          "targets in which this session apply.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the word count',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#charcount',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Characters typed',
+          content: "The same as the previous field, but for characters. This is optional, but notice that some targets " +
+          "may track the character count if you set them to do so.",
+          showNextButton: false,
+          ctaLabel: 'I\'ve set the character count',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#text',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Word counter',
+          content: "If you prefer, you can paste the text you've written in here so the system can count the words " +
+          "and characters. We will not save any of it, so be sure you back it up somewhere!",
+          showNextButton: false,
+          ctaLabel: 'I got it',
+          showCTAButton: true,
+          onCTA: function () {
+            hopscotch.nextStep();
+          }
+        },
+        {
+          target: '#isCountdown',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'left',
+          title: 'Countdown session',
+          content: "If you used a regressive timer, check this field. It helps to make your statistics later."
+        },
+        {
+          target: '#notes',
+          placement: 'top',
+          xOffset: 0,
+          arrowOffset: 'center',
+          title: 'Notes',
+          content: "Here you can put any notes you want to keep about this session.",
+          showNextButton: false,
+          ctaLabel: 'Next',
           showCTAButton: true,
           onCTA: function () {
             hopscotch.nextStep();
@@ -392,7 +637,7 @@ function tour($, hopscotch, steps) {
         {
           target: '.list-group',
           placement: 'top',
-          xOffset: 'center',
+          xOffset: 0,
           arrowOffset: 'center',
           title: 'Session info',
           content: "Now you have created a new session. If it advanced any target, it'll be shown in this page and reflected in the chart. Also it generates stats about your writing habits in your dashboard."
@@ -415,6 +660,103 @@ function tour($, hopscotch, steps) {
           arrowOffset: 'center',
           title: 'Dashboard',
           content: "Much better, right?"
+        },
+        {
+          target: $('#stats').find('a[href="/stats"]').last().get(0),
+          placement: 'bottom',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Stats',
+          content: "And now you should have some stats in here. Click on the link to see more.",
+          multipage: true,
+          showNextButton: false,
+          nextOnTargetClick: true
+        },
+        {
+          target: 'h1',
+          placement: 'bottom',
+          title: 'Statistics',
+          content: "This is the page that sums up all statistics.",
+          onPrev: function () {
+            window.location = '/dashboard'
+          }
+        },
+        {
+          target: '#year',
+          placement: 'bottom',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Year summary',
+          content: "This is a heatmap showing much you've written everyday in the last year. The greener the better!"
+        },
+        {
+          target: '#tops',
+          placement: 'top',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'High score',
+          content: "Just a sum of your best moments. Want to try to beat yourself?"
+        },
+        {
+          target: '#avgs',
+          placement: 'top',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Averages and modes',
+          content: "Not always you are in tiptop shape. Here you can see better your general habits."
+        },
+        {
+          target: '#perfPeriod',
+          placement: 'top',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Performance per period',
+          content: "Charts showing how you do for each period of the day."
+        },
+        {
+          target: '#perfSession',
+          placement: 'top',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Performance per session',
+          content: "The same thing as above, but this consider session duration instead of period."
+        },
+        {
+          target: '#timer-navbar-link',
+          placement: 'bottom',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Timer',
+          content: "Now, let's see this timer.",
+          multipage: true,
+          showNextButton: false,
+          nextOnTargetClick: true
+        },
+        {
+          target: '#timerclock',
+          placement: 'top',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Timer',
+          content: "This is a basic timer. You can set the default time in your settings. When it finishes, it does a " +
+          "beep sound and open a pre-filled form where you can create a writing session."
+        },
+        {
+          target: '#chronoclock',
+          placement: 'top',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Chronometer',
+          content: "This is like the timer, but it rolls forward and only stops when you tell it to."
+        },
+        {
+          target: '#timerpause',
+          placement: 'bottom',
+          xOffset: 'center',
+          arrowOffset: 'center',
+          title: 'Away button',
+          content: "There's a button to click if you're away but still didn't finish your session. This goes to the " +
+          "\"Time not writing\" field."
         },
         {
           target: '#feedback',

@@ -62,7 +62,9 @@ router.get('/new', sendflash, function (req, res) {
       project: {
         active: true,
         wordcount: 0,
+        charcount: 0,
         targetwc: 50000,
+        targetcc: 0,
         genres: req.query.genreid ? [{id: req.query.genreid}] : []
       },
       genres: chunk(genres, 3)
@@ -77,6 +79,8 @@ router.post('/new', isverified, function (req, res, next) {
     description: req.body.description,
     wordcount: req.body.wordcount,
     targetwc: req.body.targetwc,
+    charcount: req.body.charcount || 0,
+    targetcc: req.body.targetcc || 0,
     active: !!req.body.active,
     finished: !!req.body.finished,
     ownerId: req.user.id
@@ -115,6 +119,8 @@ router.post('/new', isverified, function (req, res, next) {
           description: req.body.description,
           wordcount: req.body.wordcount,
           targetwc: req.body.targetwc,
+          charcount: req.body.charcount,
+          targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
           genres: filterIds(genres, req.body.genres)
@@ -185,6 +191,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       project.set('description', req.body.description);
       project.set('wordcount', req.body.wordcount);
       project.set('targetwc', req.body.targetwc);
+      project.set('charcount', req.body.charcount || 0);
+      project.set('targetcc', req.body.targetcc || 0);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
       return project.save().then(function () {
@@ -230,6 +238,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           description: req.body.description,
           wordcount: req.body.wordcount,
           targetwc: req.body.targetwc,
+          charcount: req.body.charcount,
+          targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
           genres: filterIds(genres, req.body.genres)
@@ -347,7 +357,9 @@ router.get('/:id/data.json', function (req, res, next) {
           }
         },
         attributes: [
-          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'), models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`')
+          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'),
+          models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`'),
+          models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `dailyCharCount`')
         ],
         required: true
       }
@@ -359,8 +371,9 @@ router.get('/:id/data.json', function (req, res, next) {
   }).then(function (sessions) {
     
     var daysRange = [];
-    var daily = [];
+    var daily = [], dailyChar = [];
     var wordcount = [], accWc = 0;
+    var charcount = [], accCc = 0;
     
     var j = 0;
     
@@ -373,30 +386,37 @@ router.get('/:id/data.json', function (req, res, next) {
         
     for (var i = 0; i < daysToLook; i++) {
       var workingDate = moment(start).add(i, 'days');
-      var currentWc = 0;
+      var currentWc = 0, currentCc = 0;
       if (sessions[j] && moment.utc(sessions[j]['sessions.start']).diff(workingDate, 'days') === 0) {
-        daily.push(sessions[j].dailyCount);
-        accWc += sessions[j].dailyCount;
         currentWc = sessions[j].dailyCount;
+        currentCc = sessions[j].dailyCharCount;
+        accWc += currentWc;
+        accCc += currentCc;
+        daily.push(currentWc);
+        dailyChar.push(currentCc);
         j++;
       } else {
         daily.push(0);
+        dailyChar.push(0);
       }
       daysRange.push(workingDate.format('YYYY-MM-DD'));
       wordcount.push(accWc);
+      charcount.push(accCc);
     }
     
     var result = {
       date: daysRange,
       wordcount: wordcount,
-      daily: daily
+      charcount: charcount,
+      worddaily: daily,
+      chardaily: dailyChar
     };
     res.json(result).end();
   }).catch(function (err) {
     if (process.env.NODE_ENV === 'development') {
       return next(err);
     }
-    res.json({error: err});
+    res.json({error: err.message});
   });
 });
 
