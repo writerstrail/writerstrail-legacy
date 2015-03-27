@@ -8,7 +8,21 @@ function range(start, finish) {
 }
 
 function tour($, hopscotch, steps) {
-  $(function () { 
+  $(function () {
+    $(document).on('keypress', function (e) {
+      switch (e.key) {
+        case 'Left':
+        case 'ArrowLeft': {
+          hopscotch.prevStep();
+          break;
+        }
+        case 'Right':
+        case 'ArrowRight': {
+          hopscotch.nextStep();
+          break;
+        }
+      }
+    });
     var endTour = function () {
       window.location = '/tour/ended';
     };
