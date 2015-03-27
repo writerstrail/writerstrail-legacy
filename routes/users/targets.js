@@ -12,7 +12,7 @@ var router = require('express').Router(),
     char: 'characters'
   };
 
-router.get('*', function (req, res, next) {
+router.use('*', function (req, res, next) {
   res.locals.targetunits = targetunits;
   next();
 });
