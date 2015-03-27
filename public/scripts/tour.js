@@ -23,7 +23,8 @@ function tour($, hopscotch, steps) {
           target: 'h1',
           placement: 'bottom',
           title: 'Dashboard',
-          content: "Welcome to Writer's Trail! I'll guide you around the site. This is your dashboard.<br><br>You may dismiss this tour and go to your setting to reenable it."
+          content: "Welcome to Writer's Trail! I'll guide you around the site. This is your dashboard.<br><br>" +
+          "You may dismiss this tour and go to <a href=\"/settings\">your settings page</a> to reenable it."
         },
         {
           target: '#active-projects',
@@ -31,7 +32,8 @@ function tour($, hopscotch, steps) {
           xOffset: 'center',
           arrowOffset: 'center',
           title: 'Active projects',
-          content: "These are your active projects. Since you're new here, it might be a little empty. So let me take you to an example dashboard. Click on 'Next' button to go there.",
+          content: "These are your active projects. Since you're new here, it might be a little empty. " +
+          "So let me take you to an example dashboard. Click on 'Next' button to go there.",
           multipage: true,
           onNext: function () {
             window.location = '/example/dashboard';

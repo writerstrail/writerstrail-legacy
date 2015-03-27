@@ -150,7 +150,7 @@ append scripts
       unless example
         | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted}, '!{target.unit}');
       else
-        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false);
+        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false, 'word');
   script
     unless example
       if user.settings.showTour

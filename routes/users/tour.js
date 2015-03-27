@@ -44,7 +44,7 @@ router.get('/example/targetdata.json', isactivated, function (req, res) {
   for (var i = 1; i <= totalDays; i++) {
     var workingDate = moment.utc(startMoment).add(i - 1, 'days');
     var today = workingDate.format('YYYY-MM-DD');
-    var diffWc = target.wordcount - accWc;
+    var diffWc = target.count - accWc;
     var diffDays = totalDays - i + 1;
     var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
     pondDailyTarget.push(Math.max(0, pondTarget));
@@ -56,21 +56,21 @@ router.get('/example/targetdata.json', isactivated, function (req, res) {
     } else {
       wordcount.push(null);
     }
-    var incTarget = Math.floor(target.wordcount / totalDays) + (target.wordcount % totalDays < i ? 0 : 1);
+    var incTarget = Math.floor(target.count / totalDays) + (target.count % totalDays < i ? 0 : 1);
     dailytarget.push(incTarget);
     accTgt += incTarget;
     targetAcc.push(accTgt);
-    remaining.push(Math.max(0, target.wordcount - accWc));
+    remaining.push(Math.max(0, target.count - accWc));
   }
   
   var result = {
     date: daysRange,
     wordcount: wordcount,
-    target: targetAcc,
-    daily: daily,
-    dailytarget: dailytarget,
-    adjusteddailytarget: pondDailyTarget,
-    remaining: remaining
+    wordtarget: targetAcc,
+    worddaily: daily,
+    worddailytarget: dailytarget,
+    wordadjusteddailytarget: pondDailyTarget,
+    wordremaining: remaining
   };
   res.json(result).end();
 });
