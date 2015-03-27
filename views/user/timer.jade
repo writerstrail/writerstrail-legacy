@@ -4,7 +4,7 @@ block content
   h1 Timer and chronometer
   
   .row
-    .col-md-6: .panel.panel-default
+    .col-md-6: #timerpanel.panel.panel-default
       .panel-heading
         h3.panel-title Timer
       .panel-body
@@ -24,7 +24,7 @@ block content
             | &nbsp;
             button#timerpause.btn.btn-warning(type='button' disabled=true) I'm away
             
-        .row
+        #timerclock.row
           .col-md-6
             h2.text-center: big: strong#rem-min= minutes
             #timer-min
@@ -37,7 +37,7 @@ block content
               span#timeraway 0:00:00
             
     .col-md-6
-      .panel.panel-default
+      #chronopanel.panel.panel-default
         .panel-heading
           h3.panel-title Chronometer
         .panel-body
@@ -53,7 +53,7 @@ block content
             span#clockMinutes 00
             | :
             span#clockSeconds 00
-          .row
+          #chronoclock.row
             .col-md-offset-3.col-md-6
               include ../includes/clock.svg
           .row
@@ -137,3 +137,6 @@ append scripts
     | dateFormat: '!{user.settings.dateFormat}',
     | timeFormat: '!{user.settings.timeFormat}'
     | }, !{minutes}, !{seconds});
+  if user.settings.showTour
+    script
+      | tour(jQuery, hopscotch, range(65, 69));

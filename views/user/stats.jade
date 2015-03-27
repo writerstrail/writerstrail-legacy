@@ -6,14 +6,14 @@ block content
   h1 Statistics
 
   .row: .col-md-12
-    .panel.panel-success
+    #year.panel.panel-success
       .panel-heading
         h3.panel-title Your year in writing
       .panel-body
-        div#heatmap
+        #heatmap
   .row
     .col-md-6
-      .panel.panel-default
+      #tops.panel.panel-default
         .panel-heading
           h3.panel-title Tops
         ul.list-group
@@ -81,7 +81,7 @@ block content
               | You don't have a best day yet.
 
     .col-md-6
-      .panel.panel-default
+      #avgs.panel.panel-default
         .panel-heading
           h3.panel-title Averages and modes
         ul.list-group
@@ -142,7 +142,7 @@ block content
 
   .row
     .col-md-12
-      .panel.panel-primary
+      #perfPeriod.panel.panel-primary
         .panel-heading
           h3.panel-title Performance per period
         .panel-body: .row
@@ -157,7 +157,7 @@ block content
             button#flushperiod.btn.btn-lg.btn-default Refresh charts
 
     .col-md-12
-      .panel.panel-primary
+      #perfSession.panel.panel-primary
         .panel-heading
           h3.panel-title Performance per session duration
         .panel-body: .row
@@ -189,3 +189,6 @@ append scripts
     | setupPerPeriod(jQuery, c3, '!{user.settings.performanceMetric}');
     | setupPerSession(jQuery, c3, '!{user.settings.performanceMetric}');
     | });
+  if user.settings.showTour
+    script
+      | tour(jQuery, hopscotch, range(58, 64));

@@ -120,6 +120,7 @@ append scripts
   script(type='text/javascript', src='/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
   script.
     $(document).ready(function () {
+      window.format = '!{user.settings.dateFormat}';
       $('#startpicker').datetimepicker({
         format: '!{user.settings.dateFormat}'
         !{target.end ? ", maxDate: moment.utc('" + target.end + "', '" + user.settings.dateFormat + "').add(1, 'day')" : '' }
@@ -152,6 +153,6 @@ append scripts
     })
   if user.settings.showTour
     script
-      | tour(jQuery, hopscotch, range(31, 33));
+      | tour(jQuery, hopscotch, range(33, 40));
 append styles
   link(rel='stylesheet', href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')
