@@ -364,7 +364,7 @@ function tour($, hopscotch, steps) {
           xOffset: 120,
           arrowOffset: 120,
           title: 'Selected projects',
-          content: "Note that the project you just were is already selected. This is because of the shortcut button. You may select many projects for a single target."
+          content: "Note that the project you just created is already selected. This is because of the shortcut button. You may select many projects for a single target."
         },
         {
           target: '#name',
