@@ -6,7 +6,7 @@ block content
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf' value=csrf)
     .form-group
-      label.col-md-2.control-label(for='dateformat') Date format:
+      label.col-md-2.control-label(for='dateformat') Date format
       .col-md-10
         select#dateformat.form-control(name='dateformat' aria-describedby='datehelp')
           for format, i in dateFormats.data
@@ -16,7 +16,7 @@ block content
               | )
         span#datehelp.help-block Your preferred date format for sessions and targets.
     .form-group
-      label.col-md-2.control-label(for='timeformat') Time format:
+      label.col-md-2.control-label(for='timeformat') Time format
       .col-md-10
         select#timeformat.form-control(name='timeformat' aria-describedby='timehelp')
           for format, i in timeFormats.data
@@ -26,7 +26,7 @@ block content
               | )
         span#datehelp.help-block Your preferred time format for sessions.
     .form-group
-      label.col-md-2.control-label(for='charttype') Preferred target chart type:
+      label.col-md-2.control-label(for='charttype') Preferred target chart type
       .col-md-10
         label.radio-inline
           input#charttype(type='radio' name='charttype' value='cumulative' checked='cumulative' == settings.chartType aria-describedby='charttypehelp')
@@ -36,7 +36,7 @@ block content
           | Daily writing/target
         span#charttypehelp.help-block Show cumulative or daily wordcount by default on targets' charts.
     .form-group
-      label.col-md-2.control-label Target chart extra data:
+      label.col-md-2.control-label Target chart extra data
       .col-md-10
         label.checkbox-inline
           input(type='checkbox' name='showRemaining' checked=user.settings.showRemaining aria-describedby='extrahelp')
@@ -52,7 +52,7 @@ block content
         input#defaultTimer.form-control(type='text' name='defaultTimer' placeholder='Default timer' required=true aria-describedby='timerhelp' value=durationformatter(settings.defaultTimer))
         span#timerhelp.help-block= timerErr ? timerErr.message : 'The default value for the timer in mm:ss format.'
     .form-group
-      label.col-md-2.control-label(for='performanceMetric') Performance metric:
+      label.col-md-2.control-label(for='performanceMetric') Performance metric
       .col-md-10
         label.radio-inline
           input#performanceMetric(type='radio' name='performanceMetric' value='total' checked='total' == settings.performanceMetric aria-describedby='performanceMetrichelp')
@@ -62,7 +62,7 @@ block content
           | Words per minute only in the time writing
         span#performanceMetrichelp.help-block Show best performance based on whole session or exclude the time not writing.
     .form-group
-      label.col-md-2.control-label Show tour:
+      label.col-md-2.control-label Show tour
       .col-md-10
         .checkbox
           label
