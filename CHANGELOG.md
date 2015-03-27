@@ -1,5 +1,13 @@
 # Writer's Trail change log
 
+## v0.7.0
+
+* Add character count tracking.
+* Targets can now track either words or characters.
+* Users can make targets with the same name.
+* The tour now is more complete and include all features.
+* Enable database connection pooling.
+
 ## v0.6.1
 
 * Fix a bug that didn't allow sessions with null duration.
