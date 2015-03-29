@@ -131,12 +131,13 @@ append scripts
   script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
   script(type='text/javascript', src='/bower_components/bootstrap-daterangepicker/daterangepicker.js')
-  script(type='text/javascript', src='/scripts/chart.js')
+  script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
+  script(type='text/javascript', src="http://code.highcharts.com/modules/exporting.js")
+  script(type='text/javascript', src='/scripts/chart2.js')
   script(type='text/javascript', src='/scripts/range.js')
   script
     | var link = '/projects/#{project.id}/data.json';
-    | linkChart(link, jQuery, c3, d3, 'daily', false, false);
-    | chartRange(jQuery, moment, '#select-range', '#{user.settings.dateFormat}', '#chart', link);
+    | chart2(link, jQuery, Highcharts, 'daily', false, false);
     
   if user.settings.showTour
     script
