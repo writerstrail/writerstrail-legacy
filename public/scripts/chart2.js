@@ -1,4 +1,4 @@
-window.chart2 = function chart2(link, $, highCharts, chartType, showRem, showAdjusted, unit) {
+window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit) {
   link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
 
   var options = {
@@ -29,7 +29,9 @@ window.chart2 = function chart2(link, $, highCharts, chartType, showRem, showAdj
       }
     ],
     series: []
-  };
+  },
+      chart,
+      isAcc = chartType === 'cumulative';
 
   $.getJSON(link, function (data) {
     var start = Date.UTC.apply(null, data.date[0].split('-').map(function (piece) {
@@ -44,16 +46,19 @@ window.chart2 = function chart2(link, $, highCharts, chartType, showRem, showAdj
           },
           charcount: {
             name: 'Character count',
+            color: '#1F77B4',
             visible: false,
             yAxis: 1
           },
           worddaily: {
             name: 'Daily writing',
+            color: '#FF9E49',
             visible: true,
             yAxis: 0
           },
           chardaily: {
             name: 'Daily characters',
+            color: '#2CA02C',
             visible: true,
             yAxis: 1
           }
@@ -62,6 +67,7 @@ window.chart2 = function chart2(link, $, highCharts, chartType, showRem, showAdj
     for (var key in data) {
       var serie = {
         data: data[key],
+        id: key,
         pointInterval: 24 * 3600000,
         pointStart: start
       };
@@ -73,6 +79,42 @@ window.chart2 = function chart2(link, $, highCharts, chartType, showRem, showAdj
         options.series.push(serie);
       }
     }
-    new Highcharts.Chart(options);
+    chart = new Highcharts.Chart(options);
   });
+
+  $('#target-change')
+      .data('acc', isAcc)
+      .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
+      .click(function () {
+        var self = $(this),
+            ifAcc = ['wordcount', 'charcount'],
+            noAcc = ['worddaily', 'chardaily'];
+
+        function doSeries(id, func) {
+          var ser = chart.get(id);
+          if (ser) {
+            ser[func]();
+          }
+        }
+
+        function hide (id) {
+          doSeries(id, 'hide');
+        }
+
+        function show(id) {
+          doSeries(id, 'show');
+        }
+
+        if (self.data('acc')) {
+          self.html('Show as cumulative count');
+          ifAcc.forEach(hide);
+          noAcc.forEach(show);
+          self.data('acc', false);
+        } else {
+          self.html('Show as daily writing');
+          noAcc.forEach(hide);
+          ifAcc.forEach(show);
+          self.data('acc', true);
+        }
+      });
 };
