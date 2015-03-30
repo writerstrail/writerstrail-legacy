@@ -21,7 +21,10 @@ window.buildMeta = function (data, isAcc) {
           name: 'Character count',
           color: '#1F77B4',
           visible: !!isAcc,
-          yAxis: 1
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          }
         },
         worddaily: {
           name: 'Daily writing',
@@ -33,7 +36,10 @@ window.buildMeta = function (data, isAcc) {
           name: 'Daily characters',
           color: '#2CA02C',
           visible: !isAcc,
-          yAxis: 1
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          }
         }
       };
 
@@ -70,6 +76,11 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
       column: {
         borderWidth: 0
       }
+    },
+    tooltip: {
+      crosshairs: [true, true],
+      shared: true,
+      valueSuffix: ' words'
     },
     xAxis: {
       type: 'datetime',
