@@ -51,8 +51,6 @@ block content
             |  Nearest target
         .panel-body
           if target
-            h3.text-center
-              a(href='/targets/' + target.id)= target.name
             #chart
             .text-center
               button#target-change.btn.btn-default(type='button') Show as daily writing
@@ -136,21 +134,19 @@ block content
             li.list-group-item You don't have any project.
           li.list-group-item.text-center
             a(href='/stats') See all stats
-          
-append styles
-  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
-  link(rel='stylesheet', href='/stylesheets/chart.css')
 
 append scripts  
-  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
-  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
-  script(type='text/javascript', src='/scripts/chart.js')    
+  script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
+  script(type='text/javascript', src='/vendor/highcharts/exporting.js')
+  script(type='text/javascript', src='/scripts/chart2.js')
   if target
     script(type='text/javascript')
       unless example
-        | buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted}, '!{target.unit}');
+        if target
+          | targetChart(#{target.id}, jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
+          |     !{user.settings.showAdjusted}, '#{target.unit}', '<a href="/targets/#{target.id}">#{target.name}</a>');
       else
-        | linkChart('/example/targetdata.json', jQuery, c3, d3, 'cumulative', false, false, 'word');
+        | chart2('/example/targetdata.json', jQuery, Highcharts, 'cumulative', false, false, 'word', '#{target.name}');
   script
     unless example
       if user.settings.showTour

@@ -138,7 +138,8 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
       type: 'column'
     },
     title: {
-      text: title
+      text: title,
+      useHTML: true
     },
     plotOptions: {
       column: {
