@@ -24,7 +24,6 @@ block content
         span.fa.fa-bar-chart
         |  Project progress
     .panel-body
-        h3.text-center= project.name
         div.range-block
           div#select-range.range-selector.btn.btn-default
             span.fa.fa-lg.fa-calendar
@@ -136,12 +135,12 @@ append scripts
   script(type='text/javascript', src='/scripts/chart2.js')
   script(type='text/javascript', src='/scripts/range2.js')
   script.
-    var link = '/projects/!{project.id}/data.json';
+    var link = '/projects/#{project.id}/data.json';
     function build(link) {
-      chart2(link, jQuery, Highcharts, 'daily', false, false);
+      chart2(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
     }
     build(link);
-    chartRange2(jQuery, moment, '.range-selector', '!{user.settings.dateFormat}', '#chart', link, build)
+    chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build)
     
   if user.settings.showTour
     script

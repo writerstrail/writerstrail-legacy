@@ -8,7 +8,7 @@ window.startFromDate = function (date) {
 };
 
 window.buildMeta = function (data, isAcc) {
-  var start = startFromDate(data.date[0]),
+  var start = window.startFromDate(data.date[0]),
       series = [],
       meta = {
         wordcount: {
@@ -55,13 +55,16 @@ window.buildMeta = function (data, isAcc) {
   return series;
 };
 
-window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit) {
+window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
   link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
 
   var options = {
     chart: {
       renderTo: 'chart',
       type: 'column'
+    },
+    title: {
+      text: title
     },
     plotOptions: {
       column: {
