@@ -76,7 +76,6 @@ block content
     .row: .col-md-12: .panel.panel-primary
       .panel-heading: h2.panel-title Target progress
       .panel-body
-        h3.text-center= target.name
         #chart
         .text-center
           button#target-change.btn.btn-default(type='button') Show as daily writing
@@ -189,16 +188,13 @@ block content
       
   p &nbsp;
 
-append styles
-  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
-  link(rel='stylesheet', href='/stylesheets/chart.css')
-
 append scripts  
-  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
-  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
-  script(type='text/javascript', src='/scripts/chart.js')    
+  script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
+  script(type='text/javascript', src='/vendor/highcharts/exporting.js')
+  script(type='text/javascript', src='/scripts/chart2.js')
   script(type='text/javascript').
-    buildChart(!{target.id}, jQuery, c3, d3, '!{user.settings.chartType}', !{user.settings.showRemaining}, !{user.settings.showAdjusted}, '!{target.unit}');
+    targetChart(#{target.id}, jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
+            !{user.settings.showAdjusted}, '#{target.unit}', '#{target.name}');
   if user.settings.showTour
     script
       | tour(jQuery, hopscotch, range(41, 42));

@@ -7,7 +7,7 @@ window.startFromDate = function (date) {
   return result;
 };
 
-window.buildMeta = function (data, isAcc) {
+window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
   var start = window.startFromDate(data.date[0]),
       series = [],
       meta = {
@@ -19,7 +19,7 @@ window.buildMeta = function (data, isAcc) {
         },
         charcount: {
           name: 'Character count',
-          color: '#1F77B4',
+          color: unit ? '#674732' : '#1F77B4',
           visible: !!isAcc,
           yAxis: 1,
           tooltip: {
@@ -34,8 +34,76 @@ window.buildMeta = function (data, isAcc) {
         },
         chardaily: {
           name: 'Daily characters',
-          color: '#2CA02C',
+          color:  unit ? '#FF9E49' : '#2CA02C',
           visible: !isAcc,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          }
+        },
+        wordtarget: {
+          name: 'Target',
+          type: 'line',
+          color: '#9e9e9e',
+          visible: !!isAcc,
+          yAxis: 0
+        },
+        chartarget: {
+          name: 'Target',
+          type: 'line',
+          color: '#9e9e9e',
+          visible: !!isAcc,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          }
+        },
+        worddailytarget: {
+          name: 'Daily target',
+          type: 'line',
+          color: '#2ca02c',
+          visible: !isAcc,
+          yAxis: 0
+        },
+        chardailytarget: {
+          name: 'Daily target',
+          type: 'line',
+          color: '#2ca02c',
+          visible: !isAcc,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          }
+        },
+        wordadjusteddailytarget: {
+          name: 'Adjusted daily target',
+          type: 'line',
+          color: '#9467bd',
+          visible: showAdj,
+          yAxis: 0
+        },
+        charadjusteddailytarget: {
+          name: 'Adjusted daily target',
+          type: 'line',
+          color: '#9467bd',
+          visible: showAdj,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          }
+        },
+        wordremaining: {
+          name: 'Remaining word count',
+          type: 'line',
+          color: '#D62728',
+          visible: showRem,
+          yAxis: 0
+        },
+        charremaining: {
+          name: 'Remaining character count',
+          type: 'line',
+          color: '#D62728',
+          visible: showRem,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -106,7 +174,7 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
       isAcc = chartType === 'cumulative';
 
   $.getJSON(link, function (data) {
-    options.series = buildMeta(data, isAcc);
+    options.series = window.buildMeta(data, isAcc, showRem, showAdjusted, unit);
     chart = new Highcharts.Chart(options);
   });
 
@@ -115,8 +183,8 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
       .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
       .click(function () {
         var self = $(this),
-            ifAcc = ['wordcount', 'charcount'],
-            noAcc = ['worddaily', 'chardaily'];
+            ifAcc = ['wordcount', 'charcount', 'wordtarget', 'chartarget'],
+            noAcc = ['worddaily', 'chardaily', 'worddailytarget', 'chardailytarget'];
 
         function doSeries(id, func) {
           var ser = chart.get(id);
@@ -145,4 +213,8 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
           self.data('acc', true);
         }
       });
+};
+
+window.targetChart = function (targetId, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
+  window.chart2('/targets/' + targetId + '/data.json', $, Highcharts, chartType, showRem, showAdjusted, unit, title);
 };
