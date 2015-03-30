@@ -1,3 +1,60 @@
+window.startFromDate = function (date) {
+  var pieces = date.split('-').map(function (i) {
+    return parseInt(i, 10);
+  }), result;
+  pieces[1] -= 1;
+  result = Date.UTC.apply(null, pieces);
+  return result;
+};
+
+window.buildMeta = function (data, isAcc) {
+  var start = startFromDate(data.date[0]),
+      series = [],
+      meta = {
+        wordcount: {
+          name: 'Word count',
+          color: '#674732',
+          visible: !!isAcc,
+          yAxis: 0
+        },
+        charcount: {
+          name: 'Character count',
+          color: '#1F77B4',
+          visible: !!isAcc,
+          yAxis: 1
+        },
+        worddaily: {
+          name: 'Daily writing',
+          color: '#FF9E49',
+          visible: !isAcc,
+          yAxis: 0
+        },
+        chardaily: {
+          name: 'Daily characters',
+          color: '#2CA02C',
+          visible: !isAcc,
+          yAxis: 1
+        }
+      };
+
+  for (var key in data) {
+    var serie = {
+      data: data[key],
+      id: key,
+      pointInterval: 24 * 3600000,
+      pointStart: start
+    };
+
+    if (meta[key]) {
+      for (var info in meta[key]) {
+        serie[info] = meta[key][info];
+      }
+      series.push(serie);
+    }
+  }
+  return series;
+};
+
 window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit) {
   link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
 
@@ -13,7 +70,8 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
     },
     xAxis: {
       type: 'datetime',
-      minRange: 30 * 24 * 3600000
+      startOnTick: false,
+      endOnTick: false
     },
     yAxis: [
       {
@@ -34,51 +92,7 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
       isAcc = chartType === 'cumulative';
 
   $.getJSON(link, function (data) {
-    var start = Date.UTC.apply(null, data.date[0].split('-').map(function (piece) {
-      return parseInt(piece, 10);
-    })),
-        meta = {
-          wordcount: {
-            name: 'Word count',
-            color: '#674732',
-            visible: false,
-            yAxis: 0
-          },
-          charcount: {
-            name: 'Character count',
-            color: '#1F77B4',
-            visible: false,
-            yAxis: 1
-          },
-          worddaily: {
-            name: 'Daily writing',
-            color: '#FF9E49',
-            visible: true,
-            yAxis: 0
-          },
-          chardaily: {
-            name: 'Daily characters',
-            color: '#2CA02C',
-            visible: true,
-            yAxis: 1
-          }
-        };
-
-    for (var key in data) {
-      var serie = {
-        data: data[key],
-        id: key,
-        pointInterval: 24 * 3600000,
-        pointStart: start
-      };
-
-      if (meta[key]) {
-        for (var info in meta[key]) {
-          serie[info] = meta[key][info];
-        }
-        options.series.push(serie);
-      }
-    }
+    options.series = buildMeta(data, isAcc);
     chart = new Highcharts.Chart(options);
   });
 
