@@ -120,14 +120,11 @@ block content
         .col-md-10
           = moment.utc(project.createdAt).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
 append styles
-  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
   link(rel='stylesheet', href='/bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css')
   link(rel='stylesheet', href='/stylesheets/chart.css')
   link(rel='stylesheet', href='/stylesheets/range.css')
 
 append scripts
-  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
-  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
   script(type='text/javascript', src='/bower_components/bootstrap-daterangepicker/daterangepicker.js')
   script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
@@ -140,7 +137,7 @@ append scripts
       chart2(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
     }
     build(link);
-    chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build)
+    chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build);
     
   if user.settings.showTour
     script
