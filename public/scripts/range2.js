@@ -8,7 +8,7 @@ window.chartRange2 = function chartRange2($, moment, selector, format, chartSele
     var onChange = function (start, end) {
       var high = chart.highcharts();
       $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
-      var newLink = link + '?zoneOffset=' + (new Date()).getTimezoneOffset() + '&start=' + start.format('YYYY-MM-DD') + '&end=' + end.format('YYYY-MM-DD')
+      var newLink = link + '?zoneOffset=' + (new Date()).getTimezoneOffset() + '&start=' + start.format('YYYY-MM-DD') + '&end=' + end.format('YYYY-MM-DD');
       high.showLoading();
       $.getJSON(newLink, function (data) {
         var start = window.startFromDate(data.date[0]),
@@ -18,7 +18,7 @@ window.chartRange2 = function chartRange2($, moment, selector, format, chartSele
         var x = high.xAxis[0];
         x.options.startOnTick = false;
         x.options.endOnTick = false;
-        x.setExtremes(start, end, true);
+        x.setExtremes(start, end, false);
 
         var toDelete = high.series.map(function (ser) {
           return ser;
@@ -30,12 +30,10 @@ window.chartRange2 = function chartRange2($, moment, selector, format, chartSele
         toDelete.forEach(function (ser) {
           ser.remove(false);
         });
-        console.log('dates', start, end);
 
         high.redraw();
 
         high.hideLoading();
-        console.log('ext', high.xAxis[0].getExtremes());
       });
     };
     $(selector).daterangepicker(
