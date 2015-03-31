@@ -8,17 +8,17 @@ var http = require('request'),
 router.use(function maintenance(req, res, next) {
   models.App.findOne(1).then(function (app) {
     res.locals.app = app;
+
     if (app.maintenance === 'soft') {
       req.flash('maintenance', "Writer's Trail is under maintenance. You may experience some issues.");
-      return next();
     } else if (app.maintenance === 'hard') {
       if ((req.query.maintenance === process.env.WRITERSTRAIL_MAINTENANCE_KEY) || (req.user && req.user.role === 'superadmin')) {
         return next();
       } else {
         req.logout();
         if (_.some(allowedUrls, function (i) {
-          return req.originalUrl === i;
-        })) {
+            return req.originalUrl === i;
+          })) {
           return next();
         }
         return http.get('http://thecatapi.com/api/images/get?format=html&type=jpg,png&size=med', function (err, resp, cat) {
@@ -27,9 +27,13 @@ router.use(function maintenance(req, res, next) {
           });
         });
       }
-    } else {
-      return next();
     }
+
+    if (app.sysmsg) {
+      req.flash('maintenance', app.sysmsg);
+    }
+
+    return next();
   }).catch(function () {
     next();
   });

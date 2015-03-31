@@ -120,7 +120,7 @@ router.post('/users/callnext', function (req, res) {
   if (req.body.activatenext) {
     models.User.findAll({
       where: {
-        activated: false,
+        activated: false
       },
       order: [['createdAt', 'DESC']],
       limit: Math.max(1, parseInt(req.body.amount))
@@ -263,7 +263,8 @@ router.post('/deleteinvitation', function (req, res) {
 
 router.post('/maintenance', function (req, res) {
   models.App.update({
-    maintenance: req.body.maintenance
+    maintenance: req.body.maintenance,
+    sysmsg: req.body.sysmsg || null
   }, {
     where: { id: 1 }
   }).then(function (rows) {
