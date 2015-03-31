@@ -3,10 +3,11 @@ var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
+  isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids');
 
-router.get('/', sendflash, function (req, res, next) {
+router.get('/', isactivated, sendflash, function (req, res, next) {
   var filters = [],
     searchOpts = {
       where: {
@@ -46,7 +47,7 @@ router.get('/', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/new', sendflash, function (req, res) {
+router.get('/new', isactivated, sendflash, function (req, res) {
   models.Genre.findAll({
     where: {
       ownerId: req.user.id
@@ -72,7 +73,7 @@ router.get('/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/new', isverified, function (req, res, next) {
+router.post('/new', isactivated, isverified, function (req, res, next) {
   var savedProject = {};
   models.Project.create({
     name: req.body.name,
@@ -135,7 +136,7 @@ router.post('/new', isverified, function (req, res, next) {
   });
 });
 
-router.get('/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', isactivated, sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -173,7 +174,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', isverified, function (req, res, next) {
+router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
   var savedProject = null;
   models.Project.findOne({
     where: {
@@ -254,7 +255,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
   });
 });
 
-router.get('/active', sendflash, function (req, res, next) {
+router.get('/active', isactivated, sendflash, function (req, res, next) {
   models.Project.findAndCountAll({
     where: {
       ownerId: req.user.id,
@@ -289,7 +290,7 @@ router.get('/active', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id', sendflash, function (req, res, next) {
+router.get('/:id', isactivated, sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -325,7 +326,7 @@ router.get('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/data.json', function (req, res, next) {
+router.get('/:id/data.json', isactivated, function (req, res, next) {
   var daysToLook = 30;
   var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
   var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
