@@ -140,14 +140,56 @@ window.perPeriod = function ($, Highcharts, metric) {
     }
   },
     link = '/perperiod.json',
-    chart;
+    perSessionDistLink = '/periodsessionsdist.json',
+    charts = [];
 
-  return $.getJSON(link, function (data) {
-    options.xAxis[0].categories = data.period;
-    options.series = window.joinMeta(data, meta);
-    chart = new Highcharts.Chart(options);
-    return chart;
-  });
+  return $.when(
+    $.getJSON(link),
+    $.getJSON(perSessionDistLink)
+  )
+    .done(function (perperiod, sessiondist) {
+      options.xAxis[0].categories = perperiod[0].period;
+      options.series = window.joinMeta(perperiod[0], meta);
+      charts.push(new Highcharts.Chart(options));
+
+      if (Object.keys(sessiondist[0]).length) {
+        var dataSessionDist = [];
+        for (var key in sessiondist[0]) {
+          if (sessiondist[0].hasOwnProperty(key)) {
+            dataSessionDist.push([key, sessiondist[0][key]]);
+          }
+        }
+
+        charts.push(new Highcharts.Chart({
+          chart: {
+            renderTo: 'periodsessionsdist',
+            type: 'pie'
+          },
+          title: {
+            text: null
+          },
+          legend: {
+            enabled: true
+          },
+          series: [
+            {
+              name: 'Sessions per period',
+              data: dataSessionDist,
+              showInLegend: true,
+              dataLabels: {
+                format: '{percentage:.0f}%',
+                inside: true,
+                connectorPadding: 0,
+                distance: -30
+              }
+            }
+          ]
+        }));
+      }
+
+
+      return charts;
+    });
 };
 
 window.perSession = function ($, Highcharts, metric) {
