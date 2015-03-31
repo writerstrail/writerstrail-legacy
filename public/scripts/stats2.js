@@ -68,7 +68,15 @@
           ]
         },
         tooltip: {
-          crosshairs: [false, false]
+          backgroundColor: null,
+          borderWidth: 0,
+          distance: 10,
+          shadow: false,
+          useHTML: true,
+          style: {
+            padding: 0,
+            color: 'black'
+          }
         },
         plotOptions: {
           heatmap: {
@@ -87,7 +95,8 @@
         yAxis: {
           title: null,
           categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-          tickWidth: 1
+          tickWidth: 1,
+          reversed: true
         },
         series: [
           {
@@ -98,7 +107,9 @@
             data: yearData,
             tooltip: {
               pointFormat: '{point.x:%A, %B %e, %Y}: <b>{point.value} words</b>'
-            }
+            },
+            turboThreshold: Number.MAX_VALUE,
+            zIndex: 0
           }
         ]
       };
@@ -187,47 +198,43 @@
         options.series = window.joinMeta(perperiod[0], meta);
         charts.push(new Highcharts.Chart(options));
 
-        if (Object.keys(sessiondist[0]).length) {
-          var dataSessionDist = [];
-          for (var sessionkey in sessiondist[0]) {
-            if (sessiondist[0].hasOwnProperty(sessionkey)) {
-              dataSessionDist.push([sessionkey, sessiondist[0][sessionkey]]);
-            }
+        var dataSessionDist = [];
+        for (var sessionkey in sessiondist[0]) {
+          if (sessiondist[0].hasOwnProperty(sessionkey)) {
+            dataSessionDist.push([sessionkey, sessiondist[0][sessionkey]]);
           }
-
-          var sessionOpts = $.extend({}, pieOptions);
-          sessionOpts.chart.renderTo = 'periodsessionsdist';
-          sessionOpts.title.text = 'Sessions';
-          sessionOpts.series[0] = $.extend({}, pieOptions.series[0],
-            {
-              name: 'Sessions per period',
-              data: dataSessionDist
-            }
-          );
-
-          charts.push(new Highcharts.Chart(sessionOpts));
         }
 
-        if (Object.keys(wordsdist[0]).length) {
-          var dataWordsDist = [];
-          for (var wordkey in wordsdist[0]) {
-            if (wordsdist[0].hasOwnProperty(wordkey)) {
-              dataWordsDist.push([wordkey, wordsdist[0][wordkey]]);
-            }
+        var sessionOpts = $.extend({}, pieOptions);
+        sessionOpts.chart.renderTo = 'periodsessionsdist';
+        sessionOpts.title.text = 'Sessions';
+        sessionOpts.series[0] = $.extend({}, pieOptions.series[0],
+          {
+            name: 'Sessions per period',
+            data: dataSessionDist
           }
+        );
 
-          var wordOpts = $.extend({}, pieOptions);
-          wordOpts.chart.renderTo = 'periodwordsdist';
-          wordOpts.title.text = 'Words';
-          wordOpts.series[0] = $.extend({}, pieOptions.series[0],
-            {
-              name: 'Words per period',
-              data: dataWordsDist
-            }
-          );
+        charts.push(new Highcharts.Chart(sessionOpts));
 
-          charts.push(new Highcharts.Chart(wordOpts));
+        var dataWordsDist = [];
+        for (var wordkey in wordsdist[0]) {
+          if (wordsdist[0].hasOwnProperty(wordkey)) {
+            dataWordsDist.push([wordkey, wordsdist[0][wordkey]]);
+          }
         }
+
+        var wordOpts = $.extend({}, pieOptions);
+        wordOpts.chart.renderTo = 'periodwordsdist';
+        wordOpts.title.text = 'Words';
+        wordOpts.series[0] = $.extend({}, pieOptions.series[0],
+          {
+            name: 'Words per period',
+            data: dataWordsDist
+          }
+        );
+
+        charts.push(new Highcharts.Chart(wordOpts));
 
         return charts;
       });

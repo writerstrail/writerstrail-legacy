@@ -1,6 +1,16 @@
 extends ../layout
 
 block content
+  style.
+    .highcharts-tooltip > span {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid silver;
+      border-radius: 3px;
+      box-shadow: 1px 1px 2px #888;
+      padding: 8px;
+      z-index: 2;
+    }
+
   - var performanceOrder = (user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance'
   - function formatThousands(v) { return v.toString().replace(/\d(?=(\d{3})+(\.\d+)?$)/g, '$&,'); }
   h1 Statistics
@@ -169,6 +179,7 @@ append scripts
   script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
   script(type='text/javascript', src='/vendor/highcharts/heatmap.js')
   script(type='text/javascript', src='/vendor/highcharts/exporting.js')
+  script(type='text/javascript', src='/scripts/canvasHeatmap.js')
   script(type='text/javascript', src='/scripts/chart2.js')
   script(type='text/javascript', src='/scripts/stats2.js')
   script(type='text/javascript')
