@@ -67,17 +67,6 @@
             [0.9, '#3B6427']
           ]
         },
-        tooltip: {
-          backgroundColor: null,
-          borderWidth: 0,
-          distance: 10,
-          shadow: false,
-          useHTML: true,
-          style: {
-            padding: 0,
-            color: 'black'
-          }
-        },
         plotOptions: {
           heatmap: {
             borderColor: '#FFF'
