@@ -107,7 +107,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
     getWpm = function () {
       return models.Session.findAll({
         attributes: [
-          models.Sequelize.literal('AVG(`Session`.`wordcount` / (`Session`.`duration` / 60)) AS `wpm`'),
+          models.Sequelize.literal('AVG(`Session`.`wordcount` / (`Session`.`duration` / 60)) AS `wpm`')
         ],
         include: [{
           model: models.Project,
@@ -196,30 +196,6 @@ router.get('/timer', isactivated, sendflash, function (req, res, next) {
 
 router.get('/stats', isactivated, sendflash, function (req, res, next) {
   var performanceOrder = (req.user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance',
-      getYearSummary = function () {
-        return models.Session.findAll({
-          where: {
-            start: {
-              gte: moment().subtract(1, 'year').toDate()
-            }
-          },
-          attributes: [
-            models.Sequelize.literal('SUM(`Session`.`wordcount`) AS dailyCount'),
-            models.Sequelize.literal('DATE(`Session`.`start`) AS day'),
-            'zoneOffset'
-          ],
-          include: [{
-            model: models.Project,
-            as: 'project',
-            where: {
-              ownerId: req.user.id
-            }
-          }],
-          group: [models.Sequelize.literal('DATE(`Session`.`start`)')]
-        }, {
-          raw: true
-        });
-      },
       getTotalWordcount = function () {
         return models.Project.sum('currentWordcount', {
           where: {
@@ -323,27 +299,12 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
           raw: true
         });
       },
-      renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
+      renderer = function (totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
                            highestWpm, bestDate, projectAvg, performanceAvg, dailyAvg, modePeriod, modeSession, modeProject) {
-        var yearly = {}, larger = 5;
-
-        _.forEach(yearSessions, function (session) {
-          yearly[((+session.day / 1000) - (session.zoneOffset * 60)).toString()] = session.dailyCount;
-          larger = session.dailyCount > larger ? session.dailyCount : larger;
-        });
 
         res.render('user/stats', {
           title: 'Statistics',
           section: 'stats',
-          data: {
-            sessions: yearly,
-            legend: [
-              Math.round(larger * 1 / 5),
-              Math.round(larger * 2 / 5),
-              Math.round(larger * 3 / 5),
-              Math.round(larger * 4 / 5),
-            ]
-          },
           tops: {
             totalWordcount: totalWordcount,
             since: earliestSession ? earliestSession.start : null,
@@ -363,10 +324,79 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
           }
         });
       };
-  promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(),
+  promise.join(getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(),
                getPerformanceSession(), getHighestWpm(), getBestDate(), getProjectAvg(), getPerformanceAvg(),
                getDailyAverage(), getModePeriod(), getModeSession(), getModeProject(), renderer)
   .catch(next);
+});
+
+router.get('/yearlysessions.json', isactivated, function (req, res) {
+  models.Session.findAll({
+      where: {
+        start: {
+          gte: moment().subtract(1, 'year').toDate()
+        }
+      },
+      attributes: [
+        models.Sequelize.literal('SUM(`Session`.`wordcount`) AS dailyCount'),
+        models.Sequelize.literal('DATE(`Session`.`start`) AS day'),
+        'zoneOffset'
+      ],
+      include: [{
+        model: models.Project,
+        as: 'project',
+        where: {
+          ownerId: req.user.id
+        }
+      }],
+      group: [models.Sequelize.literal('DATE(`Session`.`start`)')]
+    }, {
+      raw: true
+    })
+    .then(function (yearSessions) {
+      var yearly = [],
+        dailySessions = [],
+        zoneOffset = req.query.zoneOffset || 0,
+        yearAgo = moment.utc().subtract(1, 'year').subtract(zoneOffset),
+        today = moment.utc().subtract(zoneOffset),
+        range = moment(yearAgo),
+        i = 0;
+
+      _.forEach(yearSessions, function (session) {
+        var day = moment.utc(session.day).subtract(session.zoneOffset, 'minutes');
+        dailySessions.push({
+          x: day.valueOf(),
+          y: day.day(),
+          value: session.dailyCount
+        });
+      });
+
+      while (today.diff(range) >= 0) {
+        if (!dailySessions[i] || !range.isSame(dailySessions[i].x, 'day')) {
+          yearly.push({
+            x: range.valueOf(),
+            y: range.day(),
+            value: 0,
+            color: '#EDEDED'
+          });
+        } else {
+          if (dailySessions[i]) {
+            yearly.push(dailySessions[i]);
+          }
+          i++;
+        }
+        range.add(1, 'day');
+      }
+
+      yearly = _.sortBy(yearly, 'x');
+
+      res.json(yearly);
+    }).catch(function (err) {
+      console.log(err);
+      res.status(500).json({
+        error: 'Database error'
+      });
+    });
 });
 
 router.get('/perperiod.json', isactivated, function (req, res) {

@@ -123,17 +123,17 @@ block preoutside
     
       
 append styles
-  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
   link(rel='stylesheet', href='/stylesheets/timer.css')
 
-append scripts  
-  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
-  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
+append scripts
+  script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
+  script(type='text/javascript', src='/vendor/highcharts/highcharts-more.js')
+  script(type='text/javascript', src='/vendor/highcharts/solid-gauge.js')
   script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
   script(type='text/javascript', src='/bower_components/ionsound/js/ion.sound.min.js')
-  script(type='text/javascript', src='/scripts/timer.js')
+  script(type='text/javascript', src='/scripts/timer2.js')
   script
-    | setup(document, jQuery, c3, ion, moment, {
+    | setupTimer(document, jQuery, Highcharts, ion, moment, {
     | dateFormat: '!{user.settings.dateFormat}',
     | timeFormat: '!{user.settings.timeFormat}'
     | }, !{minutes}, !{seconds});

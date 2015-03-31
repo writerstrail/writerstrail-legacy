@@ -1,6 +1,16 @@
 extends ../layout
 
 block content
+  style.
+    .highcharts-tooltip > span {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid silver;
+      border-radius: 3px;
+      box-shadow: 1px 1px 2px #888;
+      padding: 8px;
+      z-index: 2;
+    }
+
   - var performanceOrder = (user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance'
   - function formatThousands(v) { return v.toString().replace(/\d(?=(\d{3})+(\.\d+)?$)/g, '$&,'); }
   h1 Statistics
@@ -152,9 +162,6 @@ block content
             #periodsessionsdist
           .col-md-3
             #periodwordsdist
-        ul.list-group
-          li.list-group-item.text-center
-            button#flushperiod.btn.btn-lg.btn-default Refresh charts
 
     .col-md-12
       #perfSession.panel.panel-primary
@@ -167,27 +174,19 @@ block content
             #durationsessionsdist
           .col-md-3
             #durationwordsdist
-        ul.list-group
-          li.list-group-item.text-center
-            button#flushsession.btn.btn-lg.btn-default Refresh charts
-
-
-
-append styles
-  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
-  link(rel='stylesheet', href='/bower_components/cal-heatmap/cal-heatmap.css')
-  link(rel='stylesheet', href='/stylesheets/chart.css')
 
 append scripts
-  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
-  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
-  script(type='text/javascript', src='/bower_components/cal-heatmap/cal-heatmap.min.js')
-  script(type='text/javascript', src='/scripts/stats.js')
+  script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
+  script(type='text/javascript', src='/vendor/highcharts/heatmap.js')
+  script(type='text/javascript', src='/vendor/highcharts/exporting.js')
+  script(type='text/javascript', src='/scripts/canvasHeatmap.js')
+  script(type='text/javascript', src='/scripts/chart2.js')
+  script(type='text/javascript', src='/scripts/stats2.js')
   script(type='text/javascript')
     | $(function() {
-    | setupYearly(CalHeatMap, !{JSON.stringify(data.sessions)}, !{JSON.stringify(data.legend)});
-    | setupPerPeriod(jQuery, c3, '!{user.settings.performanceMetric}');
-    | setupPerSession(jQuery, c3, '!{user.settings.performanceMetric}');
+    | window.yearly($, Highcharts);
+    | window.perPeriod(jQuery, Highcharts, '!{user.settings.performanceMetric}');
+    | window.perSession(jQuery, Highcharts, '!{user.settings.performanceMetric}');
     | });
   if user.settings.showTour
     script
