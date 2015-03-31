@@ -171,7 +171,7 @@
           self.data('seconds', seconds + 1);
           loop();
 
-          self.data('interval', setInterval(loop, 100));
+          self.data('interval', setInterval(loop, 1000));
         }
       });
     });
