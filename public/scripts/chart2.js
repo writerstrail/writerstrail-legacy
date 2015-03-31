@@ -7,116 +7,12 @@ window.startFromDate = function (date) {
   return result;
 };
 
-window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
-  var start = window.startFromDate(data.date[0]),
-      series = [],
-      meta = {
-        wordcount: {
-          name: 'Word count',
-          color: '#674732',
-          visible: !!isAcc,
-          yAxis: 0
-        },
-        charcount: {
-          name: 'Character count',
-          color: unit ? '#674732' : '#1F77B4',
-          visible: !!isAcc,
-          yAxis: 1,
-          tooltip: {
-            valueSuffix: ' characters'
-          }
-        },
-        worddaily: {
-          name: 'Daily writing',
-          color: '#FF9E49',
-          visible: !isAcc,
-          yAxis: 0
-        },
-        chardaily: {
-          name: 'Daily characters',
-          color:  unit ? '#FF9E49' : '#2CA02C',
-          visible: !isAcc,
-          yAxis: 1,
-          tooltip: {
-            valueSuffix: ' characters'
-          }
-        },
-        wordtarget: {
-          name: 'Target',
-          type: 'line',
-          color: '#9e9e9e',
-          visible: !!isAcc,
-          yAxis: 0
-        },
-        chartarget: {
-          name: 'Target',
-          type: 'line',
-          color: '#9e9e9e',
-          visible: !!isAcc,
-          yAxis: 1,
-          tooltip: {
-            valueSuffix: ' characters'
-          }
-        },
-        worddailytarget: {
-          name: 'Daily target',
-          type: 'line',
-          color: '#2ca02c',
-          visible: !isAcc,
-          yAxis: 0
-        },
-        chardailytarget: {
-          name: 'Daily target',
-          type: 'line',
-          color: '#2ca02c',
-          visible: !isAcc,
-          yAxis: 1,
-          tooltip: {
-            valueSuffix: ' characters'
-          }
-        },
-        wordadjusteddailytarget: {
-          name: 'Adjusted daily target',
-          type: 'line',
-          color: '#9467bd',
-          visible: showAdj,
-          yAxis: 0
-        },
-        charadjusteddailytarget: {
-          name: 'Adjusted daily target',
-          type: 'line',
-          color: '#9467bd',
-          visible: showAdj,
-          yAxis: 1,
-          tooltip: {
-            valueSuffix: ' characters'
-          }
-        },
-        wordremaining: {
-          name: 'Remaining word count',
-          type: 'line',
-          color: '#D62728',
-          visible: showRem,
-          yAxis: 0
-        },
-        charremaining: {
-          name: 'Remaining character count',
-          type: 'line',
-          color: '#D62728',
-          visible: showRem,
-          yAxis: 1,
-          tooltip: {
-            valueSuffix: ' characters'
-          }
-        }
-      };
-
+window.joinMeta = function (data, meta) {
+  var series = [];
   for (var key in data) {
     var serie = {
       data: data[key],
-      id: key,
-      pointInterval: 24 * 3600000,
-      pointStart: start
+      id: key
     };
 
     if (meta[key]) {
@@ -127,6 +23,135 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
     }
   }
   return series;
+};
+
+window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
+  var start = window.startFromDate(data.date[0]),
+      meta = {
+        wordcount: {
+          name: 'Word count',
+          color: '#674732',
+          visible: !!isAcc,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        charcount: {
+          name: 'Character count',
+          color: unit ? '#674732' : '#1F77B4',
+          visible: !!isAcc,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        worddaily: {
+          name: 'Daily writing',
+          color: '#FF9E49',
+          visible: !isAcc,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        chardaily: {
+          name: 'Daily characters',
+          color:  unit ? '#FF9E49' : '#2CA02C',
+          visible: !isAcc,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        wordtarget: {
+          name: 'Target',
+          type: 'line',
+          color: '#9e9e9e',
+          visible: !!isAcc,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        chartarget: {
+          name: 'Target',
+          type: 'line',
+          color: '#9e9e9e',
+          visible: !!isAcc,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        worddailytarget: {
+          name: 'Daily target',
+          type: 'line',
+          color: '#2ca02c',
+          visible: !isAcc,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        chardailytarget: {
+          name: 'Daily target',
+          type: 'line',
+          color: '#2ca02c',
+          visible: !isAcc,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        wordadjusteddailytarget: {
+          name: 'Adjusted daily target',
+          type: 'line',
+          color: '#9467bd',
+          visible: showAdj,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        charadjusteddailytarget: {
+          name: 'Adjusted daily target',
+          type: 'line',
+          color: '#9467bd',
+          visible: showAdj,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        wordremaining: {
+          name: 'Remaining word count',
+          type: 'line',
+          color: '#D62728',
+          visible: showRem,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        charremaining: {
+          name: 'Remaining character count',
+          type: 'line',
+          color: '#D62728',
+          visible: showRem,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        }
+      };
+  return window.joinMeta(data, meta);
 };
 
 window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
