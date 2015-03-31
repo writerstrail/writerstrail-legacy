@@ -157,10 +157,17 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
 window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
   link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
 
+  var today = new Date();
+  today.setUTCHours(0);
+  today.setUTCMinutes(0);
+  today.setUTCSeconds(0);
+  today.setUTCMilliseconds(0);
+
   var options = {
     chart: {
       renderTo: 'chart',
-      type: 'column'
+      type: 'column',
+      alignTicks: false
     },
     title: {
       text: title,
@@ -179,19 +186,39 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
     xAxis: {
       type: 'datetime',
       startOnTick: false,
-      endOnTick: false
+      endOnTick: false,
+      plotLines: [
+        {
+          color: '#AAAAAA',
+          width: 1,
+          value: +today,
+          id: 'today',
+          label: {
+            text: 'Today',
+            style: {
+              color: '#AAAAAA'
+            },
+            rotation: 90
+          }
+        }
+      ]
     },
     yAxis: [
       {
         title: {
           text: 'Word count'
-        }
+        },
+        floor: 0,
+        min: 0
       },
       {
         title: {
           text: 'Character count'
         },
-        opposite: true
+        opposite: true,
+        gridLineWidth: 0,
+        floor: 0,
+        min: 0
       }
     ],
     series: []

@@ -165,7 +165,9 @@
             title: {
               text: 'Word count'
             },
-            opposite: true
+            opposite: true,
+            floor: 0,
+            min: 0
           }
         ]
       }, meta = {
@@ -272,7 +274,9 @@
             title: {
               text: 'Word count'
             },
-            opposite: true
+            opposite: true,
+            floor: 0,
+            min: 0
           }
         ]
       }, meta = {
