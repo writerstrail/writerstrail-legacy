@@ -141,52 +141,83 @@ window.perPeriod = function ($, Highcharts, metric) {
   },
     link = '/perperiod.json',
     perSessionDistLink = '/periodsessionsdist.json',
+    perWordsDistLink =  '/periodwordsdist.json',
     charts = [];
 
   return $.when(
     $.getJSON(link),
-    $.getJSON(perSessionDistLink)
+    $.getJSON(perSessionDistLink),
+    $.getJSON(perWordsDistLink)
   )
-    .done(function (perperiod, sessiondist) {
+    .done(function (perperiod, sessiondist, wordsdist) {
       options.xAxis[0].categories = perperiod[0].period;
       options.series = window.joinMeta(perperiod[0], meta);
       charts.push(new Highcharts.Chart(options));
 
+      var pieOptions = {
+        chart: {
+          type: 'pie'
+        },
+        title: {
+          text: ''
+        },
+        legend: {
+          enabled: true
+        },
+        series: [
+          {
+            showInLegend: true,
+            dataLabels: {
+              format: '{percentage:.0f}%',
+              inside: true,
+              connectorPadding: 0,
+              distance: -30
+            }
+          }
+        ]
+      };
+
       if (Object.keys(sessiondist[0]).length) {
         var dataSessionDist = [];
-        for (var key in sessiondist[0]) {
-          if (sessiondist[0].hasOwnProperty(key)) {
-            dataSessionDist.push([key, sessiondist[0][key]]);
+        for (var sessionkey in sessiondist[0]) {
+          if (sessiondist[0].hasOwnProperty(sessionkey)) {
+            dataSessionDist.push([sessionkey, sessiondist[0][sessionkey]]);
           }
         }
 
-        charts.push(new Highcharts.Chart({
-          chart: {
-            renderTo: 'periodsessionsdist',
-            type: 'pie'
-          },
-          title: {
-            text: null
-          },
-          legend: {
-            enabled: true
-          },
-          series: [
-            {
-              name: 'Sessions per period',
-              data: dataSessionDist,
-              showInLegend: true,
-              dataLabels: {
-                format: '{percentage:.0f}%',
-                inside: true,
-                connectorPadding: 0,
-                distance: -30
-              }
-            }
-          ]
-        }));
+        var sessionOpts = $.extend({}, pieOptions);
+        sessionOpts.chart.renderTo = 'periodsessionsdist';
+        sessionOpts.title.text = 'Sessions';
+        sessionOpts.series[0] = $.extend({}, pieOptions.series[0],
+          {
+            name: 'Sessions per period',
+            data: dataSessionDist
+          }
+        );
+
+        charts.push(new Highcharts.Chart(sessionOpts));
       }
 
+      if (Object.keys(wordsdist[0]).length) {
+        var dataWordsDist = [];
+        for (var wordkey in wordsdist[0]) {
+          if (wordsdist[0].hasOwnProperty(wordkey)) {
+            dataWordsDist.push([wordkey, wordsdist[0][wordkey]]);
+          }
+        }
+
+        var wordOpts = $.extend({}, pieOptions);
+        wordOpts.chart.renderTo = 'periodwordsdist';
+        wordOpts.title.text = 'Words';
+        wordOpts.series[0] = $.extend({}, pieOptions.series[0],
+          {
+            name: 'Words per period',
+            data: dataWordsDist
+          }
+        );
+
+        charts.push(new Highcharts.Chart(wordOpts));
+      }
 
       return charts;
     });
