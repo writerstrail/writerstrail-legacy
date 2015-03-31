@@ -378,10 +378,10 @@ router.get('/:id/data.json', function (req, res, next) {
     var j = 0;
     
     if (!hasStartQuery) {
-      start.add(req.query.zoneOffset || 0, 'minutes');
+      start.subtract(req.query.zoneOffset || 0, 'minutes');
     }
     if (!hasEndQuery) {
-      end.add(req.query.zoneOffset || 0, 'minutes');
+      end.subtract(req.query.zoneOffset || 0, 'minutes');
     }
         
     for (var i = 0; i < daysToLook; i++) {
