@@ -58,6 +58,12 @@ We along with third-party vendors, such as Google use first-party cookies (such 
 Opting out:
 Users can set preferences for how Google advertises to you using the Google Ad Settings page. Alternatively, you can opt out by visiting the Network Advertising initiative opt out page or permanently using the Google Analytics Opt Out Browser add on.
 
+### Highcharts
+
+Writer's Trail use [Highcharts](http://www.highcharts.com) to generate the charts. While the data is still contained within
+this site, the export service requires a call with the chart data to the [Highcharts Export Server](http://export.highcharts.com/).
+
+If you do not want your information going to the Highcharts server, avoid using the export service.
 
 ### California Online Privacy Protection Act
 
