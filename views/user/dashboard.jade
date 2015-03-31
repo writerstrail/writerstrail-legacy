@@ -2,6 +2,10 @@ extends ../layout
 
 block content
   include ../mixins/progressbar
+  #nowrite.alert.alert-danger(style='display: none')
+    | You didn't write anything today.&#x0020;
+    a.alert-link(href='/timer') Fix this and write now
+    | .
   h1
     span.fa.fa-lg.fa-dashboard
     |  
@@ -139,6 +143,8 @@ append scripts
   script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
   script(type='text/javascript', src='/vendor/highcharts/exporting.js')
   script(type='text/javascript', src='/scripts/chart.js')
+  unless example
+    script(type='text/javascript', src='/scripts/nowritewarning.js')
   if target
     script(type='text/javascript')
       unless example

@@ -65,23 +65,6 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         raw: true
       });
     },
-    getTodaySessions = function () {
-      return models.Session.findOne({
-        where: models.Sequelize.literal('DATE(`Session`.`start` - INTERVAL `Session`.`zoneOffset` MINUTE) = CURDATE()'),
-        attributes: ['id'],
-        include: [{
-          model: models.Project,
-          as: 'project',
-          where: {
-            ownerId: req.user.id
-          },
-          required: true,
-          attributes: []
-        }]
-      }, {
-        raw: true
-      });
-    },
     getTarget = function () {
       return models.Target.findOne({
         where: [
@@ -145,10 +128,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
     getHighestWpm = function () {
       return models.sequelize.query("SELECT `s`.`id` AS `sessionId`, (`s`.`wordcount` / (`s`.`duration` / 60)) as `performance`, (`s`.`wordcount` / ((`s`.`duration` - `s`.`pausedTime`) / 60)) as `realPerformance`,  ROUND(`s`.`duration` / 60) AS  `minuteDuration`, `s`.`wordcount` AS `sessionWordcount`, CASE WHEN `s`.`isCountdown` = 1 THEN 'countdown' ELSE 'forward' END AS `direction`, `p`.`id` AS `projectId`, `p`.`name` AS `projectName` FROM `writingSessions` `s` INNER JOIN `projects` `p` ON `p`.`deletedAt` IS NULL AND `p`.`id` = `s`.`projectId` WHERE `s`.`deletedAt` IS NULL AND `s`.`duration` IS NOT NULL AND ROUND(`s`.`duration` / 60) > 0 AND  `p`.`ownerId` = " + req.user.id + " ORDER BY " + performanceOrder + " DESC LIMIT 1");
     },
-    renderer = function (projects, todaySessions, target, totalWordcount, dailyAverage, wpm, perfPeriod, perfSession, largestProject, highestWpm) {
-      if (!todaySessions || todaySessions.length === 0) {
-        res.locals.errorMessage.push('You didn\'t write anything today. <a href="/timer" class="alert-link">Fix this and write now</a>.');
-      }
+    renderer = function (projects, target, totalWordcount, dailyAverage, wpm, perfPeriod, perfSession, largestProject, highestWpm) {
       res.render('user/dashboard', {
         title: 'Dashboard',
         section: 'dashboard',
@@ -166,7 +146,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         durationFormatter: durationFormatterAlt
       });
     };
-  promise.join(getProjects(), getTodaySessions(), getTarget(), getTotalWordcount(), getDailyAverage(), getWpm(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), getHighestWpm(), renderer)
+  promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyAverage(), getWpm(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), getHighestWpm(), renderer)
   .catch(function (err) {
     next(err);
   });

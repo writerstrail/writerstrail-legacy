@@ -53,6 +53,37 @@ router.get('/', sendflash, function (req, res, next) {
   });
 });
 
+router.get('/today.json', function (req, res) {
+  var zoneOffset = parseInt(req.query.zoneOffset, 10);
+  if (!zoneOffset || isNaN(zoneOffset) || !isFinite(zoneOffset)) {
+    zoneOffset = 0;
+  }
+
+  models.Session.findOne({
+    where: models.Sequelize.literal('DATE(`Session`.`start`) = DATE(NOW() - INTERVAL ' + zoneOffset + ' MINUTE)'),
+    attributes: ['id'],
+    include: [{
+      model: models.Project,
+      as: 'project',
+      where: {
+        ownerId: req.user.id
+      },
+      required: true,
+      attributes: []
+    }]
+  }, {
+    raw: true
+  }).then(function (todaySessions) {
+    var result = {
+      wroteToday: true
+    };
+    if (!todaySessions || todaySessions.length === 0) {
+      result.wroteToday = false;
+    }
+    res.json(result);
+  });
+});
+
 router.get('/new', sendflash, function (req, res) {
   models.Project.findAll({
     where: [
