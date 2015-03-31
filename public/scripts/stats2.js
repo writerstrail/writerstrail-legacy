@@ -8,6 +8,11 @@ window.formatWords = function formatWords(value) {
   return parseFloat((value / 1000000).toFixed(2)) + 'm';
 };
 
+window.formats = {
+  word: '<span style="color: {series.color};">\u25CF</span> {series.name}: <b>{point.y:,.0f} words</b><br/>',
+  perf: '<span style="color: {series.color};">\u25CF</span> {series.name}: <b>{point.y:,.2f} wpm</b><br/>'
+};
+
 window.yearly = function (Highcharts, yearData) {
   var options = {
     chart: {
@@ -89,6 +94,7 @@ window.perPeriod = function ($, Highcharts, metric) {
       }
     ],
     tooltip: {
+      crosshairs: [false, true],
       shared: true,
       formatter: function () {
         var period = this.x.split('!')[0],
@@ -138,6 +144,92 @@ window.perPeriod = function ($, Highcharts, metric) {
 
   return $.getJSON(link, function (data) {
     options.xAxis[0].categories = data.period;
+    options.series = window.joinMeta(data, meta);
+    chart = new Highcharts.Chart(options);
+    return chart;
+  });
+};
+
+window.perSession = function ($, Highcharts, metric) {
+  var options = {
+      chart: {
+        renderTo: 'persession',
+        type: 'column'
+      },
+      title: {
+        text: 'Performance per session duration'
+      },
+      tooltip: {
+        shared: true,
+        pointFormat: window.formats.perf,
+        headerFormat: '<span style="font-size: 10px">~{point.key}min</span><br/>'
+      },
+      xAxis: [
+        {
+          type: 'category',
+          labels: {
+            format: '~{value}min'
+          }
+        }
+      ],
+      yAxis: [
+        {
+          title: {
+            text: 'Words per minute'
+          }
+        },
+        {
+          title: {
+            text: 'Word count'
+          },
+          opposite: true
+        }
+      ]
+    }, meta = {
+      countdownWordcount: {
+        name: 'Countdown wordcount',
+        yAxis: 1,
+        type: 'line',
+        tooltip: {
+          pointFormat: window.formats.word
+        },
+        zIndex: 6
+      },
+      forwardWordcount: {
+        name: 'Forward wordcount',
+        yAxis: 1,
+        type: 'line',
+        tooltip: {
+          pointFormat: window.formats.word
+        },
+        zIndex: 5
+      },
+      countdownPerformance: {
+        name: 'Countdown perf. (whole session)',
+        visible: metric === 'total',
+        zIndex: 4
+      },
+      countdownRealPerformance: {
+        name: 'Countdown perf. (exclude paused)',
+        visible: metric === 'real',
+        zIndex: 3
+      },
+      forwardPerformance: {
+        name: 'Forward perf. (whole session)',
+        visible: metric === 'total',
+        zIndex: 2
+      },
+      forwardRealPerformance: {
+        name: 'Forward perf. (exclude paused)',
+        visible: metric === 'real',
+        zIndex: 1
+      }
+    },
+    link = '/persession.json',
+    chart;
+
+  return $.getJSON(link, function (data) {
+    options.xAxis[0].categories = data.duration;
     options.series = window.joinMeta(data, meta);
     chart = new Highcharts.Chart(options);
     return chart;

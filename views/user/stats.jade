@@ -175,7 +175,7 @@ append scripts
     | $(function() {
     | window.yearly(Highcharts, !{JSON.stringify(data.sessions)});
     | window.perPeriod(jQuery, Highcharts, '!{user.settings.performanceMetric}');
-    | //setupPerSession(jQuery, c3, '!{user.settings.performanceMetric}');
+    | window.perSession(jQuery, Highcharts, '!{user.settings.performanceMetric}');
     | });
   if user.settings.showTour
     script
