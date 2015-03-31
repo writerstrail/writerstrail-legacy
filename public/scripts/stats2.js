@@ -76,7 +76,11 @@
       xAxis: {
         type: 'datetime',
         min: yearData[0].x,
-        max: yearData[yearData.length - 1].x
+        max: yearData[yearData.length - 1].x,
+        units: [
+          ['week', [1]],
+          ['month', [1, 3, 6, 9, 12]]
+        ]
       },
       yAxis: {
         title: null,
