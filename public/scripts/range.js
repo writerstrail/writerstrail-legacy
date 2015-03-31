@@ -1,33 +1,56 @@
 /*jshint unused:false*/
-function chartRange($, moment, selector, format, chartSelector, link) {
+window.chartRange2 = function chartRange2($, moment, selector, format, chartSelector, link) {
   $(function (){
-    var chart = $(chartSelector).data('chart');
-    var start = moment().subtract('days', 29);
+    var chart = $(chartSelector);
+    var start = moment().subtract(29, 'days');
     var end = moment();
     $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
     var onChange = function (start, end) {
+      var high = chart.highcharts();
       $(selector + ' #range').html(start.format(format) + ' - ' + end.format(format));
-      chart.load({
-        url: link + '?zoneOffset=' + (new Date()).getTimezoneOffset() + '&start=' + start.format('YYYY-MM-DD') + '&end=' + end.format('YYYY-MM-DD'),
-        mimeType: 'json',
-        unload: true
+      var newLink = link + '?zoneOffset=' + (new Date()).getTimezoneOffset() + '&start=' + start.format('YYYY-MM-DD') + '&end=' + end.format('YYYY-MM-DD');
+      high.showLoading();
+      $.getJSON(newLink, function (data) {
+        var start = window.startFromDate(data.date[0]),
+            end = window.startFromDate(data.date[data.date.length - 1]),
+            isAcc = $('#target-change').data('acc');
+
+        var x = high.xAxis[0];
+        x.options.startOnTick = false;
+        x.options.endOnTick = false;
+        x.setExtremes(start, end, false);
+
+        var toDelete = high.series.map(function (ser) {
+          return ser;
+        });
+        var series = window.buildMeta(data, isAcc);
+        series.forEach(function (ser) {
+          high.addSeries(ser, false);
+        });
+        toDelete.forEach(function (ser) {
+          ser.remove(false);
+        });
+
+        high.redraw();
+
+        high.hideLoading();
       });
     };
     $(selector).daterangepicker(
       {
         ranges: {
          'Today': [moment(), moment()],
-         'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
-         'Last 7 Days': [moment().subtract('days', 6), moment()],
-         'Last 30 Days': [moment().subtract('days', 29), moment()],
+         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
          'This Month': [moment().startOf('month'), moment().endOf('month')],
-         'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         },
-        startDate: moment().subtract('days', 29),
+        startDate: moment().subtract(29, 'days'),
         endDate: moment(),
         showDropdowns: true
       },
       onChange
     );
   });
-}
+};

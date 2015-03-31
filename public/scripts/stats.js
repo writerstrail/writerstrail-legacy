@@ -1,259 +1,371 @@
-/* jshint unused:false */
-function formatWords(value) {
-  if (value < 10000) {
-    return value;
-  }
-  if (value < 1000000) {
-    return parseFloat((value / 1000).toFixed(1)) + 'k';
-  }
-  return parseFloat((value / 1000000).toFixed(2)) + 'm';
-}
+(function () {
+  "use strict";
 
-function setupYearly(CalHeatMap, yearData, legend) {
-  var cal = new CalHeatMap(),
-      today = new Date(),
-      start = new Date();
-
-  start.setFullYear(start.getFullYear() - 1, start.getMonth() + 1);
-
-  cal.init({
-    itemSelector: "#heatmap",
-    data: yearData,
-    dataType: 'json',
-    domain: 'month',
-    subDomain: 'day',
-    domainGutter: 5,
-    rowLimit: 7,
-    start: start,
-    legend: legend,
-    itemName: ["word", "words"],
-    subDomainTitleFormat: {
-      empty: 'No word written on {date}',
-      filled: '{count} {name} written {connector} {date}'
+  var pieOptions = {
+    chart: {
+      type: 'pie'
     },
-    tooltip: true,
-    highlight: today,
-    domainLabelFormat: '%b-%y',
-    cellSize: 11
-  });
-}
-
-function setupPerPeriod($, c3, metric) {
-  var chart = c3.generate({
-    bindto: '#perperiod',
-    data: {
-      url: '/perperiod.json',
-      mimeType: 'json',
-      x: 'period',
-      types: {
-        performance: 'bar',
-        realPerformance: 'bar',
-        totalWordcount: 'line'
-      },
-      hide: [metric === 'real' ? 'performance' : 'realPerformance'],
-      names: {
-        performance: 'Whole session',
-        realPerformance: 'Exclude paused time',
-        totalWordcount: 'Wordcount'
-      },
-      axes: {
-        performance: 'y',
-        realPerformance: 'y',
-        totalWordcount: 'y2'
-      },
-      colors: {
-        realPerformance: '#9467BD'
+    title: {
+      text: ''
+    },
+    legend: {
+      enabled: true
+    },
+    series: [
+      {
+        showInLegend: true,
+        dataLabels: {
+          format: '{percentage:.0f}%',
+          inside: true,
+          connectorPadding: 0,
+          distance: -30
+        }
       }
-    },
-    axis: {
-      x: {
-        type: 'category',
-        tick: {
-          format: function (x) {
-            return chart.categories()[x].split('!')[0];
+    ]
+  };
+
+  window.formatWords = function formatWords(value) {
+    if (value < 10000) {
+      return value;
+    }
+    if (value < 1000000) {
+      return parseFloat((value / 1000).toFixed(1)) + 'k';
+    }
+    return parseFloat((value / 1000000).toFixed(2)) + 'm';
+  };
+
+  window.formats = {
+    word: '<span style="color: {series.color};">\u25CF</span> {series.name}: <b>{point.y:,.0f} words</b><br/>',
+    perf: '<span style="color: {series.color};">\u25CF</span> {series.name}: <b>{point.y:,.2f} wpm</b><br/>'
+  };
+
+  window.yearly = function ($, Highcharts) {
+    var link = '/yearlysessions.json?zoneOffset=' + (new Date()).getTimezoneOffset();
+    return $.getJSON(link, function (yearData) {
+      var options = {
+        chart: {
+          renderTo: 'heatmap',
+          type: 'heatmap',
+          zoomType: 'xy',
+          panning: true,
+          panKey: 'shift',
+          height: 300
+        },
+        exporting: {
+          buttons: {
+            contextButton: {
+              verticalAlign: 'bottom',
+              y: -20
+            }
+          }
+        },
+        title: false,
+        colorAxis: {
+          min: 0,
+          stops: [
+            [0.1, '#DAE289'],
+            [0.9, '#3B6427']
+          ]
+        },
+        plotOptions: {
+          heatmap: {
+            borderColor: '#FFF'
+          }
+        },
+        xAxis: {
+          type: 'datetime',
+          min: yearData[0].x,
+          max: yearData[yearData.length - 1].x,
+          units: [
+            ['week', [1]],
+            ['month', [1, 3, 6, 9, 12]]
+          ]
+        },
+        yAxis: {
+          title: null,
+          categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          tickWidth: 1,
+          reversed: true
+        },
+        series: [
+          {
+            name: 'Word count',
+            borderWidth: 2,
+            colsize: 7 * 24 * 36e5, // one week
+            pointInterval: 7 * 24 * 36e5, // one week
+            data: yearData,
+            tooltip: {
+              pointFormat: '{point.x:%A, %B %e, %Y}: <b>{point.value} words</b>'
+            },
+            turboThreshold: Number.MAX_VALUE,
+            zIndex: 0
+          }
+        ]
+      };
+
+      return new Highcharts.Chart(options);
+    });
+  };
+
+  window.perPeriod = function ($, Highcharts, metric) {
+    var options = {
+        chart: {
+          renderTo: 'perperiod',
+          type: 'column'
+        },
+        title: {
+          text: 'Performance per period of day'
+        },
+        xAxis: [
+          {
+            type: 'category',
+            labels: {
+              formatter: function () {
+                return this.value.split('!')[0];
+              }
+            }
+          }
+        ],
+        tooltip: {
+          crosshairs: [false, true],
+          shared: true,
+          formatter: function () {
+            var period = this.x.split('!')[0],
+              start = this.x.split('!')[1],
+              end = this.x.split('!')[2],
+              template = '<span style="font-size: 10px">' + period + ' (' + start + '\u2013' + end + ')</span>';
+
+            $.each(this.points, function () {
+              template += '<br/><span style="color:' + this.series.color + ';">\u25CF</span> ' + this.series.name + ': <b>' +
+              (this.series.name === 'Wordcount' ? (window.formatWords(this.y) + ' words') : (this.y.toFixed(2) + ' wpm')) +
+              '</b>';
+            });
+
+            return template;
+          }
+        },
+        yAxis: [
+          {
+            title: {
+              text: 'Words per minute'
+            }
+          },
+          {
+            title: {
+              text: 'Word count'
+            },
+            opposite: true,
+            floor: 0,
+            min: 0
+          }
+        ]
+      }, meta = {
+        performance: {
+          name: 'Whole session',
+          visible: metric === 'total'
+        },
+        realPerformance: {
+          name: 'Exclude paused time',
+          visible: metric === 'real'
+        },
+        totalWordcount: {
+          name: 'Wordcount',
+          type: 'line',
+          yAxis: 1
+        }
+      },
+      link = '/perperiod.json',
+      perSessionDistLink = '/periodsessionsdist.json',
+      perWordsDistLink = '/periodwordsdist.json',
+      charts = [];
+
+    return $.when(
+      $.getJSON(link),
+      $.getJSON(perSessionDistLink),
+      $.getJSON(perWordsDistLink)
+    )
+      .done(function (perperiod, sessiondist, wordsdist) {
+        options.xAxis[0].categories = perperiod[0].period;
+        options.series = window.joinMeta(perperiod[0], meta);
+        charts.push(new Highcharts.Chart(options));
+
+        var dataSessionDist = [];
+        for (var sessionkey in sessiondist[0]) {
+          if (sessiondist[0].hasOwnProperty(sessionkey)) {
+            dataSessionDist.push([sessionkey, sessiondist[0][sessionkey]]);
           }
         }
-      },
-      y: {
-        label: 'Words per minute',
-        min: 0,
-        padding: {
-          bottom: 0
-        },
-      },
-      y2: {
-        show: true,
-        label: 'Words',
-        min: 0,
-        padding: {
-          bottom: 0
-        },
-        tick: {
-          format: formatWords
-        }
-      }
-    },
-    tooltip: {
-      format: {
-        title: function (x) {
-          var pieces = chart.categories()[x].split('!');
-          return pieces[0] + ' (' + pieces[1] + '—' + pieces[2] + ')';
-        },
-        value: function (value, ratio, id) {
-          if (id === 'totalWordcount') {
-            return formatWords(value) + ' words';
+
+        var sessionOpts = $.extend({}, pieOptions);
+        sessionOpts.chart.renderTo = 'periodsessionsdist';
+        sessionOpts.title.text = 'Sessions';
+        sessionOpts.series[0] = $.extend({}, pieOptions.series[0],
+          {
+            name: 'Sessions per period',
+            data: dataSessionDist
           }
-          return value.toFixed(2) + ' wpm';
-        }
-      }
-    }
-  });
+        );
 
-  var pieSessions = c3.generate({
-    bindto: '#periodsessionsdist',
-    data: {
-      url: '/periodsessionsdist.json',
-      mimeType: 'json',
-      type: 'donut'
-    },
-    donut: {
-      title: 'Sessions per period',
-      label: {
-        format: function (value) {
-          return value;
-        }
-      }
-    }
-  });
+        charts.push(new Highcharts.Chart(sessionOpts));
 
-  var pieWords = c3.generate({
-    bindto: '#periodwordsdist',
-    data: {
-      url: '/periodwordsdist.json',
-      mimeType: 'json',
-      type: 'donut'
-    },
-    donut: {
-      title: 'Words per period',
-      label: {
-        format: formatWords
-      }
-    }
-  });
-
-  $('#flushperiod').on('click', function () {
-    chart.flush();
-    pieSessions.flush();
-    pieWords.flush();
-  });
-}
-
-function setupPerSession($, c3, metric) {
-  var chart = c3.generate({
-    bindto: '#persession',
-    data: {
-      url: '/persession.json',
-      mimeType: 'json',
-      x: 'duration',
-      names: {
-        countdownWordcount: 'Countdown wordcount',
-        forwardWordcount: 'Forward wordcount',
-        countdownPerformance: 'Countdown perf. (whole session)',
-        countdownRealPerformance: 'Countdown perf. (exclude paused)',
-        forwardPerformance: 'Forward perf. (whole session)',
-        forwardRealPerformance: 'Forward perf. (exclude paused)'
-      },
-      types: {
-        countdownWordcount: 'line',
-        forwardWordcount: 'line',
-        countdownPerformance: 'bar',
-        countdownRealPerformance: 'bar',
-        forwardPerformance: 'bar',
-        forwardRealPerformance: 'bar'
-      },
-      hide: metric === 'real' ? ['countdownPerformance', 'forwardPerfomance'] : ['countdownRealPerformance', 'forwardRealPerformance'],
-      axes: {
-        countdownWordcount: 'y2',
-        forwardWordcount: 'y2',
-        countdownPerformance: 'y',
-        countdownRealPerformance: 'y',
-        forwardPerformance: 'y',
-        forwardRealPerformance: 'y'
-      }
-    },
-    axis: {
-      x: {
-        label: 'Duration (~5min)'
-      },
-      y: {
-        label: 'Words per minute',
-        min: 0,
-        padding: {
-          bottom: 0
-        }
-      },
-      y2: {
-        show: true,
-        label: 'Words',
-        min: 0,
-        padding: {
-          bottom: 0
-        },
-        tick: {
-          format: formatWords
-        }
-      }
-    },
-    tooltip: {
-      format: {
-        title: function (value) {
-          return '~' + value + ' minutes';
-        },
-        value: function (value, ratio, id) {
-          if (id.indexOf('Wordcount') >= 0) {
-            return formatWords(value) + ' words';
+        var dataWordsDist = [];
+        for (var wordkey in wordsdist[0]) {
+          if (wordsdist[0].hasOwnProperty(wordkey)) {
+            dataWordsDist.push([wordkey, wordsdist[0][wordkey]]);
           }
-          return value.toFixed(2) + ' wpm';
         }
-      }
-    }
-  });
 
-  var pieSessions = c3.generate({
-    bindto: '#durationsessionsdist',
-    data: {
-      url: '/durationsessionsdist.json',
-      mimeType: 'json',
-      type: 'donut'
-    },
-    donut: {
-      title: 'Sessions per duration',
-      label: {
-        format: function (value) {
-          return value;
+        var wordOpts = $.extend({}, pieOptions);
+        wordOpts.chart.renderTo = 'periodwordsdist';
+        wordOpts.title.text = 'Words';
+        wordOpts.series[0] = $.extend({}, pieOptions.series[0],
+          {
+            name: 'Words per period',
+            data: dataWordsDist
+          }
+        );
+
+        charts.push(new Highcharts.Chart(wordOpts));
+
+        return charts;
+      });
+  };
+
+  window.perSession = function ($, Highcharts, metric) {
+    var options = {
+        chart: {
+          renderTo: 'persession',
+          type: 'column'
+        },
+        title: {
+          text: 'Performance per session duration'
+        },
+        tooltip: {
+          shared: true,
+          pointFormat: window.formats.perf,
+          headerFormat: '<span style="font-size: 10px">~{point.key}min</span><br/>'
+        },
+        xAxis: [
+          {
+            type: 'category',
+            labels: {
+              format: '~{value}min'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            title: {
+              text: 'Words per minute'
+            }
+          },
+          {
+            title: {
+              text: 'Word count'
+            },
+            opposite: true,
+            floor: 0,
+            min: 0
+          }
+        ]
+      }, meta = {
+        countdownWordcount: {
+          name: 'Countdown wordcount',
+          yAxis: 1,
+          type: 'line',
+          tooltip: {
+            pointFormat: window.formats.word
+          },
+          zIndex: 6
+        },
+        forwardWordcount: {
+          name: 'Forward wordcount',
+          yAxis: 1,
+          type: 'line',
+          tooltip: {
+            pointFormat: window.formats.word
+          },
+          zIndex: 5
+        },
+        countdownPerformance: {
+          name: 'Countdown perf. (whole session)',
+          visible: metric === 'total',
+          zIndex: 4
+        },
+        countdownRealPerformance: {
+          name: 'Countdown perf. (exclude paused)',
+          visible: metric === 'real',
+          zIndex: 3
+        },
+        forwardPerformance: {
+          name: 'Forward perf. (whole session)',
+          visible: metric === 'total',
+          zIndex: 2
+        },
+        forwardRealPerformance: {
+          name: 'Forward perf. (exclude paused)',
+          visible: metric === 'real',
+          zIndex: 1
         }
-      }
-    }
-  });
+      },
+      link = '/persession.json',
+      perSessionDistLink = '/durationsessionsdist.json',
+      perWordsDistLink = '/durationwordsdist.json',
+      charts = [];
 
-  var pieWords = c3.generate({
-    bindto: '#durationwordsdist',
-    data: {
-      url: '/durationwordsdist.json',
-      mimeType: 'json',
-      type: 'donut'
-    },
-    donut: {
-      title: 'Words per duration',
-      label: {
-        format: formatWords
-      }
-    }
-  });
+    return $.when(
+      $.getJSON(link),
+      $.getJSON(perSessionDistLink),
+      $.getJSON(perWordsDistLink)
+    )
+      .done(function (perduration, sessiondist, wordsdist) {
+        options.xAxis[0].categories = perduration[0].duration;
+        options.series = window.joinMeta(perduration[0], meta);
+        charts.push(new Highcharts.Chart(options));
 
-  $('#flushsession').on('click', function () {
-    chart.flush();
-    pieSessions.flush();
-    pieWords.flush();
-  });
-}
+        if (Object.keys(sessiondist[0]).length) {
+          var dataSessionDist = [];
+          for (var sessionkey in sessiondist[0]) {
+            if (sessiondist[0].hasOwnProperty(sessionkey)) {
+              dataSessionDist.push([sessionkey, sessiondist[0][sessionkey]]);
+            }
+          }
+
+          var sessionOpts = $.extend({}, pieOptions);
+          sessionOpts.chart.renderTo = 'durationsessionsdist';
+          sessionOpts.title.text = 'Sessions';
+          sessionOpts.series[0] = $.extend({}, pieOptions.series[0],
+            {
+              name: 'Sessions per duration',
+              data: dataSessionDist
+            }
+          );
+
+          charts.push(new Highcharts.Chart(sessionOpts));
+        }
+
+        if (Object.keys(wordsdist[0]).length) {
+          var dataWordsDist = [];
+          for (var wordkey in wordsdist[0]) {
+            if (wordsdist[0].hasOwnProperty(wordkey)) {
+              dataWordsDist.push([wordkey, wordsdist[0][wordkey]]);
+            }
+          }
+
+          var wordOpts = $.extend({}, pieOptions);
+          wordOpts.chart.renderTo = 'durationwordsdist';
+          wordOpts.title.text = 'Words';
+          wordOpts.series[0] = $.extend({}, pieOptions.series[0],
+            {
+              name: 'Words per duration',
+              data: dataWordsDist
+            }
+          );
+
+          charts.push(new Highcharts.Chart(wordOpts));
+        }
+
+        return charts;
+      });
+  };
+})();
