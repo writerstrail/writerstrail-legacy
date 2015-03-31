@@ -40,7 +40,7 @@
   };
 
   window.yearly = function ($, Highcharts) {
-    var link = '/yearlysessions.json';
+    var link = '/yearlysessions.json?zoneOffset=' + (new Date()).getTimezoneOffset();
     return $.getJSON(link, function (yearData) {
       var options = {
         chart: {

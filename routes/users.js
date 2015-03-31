@@ -354,35 +354,48 @@ router.get('/yearlysessions.json', isactivated, function (req, res) {
       raw: true
     })
     .then(function (yearSessions) {
-      var yearly = [];
+      var yearly = [],
+        dailySessions = [],
+        zoneOffset = req.query.zoneOffset || 0,
+        yearAgo = moment.utc().subtract(1, 'year').subtract(zoneOffset),
+        today = moment.utc().subtract(zoneOffset),
+        range = moment(yearAgo),
+        i = 0;
 
       _.forEach(yearSessions, function (session) {
         var day = moment.utc(session.day).subtract(session.zoneOffset, 'minutes');
-        yearly.push({
+        dailySessions.push({
           x: day.valueOf(),
           y: day.day(),
           value: session.dailyCount
         });
       });
 
-      var arrLength = yearly.length;
-      for (var i = 1; i < arrLength; i++) {
-        var diff = Math.round(moment(yearly[i].x).diff(yearly[i - 1].x, 'days', true));
-        while (diff > 1) {
-          diff--;
-          var newDay = moment.utc(yearly[i].x).subtract(diff, 'days');
+      while (today.diff(range) >= 0) {
+        if (!dailySessions[i] || !range.isSame(dailySessions[i].x, 'day')) {
           yearly.push({
-            x: newDay.valueOf(),
-            y: newDay.day(),
+            x: range.valueOf(),
+            y: range.day(),
             value: 0,
             color: '#EDEDED'
           });
+        } else {
+          if (dailySessions[i]) {
+            yearly.push(dailySessions[i]);
+          }
+          i++;
         }
+        range.add(1, 'day');
       }
 
       yearly = _.sortBy(yearly, 'x');
 
       res.json(yearly);
+    }).catch(function (err) {
+      console.log(err);
+      res.status(500).json({
+        error: 'Database error'
+      });
     });
 });
 
