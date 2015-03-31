@@ -107,7 +107,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
     getWpm = function () {
       return models.Session.findAll({
         attributes: [
-          models.Sequelize.literal('AVG(`Session`.`wordcount` / (`Session`.`duration` / 60)) AS `wpm`'),
+          models.Sequelize.literal('AVG(`Session`.`wordcount` / (`Session`.`duration` / 60)) AS `wpm`')
         ],
         include: [{
           model: models.Project,
@@ -325,24 +325,39 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
       },
       renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
                            highestWpm, bestDate, projectAvg, performanceAvg, dailyAvg, modePeriod, modeSession, modeProject) {
-        var yearly = {}, larger = 5;
+        var yearly = [];
 
         _.forEach(yearSessions, function (session) {
-          yearly[((+session.day / 1000) - (session.zoneOffset * 60)).toString()] = session.dailyCount;
-          larger = session.dailyCount > larger ? session.dailyCount : larger;
+          var day = moment.utc(session.day).subtract(session.zoneOffset, 'minutes');
+          yearly.push({
+            x: day.valueOf(),
+            y: day.day(),
+            value: session.dailyCount
+          });
         });
+
+        var arrLength = yearly.length;
+        for (var i = 1; i < arrLength; i++) {
+          var diff = Math.round(moment(yearly[i].x).diff(yearly[i - 1].x, 'days', true));
+          while (diff > 1) {
+            diff--;
+            var newDay = moment.utc(yearly[i].x).subtract(diff, 'days');
+            yearly.push({
+              x: newDay.valueOf(),
+              y: newDay.day(),
+              value: 0,
+              color: '#EDEDED'
+            });
+          }
+        }
+
+        yearly = _.sortBy(yearly, 'x');
 
         res.render('user/stats', {
           title: 'Statistics',
           section: 'stats',
           data: {
-            sessions: yearly,
-            legend: [
-              Math.round(larger * 1 / 5),
-              Math.round(larger * 2 / 5),
-              Math.round(larger * 3 / 5),
-              Math.round(larger * 4 / 5),
-            ]
+            sessions: yearly
           },
           tops: {
             totalWordcount: totalWordcount,
