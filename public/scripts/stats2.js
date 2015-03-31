@@ -39,69 +39,72 @@
     perf: '<span style="color: {series.color};">\u25CF</span> {series.name}: <b>{point.y:,.2f} wpm</b><br/>'
   };
 
-  window.yearly = function (Highcharts, yearData) {
-    var options = {
-      chart: {
-        renderTo: 'heatmap',
-        type: 'heatmap',
-        zoomType: 'xy',
-        panning: true,
-        panKey: 'shift',
-        height: 300
-      },
-      exporting: {
-        buttons: {
-          contextButton: {
-            verticalAlign: 'bottom',
-            y: -20
+  window.yearly = function ($, Highcharts) {
+    var link = '/yearlysessions.json';
+    return $.getJSON(link, function (yearData) {
+      var options = {
+        chart: {
+          renderTo: 'heatmap',
+          type: 'heatmap',
+          zoomType: 'xy',
+          panning: true,
+          panKey: 'shift',
+          height: 300
+        },
+        exporting: {
+          buttons: {
+            contextButton: {
+              verticalAlign: 'bottom',
+              y: -20
+            }
           }
-        }
-      },
-      title: false,
-      colorAxis: {
-        min: 0,
-        stops: [
-          [0.1, '#DAE289'],
-          [0.9, '#3B6427']
-        ]
-      },
-      tooltip: {
-        crosshairs: [false, false]
-      },
-      plotOptions: {
-        heatmap: {
-          borderColor: '#FFF'
-        }
-      },
-      xAxis: {
-        type: 'datetime',
-        min: yearData[0].x,
-        max: yearData[yearData.length - 1].x,
-        units: [
-          ['week', [1]],
-          ['month', [1, 3, 6, 9, 12]]
-        ]
-      },
-      yAxis: {
-        title: null,
-        categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        tickWidth: 1
-      },
-      series: [
-        {
-          name: 'Word count',
-          borderWidth: 2,
-          colsize: 7 * 24 * 36e5, // one week
-          pointInterval: 7 * 24 * 36e5, // one week
-          data: yearData,
-          tooltip: {
-            pointFormat: '{point.x:%A, %B %e, %Y}: <b>{point.value} words</b>'
+        },
+        title: false,
+        colorAxis: {
+          min: 0,
+          stops: [
+            [0.1, '#DAE289'],
+            [0.9, '#3B6427']
+          ]
+        },
+        tooltip: {
+          crosshairs: [false, false]
+        },
+        plotOptions: {
+          heatmap: {
+            borderColor: '#FFF'
           }
-        }
-      ]
-    };
+        },
+        xAxis: {
+          type: 'datetime',
+          min: yearData[0].x,
+          max: yearData[yearData.length - 1].x,
+          units: [
+            ['week', [1]],
+            ['month', [1, 3, 6, 9, 12]]
+          ]
+        },
+        yAxis: {
+          title: null,
+          categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          tickWidth: 1
+        },
+        series: [
+          {
+            name: 'Word count',
+            borderWidth: 2,
+            colsize: 7 * 24 * 36e5, // one week
+            pointInterval: 7 * 24 * 36e5, // one week
+            data: yearData,
+            tooltip: {
+              pointFormat: '{point.x:%A, %B %e, %Y}: <b>{point.value} words</b>'
+            }
+          }
+        ]
+      };
 
-    return new Highcharts.Chart(options);
+      return new Highcharts.Chart(options);
+    });
   };
 
   window.perPeriod = function ($, Highcharts, metric) {

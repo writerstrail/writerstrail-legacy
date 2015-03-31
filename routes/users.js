@@ -196,30 +196,6 @@ router.get('/timer', isactivated, sendflash, function (req, res, next) {
 
 router.get('/stats', isactivated, sendflash, function (req, res, next) {
   var performanceOrder = (req.user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance',
-      getYearSummary = function () {
-        return models.Session.findAll({
-          where: {
-            start: {
-              gte: moment().subtract(1, 'year').toDate()
-            }
-          },
-          attributes: [
-            models.Sequelize.literal('SUM(`Session`.`wordcount`) AS dailyCount'),
-            models.Sequelize.literal('DATE(`Session`.`start`) AS day'),
-            'zoneOffset'
-          ],
-          include: [{
-            model: models.Project,
-            as: 'project',
-            where: {
-              ownerId: req.user.id
-            }
-          }],
-          group: [models.Sequelize.literal('DATE(`Session`.`start`)')]
-        }, {
-          raw: true
-        });
-      },
       getTotalWordcount = function () {
         return models.Project.sum('currentWordcount', {
           where: {
@@ -323,42 +299,12 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
           raw: true
         });
       },
-      renderer = function (yearSessions, totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
+      renderer = function (totalWordcount, earliestSession, largestProject, performancePeriod, performanceSession,
                            highestWpm, bestDate, projectAvg, performanceAvg, dailyAvg, modePeriod, modeSession, modeProject) {
-        var yearly = [];
-
-        _.forEach(yearSessions, function (session) {
-          var day = moment.utc(session.day).subtract(session.zoneOffset, 'minutes');
-          yearly.push({
-            x: day.valueOf(),
-            y: day.day(),
-            value: session.dailyCount
-          });
-        });
-
-        var arrLength = yearly.length;
-        for (var i = 1; i < arrLength; i++) {
-          var diff = Math.round(moment(yearly[i].x).diff(yearly[i - 1].x, 'days', true));
-          while (diff > 1) {
-            diff--;
-            var newDay = moment.utc(yearly[i].x).subtract(diff, 'days');
-            yearly.push({
-              x: newDay.valueOf(),
-              y: newDay.day(),
-              value: 0,
-              color: '#EDEDED'
-            });
-          }
-        }
-
-        yearly = _.sortBy(yearly, 'x');
 
         res.render('user/stats', {
           title: 'Statistics',
           section: 'stats',
-          data: {
-            sessions: yearly
-          },
           tops: {
             totalWordcount: totalWordcount,
             since: earliestSession ? earliestSession.start : null,
@@ -378,10 +324,66 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
           }
         });
       };
-  promise.join(getYearSummary(), getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(),
+  promise.join(getTotalWordcount(), getEarliestSession(), getLargestProject(), getPerformancePeriod(),
                getPerformanceSession(), getHighestWpm(), getBestDate(), getProjectAvg(), getPerformanceAvg(),
                getDailyAverage(), getModePeriod(), getModeSession(), getModeProject(), renderer)
   .catch(next);
+});
+
+router.get('/yearlysessions.json', isactivated, function (req, res) {
+  models.Session.findAll({
+      where: {
+        start: {
+          gte: moment().subtract(1, 'year').toDate()
+        }
+      },
+      attributes: [
+        models.Sequelize.literal('SUM(`Session`.`wordcount`) AS dailyCount'),
+        models.Sequelize.literal('DATE(`Session`.`start`) AS day'),
+        'zoneOffset'
+      ],
+      include: [{
+        model: models.Project,
+        as: 'project',
+        where: {
+          ownerId: req.user.id
+        }
+      }],
+      group: [models.Sequelize.literal('DATE(`Session`.`start`)')]
+    }, {
+      raw: true
+    })
+    .then(function (yearSessions) {
+      var yearly = [];
+
+      _.forEach(yearSessions, function (session) {
+        var day = moment.utc(session.day).subtract(session.zoneOffset, 'minutes');
+        yearly.push({
+          x: day.valueOf(),
+          y: day.day(),
+          value: session.dailyCount
+        });
+      });
+
+      var arrLength = yearly.length;
+      for (var i = 1; i < arrLength; i++) {
+        var diff = Math.round(moment(yearly[i].x).diff(yearly[i - 1].x, 'days', true));
+        while (diff > 1) {
+          diff--;
+          var newDay = moment.utc(yearly[i].x).subtract(diff, 'days');
+          yearly.push({
+            x: newDay.valueOf(),
+            y: newDay.day(),
+            value: 0,
+            color: '#EDEDED'
+          });
+        }
+      }
+
+      yearly = _.sortBy(yearly, 'x');
+
+      res.json(yearly);
+    });
 });
 
 router.get('/perperiod.json', isactivated, function (req, res) {

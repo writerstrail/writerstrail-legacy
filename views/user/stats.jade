@@ -173,7 +173,7 @@ append scripts
   script(type='text/javascript', src='/scripts/stats2.js')
   script(type='text/javascript')
     | $(function() {
-    | window.yearly(Highcharts, !{JSON.stringify(data.sessions)});
+    | window.yearly($, Highcharts);
     | window.perPeriod(jQuery, Highcharts, '!{user.settings.performanceMetric}');
     | window.perSession(jQuery, Highcharts, '!{user.settings.performanceMetric}');
     | });
