@@ -5,7 +5,8 @@ var router = require('express').Router(),
   isverified = require('../../utils/middlewares/isverified'),
   isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
-  filterIds = require('../../utils/functions/filterids');
+  filterIds = require('../../utils/functions/filterids'),
+  anon = require('../../utils/data/anonuser');
 
 router.get('/', isactivated, sendflash, function (req, res, next) {
   var filters = [],
@@ -290,11 +291,15 @@ router.get('/active', isactivated, sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id', isactivated, sendflash, function (req, res, next) {
+router.get('/:id', sendflash, function (req, res, next) {
+  if (!req.user) {
+    req.user = anon;
+    res.locals.user = anon;
+  }
+
   models.Project.findOne({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [
       {
@@ -310,9 +315,11 @@ router.get('/:id', isactivated, sendflash, function (req, res, next) {
     ]
   }).then(function (project) {
     if (!project) {
-      var error = new Error('Not found');
-      error.status = 404;
-      return next(error);
+      return isactivated(req, res, next);
+    }
+
+    if (!project.public && project.ownerId !== req.user.id) {
+      return isactivated(req, res, next);
     }
     
     res.render('user/projects/single', {
@@ -326,12 +333,14 @@ router.get('/:id', isactivated, sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/data.json', isactivated, function (req, res, next) {
+router.get('/:id/data.json', function (req, res, next) {
+  req.user = req.user || anon;
+
   var daysToLook = 30;
   var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
   var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
   var hasStartQuery = true, hasEndQuery = true;
-  
+
   if (!start.isValid() || start.isAfter(end)) {
     start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
     hasStartQuery = false;
@@ -341,11 +350,10 @@ router.get('/:id/data.json', isactivated, function (req, res, next) {
     hasEndQuery = false;
   }
   daysToLook = end.diff(start, 'days') + 1;
-  
+
   models.Project.findAll({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [
       {
@@ -370,7 +378,15 @@ router.get('/:id/data.json', isactivated, function (req, res, next) {
   }, {
     raw: true
   }).then(function (sessions) {
-    
+
+    var accessible = false;
+
+    if (sessions.length > 0 && (sessions[0].public > 0 || sessions[0].ownerId === req.user.id)) {
+      accessible = true;
+    }
+
+    sessions = accessible ? sessions : [];
+
     var daysRange = [];
     var daily = [], dailyChar = [];
     var wordcount = [], accWc = 0;
