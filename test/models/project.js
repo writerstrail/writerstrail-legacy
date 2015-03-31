@@ -13,6 +13,7 @@ describe('Project model', function () {
       targetcc: 10000,
       active: true,
       finished: false,
+      public: true,
       ownerId: 1
     }).then(function (project) {
       junk.push(project);
@@ -26,6 +27,7 @@ describe('Project model', function () {
         expect(project).to.have.property('targetcc', 10000);
         expect(project).to.have.property('active', true);
         expect(project).to.have.property('finished', false);
+        expect(project).to.have.property('public', true);
         done();
       } catch (err) {
         done(err);
@@ -1049,6 +1051,36 @@ describe('Project model', function () {
       } catch (e) {
         done(e);
       }
+    });
+  });
+
+  it('should set private as default', function (done) {
+    Project.create({
+      name: 'Test default access',
+      description: 'Just a test',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          ownerId: 1,
+          name: 'Test null description'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('public', false);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
     });
   });
 
