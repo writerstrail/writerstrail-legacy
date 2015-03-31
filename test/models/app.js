@@ -122,6 +122,52 @@ describe('App model', function () {
       }
     });
   });
+
+  it('should save sysmsg', function (done) {
+    id += 1;
+
+    App.create({
+      id: id,
+      maintenance: 'off',
+      sysmsg: 'Test'
+    }).then(function () {
+      return App.findOne(id);
+    }).then(function (app) {
+      junk.push(app);
+      try {
+        expect(app).to.exist;
+        expect(app).to.have.property('sysmsg', 'Test');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
+  it('should allow null sysmsg', function (done) {
+    id += 1;
+
+    App.create({
+      id: id,
+      maintenance: 'off',
+      sysmsg: null
+    }).then(function () {
+      return App.findOne(id);
+    }).then(function (app) {
+      junk.push(app);
+      try {
+        expect(app).to.exist;
+        expect(app).to.have.property('sysmsg').that.isNull;
+        done();
+      } catch (e) {
+        done(e);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
   
   cleanJunk(junk, after);
 });
