@@ -126,7 +126,8 @@ router.post('/new', isverified, function (req, res, next) {
       unit: req.body.unit,
       notes: req.body.notes,
       ownerId: req.user.id,
-      zoneOffset: req.body.zoneOffset || 0
+      zoneOffset: req.body.zoneOffset || 0,
+      public: !!req.body.public
     });
   }).then(function (target) {
     savedTarget = target;
@@ -164,6 +165,7 @@ router.post('/new', isverified, function (req, res, next) {
           count: req.body.count || null,
           unit: req.body.unit,
           notes: req.body.notes,
+          public: !!req.body.public,
           projects: filterIds(projects, req.body.projects)
         },
         validate: err.errors,
@@ -265,6 +267,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       target.set('unit', req.body.unit);
       target.set('start', start);
       target.set('end', end);
+      target.set('public', !!req.body.public);
       target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));
       return target.save().then(function () {
         return models.Project.findAll({
@@ -310,6 +313,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           unit: req.body.unit,
           start: req.body.start,
           end: req.body.end,
+          public: !!req.body.public,
           projects: filterIds(projects, req.body.projects)
         },
         projects: chunk(projects, 3),
