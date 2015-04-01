@@ -28,4 +28,7 @@ block content
           span.fa.fa-fw.fa-bar-chart
           | &nbsp;
           a(href=("/targets/" + target.id) title=target.notes)= target.name
+          if target.public
+            | &#x0020;
+            small.text-danger (public)
     +paginate(paginate, pageCount, currentPage)
