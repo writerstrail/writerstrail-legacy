@@ -85,6 +85,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
     targetcc: req.body.targetcc || 0,
     active: !!req.body.active,
     finished: !!req.body.finished,
+    public: !!req.body.public,
     ownerId: req.user.id
   }).then(function (project) {
     savedProject = project;
@@ -125,6 +126,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
           targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
+          public: !!req.body.public,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
@@ -197,6 +199,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
       project.set('targetcc', req.body.targetcc || 0);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
+      project.set('public', !!req.body.public);
       return project.save().then(function () {
         savedProject = project;
         return models.Genre.findAll({
@@ -244,6 +247,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
           targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
+          public: !!req.body.public,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
