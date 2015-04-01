@@ -405,9 +405,17 @@ router.get('/:id/data.json', function (req, res) {
     }]
   }).then(function (target) {
     res.type('application/json');
-    if (!target || !target.public) {
+    var accessible = false;
+
+    if (target && (target.ownerId === req.user.id || target.public)) {
+      accessible = true;
+    }
+
+    if (!accessible) {
       return res.status(404).send('{"Error":"Not found"}').end();
     }
+
+
     var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
     var daysRange = [];
     var daily = [];
