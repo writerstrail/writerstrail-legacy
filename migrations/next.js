@@ -13,10 +13,20 @@ module.exports = {
           defaultValue: false
         });
       })
+      .then(function () {
+        return migration.addColumn('targets', 'public', {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false
+        });
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
-    migration.removeColumn('projects', 'public')
+    migration.removeColumn('targets', 'public')
+      .then(function () {
+        return migration.removeColumn('projects', 'public');
+      })
       .then(function () {
         return migration.removeColumn('application', 'sysmsg');
       })
