@@ -4,5 +4,5 @@ script
   | m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   | })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
   | ga('create', 'UA-59463664-1', 'auto');ga('send', 'pageview');
-  if user
+  if user && user.id > 0
     | ga('set', '&uid', !{user.id});

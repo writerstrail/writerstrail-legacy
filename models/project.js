@@ -129,6 +129,11 @@ module.exports = function (sequelize, DataTypes) {
       validate: {
         min: 0
       }
+    },
+    public: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'projects',

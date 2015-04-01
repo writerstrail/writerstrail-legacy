@@ -2,15 +2,20 @@ extends ../../layout
 
 block content
   include ../../mixins/progressbar
+  - var isOwner = project.ownerId === user.id
+  if project.public && isOwner
+    .alert.alert-warning
+      | This project is <strong>public</strong>, which means anyone with the link is able to see it.
+
   h1 Project 
     em= project.name
     
-    
-  .btn-group
-    a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit this project')
-      span.fa.fa-edit.fa-lg
-    include toolbar
-  p  
+  if isOwner
+    .btn-group
+      a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit this project')
+        span.fa.fa-edit.fa-lg
+      include toolbar
+    p
   
   if project.targetwc > 0
     .row
@@ -90,17 +95,20 @@ block content
         .col-md-2.text-right
           strong Included in targets:
         .col-md-10
-          if project.targets.length === 0
+          - var targetList = isOwner ? project.targets : _.filter(project.targets, {public: true})
+          if targetList.length === 0
             | None
           else
-            for target, i in project.targets
+            for target, i in targetList
               if i > 0
                 | ,&nbsp;
               a(href='/targets/' + target.id title=target.name)= target.name
-          |  
-          a#create-target.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
-              span.fa.fa-plus
-              |  Create one
+
+          if isOwner
+            | &#x0020;
+            a#create-target.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
+                span.fa.fa-plus
+                |  Create one
     li.list-group-item
       .row
         .col-md-2.text-right

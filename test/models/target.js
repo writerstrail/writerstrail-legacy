@@ -35,6 +35,7 @@ describe('Target model', function () {
       count: 50000,
       unit: 'word',
       notes: 'test notes',
+      public: true,
       ownerId: 1
     }).then(function () {
       return Target.findOne(id);
@@ -62,6 +63,7 @@ describe('Target model', function () {
         expect(target).to.have.property('count', 50000);
         expect(target).to.have.property('unit', 'word');
         expect(target).to.have.property('notes', 'test notes');
+        expect(target).to.have.property('public', true);
         done();
       } catch (err) {
         done(err);
@@ -734,6 +736,32 @@ describe('Target model', function () {
         done(e);
       }
     });
+  });
+
+  it('should set as private by default', function (done) {
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test default access',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'word',
+      notes: 'test notes',
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (target) {
+      junk.push(target);
+      try {
+        expect(target).to.have.property('public', false);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(done);
   });
   
   it('should associate with users and projects', function (done) {

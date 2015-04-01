@@ -5,19 +5,21 @@ var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
+  isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids'),
   targetunits = {
     word: 'words',
     char: 'characters'
-  };
+  },
+  anon = require('../../utils/data/anonuser');
 
 router.use('*', function (req, res, next) {
   res.locals.targetunits = targetunits;
   next();
 });
 
-router.get('/', sendflash, function (req, res, next) {
+router.get('/', isactivated, sendflash, function (req, res, next) {
   var filters = [],
     config = {
       where: [
@@ -62,7 +64,7 @@ router.get('/', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/new', sendflash, function (req, res, next) {
+router.get('/new', isactivated, sendflash, function (req, res, next) {
   models.Project.findAll({
     where: {
       ownerId: req.user.id,
@@ -89,7 +91,7 @@ router.get('/new', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/new', isverified, function (req, res, next) {
+router.post('/new', isactivated, isverified, function (req, res, next) {
   var savedTarget = {},
     start = moment.utc(req.body.start, req.user.settings.dateFormat),
     end =  moment.utc(req.body.end, req.user.settings.dateFormat);
@@ -126,7 +128,8 @@ router.post('/new', isverified, function (req, res, next) {
       unit: req.body.unit,
       notes: req.body.notes,
       ownerId: req.user.id,
-      zoneOffset: req.body.zoneOffset || 0
+      zoneOffset: req.body.zoneOffset || 0,
+      public: !!req.body.public
     });
   }).then(function (target) {
     savedTarget = target;
@@ -164,6 +167,7 @@ router.post('/new', isverified, function (req, res, next) {
           count: req.body.count || null,
           unit: req.body.unit,
           notes: req.body.notes,
+          public: !!req.body.public,
           projects: filterIds(projects, req.body.projects)
         },
         validate: err.errors,
@@ -176,7 +180,7 @@ router.post('/new', isverified, function (req, res, next) {
   });
 });
 
-router.get('/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', isactivated, sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -220,7 +224,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', isverified, function (req, res, next) {
+router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
   var savedTarget = {};
   models.Target.findOne({
     where: {
@@ -265,6 +269,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       target.set('unit', req.body.unit);
       target.set('start', start);
       target.set('end', end);
+      target.set('public', !!req.body.public);
       target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));
       return target.save().then(function () {
         return models.Project.findAll({
@@ -310,6 +315,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           unit: req.body.unit,
           start: req.body.start,
           end: req.body.end,
+          public: !!req.body.public,
           projects: filterIds(projects, req.body.projects)
         },
         projects: chunk(projects, 3),
@@ -323,10 +329,12 @@ router.post('/:id/edit', isverified, function (req, res, next) {
 });
 
 router.get('/:id', sendflash, function (req, res, next) {
+  if (!req.user) {
+    req.user = res.locals.user = anon;
+  }
   models.Target.findOne({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [{
       model: models.Project,
@@ -350,10 +358,13 @@ router.get('/:id', sendflash, function (req, res, next) {
     }]
   }).then(function (target) {
     if (!target) {
-      var error = new Error('Not found');
-      error.status = 404;
-      return next(error);
+      return isactivated(req, res, next);
     }
+
+    if (!target.public && target.ownerId !== req.user.id) {
+      return isactivated(req, res, next);
+    }
+
     res.render('user/targets/single', {
       title: target.name + ' target',
       section: 'targetsingle',
@@ -365,10 +376,12 @@ router.get('/:id', sendflash, function (req, res, next) {
 });
 
 router.get('/:id/data.json', function (req, res) {
+  if (!req.user) {
+    req.user = anon;
+  }
   models.Target.findOne({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [{
       model: models.Project,
@@ -392,9 +405,17 @@ router.get('/:id/data.json', function (req, res) {
     }]
   }).then(function (target) {
     res.type('application/json');
-    if (!target) {
+    var accessible = false;
+
+    if (target && (target.ownerId === req.user.id || target.public)) {
+      accessible = true;
+    }
+
+    if (!accessible) {
       return res.status(404).send('{"Error":"Not found"}').end();
     }
+
+
     var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
     var daysRange = [];
     var daily = [];

@@ -16,25 +16,32 @@ block content
   - var remainingCount = Math.max(0, target.count - totalCount)
   - var unit = target.unit === 'word' ? 'words' : 'characters'
   - var unitCaps = unit.charAt(0).toLocaleUpperCase() + unit.substring(1);
+  - var isOwner = target.ownerId === user.id
+
+  if target.public && isOwner
+    .alert.alert-warning
+      | This target is <strong>public</strong>, which means anyone with the link is able to see it.
 
   h1 Target 
-    em= target.name 
-    small  (
-      = _.reduce(target.projects, function (acc, proj) { acc.push(proj.name); return acc; }, []).join(', ')
-      | )
-  
-  .btn-group(role='toolbar')
-    a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target')
-      span.fa.fa-edit.fa-lg
-    include toolbar
-  p
+    em= target.name
+    if isOwner
+      small  (
+        = _.reduce(target.projects, function (acc, proj) { acc.push(proj.name); return acc; }, []).join(', ')
+        | )
+
+  if isOwner
+    .btn-group(role='toolbar')
+      a.btn.btn-lg.btn-default(href='/targets/' + target.id + '/edit' title='Edit this target')
+        span.fa.fa-edit.fa-lg
+      include toolbar
+    p
   
   if target.count
     .row
       .col-md-12
         - var percentage = Math.min(100, Math.max(0, Math.floor((totalCount / target.count) * 100)))
         +progressbar(totalCount, target.count, percentage)
-  if daysRem == 0        
+  if isOwner && daysRem == 0
     .row
       .col-md-2: strong This target is already overdue.
       .col-md-10(class=(totalCount === 0 ? 'alert-danger' : (!target.count ? 'alert-info' : (totalCount >= target.count ? 'alert-success' : 'alert-warning'))))
@@ -69,8 +76,9 @@ block content
   if !hasStarted
     .row
       .col-md-2: strong This target still not started.
-      .col-md-10.alert-danger
-        p This target will start <strong>!{moment.utc(target.start).subtract(target.zoneOffset || 0, 'minutes').calendar()}</strong>. Be ready for it!
+      if isOwner
+        .col-md-10.alert-danger
+          p This target will start <strong>!{moment.utc(target.start).subtract(target.zoneOffset || 0, 'minutes').calendar()}</strong>. Be ready for it!
     p
   else
     .row: .col-md-12: .panel.panel-primary
@@ -120,24 +128,19 @@ block content
           ul.fa-ul
             for project in _.sortBy(target.projects, 'name')
               li
-                a(href='/projects/' + project.id title='View project ' + project.name)
+                if isOwner || project.public
+                  a(href='/projects/' + project.id title='View project ' + project.name)
+                    span.fa.fa-li.fa-file-o
+                    = project.name
+                else
                   span.fa.fa-li.fa-file-o
                   = project.name
-                | &nbsp;(
-                if project.sessions.length == 0
-                  | No session in this project within this target's period
-                else
-                  for session,i in project.sessions.slice(0, 3)
-                    if i > 0
-                      | ,&nbsp;
-                    - var sessionName = (session.summary) || (moment.utc(session.start).format(user.settings.dateFormat + ' ' + user.settings.timeFormat))
-                    a(href='/sessions/' + session.id title='View session ' + sessionName)
-                      span.fa.fa-clock-o
-                      |  
-                      = sessionName
-                | ,&nbsp;
-                a(href='/sessions?projectid=' + project.id title='All sessions for this project') ...
-                | )
+                  small  (private)
+                if isOwner
+                  | &nbsp;(
+                  a(href='/sessions?projectid=' + project.id title='All sessions for this project')
+                    span.fa.fa-calendar
+                  | )
     if target.count
       li.list-group-item
         .row
