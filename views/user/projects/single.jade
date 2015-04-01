@@ -90,19 +90,21 @@ block content
               if i > 0
                 | ,&nbsp;
               a(href='/genres/' + genre.id title=genre.name)= genre.name
-    if isOwner
-      li.list-group-item
-        .row
-          .col-md-2.text-right
-            strong Included in targets:
-          .col-md-10
-            if project.targets.length === 0
-              | None
-            else
-              for target, i in project.targets
-                if i > 0
-                  | ,&nbsp;
-                a(href='/targets/' + target.id title=target.name)= target.name
+    li.list-group-item
+      .row
+        .col-md-2.text-right
+          strong Included in targets:
+        .col-md-10
+          - var targetList = isOwner ? project.targets : _.filter(project.targets, {public: true})
+          if targetList.length === 0
+            | None
+          else
+            for target, i in targetList
+              if i > 0
+                | ,&nbsp;
+              a(href='/targets/' + target.id title=target.name)= target.name
+
+          if isOwner
             | &#x0020;
             a#create-target.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
                 span.fa.fa-plus
