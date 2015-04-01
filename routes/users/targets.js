@@ -5,19 +5,21 @@ var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
+  isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids'),
   targetunits = {
     word: 'words',
     char: 'characters'
-  };
+  },
+  anon = require('../../utils/data/anonuser');
 
 router.use('*', function (req, res, next) {
   res.locals.targetunits = targetunits;
   next();
 });
 
-router.get('/', sendflash, function (req, res, next) {
+router.get('/', isactivated, sendflash, function (req, res, next) {
   var filters = [],
     config = {
       where: [
@@ -62,7 +64,7 @@ router.get('/', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/new', sendflash, function (req, res, next) {
+router.get('/new', isactivated, sendflash, function (req, res, next) {
   models.Project.findAll({
     where: {
       ownerId: req.user.id,
@@ -89,7 +91,7 @@ router.get('/new', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/new', isverified, function (req, res, next) {
+router.post('/new', isactivated, isverified, function (req, res, next) {
   var savedTarget = {},
     start = moment.utc(req.body.start, req.user.settings.dateFormat),
     end =  moment.utc(req.body.end, req.user.settings.dateFormat);
@@ -178,7 +180,7 @@ router.post('/new', isverified, function (req, res, next) {
   });
 });
 
-router.get('/:id/edit', sendflash, function (req, res, next) {
+router.get('/:id/edit', isactivated, sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -222,7 +224,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', isverified, function (req, res, next) {
+router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
   var savedTarget = {};
   models.Target.findOne({
     where: {
@@ -326,7 +328,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
   });
 });
 
-router.get('/:id', sendflash, function (req, res, next) {
+router.get('/:id', isactivated, sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -368,7 +370,7 @@ router.get('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/data.json', function (req, res) {
+router.get('/:id/data.json', isactivated, function (req, res) {
   models.Target.findOne({
     where: {
       id: req.params.id,

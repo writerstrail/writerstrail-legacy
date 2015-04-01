@@ -40,7 +40,7 @@ router.param('id', function (req, res, next, id) {
 
 router.use('/genres', isactivated, genres);
 router.use('/projects', projects);
-router.use('/targets', isactivated, targets);
+router.use('/targets', targets);
 router.use('/sessions', isactivated, sessions);
 router.use('/settings', isactivated, settings);
 router.use('/', tour);
