@@ -328,11 +328,13 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
   });
 });
 
-router.get('/:id', isactivated, sendflash, function (req, res, next) {
+router.get('/:id', sendflash, function (req, res, next) {
+  if (!req.user) {
+    req.user = res.locals.user = anon;
+  }
   models.Target.findOne({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [{
       model: models.Project,
@@ -356,10 +358,13 @@ router.get('/:id', isactivated, sendflash, function (req, res, next) {
     }]
   }).then(function (target) {
     if (!target) {
-      var error = new Error('Not found');
-      error.status = 404;
-      return next(error);
+      return isactivated(req, res, next);
     }
+
+    if (!target.public && target.ownerId !== req.user.id) {
+      return isactivated(req, res, next);
+    }
+
     res.render('user/targets/single', {
       title: target.name + ' target',
       section: 'targetsingle',
@@ -370,11 +375,13 @@ router.get('/:id', isactivated, sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/data.json', isactivated, function (req, res) {
+router.get('/:id/data.json', function (req, res) {
+  if (!req.user) {
+    req.user = anon;
+  }
   models.Target.findOne({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [{
       model: models.Project,
@@ -398,7 +405,7 @@ router.get('/:id/data.json', isactivated, function (req, res) {
     }]
   }).then(function (target) {
     res.type('application/json');
-    if (!target) {
+    if (!target || !target.public) {
       return res.status(404).send('{"Error":"Not found"}').end();
     }
     var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
