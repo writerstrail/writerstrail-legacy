@@ -157,7 +157,8 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
 window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
   link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
 
-  var now = new Date();
+  var now = new Date(),
+    today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
 
   var options = {
     chart: {
@@ -187,10 +188,10 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
         {
           color: '#AAAAAA',
           width: 1,
-          value: +now,
-          id: 'now',
+          value: +today,
+          id: 'today',
           label: {
-            text: 'Now',
+            text: 'Today',
             style: {
               color: '#AAAAAA'
             },
