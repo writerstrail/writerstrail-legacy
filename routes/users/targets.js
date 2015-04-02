@@ -8,6 +8,7 @@ var router = require('express').Router(),
   isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids'),
+  numerictrim = require('../../utils/functions/numerictrim'),
   targetunits = {
     word: 'words',
     char: 'characters'
@@ -124,7 +125,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
       name: req.body.name,
       start: start,
       end: end,
-      count: req.body.count || null,
+      count: numerictrim(req.body.count) || null,
       unit: req.body.unit,
       notes: req.body.notes,
       ownerId: req.user.id,
@@ -265,7 +266,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
       savedTarget = target;
       target.set('name', req.body.name);
       target.set('notes', req.body.notes);
-      target.set('count', req.body.count || null);
+      target.set('count', numerictrim(req.body.count) || null);
       target.set('unit', req.body.unit);
       target.set('start', start);
       target.set('end', end);

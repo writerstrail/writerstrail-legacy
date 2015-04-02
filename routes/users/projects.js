@@ -5,6 +5,7 @@ var router = require('express').Router(),
   isverified = require('../../utils/middlewares/isverified'),
   isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
+  numerictrim = require('../../utils/functions/numerictrim'),
   filterIds = require('../../utils/functions/filterids'),
   anon = require('../../utils/data/anonuser');
 
@@ -79,10 +80,10 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
   models.Project.create({
     name: req.body.name,
     description: req.body.description,
-    wordcount: req.body.wordcount,
-    targetwc: req.body.targetwc,
-    charcount: req.body.charcount || 0,
-    targetcc: req.body.targetcc || 0,
+    wordcount: numerictrim(req.body.wordcount),
+    targetwc: numerictrim(req.body.targetwc),
+    charcount: numerictrim(req.body.charcount) || 0,
+    targetcc: numerictrim(req.body.targetcc) || 0,
     active: !!req.body.active,
     finished: !!req.body.finished,
     public: !!req.body.public,
@@ -193,10 +194,10 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
     if (!req.body.delete) {
       project.set('name', req.body.name);
       project.set('description', req.body.description);
-      project.set('wordcount', req.body.wordcount);
-      project.set('targetwc', req.body.targetwc);
-      project.set('charcount', req.body.charcount || 0);
-      project.set('targetcc', req.body.targetcc || 0);
+      project.set('wordcount', numerictrim(req.body.wordcount));
+      project.set('targetwc', numerictrim(req.body.targetwc));
+      project.set('charcount', numerictrim(req.body.charcount) || 0);
+      project.set('targetcc', numerictrim(req.body.targetcc) || 0);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
       project.set('public', !!req.body.public);

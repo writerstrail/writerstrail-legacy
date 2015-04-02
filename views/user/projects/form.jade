@@ -42,7 +42,7 @@ block content
     .form-group(class=(wcErr ? 'has-error' : ''))
       label.col-md-2.control-label(for='wordcount')= __('Starting word count')
       .col-md-10
-        input#wordcount.form-control(type='text' name='wordcount' placeholder=__('Starting word count') value=project.wordcount aria-describedby='wchelp')
+        input#wordcount.form-control(type='number' name='wordcount' placeholder=__('Starting word count') value=project.wordcount aria-describedby='wchelp')
         span#wchelp.help-block= __(wcErr ? wcErr.message : 'If you already started it, put the current wordcount in here.')
         
     - var twcErr = _.find(validate, function(err) { return err.path === 'targetwc' || err.path === 'targetOverStart'; }) || ''
@@ -50,7 +50,7 @@ block content
     .form-group(class=(twcErr ? 'has-error' : ''))
       label.col-md-2.control-label(for='targetwc')= __('Target word count')
       .col-md-10
-        input#targetwc.form-control(type='text' name='targetwc' placeholder=__('Target word count') value=project.targetwc aria-describedby='twchelp')
+        input#targetwc.form-control(type='number' name='targetwc' placeholder=__('Target word count') value=project.targetwc aria-describedby='twchelp')
         span#twchelp.help-block= __(twcErr ? twcErr.message : 'The amount of words you intend to write to finish this project.')
         
     - var ccErr = _.find(validate, { path: 'charcount'}) || ''
@@ -58,7 +58,7 @@ block content
     .form-group(class=(ccErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='charcount')= __('Starting character count')
       .col-sm-10
-        input#charcount.form-control(type='text' name='charcount' placeholder=__('Starting character count') value=project.charcount aria-describedby='cchelp')
+        input#charcount.form-control(type='number' name='charcount' placeholder=__('Starting character count') value=project.charcount aria-describedby='cchelp')
         span#cchelp.help-block= __(ccErr ? ccErr.message : 'If you already started it, put the current character count in here (optional).')
 
     - var tccErr = _.find(validate, function(err) { return err.path === 'targetcc' || err.path === 'targetCharOverStart'; }) || ''
@@ -66,7 +66,7 @@ block content
     .form-group(class=(tccErr ? 'has-error' : ''))
       label.col-sm-2.control-label(for='targetcc')= __('Target character count')
       .col-sm-10
-        input#targetcc.form-control(type='text' name='targetcc' placeholder=__('Target character count') value=project.targetcc aria-describedby='tcchelp')
+        input#targetcc.form-control(type='number' name='targetcc' placeholder=__('Target character count') value=project.targetcc aria-describedby='tcchelp')
         span#tcchelp.help-block= __(tccErr ? tccErr.message : 'The amount of characters you intend to write to finish this project (optional).')
 
     .form-group
