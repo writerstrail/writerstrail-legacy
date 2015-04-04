@@ -347,7 +347,7 @@ router.get('/:id', sendflash, function (req, res, next) {
                 lte: models.Sequelize.literal('`Session`.`start`')
               },
               end: {
-                gte: models.Sequelize.literal('CASE WHEN `Session`.`duration` IS NOT NULL THEN (`Session`.`start` + INTERVAL `Session`.`duration` SECOND) ELSE `Session`.`start` END')
+                gte: models.Sequelize.literal('`Session`.`start` - INTERVAL 1 DAY + INTERVAL 1 SECOND')
               }
             },
             required: false

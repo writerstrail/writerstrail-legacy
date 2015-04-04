@@ -340,7 +340,7 @@ router.get('/:id', sendflash, function (req, res, next) {
           start: {
             between: [
              models.Sequelize.literal('`Target`.`start`'),
-             models.Sequelize.literal('`Target`.`end`')
+             models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
             ]
           },
           deletedAt: null
@@ -382,7 +382,7 @@ router.get('/:id/data.json', function (req, res) {
           start: {
             between: [
              models.Sequelize.literal('`Target`.`start`'),
-             models.Sequelize.literal('`Target`.`end`')
+             models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
             ]
           },
           deletedAt: null
