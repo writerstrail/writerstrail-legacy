@@ -678,7 +678,7 @@ function tour($, hopscotch, steps) {
           title: 'Statistics',
           content: "This is the page that sums up all statistics.",
           onPrev: function () {
-            window.location = '/dashboard'
+            window.location = '/dashboard';
           }
         },
         {

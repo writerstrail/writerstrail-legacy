@@ -395,6 +395,11 @@ router.get('/:id/data.json', function (req, res) {
     if (!target) {
       return res.status(404).send('{"Error":"Not found"}').end();
     }
+
+    function sumToday(wc, sess) {
+      return wc + sess.dataValues[target.unit + 'count'];
+    }
+
     var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
     var daysRange = [];
     var daily = [];
@@ -422,7 +427,7 @@ router.get('/:id/data.json', function (req, res) {
       pondDailyTarget.push(Math.max(0, pondTarget));
       daysRange.push(today);
       if (a[today]) {
-        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues[target.unit + 'count']; }, 0);
+        var todayWc = _.reduce(a[today], sumToday, 0);
         accWc += todayWc;
         daily.push(todayWc);
       } else {
