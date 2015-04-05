@@ -349,7 +349,7 @@ router.get('/:id', sendflash, function (req, res, next) {
           start: {
             between: [
              models.Sequelize.literal('`Target`.`start`'),
-             models.Sequelize.literal('`Target`.`end`')
+             models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
             ]
           },
           deletedAt: null
@@ -396,7 +396,7 @@ router.get('/:id/data.json', function (req, res) {
           start: {
             between: [
              models.Sequelize.literal('`Target`.`start`'),
-             models.Sequelize.literal('`Target`.`end`')
+             models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
             ]
           },
           deletedAt: null
@@ -416,6 +416,9 @@ router.get('/:id/data.json', function (req, res) {
       return res.status(404).send('{"Error":"Not found"}').end();
     }
 
+    function sumToday(wc, sess) {
+      return wc + sess.dataValues[target.unit + 'count'];
+    }
 
     var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
     var daysRange = [];
@@ -444,7 +447,7 @@ router.get('/:id/data.json', function (req, res) {
       pondDailyTarget.push(Math.max(0, pondTarget));
       daysRange.push(today);
       if (a[today]) {
-        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues[target.unit + 'count']; }, 0);
+        var todayWc = _.reduce(a[today], sumToday, 0);
         accWc += todayWc;
         daily.push(todayWc);
       } else {

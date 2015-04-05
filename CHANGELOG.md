@@ -1,5 +1,12 @@
 # Writer's Trail change log
 
+## v0.7.1
+
+* Fix sessions in the last day of a target not counting towards the goal.
+  [#57](https://github.com/flikore/writerstrail/issues/57).
+* Fix the calendar time on target start announce.
+  [#55](https://github.com/flikore/writerstrail/issues/55).
+
 ## v0.7.0
 
 * Add character count tracking.
