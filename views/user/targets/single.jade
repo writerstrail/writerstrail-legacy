@@ -42,28 +42,28 @@ block content
           if totalCount >= target.count
             p 
               span.fa.fa-smile-o &nbsp;
-              | Congratulations, you achieved it! Take a donut and relax! Or maybe you want to keep the momentum and 
+              | Congratulations, you achieved it! Take a donut and relax! Or maybe you want to keep the momentum and&#x0020;
               a.alert-link(href='/targets/new' title='New target'): strong start a new target
-              | ! 
+              | !
           else if totalCount > 0
             p
               span.fa.fa-meh-o &nbsp;
-              | Oops, it wasn't this time. But be glad that you wrote #{totalCount} #{unit}! What do you think about
+              | Oops, it wasn't this time. But be glad that you wrote #{totalCount} #{unit}! What do you think about&#x0020;
               a.alert-link(href='/targets/new' title='New target'): strong starting a new target
               | ?
         else
           if totalCount > 0
             p
               span.fa.fa-question-circle &nbsp;
-              | You didn't set up a target count, so I can't tell how you went. But you can always
+              | You didn't set up a target count, so I can't tell how you went. But you can always&#x0020;
               a.alert-link(href='/targets/new' title='New target'): strong start a new target
               | .
         if totalCount === 0
           p
             span.fa.fa-frown-o &nbsp;
-            | You didn't write a single #{unit}. Make a
-            a.alert-link(href='/targets/new' title='New target'): strong new target 
-            | and this time get over the blank page!
+            | You didn't write a single #{unit.substr(0, unit.length - 1)}. Make a&#x0020;
+            a.alert-link(href='/targets/new' title='New target'): strong new target
+            |  and this time get over the blank page!
       
     p
   if !hasStarted
