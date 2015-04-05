@@ -4,7 +4,7 @@ block content
   include ../../mixins/progressbar
   - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
   - var now = moment.utc().add(target.zoneOffset, 'minutes')
-  - var hasStarted = now.isAfter(target.start)
+  - var hasStarted = now.isAfter(target.start) || now.isSame(target.start)
   - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
   - var daysPast = Math.max(0, Math.min(totalDays, Math.floor(now.diff(moment.utc(target.start), 'days', true)))) 
   - var daysRem = totalDays - daysPast
@@ -70,7 +70,9 @@ block content
     .row
       .col-md-2: strong This target still not started.
       .col-md-10.alert-danger
-        p This target will start <strong>!{moment.utc(target.start).subtract(target.zoneOffset || 0, 'minutes').calendar()}</strong>. Be ready for it!
+        p This target will start <strong>
+          != moment.utc(target.start).calendar(moment(now).add(target.zoneOffset || 0, 'minutes'))
+          </strong>. Be ready for it!
     p
   else
     .row: .col-md-12: .panel.panel-primary
