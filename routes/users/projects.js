@@ -466,8 +466,9 @@ router.get('/:id/:type.png', function (req, res, next) {
       var settings = _.defaults({}, {
         chartType: req.params.type
       }, anon.settings),
+        file = path.join(process.cwd(), 'generated', 'images', 'charts', 'projects', req.params.id + '.png'),
         chart = serverExport.buildChart(project, null, settings, data);
-      serverExport.generateImage(path.join(process.cwd(), 'generated', 'images', 'charts', 'projects', req.params.id + '.png'),
+      serverExport.generateImage(file,
         chart,
         function (err, image) {
           if (err) {

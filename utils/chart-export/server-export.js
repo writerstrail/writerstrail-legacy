@@ -28,6 +28,7 @@ function generateImage(file, data, callback) {
     res.on('end', function () {
       fs.writeFile(file, Buffer.concat(buffer), function (err) {
         if (err) { return callback(err); }
+        fs.writeFileSync(file + '.json', JSON.stringify(data));
         return callback(null, Buffer.concat(buffer));
       });
     });
@@ -50,3 +51,5 @@ function buildChart(object, unit, settings, data) {
   return chart.chartOptions(series, settings.chartType, settings.showRemaining,
     settings.showAdjusted, unit, object.name);
 }
+
+
