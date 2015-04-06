@@ -95,7 +95,7 @@ block content
         .col-md-2.text-right
           strong Included in targets:
         .col-md-10
-          - var targetList = isOwner ? project.targets : _.filter(project.targets, {public: true})
+          - var targetList = isOwner ? project.targets : _.filter(project.targets, {'public': true})
           if targetList.length === 0
             | None
           else
@@ -142,7 +142,7 @@ append scripts
   script.
     var link = '/projects/#{project.id}/data.json';
     function build(link) {
-      chart2(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
+      window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
     }
     build(link);
     chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build);
