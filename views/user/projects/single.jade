@@ -39,6 +39,10 @@ block content
         #chart
         .text-center
           button#target-change.btn.btn-default(type='button') Show as daily writing
+    if isOwner
+      ul.list-group
+        li.list-group-item
+          button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
 
   ul.list-group
     li.list-group-item
@@ -146,6 +150,7 @@ append scripts
     }
     build(link);
     chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build);
+    window.deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
     
   if user.settings.showTour
     script

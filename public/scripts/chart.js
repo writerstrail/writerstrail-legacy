@@ -312,3 +312,24 @@ WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjuste
     WTChart.bindButton($, chartType);
   });
 };
+
+WTChart.deleteImageSetup = function ($, link) {
+  $('#deleteimages').click(function () {
+    var $alert = $('<div class="alert alert-dismissable" role="alert">' +
+    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+    '<span aria-hidden="true">&times;</span>' +
+    '</button>' +
+    '<span class="alert-content"></span>' +
+    '</div>');
+    $.getJSON(link)
+      .done(function (data) {
+        $alert.addClass('alert-success').children('.alert-content').html(data.msg);
+        $('#alerts').append($alert);
+      })
+      .fail(function (response) {
+        var data = response.responseJSON;
+        $alert.addClass('alert-danger').children('.alert-content').html(data.error);
+        $('#alerts').append($alert);
+      });
+  });
+};

@@ -24,20 +24,21 @@ html
       block preoutside
       
       .container
-        - if(isSendingFlash)
-          noscript
-            .alert.alert-danger You need Javascript to use this web application. Please enable it.
-        - if(maintenanceMessage && maintenanceMessage.length > 0)
-          .alert.alert-warning!= maintenanceMessage[0]
-        - if(successMessage && successMessage.length > 0)
-          for msg in successMessage
-            .alert.alert-success!= msg
-        - if(errorMessage && errorMessage.length > 0)
-          for msg in errorMessage
-            .alert.alert-danger!= msg
-        - if(warningMessage && warningMessage.length > 0)
-          for msg in warningMessage
-            .alert.alert-warning!= msg
+        div#alerts
+          - if(isSendingFlash)
+            noscript
+              .alert.alert-danger You need Javascript to use this web application. Please enable it.
+          - if(maintenanceMessage && maintenanceMessage.length > 0)
+            .alert.alert-warning!= maintenanceMessage[0]
+          - if(successMessage && successMessage.length > 0)
+            for msg in successMessage
+              .alert.alert-success!= msg
+          - if(errorMessage && errorMessage.length > 0)
+            for msg in errorMessage
+              .alert.alert-danger!= msg
+          - if(warningMessage && warningMessage.length > 0)
+            for msg in warningMessage
+              .alert.alert-warning!= msg
         block content
       block outside
     
@@ -61,4 +62,4 @@ html
             $('.btn-group .btn').tooltip({
               placement: 'bottom'
             })
-          })
+          });

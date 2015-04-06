@@ -3,6 +3,7 @@ module.exports.buildChart = buildChart;
 module.exports.isFresh = isFresh;
 module.exports.isSame = isSame;
 module.exports.middleware = middleware;
+module.exports.deleteImage = deleteImage;
 
 var http = require('http'),
   fs = require('fs'),
@@ -168,4 +169,39 @@ function middleware(model, chartData) {
 
     });
   };
+}
+
+function deleteImage(model, id, callback) {
+  var dir = model.toLowerCase() + 's',
+    fileBase = path.join(config.imagesdir, 'charts', dir, id + '_'),
+    daily = fileBase + 'daily.png',
+    acc = fileBase + 'cumulative.png',
+    errs = [];
+
+  function unlinkDaily(callback) {
+    fs.unlink(daily, function (err) {
+      if (err && err.errno !== 34) {
+        errs.push(err);
+      }
+      fs.unlink(daily + '.json', callback);
+    });
+  }
+
+  function unlinkAcc(callback) {
+    fs.unlink(acc, function (err) {
+      if (err && err.errno !== 34) {
+        errs.push(err);
+      }
+      fs.unlink(acc + '.json', callback);
+    });
+
+  }
+
+  unlinkDaily(unlinkAcc.bind(null, function () {
+    if (errs.length) {
+      callback(errs);
+    } else {
+      callback();
+    }
+  }));
 }
