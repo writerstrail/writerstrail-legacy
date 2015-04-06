@@ -1,34 +1,40 @@
+module.exports.generateImage = generateImage;
+
 var http = require('http'),
   path = require('path'),
   fs = require('fs'),
-  qs = require('querystring'),
-  chart = require('./chart1.json'),
-  options = {
-    hostname: 'export.highcharts.com',
-    port: 80,
-    path: '/',
-    method: 'POST',
-    headers: {
-      accept: 'image/png',
-      'content-type': 'application/x-www-form-urlencoded'
-    }
-  },
-  file = path.join(__dirname, 'chart1.png'),
-  req;
+  qs = require('querystring');
 
-if (fs.existsSync(file)) {
-  fs.unlinkSync(file);
-}
+function generateImage(file, data, callback) {
 
-req = http.request(options, function (res) {
-  res.on('data', function (chunk) {
-    fs.appendFileSync(file, chunk);
+  var options = {
+      hostname: 'export.highcharts.com',
+      port: 80,
+      path: '/',
+      method: 'POST',
+      headers: {
+        accept: 'image/png',
+        'content-type': 'application/x-www-form-urlencoded'
+      }
+    },
+    req,
+    buffer = [];
+
+  req = http.request(options, function (res) {
+    res.on('data', function (chunk) {
+      buffer.push(chunk);
+    });
+    res.on('end', function () {
+      fs.writeFile(file, Buffer.concat(buffer), callback);
+    });
   });
-});
 
-req.end(qs.stringify({
-  options: JSON.stringify(chart),
-  type: 'image/png',
-  filename: 'chart.png',
-  width: 1000
-}));
+  req.on('error', callback);
+
+  req.end(qs.stringify({
+    options: JSON.stringify(data),
+    type: 'image/png',
+    filename: 'chart.png',
+    width: 1000
+  }));
+}
