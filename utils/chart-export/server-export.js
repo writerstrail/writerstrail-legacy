@@ -1,10 +1,13 @@
 module.exports.generateImage = generateImage;
 module.exports.buildChart = buildChart;
+module.exports.isFresh = isFresh;
+module.exports.isSame = isSame;
 
 var http = require('http'),
   fs = require('fs'),
   path = require('path'),
   qs = require('querystring'),
+  moment = require('moment'),
   mkdirp = require('../functions/mkdirp'),
   chart = require('../../public/scripts/chart');
 
@@ -33,7 +36,7 @@ function generateImage(file, data, callback) {
           if (err) {
             return callback(err);
           }
-          fs.writeFileSync(file + '.json', JSON.stringify(data));
+          fs.writeFileSync(file + '.json', JSON.stringify(data), { encoding: 'utf8'});
           return callback(null, Buffer.concat(buffer));
         });
       });
@@ -59,4 +62,32 @@ function buildChart(object, unit, settings, data) {
     settings.showAdjusted, unit, object.name);
 }
 
+function isFresh(file) {
+  var stats, diff;
+  try {
+    stats = fs.statSync(file);
+  } catch (e) {
+    if (e.errno === 34) {
+      return false;
+    }
+    throw e;
+  }
+  diff = moment().diff(stats.mtime, 'hours');
 
+  return diff <= 4;
+}
+
+function isSame(file, data) {
+  var storedData;
+
+  try {
+    storedData = fs.readFileSync(file + '.json', {encoding: 'utf8'});
+  } catch (e) {
+    if (e.errno === 34) {
+      return false;
+    }
+    throw e;
+  }
+
+  return storedData === JSON.stringify(data);
+}
