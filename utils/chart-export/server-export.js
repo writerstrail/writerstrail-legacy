@@ -3,7 +3,9 @@ module.exports.buildChart = buildChart;
 
 var http = require('http'),
   fs = require('fs'),
+  path = require('path'),
   qs = require('querystring'),
+  mkdirp = require('../functions/mkdirp'),
   chart = require('../../public/scripts/chart');
 
 function generateImage(file, data, callback) {
@@ -26,10 +28,14 @@ function generateImage(file, data, callback) {
       buffer.push(chunk);
     });
     res.on('end', function () {
-      fs.writeFile(file, Buffer.concat(buffer), function (err) {
-        if (err) { return callback(err); }
-        fs.writeFileSync(file + '.json', JSON.stringify(data));
-        return callback(null, Buffer.concat(buffer));
+      mkdirp(path.dirname(file), undefined, function () {
+        fs.writeFile(file, Buffer.concat(buffer), function (err) {
+          if (err) {
+            return callback(err);
+          }
+          fs.writeFileSync(file + '.json', JSON.stringify(data));
+          return callback(null, Buffer.concat(buffer));
+        });
       });
     });
   });
@@ -40,7 +46,8 @@ function generateImage(file, data, callback) {
     options: JSON.stringify(data),
     type: 'image/png',
     filename: 'chart.png',
-    width: 1000
+    width: 1000,
+    scale: 1
   }));
 }
 

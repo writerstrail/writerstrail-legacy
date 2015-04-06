@@ -2,6 +2,8 @@ var router = require('express').Router(),
   path = require('path'),
   moment = require('moment'),
   _ = require('lodash'),
+  env = process.env.NODE_ENV || 'development',
+  config = require('../../config/config')[env],
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
@@ -442,7 +444,7 @@ router.get('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/:type.png', function (req, res, next) {
+router.get('/:id/:type.png', function (req, res) {
   res.type('image/png');
   var types = ['cumulative', 'daily'];
   if (_.indexOf(types, req.params.type) < 0 ) {
@@ -460,19 +462,21 @@ router.get('/:id/:type.png', function (req, res, next) {
 
     chartData(req, function (err, data) {
       if (err) {
+        console.log(err);
         return res.status(500).end();
       }
 
       var settings = _.defaults({}, {
         chartType: req.params.type
       }, anon.settings),
-        file = path.join(process.cwd(), 'generated', 'images', 'charts', 'projects', req.params.id + '.png'),
+        file = path.join(config.imagesdir, 'charts', 'projects', req.params.id + '_' + req.params.type + '.png'),
         chart = serverExport.buildChart(project, null, settings, data);
       serverExport.generateImage(file,
         chart,
         function (err, image) {
           if (err) {
-            return next(err);
+            console.log(err);
+            return res.status(500).end();
           }
           return res.send(image).end();
         }
