@@ -5,7 +5,7 @@ var WTChart;
 if (typeof window === 'undefined' && typeof exports !== 'undefined') {
   WTChart = exports;
 } else {
-  WTChart= window;
+  WTChart = window;
 }
 
 WTChart.startFromDate = function (date) {
@@ -40,13 +40,15 @@ WTChart.joinMeta = function (data, meta) {
   return series;
 };
 
-WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
+WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
   var start = WTChart.startFromDate(data.date[0]),
+      showLegend = !isExport,
       meta = {
         wordcount: {
           name: 'Word count',
           color: '#674732',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -55,6 +57,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           name: 'Character count',
           color: unit ? '#674732' : '#1F77B4',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -66,6 +69,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           name: 'Daily writing',
           color: '#FF9E49',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -74,6 +78,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           name: 'Daily characters',
           color:  unit ? '#FF9E49' : '#2CA02C',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -86,6 +91,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9e9e9e',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -95,6 +101,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9e9e9e',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -107,6 +114,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#2ca02c',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -116,6 +124,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#2ca02c',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -128,6 +137,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9467bd',
           visible: showAdj,
+          showInLegend: showAdj || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -137,6 +147,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9467bd',
           visible: showAdj,
+          showInLegend: showAdj || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -149,6 +160,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#D62728',
           visible: showRem,
+          showInLegend: showRem || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -158,6 +170,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#D62728',
           visible: showRem,
+          showInLegend: showRem || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'

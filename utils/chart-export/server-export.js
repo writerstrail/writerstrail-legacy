@@ -61,7 +61,7 @@ function generateImage(file, data, callback) {
 
 function buildChart(object, unit, settings, data) {
   var isAcc = settings.chartType === 'cumulative',
-    series = chart.buildMeta(data, isAcc, settings.showRemaining, settings.showAdjusted, unit);
+    series = chart.buildMeta(data, isAcc, settings.showRemaining, settings.showAdjusted, unit, true);
 
   return chart.chartOptions(series, settings.chartType, settings.showRemaining,
     settings.showAdjusted, unit, object.name);
