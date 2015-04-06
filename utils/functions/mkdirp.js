@@ -4,7 +4,7 @@ var path = require('path');
 
 module.exports = function mkdirp(dirPath, mode, callback) {
   //Call the standard fs.mkdir
-  fs.mkdir(dirPath, mode, function(error) {
+  fs.mkdir(dirPath, mode, function (error) {
     //When it fail in this way, do the custom steps
     if (error && error.errno === 34) {
       //Create all the parents recursively
@@ -13,6 +13,8 @@ module.exports = function mkdirp(dirPath, mode, callback) {
       mkdirp(dirPath, mode, callback);
     }
     //Manually run the callback since we used our own callback to do all these
-    callback && callback(error);
+    if (callback && typeof callback === 'function') {
+      callback(error);
+    }
   });
 };
