@@ -486,68 +486,7 @@ router.get('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/:type.png', function (req, res) {
-  res.type('image/png');
-  var types = ['cumulative', 'daily'],
-    file,
-    target;
-  if (_.indexOf(types, req.params.type) < 0 ) {
-    return res.status(404).end();
-  }
-
-  function serveImage(err, image) {
-    if (err) {
-      console.log(err);
-      return res.status(500).end();
-    }
-    return res.send(image).end();
-  }
-
-  function createImage(err, data) {
-    if (err) {
-      console.log(err);
-      return res.status(500).end();
-    }
-
-    var settings = _.defaults({}, {
-        chartType: req.params.type
-      }, anon.settings),
-      chart = serverExport.buildChart(target, target.unit, settings, data);
-
-    if (serverExport.isSame(file, chart)) {
-      return res.sendFile(file);
-    }
-
-    serverExport.generateImage(file,
-      chart,
-      serveImage
-    );
-  }
-
-  models.Target.findOne({
-    where: {
-      id: req.params.id
-    },
-    attributes: ['id', 'name', 'public']
-  }).then(function (t) {
-    if (!t || !t.public) {
-      return res.status(404).end();
-    }
-
-    target = t;
-
-    file = path.join(config.imagesdir, 'charts', 'targets', req.params.id + '_' + req.params.type + '.png');
-
-    if (serverExport.isFresh(file)) {
-      return res.sendFile(file, {
-        maxAge: 5 * 36e5 // 5 hours
-      });
-    }
-
-    chartData(req, createImage);
-
-  });
-});
+router.get('/:id/:type.png', serverExport.middleware('Target', chartData));
 
 router.get('/:id/data.json', function (req, res) {
   chartData(req, function (err, data) {

@@ -2,13 +2,19 @@ module.exports.generateImage = generateImage;
 module.exports.buildChart = buildChart;
 module.exports.isFresh = isFresh;
 module.exports.isSame = isSame;
+module.exports.middleware = middleware;
 
 var http = require('http'),
   fs = require('fs'),
   path = require('path'),
   qs = require('querystring'),
   moment = require('moment'),
+  _ = require('lodash'),
+  env = process.env.NODE_ENV || 'development',
+  config = require('../../config/config')[env],
+  models = require('../../models'),
   mkdirp = require('../functions/mkdirp'),
+  anon = require('../data/anonuser'),
   chart = require('../../public/scripts/chart');
 
 function generateImage(file, data, callback) {
@@ -95,4 +101,71 @@ function isSame(file, data) {
     fs.utimes(file, now, now);
   }
   return same;
+}
+
+function middleware(model, chartData) {
+  var dir = model.toLowerCase() + 's';
+
+  return function (req, res) {
+    res.type('image/png');
+    var types = ['cumulative', 'daily'],
+      file,
+      object;
+    if (_.indexOf(types, req.params.type) < 0) {
+      return res.status(404).end();
+    }
+
+    function serveImage(err, image) {
+      if (err) {
+        console.log(err);
+        return res.status(500).end();
+      }
+      return res.send(image).end();
+    }
+
+    function createImage(err, data) {
+      if (err) {
+        console.log(err);
+        return res.status(500).end();
+      }
+
+      var settings = _.defaults({}, {
+          chartType: req.params.type
+        }, anon.settings),
+        chart = buildChart(object, object.unit, settings, data);
+
+      if (isSame(file, chart)) {
+        return res.sendFile(file);
+      }
+
+      generateImage(file,
+        chart,
+        serveImage
+      );
+    }
+
+    models[model].findOne({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id', 'name', 'public']
+    }).then(function (o) {
+      if (!o || !o.public) {
+        return res.status(404).end();
+      }
+
+      object = o;
+
+      file = path.join(config.imagesdir, 'charts', dir, req.params.id + '_' + req.params.type + '.png');
+
+      if (isFresh(file)) {
+        return res.sendFile(file, {
+          maxAge: 5 * 36e5 // 5 hours
+        });
+      }
+
+      chartData(req, createImage);
+
+    });
+  };
 }
