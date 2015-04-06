@@ -78,7 +78,7 @@ function isFresh(file) {
 }
 
 function isSame(file, data) {
-  var storedData;
+  var storedData, same;
 
   try {
     storedData = fs.readFileSync(file + '.json', {encoding: 'utf8'});
@@ -89,5 +89,11 @@ function isSame(file, data) {
     throw e;
   }
 
-  return storedData === JSON.stringify(data);
+  same = storedData === JSON.stringify(data);
+
+  if (same) {
+    var now = new Date();
+    fs.utimes(file, now, now);
+  }
+  return same;
 }

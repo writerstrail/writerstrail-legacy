@@ -472,6 +472,10 @@ router.get('/:id/:type.png', function (req, res) {
       }, anon.settings),
       chart = serverExport.buildChart(project, null, settings, data);
 
+    if (serverExport.isSame(file, chart)) {
+      return res.sendFile(file);
+    }
+
     serverExport.generateImage(file,
       chart,
       serveImage
