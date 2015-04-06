@@ -491,7 +491,7 @@ router.get('/:id/:type.png', function (req, res) {
     where: {
       id: req.params.id
     },
-    attributes: ['id', 'public']
+    attributes: ['id', 'name', 'public']
   }).then(function (p) {
     if (!p || !p.public) {
       return res.status(404).end();
