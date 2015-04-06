@@ -12,12 +12,15 @@ var express = require('express'),
   csrf = require('csurf'),
   paginate = require('express-paginate'),
   moment = require('moment'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  mkdirp = require('./utils/functions/mkdirp');
 
 var app = express();
 
 var env = process.env.NODE_ENV || "development";
 var config = require('./config/config.js')[env];
+
+mkdirp(config.imagesdir);
 
 // create session store
 var sessionStore = new MysqlStore({
