@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  path = require('path'),
   moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
@@ -7,6 +8,7 @@ var router = require('express').Router(),
   chunk = require('../../utils/functions/chunk'),
   numerictrim = require('../../utils/functions/numerictrim'),
   filterIds = require('../../utils/functions/filterids'),
+  serverExport = require('../../utils/chart-export/server-export'),
   anon = require('../../utils/data/anonuser');
 
 router.get('/', isactivated, sendflash, function (req, res, next) {
@@ -335,6 +337,28 @@ router.get('/:id', sendflash, function (req, res, next) {
     
   }).catch(function (err) {
     next(err);
+  });
+});
+
+router.get('/:id/chart.png', function (req, res, next) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id
+    },
+    attributes: ['id', 'public']
+  }).then(function (project) {
+    if (!project || !project.public) {
+      return res.status(404).end();
+    }
+
+    serverExport.generateImage(path.join(process.cwd(), 'generated', 'images', 'charts', 'projects', req.params.id + '.png'),
+    require('../../utils/chart-export/chart1.json'),
+      function (err, image) {
+        if (err) { return next(err); }
+        return res.type('image/png').send(image).end();
+      }
+    );
+
   });
 });
 

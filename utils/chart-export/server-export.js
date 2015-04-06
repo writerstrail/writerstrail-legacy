@@ -1,7 +1,6 @@
 module.exports.generateImage = generateImage;
 
 var http = require('http'),
-  path = require('path'),
   fs = require('fs'),
   qs = require('querystring');
 
@@ -25,7 +24,10 @@ function generateImage(file, data, callback) {
       buffer.push(chunk);
     });
     res.on('end', function () {
-      fs.writeFile(file, Buffer.concat(buffer), callback);
+      fs.writeFile(file, Buffer.concat(buffer), function (err) {
+        if (err) { return callback(err); }
+        return callback(null, Buffer.concat(buffer));
+      });
     });
   });
 
