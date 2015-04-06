@@ -193,6 +193,10 @@ WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, 
       shared: true,
       valueSuffix: ' words'
     },
+    credits: {
+      text: 'Writer\'s Trail',
+      href: 'http://writerstrail.georgemarques.com.br'
+    },
     xAxis: {
       type: 'datetime',
       startOnTick: false,
