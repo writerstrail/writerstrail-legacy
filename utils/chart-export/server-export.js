@@ -1,8 +1,10 @@
 module.exports.generateImage = generateImage;
+module.exports.buildChart = buildChart;
 
 var http = require('http'),
   fs = require('fs'),
-  qs = require('querystring');
+  qs = require('querystring'),
+  chart = require('../../public/scripts/chart');
 
 function generateImage(file, data, callback) {
 
@@ -39,4 +41,12 @@ function generateImage(file, data, callback) {
     filename: 'chart.png',
     width: 1000
   }));
+}
+
+function buildChart(object, unit, settings, data) {
+  var isAcc = settings.chartType === 'cumulative',
+    series = chart.buildMeta(data, isAcc, settings.showRemaining, settings.showAdjusted, unit);
+
+  return chart.chartOptions(series, settings.chartType, settings.showRemaining,
+    settings.showAdjusted, unit, object.name);
 }
