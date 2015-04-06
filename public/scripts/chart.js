@@ -235,6 +235,7 @@ WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, 
         title: {
           text: 'Word count'
         },
+        gridLineWidth: unit === 'char' ? 0 : 1,
         floor: 0,
         min: 0
       },
@@ -243,7 +244,7 @@ WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, 
           text: 'Character count'
         },
         opposite: true,
-        gridLineWidth: 0,
+        gridLineWidth: unit === 'char' ? 1 : 0,
         floor: 0,
         min: 0
       }
