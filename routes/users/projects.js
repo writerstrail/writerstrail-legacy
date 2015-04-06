@@ -66,7 +66,11 @@ function chartData(req, callback) {
       accessible = true;
     }
 
-    sessions = accessible ? sessions : [];
+    if (!accessible) {
+      var err = new Error('Not Found');
+      err.code = 404;
+      return callback(err, {error: err.message});
+    }
 
     var daysRange = [];
     var daily = [], dailyChar = [];
@@ -111,6 +115,7 @@ function chartData(req, callback) {
     };
     callback(null, result);
   }).catch(function (err) {
+    err.code = 500;
     callback(err, {error: err.message});
   });
 }
@@ -511,6 +516,7 @@ router.get('/:id/data.json', function (req, res) {
   chartData(req, function (err, data) {
     if (err) {
       console.log(err);
+      res.status(err.code);
     }
     res.json(data).end();
   });

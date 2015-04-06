@@ -15,6 +15,112 @@ var router = require('express').Router(),
   },
   anon = require('../../utils/data/anonuser');
 
+function chartData(req, callback) {
+  var user = req.user || anon;
+
+  models.Target.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: [{
+      model: models.Project,
+      as: 'projects',
+      order: [['name', 'ASC']],
+      include: [{
+        model: models.Session,
+        as: 'sessions',
+        required: false,
+        where: {
+          start: {
+            between: [
+              models.Sequelize.literal('`Target`.`start`'),
+              models.Sequelize.literal('`Target`.`end`')
+            ]
+          },
+          deletedAt: null
+        },
+        order: [['start', 'DESC']]
+      }]
+    }]
+  }).then(function (target) {
+    var accessible = false;
+
+    if (target && (target.ownerId === user.id || target.public)) {
+      accessible = true;
+    }
+
+    if (!accessible) {
+      var err = new Error('Not Found');
+      err.code = 404;
+      return callback(err, {error: err.message});
+    }
+
+    var allSessions = _.reduce(target.projects, function (acc, project) {
+      _.forEach(project.sessions, function (sess) {
+        acc.push(sess);
+      });
+      return acc;
+    }, []);
+
+    var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
+    var daysRange = [];
+    var daily = [];
+    var count = [], accWc = 0;
+    var targetAcc = [], accTgt = 0;
+    var dailytarget = [];
+    var pondDailyTarget = [];
+    var remaining = [];
+
+    var a = _.groupBy(allSessions, function (sess) { return moment.utc(sess.dataValues.start).format('YYYY-MM-DD'); });
+
+    for (var i = 1; i <= totalDays; i++) {
+      var workingDate = moment.utc(target.start).add(i - 1, 'days');
+      var today = workingDate.format('YYYY-MM-DD');
+      var diffWc = target.count - accWc;
+      var diffDays = totalDays - i + 1;
+      var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
+      pondDailyTarget.push(Math.max(0, pondTarget));
+      daysRange.push(today);
+      if (a[today]) {
+        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues[target.unit + 'count']; }, 0);
+        accWc += todayWc;
+        daily.push(todayWc);
+      } else {
+        daily.push(0);
+      }
+      if (moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
+        count.push(accWc);
+      } else {
+        count.push(null);
+      }
+      var incTarget = Math.floor(target.count / totalDays) + (target.count % totalDays < i ? 0 : 1);
+      dailytarget.push(incTarget);
+      accTgt += incTarget;
+      targetAcc.push(accTgt);
+      remaining.push(Math.max(0, target.count - accWc));
+    }
+
+    var result = {
+      date: daysRange
+    };
+    result[target.unit + 'count'] = count;
+    result[target.unit + 'daily'] = daily;
+
+    if (target.count !== null) {
+      result[target.unit + 'target'] = targetAcc;
+      result[target.unit + 'dailytarget'] = dailytarget;
+      result[target.unit + 'adjusteddailytarget'] = pondDailyTarget;
+      result[target.unit + 'remaining'] = remaining;
+    }
+    callback(null, result);
+  }).catch(function (err) {
+    err.code = 500;
+    callback(err, {
+      error: err.message
+    });
+  });
+}
+
 router.use('*', function (req, res, next) {
   res.locals.targetunits = targetunits;
   next();
@@ -377,104 +483,12 @@ router.get('/:id', sendflash, function (req, res, next) {
 });
 
 router.get('/:id/data.json', function (req, res) {
-  if (!req.user) {
-    req.user = anon;
-  }
-  models.Target.findOne({
-    where: {
-      id: req.params.id
-    },
-    include: [{
-      model: models.Project,
-      as: 'projects',
-      order: [['name', 'ASC']],
-      include: [{
-        model: models.Session,
-        as: 'sessions',
-        required: false,
-        where: {
-          start: {
-            between: [
-             models.Sequelize.literal('`Target`.`start`'),
-             models.Sequelize.literal('`Target`.`end`')
-            ]
-          },
-          deletedAt: null
-        },
-        order: [['start', 'DESC']]
-      }]
-    }]
-  }).then(function (target) {
-    res.type('application/json');
-    var accessible = false;
-
-    if (target && (target.ownerId === req.user.id || target.public)) {
-      accessible = true;
+  chartData(req, function (err, data) {
+    if (err) {
+      console.log(err);
+      res.status(err.code);
     }
-
-    if (!accessible) {
-      return res.status(404).send('{"Error":"Not found"}').end();
-    }
-
-
-    var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
-    var daysRange = [];
-    var daily = [];
-    var count = [], accWc = 0;
-    var targetAcc = [], accTgt = 0;
-    var dailytarget = [];
-    var pondDailyTarget = [];
-    var remaining = [];
-    
-    var allSessions = _.reduce(target.projects, function (acc, project) { 
-      _.forEach(project.sessions, function (sess) {
-        acc.push(sess);
-      });
-      return acc;
-    }, []);
-    
-    var a = _.groupBy(allSessions, function (sess) { return moment.utc(sess.dataValues.start).format('YYYY-MM-DD'); });
-    
-    for (var i = 1; i <= totalDays; i++) {
-      var workingDate = moment.utc(target.start).add(i - 1, 'days');
-      var today = workingDate.format('YYYY-MM-DD');
-      var diffWc = target.count - accWc;
-      var diffDays = totalDays - i + 1;
-      var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
-      pondDailyTarget.push(Math.max(0, pondTarget));
-      daysRange.push(today);
-      if (a[today]) {
-        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues[target.unit + 'count']; }, 0);
-        accWc += todayWc;
-        daily.push(todayWc);
-      } else {
-        daily.push(0);
-      }
-      if (moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
-        count.push(accWc);
-      } else {
-        count.push(null);
-      }
-      var incTarget = Math.floor(target.count / totalDays) + (target.count % totalDays < i ? 0 : 1);
-      dailytarget.push(incTarget);
-      accTgt += incTarget;
-      targetAcc.push(accTgt);
-      remaining.push(Math.max(0, target.count - accWc));
-    }
-    
-    var result = {
-      date: daysRange
-    };
-    result[target.unit + 'count'] = count;
-    result[target.unit + 'daily'] = daily;
-
-    if (target.count !== null) {
-      result[target.unit + 'target'] = targetAcc;
-      result[target.unit + 'dailytarget'] = dailytarget;
-      result[target.unit + 'adjusteddailytarget'] = pondDailyTarget;
-      result[target.unit + 'remaining'] = remaining;
-    }
-    res.json(result).end();
+    res.json(data).end();
   });
 });
 
