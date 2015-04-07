@@ -17,7 +17,8 @@ var http = require('http'),
   models = require('../../models'),
   mkdirp = require('../functions/mkdirp'),
   anon = require('../data/anonuser'),
-  chart = require('../../public/scripts/chart');
+  chart = require('../../public/scripts/chart'),
+  options = require('../../public/scripts/highcharts-init').options;
 
 function generateImage(file, data, callback) {
 
@@ -65,8 +66,8 @@ function buildChart(object, unit, settings, data) {
   var isAcc = settings.chartType === 'cumulative',
     series = chart.buildMeta(data, isAcc, settings.showRemaining, settings.showAdjusted, unit, true);
 
-  return chart.chartOptions(series, settings.chartType, settings.showRemaining,
-    settings.showAdjusted, unit, object.name);
+  return _.defaults({}, options, chart.chartOptions(series, settings.chartType, settings.showRemaining,
+    settings.showAdjusted, unit, object.name));
 }
 
 function isFresh(file) {
