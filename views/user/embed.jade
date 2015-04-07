@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    if process.env.NODE_ENV === 'production'
+      include ../includes/ga
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title!= (title ? title + ' &raquo; ' : '') + 'Writer\'s Trail'
+    link(rel="shortcut icon" type="image/png" href="/favicon.png")
+    link(rel='stylesheet', href='/stylesheets/embed.css')
+  body
+    #chart
+    script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
+    script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
+    script(type='text/javascript', src='/vendor/highcharts/exporting.js')
+    script(type='text/javascript', src='/scripts/chart.js')
+    script.
+      var link = '!{datalink}';
+      window.linkChart(link, jQuery, Highcharts, '!{options.chartType}', !{options.showRemaining},
+              !{options.showAdjusted}, #{object.unit || 'null'}, '<a href="#{objectlink}" target="_blank">#{object.name}</a>');
