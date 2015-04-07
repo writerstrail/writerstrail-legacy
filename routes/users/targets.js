@@ -1,10 +1,7 @@
 var router = require('express').Router(),
   _ = require('lodash'),
-  path = require('path'),
   moment = require('moment'),
   promise = require('sequelize').Promise,
-  env = process.env.NODE_ENV || 'development',
-  config = require('../../config/config')[env],
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
@@ -77,6 +74,10 @@ function chartData(req, callback) {
 
     var a = _.groupBy(allSessions, function (sess) { return moment.utc(sess.dataValues.start).format('YYYY-MM-DD'); });
 
+    function groupDaySessions(wc, sess) {
+      return wc + sess.dataValues[target.unit + 'count'];
+    }
+
     for (var i = 1; i <= totalDays; i++) {
       var workingDate = moment.utc(target.start).add(i - 1, 'days');
       var today = workingDate.format('YYYY-MM-DD');
@@ -86,7 +87,7 @@ function chartData(req, callback) {
       pondDailyTarget.push(Math.max(0, pondTarget));
       daysRange.push(today);
       if (a[today]) {
-        var todayWc = _.reduce(a[today], function (wc, sess) { return wc + sess.dataValues[target.unit + 'count']; }, 0);
+        var todayWc = _.reduce(a[today], groupDaySessions, 0);
         accWc += todayWc;
         daily.push(todayWc);
       } else {
@@ -479,7 +480,14 @@ router.get('/:id', sendflash, function (req, res, next) {
     res.render('user/targets/single', {
       title: target.name + ' target',
       section: 'targetsingle',
-      target: target
+      target: target,
+      socialMeta: {
+        title: target.name,
+        description: target.description || 'A writing target in Writer\'s Trail.',
+        image: '/targets/' + target.id + '/cumulative.png',
+        type: 'target',
+        url: '/targets/' + target.id
+      }
     });
   }).catch(function (err) {
     next(err);

@@ -439,7 +439,14 @@ router.get('/:id', sendflash, function (req, res, next) {
     res.render('user/projects/single', {
       title: project.name + ' project',
       section: 'projectsingle',
-      project: project
+      project: project,
+      socialMeta: {
+        title: project.name,
+        description: project.description || 'A writing project in Writer\'s Trail.',
+        image: '/projects/' + project.id + '/daily.png',
+        type: 'project',
+        url: '/projects/' + project.id
+      }
     });
     
   }).catch(function (err) {

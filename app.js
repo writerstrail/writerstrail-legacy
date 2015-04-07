@@ -100,6 +100,8 @@ app.use(function (req, res, next) {
 
   res.locals._ = _;
   res.locals.moment = moment;
+  res.locals.baseurl = config.baseurl;
+  res.locals.fbnamespace = config.facebook.namespace;
   next();
 });
 
