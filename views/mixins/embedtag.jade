@@ -1,0 +1,22 @@
+mixin embedtag(base, id)
+  div#embedtag(style='display: none')
+    p
+    p: strong To embed on your site or blog, paste the following code:
+    input.form-control(type='text' readonly=true
+      value='<iframe src="' + baseurl + '/' + base + '/embed/' + id + '" width="100%" height="400" frameborder="0"></iframe>')
+  script.
+    window.setInterval(function () {
+      var $embed = $('#embedtag');
+      $embed.children('input').on('focus', function () {
+        this.select();
+      });
+      $('#embedbutton')
+        .on('click', function () {
+          var $this = $(this);
+          if ($this.hasClass('active')) {
+            $embed.hide();
+          } else {
+            $embed.show();
+          }
+      });
+    }, 10);
