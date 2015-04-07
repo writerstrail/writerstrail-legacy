@@ -2,6 +2,7 @@ extends ../../layout
 
 block content
   include ../../mixins/progressbar
+  include ../../mixins/embedtag
   - var isOwner = project.ownerId === user.id
   if project.public && isOwner
     .alert.alert-warning
@@ -39,15 +40,19 @@ block content
         #chart
         .text-center
           button#target-change.btn.btn-default(type='button') Show as daily writing
-    if isOwner && project.public
+    if project.public
       ul.list-group
         li.list-group-item
+          button#embedbutton.btn.btn-default(type='button' data-toggle='button' aria-pressed='false' autocomplete='off')
+            | Embed chart
+          | &#x0020;
           a.btn.btn-default(href='/projects/' + project.id + '/daily.png' target='_blank') Daily writing image
           | &#x0020;
           a.btn.btn-default(href='/projects/' + project.id + '/cumulative.png' target='_blank') Cumulative writing image
-          | &#x0020;
-          button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
-
+          if isOwner
+            | &#x0020;
+            button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
+          +embedtag('projects', project.id)
 
   ul.list-group
     li.list-group-item
@@ -146,6 +151,7 @@ append scripts
   script(type='text/javascript', src='/bower_components/bootstrap-daterangepicker/daterangepicker.js')
   script(type='text/javascript', src='/vendor/highcharts/highcharts.js')
   script(type='text/javascript', src='/vendor/highcharts/exporting.js')
+  script(type='text/javascript', src='/scripts/highcharts-init.js')
   script(type='text/javascript', src='/scripts/chart.js')
   script(type='text/javascript', src='/scripts/range.js')
   script.

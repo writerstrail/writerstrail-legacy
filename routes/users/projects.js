@@ -1,7 +1,5 @@
 var router = require('express').Router(),
-  path = require('path'),
   moment = require('moment'),
-  _ = require('lodash'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
@@ -246,6 +244,32 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
     }).catch(function (err) {
       next(err);
     });
+  });
+});
+
+router.get('/embed/:id', function (req, res, next) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      "public": true
+    }
+  }).then(function (project) {
+    if (!project) {
+      return next();
+    }
+    res.render('user/embed', {
+      title: 'Project ' + project.name,
+      object: project,
+      options: {
+        chartType: 'daily',
+        showRemaining: false,
+        showAdjusted: false
+      },
+      datalink: '/projects/' + project.id + '/data.json',
+      objectlink: '/projects/' + project.id
+    });
+  }).catch(function (err) {
+    next(err);
   });
 });
 
