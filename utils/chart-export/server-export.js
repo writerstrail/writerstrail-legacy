@@ -4,6 +4,7 @@ module.exports.isFresh = isFresh;
 module.exports.isSame = isSame;
 module.exports.middleware = middleware;
 module.exports.deleteImage = deleteImage;
+module.exports.deleteImageMiddleware = deleteImageMiddleware;
 
 var http = require('http'),
   fs = require('fs'),
@@ -204,4 +205,37 @@ function deleteImage(model, id, callback) {
       callback();
     }
   }));
+}
+
+function deleteImageMiddleware(model) {
+  return function (req, res) {
+    models[model].findOne({
+      where: {
+        id: req.params.id,
+        ownerId: req.user.id
+      }
+    }).then(function (object) {
+      if (object) {
+        deleteImage(model, req.params.id, function (err) {
+          if (err) {
+            res.status(500).json({
+              error: 'Couldn\'t delete ' + err.length + ' of 2 images.'
+            });
+          } else {
+            res.status(200).json({
+              msg: 'Images successfully deleted.'
+            });
+          }
+        });
+      } else {
+        res.status(404).json({
+          error: 'Not Found'
+        });
+      }
+    }).catch(function () {
+      res.status(500).json({
+        error: 'Database error'
+      });
+    });
+  };
 }

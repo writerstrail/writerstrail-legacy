@@ -155,7 +155,7 @@ append scripts
     }
     build(link);
     chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build);
-    window.deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
+    deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
     
   if user.settings.showTour
     script

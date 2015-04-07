@@ -87,6 +87,14 @@ block content
         #chart
         .text-center
           button#target-change.btn.btn-default(type='button') Show as daily writing
+      if isOwner && target.public
+        ul.list-group
+          li.list-group-item
+            a.btn.btn-default(href='/targets/' + target.id + '/daily.png' target='_blank') Daily writing image
+            | &#x0020;
+            a.btn.btn-default(href='/targets/' + target.id + '/cumulative.png' target='_blank') Cumulative writing image
+            | &#x0020;
+            button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
   ul.list-group
     li.list-group-item
       .row
@@ -198,6 +206,7 @@ append scripts
   script(type='text/javascript').
     targetChart(#{target.id}, jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
             !{user.settings.showAdjusted}, '#{target.unit}', '#{target.name}');
+    deleteImageSetup(jQuery, '/targets/#{target.id}/deleteImage');
   if user.settings.showTour
     script
       | tour(jQuery, hopscotch, range(41, 42));

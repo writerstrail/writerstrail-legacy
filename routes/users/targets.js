@@ -488,6 +488,8 @@ router.get('/:id', sendflash, function (req, res, next) {
 
 router.get('/:id/:type.png', serverExport.middleware('Target', chartData));
 
+router.get('/:id/deleteImage', isactivated, serverExport.deleteImageMiddleware('Target'));
+
 router.get('/:id/data.json', function (req, res) {
   chartData(req, function (err, data) {
     if (err) {

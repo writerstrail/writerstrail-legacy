@@ -449,36 +449,7 @@ router.get('/:id', sendflash, function (req, res, next) {
 
 router.get('/:id/:type.png', serverExport.middleware('Project', chartData));
 
-router.get('/:id/deleteImage', isactivated, function (req, res) {
-  models.Project.findOne({
-    where: {
-      id: req.params.id,
-      ownerId: req.user.id
-    }
-  }).then(function (project) {
-    if (project) {
-      serverExport.deleteImage('Project', req.params.id, function (err) {
-        if (err) {
-          res.status(500).json({
-            error: 'Couldn\'t delete ' + err.length + ' of 2 images.'
-          });
-        } else {
-          res.status(200).json({
-            msg: 'Images successfully deleted.'
-          });
-        }
-      });
-    } else {
-      res.status(404).json({
-        error: 'Not Found'
-      });
-    }
-  }).catch(function () {
-    res.status(500).json({
-      error: 'Database error'
-    });
-  });
-});
+router.get('/:id/deleteImage', isactivated, serverExport.deleteImageMiddleware('Project'));
 
 router.get('/:id/data.json', function (req, res) {
   chartData(req, function (err, data) {
