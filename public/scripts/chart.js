@@ -1,4 +1,14 @@
-window.startFromDate = function (date) {
+/* globals exports, window */
+
+var WTChart;
+
+if (typeof window === 'undefined' && typeof exports !== 'undefined') {
+  WTChart = exports;
+} else {
+  WTChart = window;
+}
+
+WTChart.startFromDate = function (date) {
   var pieces = date.split('-').map(function (i) {
     return parseInt(i, 10);
   }), result;
@@ -7,9 +17,12 @@ window.startFromDate = function (date) {
   return result;
 };
 
-window.joinMeta = function (data, meta) {
+WTChart.joinMeta = function (data, meta) {
   var series = [];
   for (var key in data) {
+    if (!data.hasOwnProperty(key)) {
+      continue;
+    }
     var serie = {
       data: data[key],
       id: key
@@ -17,7 +30,9 @@ window.joinMeta = function (data, meta) {
 
     if (meta[key]) {
       for (var info in meta[key]) {
-        serie[info] = meta[key][info];
+        if (meta[key].hasOwnProperty(info)) {
+          serie[info] = meta[key][info];
+        }
       }
       series.push(serie);
     }
@@ -25,13 +40,15 @@ window.joinMeta = function (data, meta) {
   return series;
 };
 
-window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
-  var start = window.startFromDate(data.date[0]),
+WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
+  var start = WTChart.startFromDate(data.date[0]),
+      showLegend = !isExport,
       meta = {
         wordcount: {
           name: 'Word count',
           color: '#674732',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -40,6 +57,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           name: 'Character count',
           color: unit ? '#674732' : '#1F77B4',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -51,6 +69,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           name: 'Daily writing',
           color: '#FF9E49',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -59,6 +78,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           name: 'Daily characters',
           color:  unit ? '#FF9E49' : '#2CA02C',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -71,6 +91,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9e9e9e',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -80,6 +101,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9e9e9e',
           visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -92,6 +114,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#2ca02c',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -101,6 +124,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#2ca02c',
           visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -113,6 +137,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9467bd',
           visible: showAdj,
+          showInLegend: showAdj || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -122,6 +147,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#9467bd',
           visible: showAdj,
+          showInLegend: showAdj || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -134,6 +160,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#D62728',
           visible: showRem,
+          showInLegend: showRem || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -143,6 +170,7 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           type: 'line',
           color: '#D62728',
           visible: showRem,
+          showInLegend: showRem || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -151,16 +179,14 @@ window.buildMeta = function (data, isAcc, showRem, showAdj, unit) {
           pointInterval: 24 * 3600000
         }
       };
-  return window.joinMeta(data, meta);
+  return WTChart.joinMeta(data, meta);
 };
 
-window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
-  link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
-
+WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, unit, title) {
   var now = new Date(),
     today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
 
-  var options = {
+  return {
     chart: {
       renderTo: 'chart',
       type: 'column',
@@ -179,6 +205,10 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
       crosshairs: [true, true],
       shared: true,
       valueSuffix: ' words'
+    },
+    credits: {
+      text: 'Writer\'s Trail',
+      href: 'http://writerstrail.georgemarques.com.br'
     },
     xAxis: {
       type: 'datetime',
@@ -205,6 +235,7 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
         title: {
           text: 'Word count'
         },
+        gridLineWidth: unit === 'char' ? 0 : 1,
         floor: 0,
         min: 0
       },
@@ -213,58 +244,92 @@ window.chart2 = function chart2(link, $, Highcharts, chartType, showRem, showAdj
           text: 'Character count'
         },
         opposite: true,
-        gridLineWidth: 0,
+        gridLineWidth: unit === 'char' ? 1 : 0,
         floor: 0,
         min: 0
       }
     ],
-    series: []
-  },
-      chart,
-      isAcc = chartType === 'cumulative';
-
-  $.getJSON(link, function (data) {
-    options.series = window.buildMeta(data, isAcc, showRem, showAdjusted, unit);
-    chart = new Highcharts.Chart(options);
-  });
-
-  $('#target-change')
-      .data('acc', isAcc)
-      .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
-      .click(function () {
-        var self = $(this),
-            ifAcc = ['wordcount', 'charcount', 'wordtarget', 'chartarget'],
-            noAcc = ['worddaily', 'chardaily', 'worddailytarget', 'chardailytarget'];
-
-        function doSeries(id, func) {
-          var ser = chart.get(id);
-          if (ser) {
-            ser[func]();
-          }
-        }
-
-        function hide (id) {
-          doSeries(id, 'hide');
-        }
-
-        function show(id) {
-          doSeries(id, 'show');
-        }
-
-        if (self.data('acc')) {
-          self.html('Show as cumulative count');
-          ifAcc.forEach(hide);
-          noAcc.forEach(show);
-          self.data('acc', false);
-        } else {
-          self.html('Show as daily writing');
-          noAcc.forEach(hide);
-          ifAcc.forEach(show);
-          self.data('acc', true);
-        }
-      });
+    series: series
+  };
 };
 
-window.targetChart = function (targetId, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
-  window.chart2('/targets/' + targetId + '/data.json', $, Highcharts, chartType, showRem, showAdjusted, unit, title);
+WTChart.bindButton = function ($, chartType) {
+  var isAcc = chartType === 'cumulative';
+
+  $('#target-change')
+    .data('acc', isAcc)
+    .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
+    .click(function () {
+      var self = $(this),
+        ifAcc = ['wordcount', 'charcount', 'wordtarget', 'chartarget'],
+        noAcc = ['worddaily', 'chardaily', 'worddailytarget', 'chardailytarget'];
+
+      function doSeries(id, func) {
+        var ser = $('#chart').highcharts().get(id);
+        if (ser) {
+          ser[func]();
+        }
+      }
+
+      function hide (id) {
+        doSeries(id, 'hide');
+      }
+
+      function show(id) {
+        doSeries(id, 'show');
+      }
+
+      if (self.data('acc')) {
+        self.html('Show as cumulative count');
+        ifAcc.forEach(hide);
+        noAcc.forEach(show);
+        self.data('acc', false);
+      } else {
+        self.html('Show as daily writing');
+        noAcc.forEach(hide);
+        ifAcc.forEach(show);
+        self.data('acc', true);
+      }
+    });
+};
+
+WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
+  var isAcc = chartType === 'cumulative';
+  link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
+  $.getJSON(link, function (data) {
+    var series = WTChart.buildMeta(data, isAcc, showRem, showAdjusted, unit);
+    WTChart.chart(series, $, Highcharts, chartType, showRem, showAdjusted, unit, title);
+  });
+};
+
+WTChart.targetChart = function (targetId, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
+  WTChart.linkChart('/targets/' + targetId + '/data.json', $, Highcharts, chartType, showRem, showAdjusted, unit, title);
+};
+
+WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
+  var options = WTChart.chartOptions(series, chartType, showRem, showAdjusted, unit, title);
+  new Highcharts.Chart(options, function () {
+    WTChart.bindButton($, chartType);
+  });
+};
+
+WTChart.deleteImageSetup = function ($, link) {
+  $('#deleteimages').click(function () {
+    var $alert = $('<div class="alert alert-dismissable" role="alert">' +
+    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+    '<span aria-hidden="true">&times;</span>' +
+    '</button>' +
+    '<span class="alert-content"></span>' +
+    '</div>');
+    $.getJSON(link)
+      .done(function (data) {
+        $alert.addClass('alert-success').children('.alert-content').html(data.msg);
+        $('#alerts').append($alert);
+      })
+      .fail(function (response) {
+        var data = response.responseJSON;
+        $alert.addClass('alert-danger').children('.alert-content').html(data.error);
+        $('#alerts').append($alert);
+      });
+  });
 };

@@ -39,6 +39,15 @@ block content
         #chart
         .text-center
           button#target-change.btn.btn-default(type='button') Show as daily writing
+    if isOwner && project.public
+      ul.list-group
+        li.list-group-item
+          a.btn.btn-default(href='/projects/' + project.id + '/daily.png' target='_blank') Daily writing image
+          | &#x0020;
+          a.btn.btn-default(href='/projects/' + project.id + '/cumulative.png' target='_blank') Cumulative writing image
+          | &#x0020;
+          button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
+
 
   ul.list-group
     li.list-group-item
@@ -95,7 +104,7 @@ block content
         .col-md-2.text-right
           strong Included in targets:
         .col-md-10
-          - var targetList = isOwner ? project.targets : _.filter(project.targets, {public: true})
+          - var targetList = isOwner ? project.targets : _.filter(project.targets, {'public': true})
           if targetList.length === 0
             | None
           else
@@ -142,10 +151,11 @@ append scripts
   script.
     var link = '/projects/#{project.id}/data.json';
     function build(link) {
-      chart2(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
+      window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
     }
     build(link);
     chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build);
+    deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
     
   if user.settings.showTour
     script
