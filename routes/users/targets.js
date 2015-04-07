@@ -483,7 +483,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       target: target,
       socialMeta: {
         title: target.name,
-        description: target.description || 'A writing target in Writer\'s Trail.',
+        description: target.notes || 'A writing target in Writer\'s Trail.',
         image: '/targets/' + target.id + '/cumulative.png',
         type: 'target',
         url: '/targets/' + target.id
