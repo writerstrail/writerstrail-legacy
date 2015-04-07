@@ -17,4 +17,4 @@ html
     script.
       var link = '!{datalink}';
       window.linkChart(link, jQuery, Highcharts, '!{options.chartType}', !{options.showRemaining},
-              !{options.showAdjusted}, #{object.unit || 'null'}, '<a href="#{objectlink}" target="_blank">#{object.name}</a>');
+              !{options.showAdjusted}, #{object.unit ? "'" + object.unit + "'" : 'null'}, '<a href="#{objectlink}" target="_blank">#{object.name}</a>');

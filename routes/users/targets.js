@@ -292,6 +292,47 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
   });
 });
 
+router.get('/embed/:id', function (req, res, next) {
+  models.Target.findOne({
+    where: {
+      id: req.params.id,
+      "public": true
+    },
+    include: [
+      {
+        model: models.User,
+        as: 'owner',
+        required: true,
+        include: [
+          {
+            model: models.Settings,
+            as: 'settings',
+            required: true
+          }
+        ]
+      }
+    ]
+  }).then(function (target) {
+    if (!target) {
+      return next();
+    }
+    var settings = target.owner.settings;
+    res.render('user/embed', {
+      title: 'Target ' + target.name,
+      object: target,
+      options: {
+        chartType: settings.chartType,
+        showRemaining: settings.showRemaining,
+        showAdjusted: settings.showAdjusted
+      },
+      datalink: '/targets/' + target.id + '/data.json',
+      objectlink: '/targets/' + target.id
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
 router.get('/:id/edit', isactivated, sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
