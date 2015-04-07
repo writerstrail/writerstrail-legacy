@@ -39,10 +39,15 @@ block content
         #chart
         .text-center
           button#target-change.btn.btn-default(type='button') Show as daily writing
-    if isOwner
+    if isOwner && project.public
       ul.list-group
         li.list-group-item
+          a.btn.btn-default(href='/projects/' + project.id + '/daily.png' target='_blank') Daily writing image
+          | &#x0020;
+          a.btn.btn-default(href='/projects/' + project.id + '/cumulative.png' target='_blank') Cumulative writing image
+          | &#x0020;
           button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
+
 
   ul.list-group
     li.list-group-item
