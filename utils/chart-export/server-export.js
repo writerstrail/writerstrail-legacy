@@ -57,7 +57,7 @@ function generateImage(file, data, callback) {
     options: JSON.stringify(data),
     type: 'image/png',
     filename: 'chart.png',
-    width: 1000
+    width: 1200
   }));
 }
 
