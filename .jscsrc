@@ -20,6 +20,8 @@
     "bower_components/**",
     "coverage/**",
     "scripts/**",
+    "public/scripts/*.min.js",
+    "public/scripts/*.map.js",
     "public/vendor/**",
     ".*/**"
   ]
