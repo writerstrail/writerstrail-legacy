@@ -125,3 +125,5 @@ module.exports =
     }
   }
 };
+
+module.exports.staging = module.exports.production;
