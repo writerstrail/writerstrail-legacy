@@ -74,10 +74,10 @@ app.use(session({
 }));
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(uglify(path.join(__dirname, 'public'), {
   generateSourceMap: env !== 'production'
 }));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 app.use(i18n.init);
 app.use(csrf());
