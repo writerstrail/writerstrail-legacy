@@ -5,6 +5,11 @@
       target: '_blank',
       text: 'Writer\'s Trail',
       href: 'http://writerstrail.georgemarques.com.br'
+    },
+    chart: {
+      zoomType: 'xy',
+      panning: true,
+      panKey: 'shift'
     }
   };
 
