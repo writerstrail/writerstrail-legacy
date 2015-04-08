@@ -29,6 +29,7 @@ describe('Target model', function () {
     Target.create({
       id: id,
       name: 'Test ok',
+      description: 'Description test',
       start: start.toDate(),
       end: end.toDate(),
       zoneOffset: -120,
@@ -57,6 +58,7 @@ describe('Target model', function () {
         
         expect(target).to.exist;
         expect(target).to.have.property('name', 'Test ok');
+        expect(target).to.have.property('description', 'Description test');
         expect(target).to.have.property('start').that.is.equalTime(validStart);
         expect(target).to.have.property('end').that.is.equalTime(validEnd);
         expect(target).to.have.property('zoneOffset', -120);
@@ -208,6 +210,62 @@ describe('Target model', function () {
         done(e);
       }
     });
+  });
+
+  it('should allow null description', function (done) {
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test null description',
+      description: null,
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'word',
+      notes: 'test notes',
+      public: false,
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (target) {
+      junk.push(target);
+      try {
+        expect(target).to.have.property('description', null);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(done);
+  });
+
+  it('should allow empty description', function (done) {
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test empty description',
+      description: '',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'word',
+      notes: 'test notes',
+      public: false,
+      ownerId: 1
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (target) {
+      junk.push(target);
+      try {
+        expect(target).to.have.property('description', '');
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(done);
   });
   
   it('should not allow zero target', function (done) {

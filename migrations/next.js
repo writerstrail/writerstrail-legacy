@@ -28,6 +28,13 @@ module.exports = {
           comment: 'User timezone offset in minutes'
         });
       })
+      .then(function () {
+        return migration.addColumn('targets', 'description', {
+          type: DataTypes.TEXT,
+          allowNull: true,
+          defaultValue: null
+        });
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
