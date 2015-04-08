@@ -116,10 +116,10 @@ module.exports = function (sequelize, DataTypes) {
             return project.increment({
               currentWordcount: session.wordcount,
               currentCharcount: session.charcount
-            }).then(function () {
+            }, { transaction: options.transaction }).then(function () {
               return project.updateAttributes({
                 zoneOffset: session.zoneOffset || 0
-              });
+              }, { transaction: options.transaction });
             });
           }).then(function () {
             done(null, session);
@@ -140,10 +140,10 @@ module.exports = function (sequelize, DataTypes) {
                 return project.increment({
                   currentWordcount: session.wordcount,
                   currentCharcount: session.charcount
-                }).then(function () {
+                }, { transaction: options.transaction }).then(function () {
                   return project.updateAttributes({
                     zoneOffset: session.zoneOffset || 0
-                  });
+                  }, { transaction: options.transaction });
                 });
               }));
             });
@@ -166,20 +166,20 @@ module.exports = function (sequelize, DataTypes) {
             return project.decrement({
               currentWordcount: session._previousDataValues.wordcount,
               currentCharcount: session._previousDataValues.charcount
-            }).then(function () {
+            }, { transaction: options.transaction }).then(function () {
               return project.updateAttributes({
                 zoneOffset: session.zoneOffset || 0
-              });
+              }, { transaction: options.transaction });
             });
           }));
           promises.push(models.Project.findOne(session.projectId).then(function (project) {
             return project.increment({
               currentWordcount: session.wordcount,
               currentCharcount: session.charcount
-            }).then(function () {
+            }, { transaction: options.transaction }).then(function () {
               return project.updateAttributes({
                 zoneOffset: session.zoneOffset || 0
-              });
+              }, { transaction: options.transaction });
             });
           }));
           promise.all(promises).then(function () {
@@ -225,7 +225,7 @@ module.exports = function (sequelize, DataTypes) {
                 return project.decrement({
                   currentWordcount: s.wordcount,
                   currentCharcount: s.charcount
-                });
+                }, { transaction: opt.transaction });
               });
               promises.push(p);
             });
