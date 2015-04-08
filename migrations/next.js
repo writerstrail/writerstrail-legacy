@@ -3,7 +3,7 @@
 module.exports = {
   up: function (migration, DataTypes, done) {
     migration.addColumn('application', 'sysmsg', {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true
     })
       .then(function () {

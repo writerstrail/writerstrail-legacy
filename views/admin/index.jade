@@ -60,7 +60,7 @@ block content
           .form-group
             label.col-md-2.control-label(for='sysmsg') System message
             .col-md-10
-              input#sysmsg.form-control(type='text' name='sysmsg' placeholder='System message' value=app.sysmsg)
+              textarea#sysmsg.form-control(name='sysmsg' placeholder='System message' rows='3')= app.sysmsg
           .form-group
             .col-md-offset-2.col-md-10
               button.btn.btn-warning(type='submit' name='maintenanceButton' value='ok') Update

@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
       comment: "Enable/disable maintenance mode"
     },
     sysmsg: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true
     }
   }, {
