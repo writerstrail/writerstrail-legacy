@@ -16,15 +16,12 @@ function chartData(req, callback) {
   var daysToLook = 30;
   var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
   var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
-  var hasStartQuery = true, hasEndQuery = true;
 
   if (!start.isValid() || start.isAfter(end)) {
     start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
-    hasStartQuery = false;
   }
   if (!end.isValid() || start.isAfter(end)) {
     end = moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').endOf('day');
-    hasEndQuery = false;
   }
   daysToLook = end.diff(start, 'days') + 1;
 
@@ -72,13 +69,6 @@ function chartData(req, callback) {
     var charcount = [], accCc = 0;
 
     var j = 0;
-
-    if (!hasStartQuery) {
-      start.subtract(req.query.zoneOffset || 0, 'minutes');
-    }
-    if (!hasEndQuery) {
-      end.subtract(req.query.zoneOffset || 0, 'minutes');
-    }
 
     for (var i = 0; i < daysToLook; i++) {
       var workingDate = moment(start).add(i, 'days');

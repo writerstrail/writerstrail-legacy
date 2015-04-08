@@ -288,7 +288,7 @@ WTChart.bindButton = function ($, chartType) {
 
 WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
   var isAcc = chartType === 'cumulative';
-  link = link + '?zoneOffset=' + (zoneOffset);
+  link = link + '?zoneOffset=' + (-zoneOffset);
   $.getJSON(link, function (data) {
     var series = WTChart.buildMeta(data, isAcc, showRem, showAdjusted, unit);
     WTChart.chart(series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset);
