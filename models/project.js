@@ -130,6 +130,12 @@ module.exports = function (sequelize, DataTypes) {
         min: 0
       }
     },
+    zoneOffset: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      comment: 'User timezone offset in minutes'
+    },
     public: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

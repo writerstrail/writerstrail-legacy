@@ -20,6 +20,14 @@ module.exports = {
           defaultValue: false
         });
       })
+      .then(function () {
+        return migration.addColumn('projects', 'zoneOffset', {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0,
+          comment: 'User timezone offset in minutes'
+        });
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
