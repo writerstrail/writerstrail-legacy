@@ -118,7 +118,7 @@ module.exports = function (sequelize, DataTypes) {
               currentCharcount: session.charcount
             }).then(function () {
               return project.updateAttributes({
-                zoneOffset: session.zoneOffset
+                zoneOffset: session.zoneOffset || 0
               });
             });
           }).then(function () {
@@ -142,7 +142,7 @@ module.exports = function (sequelize, DataTypes) {
                   currentCharcount: session.charcount
                 }).then(function () {
                   return project.updateAttributes({
-                    zoneOffset: session.zoneOffset
+                    zoneOffset: session.zoneOffset || 0
                   });
                 });
               }));
@@ -168,7 +168,7 @@ module.exports = function (sequelize, DataTypes) {
               currentCharcount: session._previousDataValues.charcount
             }).then(function () {
               return project.updateAttributes({
-                zoneOffset: session.zoneOffset
+                zoneOffset: session.zoneOffset || 0
               });
             });
           }));
@@ -178,7 +178,7 @@ module.exports = function (sequelize, DataTypes) {
               currentCharcount: session.charcount
             }).then(function () {
               return project.updateAttributes({
-                zoneOffset: session.zoneOffset
+                zoneOffset: session.zoneOffset || 0
               });
             });
           }));

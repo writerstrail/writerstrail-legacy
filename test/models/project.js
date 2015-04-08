@@ -1167,9 +1167,10 @@ describe('Project model', function () {
         expect(session).to.not.have.property('deletedAt', null);
         done();
       } catch (err) {
-        done(err);
+        return Promise.reject(err);
       }
     }).catch(function (err) {
+      console.log(err);
       done(err);
     });
   });
