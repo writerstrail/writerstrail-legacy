@@ -157,7 +157,7 @@ append scripts
   script.
     var link = '/projects/#{project.id}/data.json';
     function build(link) {
-      window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
+      window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}', #{project.zoneOffset});
     }
     build(link);
     chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build);
