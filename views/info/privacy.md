@@ -51,6 +51,7 @@ We use Google AdSense Advertising on our website.
 Google, as a third party vendor, uses cookies to serve ads on our site. Google's use of the DART cookie enables it to serve ads to our users based on their visit to our site and other sites on the Internet. Users may opt out of the use of the DART cookie by visiting the Google ad and content network privacy policy.
 
 We have implemented the following:
+
 * Demographics and Interests Reporting
 
 We along with third-party vendors, such as Google use first-party cookies (such as the Google Analytics cookies) and third-party cookies (such as the DoubleClick cookie) or other third-party identifiers together to compile data regarding user interactions with ad impressions, and other ad service functions as they relate to our website.
@@ -64,6 +65,17 @@ Writer's Trail use [Highcharts](http://www.highcharts.com) to generate the chart
 this site, the export service requires a call with the chart data to the [Highcharts Export Server](http://export.highcharts.com/).
 
 If you do not want your information going to the Highcharts server, avoid using the export service.
+
+### Public pages
+
+Projects and targets may be set as _public_ in a **opt-in individual basis** (which means everything is private unless you make
+it otherwise). If they are set as public, it's possible to any person or machine to access the data if they have the link. This
+includes search engines, social networks and other sites that track content.
+
+Once the user makes the page public, there's no guarantee that the data wasn't registered by any third-party service, even
+if the user makes it private once again. New changes to data after it was set private again won't be propagated anywhere,
+and Writer's Trail will stop to provide any data (new or old) about the resources made private to any other person besides
+the resource's owner.
 
 ### California Online Privacy Protection Act
 
@@ -89,6 +101,7 @@ We do not specifically market to children under 13.
 The Fair Information Practices Principles form the backbone of privacy law in the United States and the concepts they include have played a significant role in the development of data protection laws around the globe. Understanding the Fair Information Practice Principles and how they should be implemented is critical to comply with the various privacy laws that protect personal information.
 
 In order to be in line with Fair Information Practices we will take the following responsive action, should a data breach occur:
+
 * We will notify the users via email within 7 business days.
 * We will notify the users via in site notification within 1 business day.
 
@@ -109,6 +122,6 @@ To be in accordance with CANSPAM we agree to the following:
 
 If at any time you would like to unsubscribe from receiving future emails, you can follow the instructions at the bottom of each email and we will promptly remove you from *ALL* correspondence.
 
-Contacting Us
+### Contacting Us
 
 If there are any questions regarding this privacy policy you may contact us using the following email address: writerstrail@georgemarques.com.br.
