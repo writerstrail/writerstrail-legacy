@@ -2,7 +2,7 @@ mixin embedtag(base, id)
   div#embedtag(style='display: none')
     p
     p: strong To embed on your site or blog, paste the following code:
-    input.form-control(type='text' readonly=true
+    input.form-control(type='text'
       value='<iframe src="' + baseurl + '/' + base + '/embed/' + id + '" width="100%" height="400" frameborder="0"></iframe>')
   script.
     window.setInterval(function () {
