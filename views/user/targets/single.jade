@@ -126,16 +126,30 @@ block content
     li.list-group-item
       .row
         .col-md-2
-          strong Notes:
+          strong Description:
         .col-md-10
-          unless target.notes
+          unless target.description
             | None
           else
-            - var notePieces = target.notes.split(/(?:\r\n|\r|\n)/g)
+            - var notePieces = target.description.split(/(?:\r\n|\r|\n)/g)
             for line, i in notePieces
               if i > 0
                 br
               = line
+    if isOwner
+      li.list-group-item
+        .row
+          .col-md-2
+            strong Notes:
+          .col-md-10
+            unless target.notes
+              | None
+            else
+              - var notePieces = target.notes.split(/(?:\r\n|\r|\n)/g)
+              for line, i in notePieces
+                if i > 0
+                  br
+                = line
     li.list-group-item
       .row
         .col-md-2
