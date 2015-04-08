@@ -116,6 +116,10 @@ module.exports = function (sequelize, DataTypes) {
             return project.increment({
               currentWordcount: session.wordcount,
               currentCharcount: session.charcount
+            }).then(function () {
+              return project.updateAttributes({
+                zoneOffset: session.zoneOffset
+              });
             });
           }).then(function () {
             done(null, session);
@@ -136,6 +140,10 @@ module.exports = function (sequelize, DataTypes) {
                 return project.increment({
                   currentWordcount: session.wordcount,
                   currentCharcount: session.charcount
+                }).then(function () {
+                  return project.updateAttributes({
+                    zoneOffset: session.zoneOffset
+                  });
                 });
               }));
             });
@@ -158,12 +166,20 @@ module.exports = function (sequelize, DataTypes) {
             return project.decrement({
               currentWordcount: session._previousDataValues.wordcount,
               currentCharcount: session._previousDataValues.charcount
+            }).then(function () {
+              return project.updateAttributes({
+                zoneOffset: session.zoneOffset
+              });
             });
           }));
           promises.push(models.Project.findOne(session.projectId).then(function (project) {
             return project.increment({
               currentWordcount: session.wordcount,
               currentCharcount: session.charcount
+            }).then(function () {
+              return project.updateAttributes({
+                zoneOffset: session.zoneOffset
+              });
             });
           }));
           promise.all(promises).then(function () {
