@@ -1,5 +1,17 @@
 # Writer's Trail change log
 
+## 0.8.0
+
+* Add public option to projects and targets.
+* Include possibility to export images (thanks to [Highcharts](http://www.highcharts.com)).
+* Social meta tags for Facebook and Twitter sharing.
+* Charts in public pages can be embedded in other external pages.
+* Better view in small screens and touch devices (such as phones and tablets).
+  * Also with chart zooming and panning, be touch or not.
+* Better timezone handling for some things (like the "didn't write today" warning).
+* Fix a bug that gave error if user tried to put commas and dots in numeric fields.
+* Add site-wide messages given by an administrator.
+
 ## v0.7.1
 
 * Fix sessions in the last day of a target not counting towards the goal.
