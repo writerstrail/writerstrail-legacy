@@ -3,6 +3,7 @@ extends ../../layout
 block content
   include ../../mixins/progressbar
   include ../../mixins/embedtag
+  include ../../mixins/socialbuttons
   - var isOwner = project.ownerId === user.id
   if project.public && isOwner
     .alert.alert-warning
@@ -23,6 +24,12 @@ block content
       .col-md-12
         - var percentage = Math.min(100, Math.max(0, Math.floor((project.currentWordcount / project.targetwc) * 100)))
         +progressbar(project.currentWordcount, project.targetwc, percentage)
+
+  if project.public
+    .row: .col-md-12
+      +socialbuttons(baseurl + '/project/' + project.id, project.name + ' project',
+          truncatedesc(project.description || 'A writing project in Writer\'s Trail'))
+    p
             
   #project-chart.panel.panel-default
     .panel-heading
@@ -163,3 +170,5 @@ append scripts
   if user.settings.showTour
     script
       | tour(jQuery, hopscotch, range(28, 32));
+  if project.public
+    script(src='/bower_components/RRSSB/js/rrssb.min.js')

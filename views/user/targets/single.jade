@@ -3,6 +3,7 @@ extends ../../layout
 block content
   include ../../mixins/progressbar
   include ../../mixins/embedtag
+  include ../../mixins/socialbuttons
   - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
   - var now = moment.utc().add(target.zoneOffset, 'minutes')
   - var hasStarted = now.isAfter(target.start) || now.isSame(target.start)
@@ -42,6 +43,10 @@ block content
       .col-md-12
         - var percentage = Math.min(100, Math.max(0, Math.floor((totalCount / target.count) * 100)))
         +progressbar(totalCount, target.count, percentage)
+
+  if target.public
+
+
   if isOwner && daysRem == 0
     .row
       .col-md-2: strong This target is already overdue.
@@ -74,6 +79,13 @@ block content
             |  and this time get over the blank page!
       
     p
+
+  if target.public
+    .row: .col-md-12
+      +socialbuttons(baseurl + '/targets/' + target.id, target.name + ' target',
+        truncatedesc(target.description || 'A writing target in Writer\'s Trail'))
+    p
+
   if !hasStarted
     .row
       .col-md-2: strong This target still not started.
@@ -234,3 +246,5 @@ append scripts
   if user.settings.showTour
     script
       | tour(jQuery, hopscotch, range(41, 42));
+  if target.public
+    script(src='/bower_components/RRSSB/js/rrssb.min.js')
