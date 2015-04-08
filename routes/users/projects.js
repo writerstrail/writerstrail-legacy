@@ -63,9 +63,7 @@ function chartData(req, callback) {
     }
 
     if (!accessible) {
-      var err = new Error('Not Found');
-      err.code = 404;
-      return callback(err, {error: err.message});
+      sessions = [];
     }
 
     var daysRange = [];
