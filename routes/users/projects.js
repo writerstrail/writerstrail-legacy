@@ -194,6 +194,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
     active: !!req.body.active,
     finished: !!req.body.finished,
     public: !!req.body.public,
+    zoneOffset: req.body.zoneOffset || 0,
     ownerId: req.user.id
   }).then(function (project) {
     savedProject = project;
@@ -235,6 +236,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
+          zoneOffset: req.body.zoneOffset || 0,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
@@ -333,6 +335,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
       project.set('targetcc', numerictrim(req.body.targetcc) || 0);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
+      project.set('zoneOffset', req.body.zoneOffset || 0);
       project.set('public', !!req.body.public);
       return project.save().then(function () {
         savedProject = project;
@@ -382,6 +385,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
+          zoneOffset: req.body.zoneOffset || 0,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),

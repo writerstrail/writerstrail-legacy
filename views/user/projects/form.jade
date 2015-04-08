@@ -28,6 +28,7 @@ block content
 
   form.form-horizontal(method='post')
     input(type='hidden' name='_csrf', value=csrf)
+    input#zoneOffset(type='hidden' name='zoneOffset' value=project.zoneOffset || '')
     
     - var nameErr = _.find(validate, function(err) { return err.path === 'name' || err.path === 'uniqueName'; }) || ''
     
@@ -128,6 +129,8 @@ block content
     include ../../mixins/single-form-buttons
     
 append scripts
+  script.
+    $('#zoneOffset').val(-((new Date()).getTimezoneOffset()));
   if user.settings.showTour
     script
       unless edit

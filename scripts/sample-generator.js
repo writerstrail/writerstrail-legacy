@@ -181,6 +181,7 @@ function calcCharcount(wordcount) {
   projectsData.forEach(function (p) {
     p.description = faker.hacker.phrase();
     p.targetcc = calcCharcount(p.targetwc);
+    p.zoneOffset = -180;
     if (isFinite(p.totalWordcount)) {
       p.totalWordcount = Math.floor((p.targetwc / 100) * p.totalWordcount);
     }
