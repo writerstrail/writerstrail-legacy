@@ -180,7 +180,7 @@ module.exports = function (sequelize, DataTypes) {
           done();
         });
         
-        Project.hook('beforeDestroy', function (project, options, done) {
+        Project.hook('afterDestroy', function (project, options, done) {
           project.setTargets([], {}, {}).then(function () {
             return models.Session.destroy({
               where: {
