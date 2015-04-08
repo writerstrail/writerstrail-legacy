@@ -1,5 +1,5 @@
 module.exports = function isactivated(req, res, next) {
-  if (!req.isAuthenticated()) {
+  if (!req.user || req.user.id < 0) {
     req.session.referrer = req.originalUrl;
     res.redirect('/signin');
   } else if (req.user.password === null) {
