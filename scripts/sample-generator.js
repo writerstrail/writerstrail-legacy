@@ -17,8 +17,8 @@ The process works roughly like this:
       does not got to database and is used to keep the currentWordcount
       of such project within a certain percentage boundary.
   * Associate each project to a random genre.
-  * Create a date one year ago.
-  * For each day from this date until today:
+  * Create a date with today.
+  * For each day from this date until a year ago:
     * Create a random number of sessions (between min-max boundaries).
     * Distribute these sessions to the existing projects that still has wordcount to fill
 
@@ -230,10 +230,10 @@ models.User.destroy({
   // Generate sessions
 
   function selectProject() {
-    return _.findWhere(_.shuffle(projectsData), function (p) {
-      if (!p.active) { return true; }
+    return _.find(_.shuffle(projectsData), function (p) {
+      if (p.totalWordcount === Infinity) { return true; }
       if (p.totalWordcount > 0) { return true; }
-      return !p.active;
+      return p.totalWordcount === Infinity;
     });
   }
 
@@ -254,8 +254,8 @@ models.User.destroy({
       for (var i = 0; i < amount; i++) {
         var project = selectProject(),
             wpm = (Math.random() * wpmRange[1]) + wpmRange[0],
-            duration = (Math.random() * durationRange[1]) + durationRange[0],
-            wordcount = Math.max(1, Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount)),
+            duration = Math.floor((Math.random() * durationRange[1]) + durationRange[0]),
+            wordcount = Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount),
             charcount = calcCharcount(wordcount);
 
         project.totalWordcount -= wordcount;
