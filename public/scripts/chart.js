@@ -295,10 +295,6 @@ WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjus
   });
 };
 
-WTChart.targetChart = function (targetId, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
-  WTChart.linkChart('/targets/' + targetId + '/data.json', $, Highcharts, chartType, showRem, showAdjusted, unit, title);
-};
-
 WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
   var now, today, options, userOffset;
   userOffset = (new Date()).getTimezoneOffset();
