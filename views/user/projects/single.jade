@@ -152,15 +152,12 @@ append scripts
   script(type='text/javascript', src='/vendor/highcharts/highcharts.min.js')
   script(type='text/javascript', src='/vendor/highcharts/exporting.min.js')
   script(type='text/javascript', src='/scripts/highcharts-init.js')
-  script(type='text/javascript', src='/scripts/chart.js')
-  script(type='text/javascript', src='/scripts/range.js')
+  script(type='text/javascript', src='/scripts/chart.min.js')
+  script(type='text/javascript', src='/scripts/range.min.js')
   script.
     var link = '/projects/#{project.id}/data.json';
-    function build(link) {
-      window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}');
-    }
-    build(link);
-    chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, build);
+    window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}', #{project.zoneOffset});
+    chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, #{project.zoneOffset});
     deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
     
   if user.settings.showTour

@@ -93,7 +93,7 @@ function chartData(req, callback) {
       } else {
         daily.push(0);
       }
-      if (moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
+      if (moment.utc().subtract(target.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
         count.push(accWc);
       } else {
         count.push(null);

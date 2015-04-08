@@ -53,6 +53,11 @@ var uglify = function (dir, localOptions) {
       var pathToMin = path.join(dir, filename + ".min.js");
       var pathToFull = path.join(dir, filename + ".js");
 
+      // Ignore if there's no full file
+      if (!fs.existsSync(pathToFull)) {
+        return next();
+      }
+
       var compile = function () {
 
         // Generate options for UglifyJS
@@ -60,7 +65,6 @@ var uglify = function (dir, localOptions) {
 
         if (localOptions.generateSourceMap) {
           options.outSourceMap = filename + ".map.js";
-          //options.prefix = dir.replace(/^\/|\/$/g, '').split("/").length;
         }
 
         // Generate paths
@@ -108,6 +112,7 @@ var uglify = function (dir, localOptions) {
                 return compile();
               } else {
                 fs.stat(pathToMin, function (err, statsMin){
+                  console.log('---stat', statsFull.mtime, statsMin.mtime);
                   if (err) {
                     return next(err);
                   } else if (statsFull.mtime > statsMin.mtime) {

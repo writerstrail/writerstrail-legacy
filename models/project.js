@@ -130,6 +130,12 @@ module.exports = function (sequelize, DataTypes) {
         min: 0
       }
     },
+    zoneOffset: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      comment: 'User timezone offset in minutes'
+    },
     public: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -174,7 +180,7 @@ module.exports = function (sequelize, DataTypes) {
           done();
         });
         
-        Project.hook('beforeDestroy', function (project, options, done) {
+        Project.hook('afterDestroy', function (project, options, done) {
           project.setTargets([], {}, {}).then(function () {
             return models.Session.destroy({
               where: {

@@ -16,15 +16,12 @@ function chartData(req, callback) {
   var daysToLook = 30;
   var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
   var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
-  var hasStartQuery = true, hasEndQuery = true;
 
   if (!start.isValid() || start.isAfter(end)) {
     start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
-    hasStartQuery = false;
   }
   if (!end.isValid() || start.isAfter(end)) {
     end = moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').endOf('day');
-    hasEndQuery = false;
   }
   daysToLook = end.diff(start, 'days') + 1;
 
@@ -63,9 +60,7 @@ function chartData(req, callback) {
     }
 
     if (!accessible) {
-      var err = new Error('Not Found');
-      err.code = 404;
-      return callback(err, {error: err.message});
+      sessions = [];
     }
 
     var daysRange = [];
@@ -74,13 +69,6 @@ function chartData(req, callback) {
     var charcount = [], accCc = 0;
 
     var j = 0;
-
-    if (!hasStartQuery) {
-      start.subtract(req.query.zoneOffset || 0, 'minutes');
-    }
-    if (!hasEndQuery) {
-      end.subtract(req.query.zoneOffset || 0, 'minutes');
-    }
 
     for (var i = 0; i < daysToLook; i++) {
       var workingDate = moment(start).add(i, 'days');
@@ -194,6 +182,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
     active: !!req.body.active,
     finished: !!req.body.finished,
     public: !!req.body.public,
+    zoneOffset: req.body.zoneOffset || 0,
     ownerId: req.user.id
   }).then(function (project) {
     savedProject = project;
@@ -235,6 +224,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
+          zoneOffset: req.body.zoneOffset || 0,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
@@ -333,6 +323,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
       project.set('targetcc', numerictrim(req.body.targetcc) || 0);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
+      project.set('zoneOffset', req.body.zoneOffset || 0);
       project.set('public', !!req.body.public);
       return project.save().then(function () {
         savedProject = project;
@@ -382,6 +373,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
+          zoneOffset: req.body.zoneOffset || 0,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),

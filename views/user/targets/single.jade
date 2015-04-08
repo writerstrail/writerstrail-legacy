@@ -213,8 +213,9 @@ append scripts
   script(type='text/javascript', src='/scripts/highcharts-init.min.js')
   script(type='text/javascript', src='/scripts/chart.min.js')
   script(type='text/javascript').
-    targetChart(#{target.id}, jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
-            !{user.settings.showAdjusted}, '#{target.unit}', '#{target.name}');
+    var link = '/targets/#{target.id}/data.json';
+    window.linkChart(link, jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
+            !{user.settings.showAdjusted}, '#{target.unit}', '#{target.name}', #{target.zoneOffset || 0});
     deleteImageSetup(jQuery, '/targets/#{target.id}/deleteImage');
   if user.settings.showTour
     script

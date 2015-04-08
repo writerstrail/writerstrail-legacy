@@ -840,7 +840,7 @@ describe('Session model', function () {
     }
   });
   
-  it('should increment the project wordcount and charcount on creation', function (done) {
+  it('should increment the project wordcount and charcount, and update zoneOffset on creation', function (done) {
     var startingWordcount = 0,
         startingCharcount = 0;
     
@@ -851,7 +851,7 @@ describe('Session model', function () {
         id: id,
         summary: 'test summary',
         start: now,
-        zoneOffset: -120,
+        zoneOffset: id,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
@@ -876,6 +876,7 @@ describe('Session model', function () {
       try {
         expect(project).to.have.property('currentWordcount', startingWordcount + 5000);
         expect(project).to.have.property('currentCharcount', startingCharcount + 10000);
+        expect(project).to.have.property('zoneOffset', id);
         done();
       } catch (err) {
         done(err);
@@ -883,7 +884,7 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should increment the project wordcount and charcount on bulk creation', function (done) {
+  it('should increment the project wordcount and charcount, and update zoneOffset on bulk creation', function (done) {
     var startingWordcount = 0,
         startingCharcount = 0;
     
@@ -894,7 +895,7 @@ describe('Session model', function () {
         id: id,
         summary: 'test summary',
         start: now,
-        zoneOffset: -120,
+        zoneOffset: id,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
@@ -919,6 +920,7 @@ describe('Session model', function () {
       try {
         expect(project).to.have.property('currentWordcount', startingWordcount + 5000);
         expect(project).to.have.property('currentCharcount', startingCharcount + 10000);
+        expect(project).to.have.property('zoneOffset', id);
         done();
       } catch (err) {
         done(err);
@@ -926,7 +928,7 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should increment the project wordcount and charcount on bulk creation with individual hooks', function (done) {
+  it('should increment the project wordcount and charcount, and update zoneOffset on bulk creation with individual hooks', function (done) {
     var startingWordcount = 0,
         startingCharcount = 0;
     
@@ -937,7 +939,7 @@ describe('Session model', function () {
         id: id,
         summary: 'test summary',
         start: now,
-        zoneOffset: -120,
+        zoneOffset: id,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
@@ -962,6 +964,7 @@ describe('Session model', function () {
       try {
         expect(project).to.have.property('currentWordcount', startingWordcount + 5000);
         expect(project).to.have.property('currentCharcount', startingCharcount + 10000);
+        expect(project).to.have.property('zoneOffset', id);
         done();
       } catch (err) {
         done(err);
@@ -969,7 +972,7 @@ describe('Session model', function () {
     }).catch(done);
   });
   
-  it('should increment/decrement the projects\' wordcount and wordcount on update', function (done) {
+  it('should increment/decrement the projects\' wordcount and charcount, and update zoneOffset on update', function (done) {
     var startingWordcount1 = 0,
         startingWordcount2 = 0,
         startingCharcount1 = 0,
@@ -986,7 +989,7 @@ describe('Session model', function () {
         id: id,
         summary: 'test summary',
         start: now,
-        zoneOffset: -120,
+        zoneOffset: id,
         duration: 500,
         pausedTime: 2,
         wordcount: 5000,
@@ -1011,22 +1014,23 @@ describe('Session model', function () {
       try {
         expect(project1).to.have.property('currentWordcount', startingWordcount1);
         expect(project1).to.have.property('currentCharcount', startingCharcount1);
+        expect(project1).to.have.property('zoneOffset', id);
         return models.Project.findOne(9002);
       } catch (err) {
-        done(err);
+        return Promise.reject(err);
       }
     }).then(function (project2) {
       try {
         expect(project2).to.have.property('currentWordcount', startingWordcount2 + 1000);
         expect(project2).to.have.property('currentCharcount', startingCharcount2 + 3000);
+        expect(project2).to.have.property('zoneOffset', id);
         done();
       } catch (err) {
         done(err);
       }
     }).catch(done);
   });
-  
-  
+
   // The update hook isn't quite cool, because it's impossible to get the before data.
   // Maybe go to database triggers
   it('should not allow bulk update', function (done) {

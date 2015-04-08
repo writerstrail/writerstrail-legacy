@@ -182,10 +182,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
   return WTChart.joinMeta(data, meta);
 };
 
-WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, unit, title) {
-  var now = new Date(),
-    today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-
+WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, unit, title, today) {
   return {
     chart: {
       renderTo: 'chart',
@@ -289,21 +286,21 @@ WTChart.bindButton = function ($, chartType) {
     });
 };
 
-WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
+WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
   var isAcc = chartType === 'cumulative';
-  link = link + '?zoneOffset=' + (new Date()).getTimezoneOffset();
+  link = link + '?zoneOffset=' + (-zoneOffset);
   $.getJSON(link, function (data) {
     var series = WTChart.buildMeta(data, isAcc, showRem, showAdjusted, unit);
-    WTChart.chart(series, $, Highcharts, chartType, showRem, showAdjusted, unit, title);
+    WTChart.chart(series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset);
   });
 };
 
-WTChart.targetChart = function (targetId, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
-  WTChart.linkChart('/targets/' + targetId + '/data.json', $, Highcharts, chartType, showRem, showAdjusted, unit, title);
-};
-
-WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjusted, unit, title) {
-  var options = WTChart.chartOptions(series, chartType, showRem, showAdjusted, unit, title);
+WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
+  var now, today, options, userOffset;
+  userOffset = (new Date()).getTimezoneOffset();
+  now = new Date(+(new Date()) + (userOffset * 6e4) + (zoneOffset * 6e4));
+  today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  options = WTChart.chartOptions(series, chartType, showRem, showAdjusted, unit, title, today);
   new Highcharts.Chart(options, function () {
     WTChart.bindButton($, chartType);
   });
