@@ -33,6 +33,12 @@ block content
       .col-md-10
         input#name.form-control(type='text' name='name' placeholder=__('Name') value=target.name aria-describedby='namehelp')
         span#namehelp.help-block= __(nameErr ? nameErr.message : 'A name for this target so you can find it later. Does not need to be unique.')
+
+    .form-group
+      label.col-md-2.control-label(for='description') Description
+      .col-md-10
+        textarea#description.form-control(rows='3' name='description' placeholder='Description' aria-describedby='descriptionhelp')= target.description
+        span#descriptionhelp.help-block Description of this target (optional).
         
     - var wcErr = _.find(validate, { path: 'count' }) || ''
 
@@ -85,7 +91,7 @@ block content
       label.col-md-2.control-label(for='notes')= __('Notes')
       .col-md-10
         textarea#notes.form-control(rows='3' name='notes' placeholder=__('Notes') aria-describedby='noteshelp')= target.notes
-        span#noteshelp.help-block Any notes you want to keep for yourself about this target.
+        span#noteshelp.help-block Any notes you want to keep for yourself about this target (not shown for public).
 
     .form-group
       .col-md-10.col-md-offset-2

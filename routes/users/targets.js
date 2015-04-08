@@ -234,6 +234,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
   })().spread(function (start, end) {
     return models.Target.create({
       name: req.body.name,
+      description: ''.trim.apply(req.body.description || '') || null,
       start: start,
       end: end,
       count: numerictrim(req.body.count) || null,
@@ -273,6 +274,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
         edit: false,
         target: {
           name: req.body.name,
+          description: req.body.description,
           start: start ? req.body.start : '',
           end: end ? req.body.end : '',
           zoneOffset: req.body.zoneOffset || 0,
@@ -417,6 +419,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
       }
       savedTarget = target;
       target.set('name', req.body.name);
+      target.set('description', ''.trim.apply(req.body.description || '') || null);
       target.set('notes', req.body.notes);
       target.set('count', numerictrim(req.body.count) || null);
       target.set('unit', req.body.unit);
@@ -463,6 +466,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
         edit: true,
         target: {
           name: req.body.name,
+          description:req.body.description,
           notes: req.body.notes,
           count: req.body.count || null,
           unit: req.body.unit,
