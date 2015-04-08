@@ -255,7 +255,7 @@ models.User.destroy({
         var project = selectProject(),
             wpm = (Math.random() * wpmRange[1]) + wpmRange[0],
             duration = (Math.random() * durationRange[1]) + durationRange[0],
-            wordcount = Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount),
+            wordcount = Math.max(1, Math.min(Math.floor(wpm * (duration / 60)), project.totalWordcount)),
             charcount = calcCharcount(wordcount);
 
         project.totalWordcount -= wordcount;
