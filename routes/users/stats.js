@@ -153,7 +153,7 @@ router.get('/yearlysessions.json', isactivated, function (req, res) {
   models.Session.findAll({
     where: {
       start: {
-        gte: moment().subtract(1, 'year').toDate()
+        gte: moment.utc().subtract(1, 'year').toDate()
       }
     },
     attributes: [
@@ -176,13 +176,13 @@ router.get('/yearlysessions.json', isactivated, function (req, res) {
       var yearly = [],
         dailySessions = [],
         zoneOffset = req.query.zoneOffset || 0,
-        yearAgo = moment.utc().subtract(1, 'year').subtract(zoneOffset),
-        today = moment.utc().subtract(zoneOffset),
+        today = moment.utc().subtract(zoneOffset).startOf('day'),
+        yearAgo = moment.utc(today).subtract(1, 'year'),
         range = moment(yearAgo),
         i = 0;
 
       _.forEach(yearSessions, function (session) {
-        var day = moment.utc(session.day).subtract(session.zoneOffset, 'minutes');
+        var day = moment.utc(session.day);
         dailySessions.push({
           x: day.valueOf(),
           y: day.day(),
@@ -191,6 +191,7 @@ router.get('/yearlysessions.json', isactivated, function (req, res) {
       });
 
       while (today.diff(range) >= 0) {
+
         if (!dailySessions[i] || !range.isSame(dailySessions[i].x, 'day')) {
           yearly.push({
             x: range.valueOf(),
@@ -201,8 +202,8 @@ router.get('/yearlysessions.json', isactivated, function (req, res) {
         } else {
           if (dailySessions[i]) {
             yearly.push(dailySessions[i]);
+            i++;
           }
-          i++;
         }
         range.add(1, 'day');
       }
