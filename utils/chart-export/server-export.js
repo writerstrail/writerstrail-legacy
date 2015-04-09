@@ -66,8 +66,11 @@ function buildChart(object, unit, settings, data) {
   var isAcc = settings.chartType === 'cumulative',
     series = chart.buildMeta(data, isAcc, settings.showRemaining, settings.showAdjusted, unit, true);
 
-  return _.defaults({}, options, chart.chartOptions(series, settings.chartType, settings.showRemaining,
-    settings.showAdjusted, unit, object.name));
+  return _.defaults({},
+    chart.chartOptions(series, settings.chartType, settings.showRemaining,
+      settings.showAdjusted, unit, object.name, moment.utc().add(object.zoneOffset || 0, 'minutes').startOf('day').toDate()),
+    options
+  );
 }
 
 function isFresh(file) {
