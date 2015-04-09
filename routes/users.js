@@ -10,7 +10,8 @@ var router = require('express').Router(),
   isactivated = require('../utils/middlewares/isactivated'),
   models = require('../models'),
   sendflash = require('../utils/middlewares/sendflash'),
-  durationformatter = require('../utils/functions/durationformatter');
+  durationformatter = require('../utils/functions/durationformatter'),
+  truncatedesc = require('../utils/functions/truncatedesc');
 
 function durationFormatterAlt(dur) {
   var min = Math.floor(dur / 60),
@@ -18,6 +19,11 @@ function durationFormatterAlt(dur) {
   
   return (min.toString() +  'm' + (sec < 10 ? '0' + sec : sec)) + 's';
 }
+
+router.use(function (req, res, next) {
+  res.locals.truncatedesc = truncatedesc;
+  next();
+});
 
 router.param('id', function (req, res, next, id) {
   var regex = /\d+/;
