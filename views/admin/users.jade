@@ -96,7 +96,7 @@ block content
       .well.well-sm
         .btn-toolbar(role='toolbar')
           .btn-group(role='group')
-            a.btn.btn-default(title=__('Refresh') href=paginate.href)
+            a.btn.btn-default(title=__('Refresh') href=paginate.href())
               span.fa.fa-2x.fa-refresh
           .btn-group(role='group')
             - var hideButtonTitle = deleted ? __('Hide deleted') : __('Show deleted')
@@ -128,7 +128,7 @@ block content
           | &nbsp;
           button.btn.btn-info(type='submit' name='activatenext' value='true')= __('Activate')
       | &nbsp;
-      - if(actlist)
+      if actlist
         - var concat = _.map(actlist, function(p) { return p.name + ' <' + p.email + '>' })
         textarea#actlist.form-control(rows='1')
           = concat.join()
@@ -139,4 +139,4 @@ block content
             li.list-group-item= person.name + ' <' + person.email + '>'
         
 append scripts
-  script(src='/scripts/users.js' type='text/javascript')
+  script(src='/scripts/users.min.js' type='text/javascript')

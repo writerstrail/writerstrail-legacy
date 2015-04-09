@@ -1,18 +1,37 @@
+//- Viewport
+meta(name="viewport" content="width=device-width, initial-scale=1")
+
 //- Google Webmaster Tools
 meta(name="google-site-verification" content="HobKoO8r3WYaPXqpMX63mG8E78XBIlQ9oL4_t57gLf4")
 
 //- Twitter Card
-meta(name="twitter:card" content="summary")
 meta(name="twitter:site" content="@writerstrail")
-meta(name="twitter:title" content="Writer's Trail")
-meta(name="twitter:description" content="A tool for writers to keep track of their progress (inspired by NaNoWriMo charts).")
-meta(name="twitter:image" content="http://writerstrail.georgemarques.com.br/image/writerstrail-big.png")
-meta(name="twitter:url" content="http://writerstrail.georgemarques.com.br")
+if socialMeta
+  meta(name="twitter:card" content="summary_large_image")
+  meta(name="twitter:title" content=socialMeta.title)
+  meta(name="twitter:description" content=socialMeta.description)
+  meta(name="twitter:image:src" content=baseurl + socialMeta.image)
+  meta(name="twitter:image:width" content="1200")
+  meta(name="twitter:image:height" content="800")
+else
+  meta(name="twitter:card" content="summary")
+  meta(name="twitter:title" content="Writer's Trail")
+  meta(name="twitter:description" content="A tool for writers to keep track of their progress (inspired by NaNoWriMo charts).")
+  meta(name="twitter:image" content="http://writerstrail.georgemarques.com.br/image/writerstrail-big.png")
+  meta(name="twitter:url" content="http://writerstrail.georgemarques.com.br")
 
 //- Open Graph
-meta(property="og:title" content="Writer's Trail")
-meta(property="og:url" content="http://writerstrail.georgemarques.com.br/")
-meta(property="og:type" content="website")
-meta(property="og:image" content="http://writerstrail.georgemarques.com.br/images/writerstrail-big.png")
-meta(property="og:description" content="A tool for writers to keep track of their progress (inspired by NaNoWriMo charts). Now you can keep track of your writings statistics.")
 meta(property="fb:app_id" content="1570601513153802")
+meta(property="og:site_name" content="Writer's Trail")
+if socialMeta
+  meta(property="og:title" content=socialMeta.title)
+  meta(property="og:description" content=socialMeta.description)
+  meta(property="og:url" content=baseurl + socialMeta.url)
+  meta(property="og:type" content=fbnamespace + ':' + socialMeta.type)
+  meta(property="og:image" content=baseurl + socialMeta.image)
+else
+  meta(property="og:title" content="Writer's Trail")
+  meta(property="og:url" content="http://writerstrail.georgemarques.com.br/")
+  meta(property="og:type" content="website")
+  meta(property="og:image" content="http://writerstrail.georgemarques.com.br/images/writerstrail-big.png")
+  meta(property="og:description" content="A tool for writers to keep track of their progress (inspired by NaNoWriMo charts). Now you can keep track of your writings statistics.")

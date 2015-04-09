@@ -5,19 +5,133 @@ var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
+  isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
   filterIds = require('../../utils/functions/filterids'),
+  numerictrim = require('../../utils/functions/numerictrim'),
+  serverExport = require('../../utils/chart-export/server-export'),
   targetunits = {
     word: 'words',
     char: 'characters'
-  };
+  },
+  anon = require('../../utils/data/anonuser');
+
+function chartData(req, callback) {
+  var user = req.user || anon;
+
+  models.Target.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: [{
+      model: models.Project,
+      as: 'projects',
+      order: [['name', 'ASC']],
+      include: [{
+        model: models.Session,
+        as: 'sessions',
+        required: false,
+        where: {
+          start: {
+            between: [
+              models.Sequelize.literal('`Target`.`start`'),
+              models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
+            ]
+          },
+          deletedAt: null
+        },
+        order: [['start', 'DESC']]
+      }]
+    }]
+  }).then(function (target) {
+    var accessible = false;
+
+    if (target && (target.ownerId === user.id || target.public)) {
+      accessible = true;
+    }
+
+    if (!accessible) {
+      var err = new Error('Not Found');
+      err.code = 404;
+      return callback(err, {error: err.message});
+    }
+
+    var allSessions = _.reduce(target.projects, function (acc, project) {
+      _.forEach(project.sessions, function (sess) {
+        acc.push(sess);
+      });
+      return acc;
+    }, []);
+
+    var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
+    var daysRange = [];
+    var daily = [];
+    var count = [], accWc = 0;
+    var targetAcc = [], accTgt = 0;
+    var dailytarget = [];
+    var pondDailyTarget = [];
+    var remaining = [];
+
+    var a = _.groupBy(allSessions, function (sess) { return moment.utc(sess.dataValues.start).format('YYYY-MM-DD'); });
+
+    function groupDaySessions(wc, sess) {
+      return wc + sess.dataValues[target.unit + 'count'];
+    }
+
+    for (var i = 1; i <= totalDays; i++) {
+      var workingDate = moment.utc(target.start).add(i - 1, 'days');
+      var today = workingDate.format('YYYY-MM-DD');
+      var diffWc = target.count - accWc;
+      var diffDays = totalDays - i + 1;
+      var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
+      pondDailyTarget.push(Math.max(0, pondTarget));
+      daysRange.push(today);
+      if (a[today]) {
+        var todayWc = _.reduce(a[today], groupDaySessions, 0);
+        accWc += todayWc;
+        daily.push(todayWc);
+      } else {
+        daily.push(0);
+      }
+      if (moment.utc().subtract(target.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
+        count.push(accWc);
+      } else {
+        count.push(null);
+      }
+      var incTarget = Math.floor(target.count / totalDays) + (target.count % totalDays < i ? 0 : 1);
+      dailytarget.push(incTarget);
+      accTgt += incTarget;
+      targetAcc.push(accTgt);
+      remaining.push(Math.max(0, target.count - accWc));
+    }
+
+    var result = {
+      date: daysRange
+    };
+    result[target.unit + 'count'] = count;
+    result[target.unit + 'daily'] = daily;
+
+    if (target.count !== null) {
+      result[target.unit + 'target'] = targetAcc;
+      result[target.unit + 'dailytarget'] = dailytarget;
+      result[target.unit + 'adjusteddailytarget'] = pondDailyTarget;
+      result[target.unit + 'remaining'] = remaining;
+    }
+    callback(null, result);
+  }).catch(function (err) {
+    err.code = 500;
+    callback(err, {
+      error: err.message
+    });
+  });
+}
 
 router.use('*', function (req, res, next) {
   res.locals.targetunits = targetunits;
   next();
 });
 
-router.get('/', sendflash, function (req, res, next) {
+router.get('/', isactivated, sendflash, function (req, res, next) {
   var filters = [],
     config = {
       where: [
@@ -62,7 +176,7 @@ router.get('/', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/new', sendflash, function (req, res, next) {
+router.get('/new', isactivated, sendflash, function (req, res, next) {
   models.Project.findAll({
     where: {
       ownerId: req.user.id,
@@ -89,7 +203,7 @@ router.get('/new', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/new', isverified, function (req, res, next) {
+router.post('/new', isactivated, isverified, function (req, res, next) {
   var savedTarget = {},
     start = moment.utc(req.body.start, req.user.settings.dateFormat),
     end =  moment.utc(req.body.end, req.user.settings.dateFormat);
@@ -120,13 +234,15 @@ router.post('/new', isverified, function (req, res, next) {
   })().spread(function (start, end) {
     return models.Target.create({
       name: req.body.name,
+      description: ''.trim.apply(req.body.description || '') || null,
       start: start,
       end: end,
-      count: req.body.count || null,
+      count: numerictrim(req.body.count) || null,
       unit: req.body.unit,
       notes: req.body.notes,
       ownerId: req.user.id,
-      zoneOffset: req.body.zoneOffset || 0
+      zoneOffset: req.body.zoneOffset || 0,
+      public: !!req.body.public
     });
   }).then(function (target) {
     savedTarget = target;
@@ -158,12 +274,14 @@ router.post('/new', isverified, function (req, res, next) {
         edit: false,
         target: {
           name: req.body.name,
+          description: req.body.description,
           start: start ? req.body.start : '',
           end: end ? req.body.end : '',
           zoneOffset: req.body.zoneOffset || 0,
           count: req.body.count || null,
           unit: req.body.unit,
           notes: req.body.notes,
+          public: !!req.body.public,
           projects: filterIds(projects, req.body.projects)
         },
         validate: err.errors,
@@ -176,7 +294,48 @@ router.post('/new', isverified, function (req, res, next) {
   });
 });
 
-router.get('/:id/edit', sendflash, function (req, res, next) {
+router.get('/embed/:id', function (req, res, next) {
+  models.Target.findOne({
+    where: {
+      id: req.params.id,
+      "public": true
+    },
+    include: [
+      {
+        model: models.User,
+        as: 'owner',
+        required: true,
+        include: [
+          {
+            model: models.Settings,
+            as: 'settings',
+            required: true
+          }
+        ]
+      }
+    ]
+  }).then(function (target) {
+    if (!target) {
+      return next();
+    }
+    var settings = target.owner.settings;
+    res.render('user/embed', {
+      title: 'Target ' + target.name,
+      object: target,
+      options: {
+        chartType: settings.chartType,
+        showRemaining: settings.showRemaining,
+        showAdjusted: settings.showAdjusted
+      },
+      datalink: '/targets/' + target.id + '/data.json',
+      objectlink: '/targets/' + target.id
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id/edit', isactivated, sendflash, function (req, res, next) {
   models.Target.findOne({
     where: {
       id: req.params.id,
@@ -220,7 +379,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', isverified, function (req, res, next) {
+router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
   var savedTarget = {};
   models.Target.findOne({
     where: {
@@ -260,11 +419,13 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       }
       savedTarget = target;
       target.set('name', req.body.name);
+      target.set('description', ''.trim.apply(req.body.description || '') || null);
       target.set('notes', req.body.notes);
-      target.set('count', req.body.count || null);
+      target.set('count', numerictrim(req.body.count) || null);
       target.set('unit', req.body.unit);
       target.set('start', start);
       target.set('end', end);
+      target.set('public', !!req.body.public);
       target.set('zoneOffset', target.zoneOffset || (req.body.zoneOffset || 0));
       return target.save().then(function () {
         return models.Project.findAll({
@@ -305,11 +466,13 @@ router.post('/:id/edit', isverified, function (req, res, next) {
         edit: true,
         target: {
           name: req.body.name,
+          description:req.body.description,
           notes: req.body.notes,
           count: req.body.count || null,
           unit: req.body.unit,
           start: req.body.start,
           end: req.body.end,
+          public: !!req.body.public,
           projects: filterIds(projects, req.body.projects)
         },
         projects: chunk(projects, 3),
@@ -323,10 +486,12 @@ router.post('/:id/edit', isverified, function (req, res, next) {
 });
 
 router.get('/:id', sendflash, function (req, res, next) {
+  if (!req.user) {
+    req.user = res.locals.user = anon;
+  }
   models.Target.findOne({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [{
       model: models.Project,
@@ -350,114 +515,41 @@ router.get('/:id', sendflash, function (req, res, next) {
     }]
   }).then(function (target) {
     if (!target) {
-      var error = new Error('Not found');
-      error.status = 404;
-      return next(error);
+      return isactivated(req, res, next);
     }
+
+    if (!target.public && target.ownerId !== req.user.id) {
+      return isactivated(req, res, next);
+    }
+
     res.render('user/targets/single', {
       title: target.name + ' target',
       section: 'targetsingle',
-      target: target
+      target: target,
+      socialMeta: {
+        title: target.name,
+        description: target.description || 'A writing target in Writer\'s Trail.',
+        image: '/targets/' + target.id + '/cumulative.png',
+        type: 'target',
+        url: '/targets/' + target.id
+      }
     });
   }).catch(function (err) {
     next(err);
   });
 });
 
+router.get('/:id/:type.png', serverExport.middleware('Target', chartData));
+
+router.get('/:id/deleteImage', isactivated, serverExport.deleteImageMiddleware('Target'));
+
 router.get('/:id/data.json', function (req, res) {
-  models.Target.findOne({
-    where: {
-      id: req.params.id,
-      ownerId: req.user.id
-    },
-    include: [{
-      model: models.Project,
-      as: 'projects',
-      order: [['name', 'ASC']],
-      include: [{
-        model: models.Session,
-        as: 'sessions',
-        required: false,
-        where: {
-          start: {
-            between: [
-             models.Sequelize.literal('`Target`.`start`'),
-             models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
-            ]
-          },
-          deletedAt: null
-        },
-        order: [['start', 'DESC']]
-      }]
-    }]
-  }).then(function (target) {
-    res.type('application/json');
-    if (!target) {
-      return res.status(404).send('{"Error":"Not found"}').end();
+  chartData(req, function (err, data) {
+    if (err) {
+      console.log(err);
+      res.status(err.code);
     }
-
-    function sumToday(wc, sess) {
-      return wc + sess.dataValues[target.unit + 'count'];
-    }
-
-    var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1;
-    var daysRange = [];
-    var daily = [];
-    var count = [], accWc = 0;
-    var targetAcc = [], accTgt = 0;
-    var dailytarget = [];
-    var pondDailyTarget = [];
-    var remaining = [];
-    
-    var allSessions = _.reduce(target.projects, function (acc, project) { 
-      _.forEach(project.sessions, function (sess) {
-        acc.push(sess);
-      });
-      return acc;
-    }, []);
-    
-    var a = _.groupBy(allSessions, function (sess) { return moment.utc(sess.dataValues.start).format('YYYY-MM-DD'); });
-    
-    for (var i = 1; i <= totalDays; i++) {
-      var workingDate = moment.utc(target.start).add(i - 1, 'days');
-      var today = workingDate.format('YYYY-MM-DD');
-      var diffWc = target.count - accWc;
-      var diffDays = totalDays - i + 1;
-      var pondTarget = Math.floor(diffWc / diffDays) + (diffWc % diffDays < i ? 0 : 1);
-      pondDailyTarget.push(Math.max(0, pondTarget));
-      daysRange.push(today);
-      if (a[today]) {
-        var todayWc = _.reduce(a[today], sumToday, 0);
-        accWc += todayWc;
-        daily.push(todayWc);
-      } else {
-        daily.push(0);
-      }
-      if (moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').diff(workingDate) > 0) {
-        count.push(accWc);
-      } else {
-        count.push(null);
-      }
-      var incTarget = Math.floor(target.count / totalDays) + (target.count % totalDays < i ? 0 : 1);
-      dailytarget.push(incTarget);
-      accTgt += incTarget;
-      targetAcc.push(accTgt);
-      remaining.push(Math.max(0, target.count - accWc));
-    }
-    
-    var result = {
-      date: daysRange
-    };
-    result[target.unit + 'count'] = count;
-    result[target.unit + 'daily'] = daily;
-
-    if (target.count !== null) {
-      result[target.unit + 'target'] = targetAcc;
-      result[target.unit + 'dailytarget'] = dailytarget;
-      result[target.unit + 'adjusteddailytarget'] = pondDailyTarget;
-      result[target.unit + 'remaining'] = remaining;
-    }
-    res.json(result).end();
+    res.json(data).end();
   });
 });
 

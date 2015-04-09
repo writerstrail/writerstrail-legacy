@@ -15,3 +15,7 @@ public/stylesheets/*.css
 
 # Locales tranlations
 locales
+
+# Minified sources
+public/scripts/*.min.js
+public/scripts/*.map.js

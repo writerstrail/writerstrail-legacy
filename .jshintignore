@@ -3,4 +3,6 @@ coverage
 validate-commit-message.js
 .*
 bower_components
+public/scripts/*.min.js
+public/scripts/*.map.js
 public/vendor

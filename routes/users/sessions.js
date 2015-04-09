@@ -7,7 +7,8 @@ var router = require('express').Router(),
   durationparser = require('../../utils/functions/durationparser'),
   durationformatter = require('../../utils/functions/durationformatter'),
   wordcounter = require('../../utils/functions/wordcounter'),
-  charcounter = require('../../utils/functions/charcounter');
+  charcounter = require('../../utils/functions/charcounter'),
+  numerictrim = require('../../utils/functions/numerictrim');
 
 function durationformatterAlt(dur) {
   if (dur === null) { return 'No duration set'; }
@@ -50,6 +51,37 @@ router.get('/', sendflash, function (req, res, next) {
     });
   }).catch(function (err) {
     return next(err);
+  });
+});
+
+router.get('/today.json', function (req, res) {
+  var zoneOffset = parseInt(req.query.zoneOffset, 10);
+  if (!zoneOffset || isNaN(zoneOffset) || !isFinite(zoneOffset)) {
+    zoneOffset = 0;
+  }
+
+  models.Session.findOne({
+    where: models.Sequelize.literal('DATE(`Session`.`start`) = DATE(NOW() - INTERVAL ' + zoneOffset + ' MINUTE)'),
+    attributes: ['id'],
+    include: [{
+      model: models.Project,
+      as: 'project',
+      where: {
+        ownerId: req.user.id
+      },
+      required: true,
+      attributes: []
+    }]
+  }, {
+    raw: true
+  }).then(function (todaySessions) {
+    var result = {
+      wroteToday: true
+    };
+    if (!todaySessions || todaySessions.length === 0) {
+      result.wroteToday = false;
+    }
+    res.json(result);
   });
 });
 
@@ -104,8 +136,8 @@ router.post('/new', isverified, function (req, res, next) {
     var data = {
       summary: req.body.summary || null,
       notes: req.body.notes,
-      wordcount: wordcounter(req.body.text) || req.body.wordcount,
-      charcount: charcounter(req.body.text) || req.body.charcount || 0,
+      wordcount: wordcounter(req.body.text) || numerictrim(req.body.wordcount),
+      charcount: charcounter(req.body.text) || numerictrim(req.body.charcount) || 0,
       start: moment.utc(req.body.start, req.user.settings.dateFormat + ' ' + req.user.settings.timeFormat).toDate(),
       duration: durationparser(req.body.duration),
       pausedTime: durationparser(req.body.duration) ? durationparser(req.body.pausedTime) || 0 : 0,
@@ -258,8 +290,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
       }).then(function () {
         session.set('summary', req.body.summary || null);
         session.set('notes', req.body.notes);
-        session.set('wordcount', wordcounter(req.body.text) || req.body.wordcount);
-        session.set('charcount', charcounter(req.body.text) || req.body.charcount || 0);
+        session.set('wordcount', wordcounter(req.body.text) || numerictrim(req.body.wordcount));
+        session.set('charcount', charcounter(req.body.text) || numerictrim(req.body.charcount) || 0);
         session.set('start', start.toDate());
         var duration = durationparser(req.body.duration);
         if (duration) {

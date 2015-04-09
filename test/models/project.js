@@ -13,6 +13,8 @@ describe('Project model', function () {
       targetcc: 10000,
       active: true,
       finished: false,
+      public: true,
+      zoneOffset: -180,
       ownerId: 1
     }).then(function (project) {
       junk.push(project);
@@ -26,6 +28,8 @@ describe('Project model', function () {
         expect(project).to.have.property('targetcc', 10000);
         expect(project).to.have.property('active', true);
         expect(project).to.have.property('finished', false);
+        expect(project).to.have.property('public', true);
+        expect(project).to.have.property('zoneOffset', -180);
         done();
       } catch (err) {
         done(err);
@@ -1052,6 +1056,67 @@ describe('Project model', function () {
     });
   });
 
+  it('should set private as default', function (done) {
+    Project.create({
+      name: 'Test default access',
+      description: 'Just a test',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          ownerId: 1,
+          name: 'Test default access'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('public', false);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
+  it('should set 0 timezone offset as default', function (done) {
+    Project.create({
+      name: 'Test default tz offset',
+      description: 'Just a test',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      "public": false,
+      ownerId: 1
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          ownerId: 1,
+          name: 'Test default tz offset'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('zoneOffset', 0);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
   it('should destroy the sessions associated at soft delete', function (done) {
     var project;
     var now = new Date();
@@ -1102,9 +1167,10 @@ describe('Project model', function () {
         expect(session).to.not.have.property('deletedAt', null);
         done();
       } catch (err) {
-        done(err);
+        return Promise.reject(err);
       }
     }).catch(function (err) {
+      console.log(err);
       done(err);
     });
   });

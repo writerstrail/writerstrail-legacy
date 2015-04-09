@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports =
 {
   "development": {
@@ -13,10 +15,12 @@ module.exports =
       min: 0,
       idle: 10000
     },
+    "imagesdir": path.join(process.cwd(), "generated", "images"),
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK
+      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
+      "namespace": "writerstrail-test"
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
@@ -52,10 +56,12 @@ module.exports =
       idle: 10000
     },
     "logging": null,
+    "imagesdir": path.join(process.cwd(), "generated", "images"),
     "facebook": {
       "appid": "dummy",
       "secret": "dummy",
-      "callback": "dummy"
+      "callback": "dummy",
+      "namespace": "writerstrail-test"
     },
     "google": {
       "appid": "dummy",
@@ -91,10 +97,12 @@ module.exports =
       min: 0,
       idle: 30000
     },
+    "imagesdir": path.join(process.env.OPENSHIFT_DATA_DIR || process.cwd(), "images"),
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
       "secret": process.env.WRITERSTRAIL_FACEBOOK_SECRET,
-      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK
+      "callback": process.env.WRITERSTRAIL_FACEBOOK_CALLBACK,
+      "namespace": "writerstrail"
     },
     "google": {
       "appid": process.env.WRITERSTRAIL_GOOGLE_ID,
@@ -117,3 +125,5 @@ module.exports =
     }
   }
 };
+
+module.exports.staging = module.exports.production;

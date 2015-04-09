@@ -2,6 +2,7 @@ extends layout
 
 block preoutside
   include mixins/nofeedback
+  include mixins/socialbuttons
   include includes/fb.jade
   .jumbotron.text-center
     .container
@@ -12,12 +13,15 @@ block preoutside
       a.btn.btn-lg.btn-primary(href='/signin')
         span.fa.fa-lg.fa-sign-in
         |  Apply for closed beta
-      
+
   .container
     .text-center
       h1 Sum up all the statistics of your writing
       h3 Sometimes it is not enough to feel that you wrote a lot. Sometimes you need to see it.
       h3 That's what Writer's Trail is here to do.
+      h2 Share with your writing buddies!
+      +socialbuttons(baseurl, "Writer's Trail", 'Now you can keep track of your writings statistics')
+      p
       a(href='/features'): img.full(src='/images/dash.png')
 
     .feature
@@ -85,3 +89,6 @@ block preoutside
   
 append styles
   link(rel='stylesheet', href='/stylesheets/home.css')
+
+append scripts
+  script(src='/bower_components/RRSSB/js/rrssb.min.js')

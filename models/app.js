@@ -13,9 +13,13 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 'off',
       comment: "Enable/disable maintenance mode"
+    },
+    sysmsg: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
-    tableName: 'application',
+    tableName: 'application'
   });
 
   return App;

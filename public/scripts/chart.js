@@ -1,128 +1,328 @@
-/*jshint unused:false*/
+/* globals exports, window */
 
-function buildChart(targetId, $, c3, d3, chartType, showRem, showAdjusted, unit) {
-  linkChart('/targets/' + targetId + '/data.json', $, c3, d3, chartType, showRem, showAdjusted, unit);
+var WTChart;
+
+if (typeof window === 'undefined' && typeof exports !== 'undefined') {
+  WTChart = exports;
+} else {
+  WTChart = window;
 }
 
-function linkChart(link, $, c3, d3, chartType, showRem, showAdjusted, unit) {
-  $(function () {
-    var isAcc = chartType === 'cumulative',
-      chart = c3.generate({
-      bindto: '#chart',
-      data: {
-        url: link + '?zoneOffset=' + (new Date()).getTimezoneOffset(),
-        mimeType: 'json',
-        x: 'date',
-        types: {
-          wordcount: 'bar',
-          charcount: 'bar',
-          worddaily: 'bar',
-          chardaily: 'bar',
-          wordremaining: 'line',
-          charremaining: 'line'
-        },
-        names: {
-          date: 'Date',
-          wordcount: 'Word count',
-          charcount: 'Character count',
-          wordtarget: 'Target',
-          chartarget: 'Target',
-          worddaily: 'Daily writing',
-          chardaily: 'Daily characters',
-          worddailytarget: 'Daily target',
-          chardailytarget: 'Daily target',
-          wordadjusteddailytarget: 'Adjusted daily target',
-          charadjusteddailytarget: 'Adjusted daily target',
-          wordremaining: 'Remaining wordcount',
-          charremaining: 'Remaining character count'
-        },
-        axes: {
-          charcount: 'y2',
-          chartarget: 'y2',
-          chardaily: 'y2',
-          chardailytarget: 'y2',
-          charadjusteddailytarget: 'y2',
-          charremaining: 'y2'
-        },
-        colors: {
-          wordcount: '#674732',
-          wordtarget: '#9e9e9e',
-          charcount: unit ? '#674732' : null,
-          chartarget: '#9e9e9e'
-        },
-        hide: (isAcc ? ['worddaily', 'chardaily', 'worddailytarget', 'chardailytarget'] : ['wordcount', 'charcount', 'wordtarget', 'chartarget'])
-            .concat(showRem ? [] : ['wordremaining', 'charremaining'])
-            .concat(showAdjusted ? [] : ['wordadjusteddailytarget', 'charadjusteddailytarget'])
-            .concat(['unit'])
-      },
-      legend: {
-        hide: ['unit']
-      },
-      axis: {
-        x: {
-          type: 'timeseries',
-          tick: {
-            format: '%b-%d'
-          }
-        },
-        y: {
-          show: unit !== 'char',
-          label: {
-            text: 'Word count',
-            position: 'inner-right'
-          },
-          min: 0,
-          padding: {
-            bottom: 0
-          },
-          tick: {
-            format: d3.format(',')
-          }
-        },
-        y2: {
-          show: unit !== 'word',
-          label: {
-            text: 'Character count',
-            position: 'inner-right'
-          }
-        }
-      },
-      grid: {
-        x: {
-          lines: [
-            { value: d3.time.day.floor(new Date()), text: 'Today', class: 'today-line' }
-          ]
-        },
-        y: {
-          show: true
-        }
-      },
-      tooltip: {
-        format: {
-          title: d3.time.format('%Y-%b-%d'),
-          value: d3.format(',')
+WTChart.startFromDate = function (date) {
+  var pieces = date.split('-').map(function (i) {
+    return parseInt(i, 10);
+  }), result;
+  pieces[1] -= 1;
+  result = Date.UTC.apply(null, pieces);
+  return result;
+};
+
+WTChart.joinMeta = function (data, meta) {
+  var series = [];
+  for (var key in data) {
+    if (!data.hasOwnProperty(key)) {
+      continue;
+    }
+    var serie = {
+      data: data[key],
+      id: key
+    };
+
+    if (meta[key]) {
+      for (var info in meta[key]) {
+        if (meta[key].hasOwnProperty(info)) {
+          serie[info] = meta[key][info];
         }
       }
-    });
-    
-    $('#chart').data('chart', chart);
-    
-    $('#target-change')
-      .data('acc', isAcc)
-      .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
-      .click(function () {
-        var self = $(this);
-        if (self.data('acc')) {
-          self.html('Show as cumulative count');
-          chart.hide(['wordcount', 'wordtarget', 'charcount', 'chartarget'], { withLegend: false });
-          chart.show(['worddaily', 'worddailytarget', 'chardaily', 'chardailytarget'], { withLegend: false });
-          self.data('acc', false);
-        } else {
-          self.html('Show as daily writing');
-          chart.hide(['worddaily', 'worddailytarget', 'chardaily', 'chardailytarget'], { withLegend: false });
-          chart.show(['wordcount', 'wordtarget', 'charcount', 'chartarget'], { withLegend: false });
-          self.data('acc', true);
+      series.push(serie);
+    }
+  }
+  return series;
+};
+
+WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
+  var start = WTChart.startFromDate(data.date[0]),
+      showLegend = !isExport,
+      meta = {
+        wordcount: {
+          name: 'Word count',
+          color: '#674732',
+          visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        charcount: {
+          name: 'Character count',
+          color: unit ? '#674732' : '#1F77B4',
+          visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        worddaily: {
+          name: 'Daily writing',
+          color: '#FF9E49',
+          visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        chardaily: {
+          name: 'Daily characters',
+          color:  unit ? '#FF9E49' : '#2CA02C',
+          visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        wordtarget: {
+          name: 'Target',
+          type: 'line',
+          color: '#9e9e9e',
+          visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        chartarget: {
+          name: 'Target',
+          type: 'line',
+          color: '#9e9e9e',
+          visible: !!isAcc,
+          showInLegend: isAcc || showLegend,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        worddailytarget: {
+          name: 'Daily target',
+          type: 'line',
+          color: '#2ca02c',
+          visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        chardailytarget: {
+          name: 'Daily target',
+          type: 'line',
+          color: '#2ca02c',
+          visible: !isAcc,
+          showInLegend: !isAcc || showLegend,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        wordadjusteddailytarget: {
+          name: 'Adjusted daily target',
+          type: 'line',
+          color: '#9467bd',
+          visible: showAdj,
+          showInLegend: showAdj || showLegend,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        charadjusteddailytarget: {
+          name: 'Adjusted daily target',
+          type: 'line',
+          color: '#9467bd',
+          visible: showAdj,
+          showInLegend: showAdj || showLegend,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        wordremaining: {
+          name: 'Remaining word count',
+          type: 'line',
+          color: '#D62728',
+          visible: showRem,
+          showInLegend: showRem || showLegend,
+          yAxis: 0,
+          pointStart: start,
+          pointInterval: 24 * 3600000
+        },
+        charremaining: {
+          name: 'Remaining character count',
+          type: 'line',
+          color: '#D62728',
+          visible: showRem,
+          showInLegend: showRem || showLegend,
+          yAxis: 1,
+          tooltip: {
+            valueSuffix: ' characters'
+          },
+          pointStart: start,
+          pointInterval: 24 * 3600000
         }
+      };
+  return WTChart.joinMeta(data, meta);
+};
+
+WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, unit, title, today) {
+  return {
+    chart: {
+      renderTo: 'chart',
+      type: 'column',
+      alignTicks: false
+    },
+    title: {
+      text: title,
+      useHTML: true
+    },
+    plotOptions: {
+      column: {
+        borderWidth: 0
+      }
+    },
+    tooltip: {
+      crosshairs: [true, true],
+      shared: true,
+      valueSuffix: ' words'
+    },
+    xAxis: {
+      type: 'datetime',
+      startOnTick: false,
+      endOnTick: false,
+      plotLines: [
+        {
+          color: '#AAAAAA',
+          width: 1,
+          value: +today,
+          id: 'today',
+          label: {
+            text: 'Today',
+            style: {
+              color: '#AAAAAA'
+            },
+            rotation: 90
+          }
+        }
+      ]
+    },
+    yAxis: [
+      {
+        title: {
+          text: 'Word count'
+        },
+        gridLineWidth: unit === 'char' ? 0 : 1,
+        floor: 0,
+        min: 0
+      },
+      {
+        title: {
+          text: 'Character count'
+        },
+        opposite: true,
+        gridLineWidth: unit === 'char' ? 1 : 0,
+        floor: 0,
+        min: 0
+      }
+    ],
+    series: series
+  };
+};
+
+WTChart.bindButton = function ($, chartType) {
+  var isAcc = chartType === 'cumulative';
+
+  $('#target-change')
+    .data('acc', isAcc)
+    .html(isAcc ? 'Show as daily writing' : 'Show as cumulative count')
+    .click(function () {
+      var self = $(this),
+        ifAcc = ['wordcount', 'charcount', 'wordtarget', 'chartarget'],
+        noAcc = ['worddaily', 'chardaily', 'worddailytarget', 'chardailytarget'];
+
+      function doSeries(id, func) {
+        var ser = $('#chart').highcharts().get(id);
+        if (ser) {
+          ser[func]();
+        }
+      }
+
+      function hide (id) {
+        doSeries(id, 'hide');
+      }
+
+      function show(id) {
+        doSeries(id, 'show');
+      }
+
+      if (self.data('acc')) {
+        self.html('Show as cumulative count');
+        ifAcc.forEach(hide);
+        noAcc.forEach(show);
+        self.data('acc', false);
+      } else {
+        self.html('Show as daily writing');
+        noAcc.forEach(hide);
+        ifAcc.forEach(show);
+        self.data('acc', true);
+      }
+    });
+};
+
+WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
+  var isAcc = chartType === 'cumulative';
+  link = link + '?zoneOffset=' + (-zoneOffset);
+  $.getJSON(link, function (data) {
+    var series = WTChart.buildMeta(data, isAcc, showRem, showAdjusted, unit);
+    WTChart.chart(series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset);
+  });
+};
+
+WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
+  var now, today, options, userOffset;
+  userOffset = (new Date()).getTimezoneOffset();
+  now = new Date(+(new Date()) + (userOffset * 6e4) + (zoneOffset * 6e4));
+  today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  options = WTChart.chartOptions(series, chartType, showRem, showAdjusted, unit, title, today);
+  new Highcharts.Chart(options, function () {
+    WTChart.bindButton($, chartType);
+  });
+};
+
+WTChart.deleteImageSetup = function ($, link) {
+  $('#deleteimages').click(function () {
+    var $alert = $('<div class="alert alert-dismissable" role="alert">' +
+    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+    '<span aria-hidden="true">&times;</span>' +
+    '</button>' +
+    '<span class="alert-content"></span>' +
+    '</div>');
+    $.getJSON(link)
+      .done(function (data) {
+        $alert.addClass('alert-success').children('.alert-content').html(data.msg);
+        $('#alerts').append($alert);
+      })
+      .fail(function (response) {
+        var data = response.responseJSON;
+        $alert.addClass('alert-danger').children('.alert-content').html(data.error);
+        $('#alerts').append($alert);
       });
   });
-}
+};

@@ -3,10 +3,108 @@ var router = require('express').Router(),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
+  isactivated = require('../../utils/middlewares/isactivated'),
   chunk = require('../../utils/functions/chunk'),
-  filterIds = require('../../utils/functions/filterids');
+  numerictrim = require('../../utils/functions/numerictrim'),
+  filterIds = require('../../utils/functions/filterids'),
+  serverExport = require('../../utils/chart-export/server-export'),
+  anon = require('../../utils/data/anonuser');
 
-router.get('/', sendflash, function (req, res, next) {
+function chartData(req, callback) {
+  var user = req.user || anon;
+
+  var daysToLook = 30;
+  var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
+  var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
+
+  if (!start.isValid() || start.isAfter(end)) {
+    start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
+  }
+  if (!end.isValid() || start.isAfter(end)) {
+    end = moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').endOf('day');
+  }
+  daysToLook = end.diff(start, 'days') + 1;
+
+  models.Project.findAll({
+    where: {
+      id: req.params.id
+    },
+    include: [
+      {
+        model: models.Session,
+        as: 'sessions',
+        where: {
+          start: {
+            gte: start.toDate(),
+            lte: end.toDate()
+          }
+        },
+        attributes: [
+          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'),
+          models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`'),
+          models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `dailyCharCount`')
+        ],
+        required: true
+      }
+    ],
+    order: [models.Sequelize.literal('`date` ASC')],
+    group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
+  }, {
+    raw: true
+  }).then(function (sessions) {
+
+    var accessible = false;
+
+    if (sessions.length > 0 && (sessions[0].public > 0 || sessions[0].ownerId === user.id)) {
+      accessible = true;
+    }
+
+    if (!accessible) {
+      sessions = [];
+    }
+
+    var daysRange = [];
+    var daily = [], dailyChar = [];
+    var wordcount = [], accWc = 0;
+    var charcount = [], accCc = 0;
+
+    var j = 0;
+
+    for (var i = 0; i < daysToLook; i++) {
+      var workingDate = moment(start).add(i, 'days');
+      var currentWc = 0, currentCc = 0;
+      if (sessions[j] && moment.utc(sessions[j]['sessions.start']).diff(workingDate, 'days') === 0) {
+        currentWc = sessions[j].dailyCount;
+        currentCc = sessions[j].dailyCharCount;
+        accWc += currentWc;
+        accCc += currentCc;
+        daily.push(currentWc);
+        dailyChar.push(currentCc);
+        j++;
+      } else {
+        daily.push(0);
+        dailyChar.push(0);
+      }
+      daysRange.push(workingDate.format('YYYY-MM-DD'));
+      wordcount.push(accWc);
+      charcount.push(accCc);
+    }
+
+    var result = {
+      date: daysRange,
+      wordcount: wordcount,
+      charcount: charcount,
+      worddaily: daily,
+      chardaily: dailyChar
+    };
+    callback(null, result);
+  }).catch(function (err) {
+    err.code = 500;
+    callback(err, {error: err.message});
+  });
+}
+
+router.get('/', isactivated, sendflash, function (req, res, next) {
   var filters = [],
     searchOpts = {
       where: {
@@ -46,7 +144,7 @@ router.get('/', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/new', sendflash, function (req, res) {
+router.get('/new', isactivated, sendflash, function (req, res) {
   models.Genre.findAll({
     where: {
       ownerId: req.user.id
@@ -72,17 +170,19 @@ router.get('/new', sendflash, function (req, res) {
   });
 });
 
-router.post('/new', isverified, function (req, res, next) {
+router.post('/new', isactivated, isverified, function (req, res, next) {
   var savedProject = {};
   models.Project.create({
     name: req.body.name,
     description: req.body.description,
-    wordcount: req.body.wordcount,
-    targetwc: req.body.targetwc,
-    charcount: req.body.charcount || 0,
-    targetcc: req.body.targetcc || 0,
+    wordcount: numerictrim(req.body.wordcount),
+    targetwc: numerictrim(req.body.targetwc),
+    charcount: numerictrim(req.body.charcount) || 0,
+    targetcc: numerictrim(req.body.targetcc) || 0,
     active: !!req.body.active,
     finished: !!req.body.finished,
+    public: !!req.body.public,
+    zoneOffset: req.body.zoneOffset || 0,
     ownerId: req.user.id
   }).then(function (project) {
     savedProject = project;
@@ -123,6 +223,8 @@ router.post('/new', isverified, function (req, res, next) {
           targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
+          public: !!req.body.public,
+          zoneOffset: req.body.zoneOffset || 0,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
@@ -135,7 +237,33 @@ router.post('/new', isverified, function (req, res, next) {
   });
 });
 
-router.get('/:id/edit', sendflash, function (req, res, next) {
+router.get('/embed/:id', function (req, res, next) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      "public": true
+    }
+  }).then(function (project) {
+    if (!project) {
+      return next();
+    }
+    res.render('user/embed', {
+      title: 'Project ' + project.name,
+      object: project,
+      options: {
+        chartType: 'daily',
+        showRemaining: false,
+        showAdjusted: false
+      },
+      datalink: '/projects/' + project.id + '/data.json',
+      objectlink: '/projects/' + project.id
+    });
+  }).catch(function (err) {
+    next(err);
+  });
+});
+
+router.get('/:id/edit', isactivated, sendflash, function (req, res, next) {
   models.Project.findOne({
     where: {
       id: req.params.id,
@@ -173,7 +301,7 @@ router.get('/:id/edit', sendflash, function (req, res, next) {
   });
 });
 
-router.post('/:id/edit', isverified, function (req, res, next) {
+router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
   var savedProject = null;
   models.Project.findOne({
     where: {
@@ -189,12 +317,14 @@ router.post('/:id/edit', isverified, function (req, res, next) {
     if (!req.body.delete) {
       project.set('name', req.body.name);
       project.set('description', req.body.description);
-      project.set('wordcount', req.body.wordcount);
-      project.set('targetwc', req.body.targetwc);
-      project.set('charcount', req.body.charcount || 0);
-      project.set('targetcc', req.body.targetcc || 0);
+      project.set('wordcount', numerictrim(req.body.wordcount));
+      project.set('targetwc', numerictrim(req.body.targetwc));
+      project.set('charcount', numerictrim(req.body.charcount) || 0);
+      project.set('targetcc', numerictrim(req.body.targetcc) || 0);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
+      project.set('zoneOffset', req.body.zoneOffset || 0);
+      project.set('public', !!req.body.public);
       return project.save().then(function () {
         savedProject = project;
         return models.Genre.findAll({
@@ -242,6 +372,8 @@ router.post('/:id/edit', isverified, function (req, res, next) {
           targetcc: req.body.targetcc,
           active: !!req.body.active,
           finished: !!req.body.finished,
+          public: !!req.body.public,
+          zoneOffset: req.body.zoneOffset || 0,
           genres: filterIds(genres, req.body.genres)
         },
         genres: chunk(genres, 3),
@@ -254,7 +386,7 @@ router.post('/:id/edit', isverified, function (req, res, next) {
   });
 });
 
-router.get('/active', sendflash, function (req, res, next) {
+router.get('/active', isactivated, sendflash, function (req, res, next) {
   models.Project.findAndCountAll({
     where: {
       ownerId: req.user.id,
@@ -290,10 +422,14 @@ router.get('/active', sendflash, function (req, res, next) {
 });
 
 router.get('/:id', sendflash, function (req, res, next) {
+  if (!req.user) {
+    req.user = anon;
+    res.locals.user = anon;
+  }
+
   models.Project.findOne({
     where: {
-      id: req.params.id,
-      ownerId: req.user.id
+      id: req.params.id
     },
     include: [
       {
@@ -309,15 +445,24 @@ router.get('/:id', sendflash, function (req, res, next) {
     ]
   }).then(function (project) {
     if (!project) {
-      var error = new Error('Not found');
-      error.status = 404;
-      return next(error);
+      return isactivated(req, res, next);
+    }
+
+    if (!project.public && project.ownerId !== req.user.id) {
+      return isactivated(req, res, next);
     }
     
     res.render('user/projects/single', {
       title: project.name + ' project',
       section: 'projectsingle',
-      project: project
+      project: project,
+      socialMeta: {
+        title: project.name,
+        description: project.description || 'A writing project in Writer\'s Trail.',
+        image: '/projects/' + project.id + '/daily.png',
+        type: 'project',
+        url: '/projects/' + project.id
+      }
     });
     
   }).catch(function (err) {
@@ -325,98 +470,17 @@ router.get('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/data.json', function (req, res, next) {
-  var daysToLook = 30;
-  var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
-  var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
-  var hasStartQuery = true, hasEndQuery = true;
-  
-  if (!start.isValid() || start.isAfter(end)) {
-    start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
-    hasStartQuery = false;
-  }
-  if (!end.isValid() || start.isAfter(end)) {
-    end = moment.utc().subtract(req.query.zoneOffset || 0, 'minutes').endOf('day');
-    hasEndQuery = false;
-  }
-  daysToLook = end.diff(start, 'days') + 1;
-  
-  models.Project.findAll({
-    where: {
-      id: req.params.id,
-      ownerId: req.user.id
-    },
-    include: [
-      {
-        model: models.Session,
-        as: 'sessions',
-        where: {
-          start: {
-            gte: start.toDate(),
-            lte: end.toDate()
-          }
-        },
-        attributes: [
-          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'),
-          models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`'),
-          models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `dailyCharCount`')
-        ],
-        required: true
-      }
-    ],
-    order: [models.Sequelize.literal('`date` ASC')],
-    group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
-  }, {
-    raw: true
-  }).then(function (sessions) {
-    
-    var daysRange = [];
-    var daily = [], dailyChar = [];
-    var wordcount = [], accWc = 0;
-    var charcount = [], accCc = 0;
-    
-    var j = 0;
-    
-    if (!hasStartQuery) {
-      start.add(req.query.zoneOffset || 0, 'minutes');
+router.get('/:id/:type.png', serverExport.middleware('Project', chartData));
+
+router.get('/:id/deleteImage', isactivated, serverExport.deleteImageMiddleware('Project'));
+
+router.get('/:id/data.json', function (req, res) {
+  chartData(req, function (err, data) {
+    if (err) {
+      console.log(err);
+      res.status(err.code);
     }
-    if (!hasEndQuery) {
-      end.add(req.query.zoneOffset || 0, 'minutes');
-    }
-        
-    for (var i = 0; i < daysToLook; i++) {
-      var workingDate = moment(start).add(i, 'days');
-      var currentWc = 0, currentCc = 0;
-      if (sessions[j] && moment.utc(sessions[j]['sessions.start']).diff(workingDate, 'days') === 0) {
-        currentWc = sessions[j].dailyCount;
-        currentCc = sessions[j].dailyCharCount;
-        accWc += currentWc;
-        accCc += currentCc;
-        daily.push(currentWc);
-        dailyChar.push(currentCc);
-        j++;
-      } else {
-        daily.push(0);
-        dailyChar.push(0);
-      }
-      daysRange.push(workingDate.format('YYYY-MM-DD'));
-      wordcount.push(accWc);
-      charcount.push(accCc);
-    }
-    
-    var result = {
-      date: daysRange,
-      wordcount: wordcount,
-      charcount: charcount,
-      worddaily: daily,
-      chardaily: dailyChar
-    };
-    res.json(result).end();
-  }).catch(function (err) {
-    if (process.env.NODE_ENV === 'development') {
-      return next(err);
-    }
-    res.json({error: err.message});
+    res.json(data).end();
   });
 });
 

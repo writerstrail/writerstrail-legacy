@@ -58,8 +58,12 @@ block content
                 for i in ['off', 'soft', 'hard']
                   option(selected=i===app.maintenance)= i
           .form-group
+            label.col-md-2.control-label(for='sysmsg') System message
+            .col-md-10
+              textarea#sysmsg.form-control(name='sysmsg' placeholder='System message' rows='3')= app.sysmsg
+          .form-group
             .col-md-offset-2.col-md-10
               button.btn.btn-warning(type='submit' name='maintenanceButton' value='ok') Update
 
 append scripts
-  script(src='/scripts/admin.js' type='text/javascript')
+  script(src='/scripts/admin.min.js' type='text/javascript')

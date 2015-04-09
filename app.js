@@ -10,14 +10,18 @@ var express = require('express'),
   flash = require('connect-flash'),
   i18n = require('i18n'),
   csrf = require('csurf'),
+  uglify = require('./utils/middlewares/uglify'),
   paginate = require('express-paginate'),
   moment = require('moment'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  mkdirp = require('./utils/functions/mkdirp');
 
 var app = express();
 
 var env = process.env.NODE_ENV || "development";
 var config = require('./config/config.js')[env];
+
+mkdirp(config.imagesdir);
 
 // create session store
 var sessionStore = new MysqlStore({
@@ -70,6 +74,9 @@ app.use(session({
 }));
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
+app.use(uglify(path.join(__dirname, 'public'), {
+  generateSourceMap: env !== 'production'
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 app.use(i18n.init);
@@ -97,6 +104,8 @@ app.use(function (req, res, next) {
 
   res.locals._ = _;
   res.locals.moment = moment;
+  res.locals.baseurl = config.baseurl;
+  res.locals.fbnamespace = config.facebook.namespace;
   next();
 });
 

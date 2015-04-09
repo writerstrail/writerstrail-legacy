@@ -31,4 +31,7 @@ block content
           span.fa.fa-fw.fa-file-o
           | &nbsp;
           a(href=("/projects/" + project.id) title=project.description)= project.name
+          if project.public
+            | &#x0020;
+            small.text-danger (public)
     +paginate(paginate, pageCount, currentPage)

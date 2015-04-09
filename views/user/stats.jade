@@ -152,9 +152,6 @@ block content
             #periodsessionsdist
           .col-md-3
             #periodwordsdist
-        ul.list-group
-          li.list-group-item.text-center
-            button#flushperiod.btn.btn-lg.btn-default Refresh charts
 
     .col-md-12
       #perfSession.panel.panel-primary
@@ -167,27 +164,19 @@ block content
             #durationsessionsdist
           .col-md-3
             #durationwordsdist
-        ul.list-group
-          li.list-group-item.text-center
-            button#flushsession.btn.btn-lg.btn-default Refresh charts
-
-
-
-append styles
-  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
-  link(rel='stylesheet', href='/bower_components/cal-heatmap/cal-heatmap.css')
-  link(rel='stylesheet', href='/stylesheets/chart.css')
 
 append scripts
-  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
-  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
-  script(type='text/javascript', src='/bower_components/cal-heatmap/cal-heatmap.min.js')
-  script(type='text/javascript', src='/scripts/stats.js')
+  script(type='text/javascript', src='/vendor/highcharts/highcharts.min.js')
+  script(type='text/javascript', src='/vendor/highcharts/heatmap.min.js')
+  script(type='text/javascript', src='/vendor/highcharts/exporting.min.js')
+  script(type='text/javascript', src='/scripts/highcharts-init.min.js')
+  script(type='text/javascript', src='/scripts/chart.min.js')
+  script(type='text/javascript', src='/scripts/stats.min.js')
   script(type='text/javascript')
     | $(function() {
-    | setupYearly(CalHeatMap, !{JSON.stringify(data.sessions)}, !{JSON.stringify(data.legend)});
-    | setupPerPeriod(jQuery, c3, '!{user.settings.performanceMetric}');
-    | setupPerSession(jQuery, c3, '!{user.settings.performanceMetric}');
+    | window.yearly($, Highcharts);
+    | window.perPeriod(jQuery, Highcharts, '!{user.settings.performanceMetric}');
+    | window.perSession(jQuery, Highcharts, '!{user.settings.performanceMetric}');
     | });
   if user.settings.showTour
     script

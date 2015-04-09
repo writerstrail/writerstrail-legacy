@@ -28,6 +28,11 @@ module.exports = function (sequelize, DataTypes) {
         }
       }
     },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null
+    },
     notes: {
       type: DataTypes.TEXT
     },
@@ -71,6 +76,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.ENUM,
       values: require('../utils/data/targetunits'),
       allowNull: false
+    },
+    public: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'targets',

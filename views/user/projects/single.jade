@@ -2,21 +2,34 @@ extends ../../layout
 
 block content
   include ../../mixins/progressbar
+  include ../../mixins/embedtag
+  include ../../mixins/socialbuttons
+  - var isOwner = project.ownerId === user.id
+  if project.public && isOwner
+    .alert.alert-warning
+      | This project is <strong>public</strong>, which means anyone with the link is able to see it.
+
   h1 Project 
     em= project.name
     
-    
-  .btn-group
-    a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit this project')
-      span.fa.fa-edit.fa-lg
-    include toolbar
-  p  
+  if isOwner
+    .btn-group
+      a.btn.btn-lg.btn-default(href='/projects/' + project.id + '/edit' title='Edit this project')
+        span.fa.fa-edit.fa-lg
+      include toolbar
+    p
   
   if project.targetwc > 0
     .row
       .col-md-12
         - var percentage = Math.min(100, Math.max(0, Math.floor((project.currentWordcount / project.targetwc) * 100)))
         +progressbar(project.currentWordcount, project.targetwc, percentage)
+
+  if project.public
+    .row: .col-md-12
+      +socialbuttons(baseurl + '/project/' + project.id, project.name + ' project',
+          truncatedesc(project.description || 'A writing project in Writer\'s Trail'))
+    p
             
   #project-chart.panel.panel-default
     .panel-heading
@@ -24,7 +37,6 @@ block content
         span.fa.fa-bar-chart
         |  Project progress
     .panel-body
-        h3.text-center= project.name
         div.range-block
           div#select-range.range-selector.btn.btn-default
             span.fa.fa-lg.fa-calendar
@@ -35,6 +47,19 @@ block content
         #chart
         .text-center
           button#target-change.btn.btn-default(type='button') Show as daily writing
+    if project.public
+      ul.list-group
+        li.list-group-item
+          button#embedbutton.btn.btn-default(type='button' data-toggle='button' aria-pressed='false' autocomplete='off')
+            | Embed chart
+          | &#x0020;
+          a.btn.btn-default(href='/projects/' + project.id + '/daily.png' target='_blank') Daily writing image
+          | &#x0020;
+          a.btn.btn-default(href='/projects/' + project.id + '/cumulative.png' target='_blank') Cumulative writing image
+          if isOwner
+            | &#x0020;
+            button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
+          +embedtag('projects', project.id)
 
   ul.list-group
     li.list-group-item
@@ -91,17 +116,20 @@ block content
         .col-md-2.text-right
           strong Included in targets:
         .col-md-10
-          if project.targets.length === 0
+          - var targetList = isOwner ? project.targets : _.filter(project.targets, {'public': true})
+          if targetList.length === 0
             | None
           else
-            for target, i in project.targets
+            for target, i in targetList
               if i > 0
                 | ,&nbsp;
               a(href='/targets/' + target.id title=target.name)= target.name
-          |  
-          a#create-target.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
-              span.fa.fa-plus
-              |  Create one
+
+          if isOwner
+            | &#x0020;
+            a#create-target.btn.btn-sm.btn-success(href='/targets/new?projectid=' + project.id)
+                span.fa.fa-plus
+                |  Create one
     li.list-group-item
       .row
         .col-md-2.text-right
@@ -121,23 +149,26 @@ block content
         .col-md-10
           = moment.utc(project.createdAt).format(user.settings.dateFormat + ' ' + user.settings.timeFormat)
 append styles
-  link(rel='stylesheet', href='/bower_components/c3/c3.min.css')
   link(rel='stylesheet', href='/bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css')
   link(rel='stylesheet', href='/stylesheets/chart.css')
   link(rel='stylesheet', href='/stylesheets/range.css')
 
 append scripts
-  script(type='text/javascript', src='/bower_components/d3/d3.min.js')
-  script(type='text/javascript', src='/bower_components/c3/c3.min.js')
   script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
   script(type='text/javascript', src='/bower_components/bootstrap-daterangepicker/daterangepicker.js')
-  script(type='text/javascript', src='/scripts/chart.js')
-  script(type='text/javascript', src='/scripts/range.js')
-  script
-    | var link = '/projects/#{project.id}/data.json';
-    | linkChart(link, jQuery, c3, d3, 'daily', false, false);
-    | chartRange(jQuery, moment, '#select-range', '#{user.settings.dateFormat}', '#chart', link);
+  script(type='text/javascript', src='/vendor/highcharts/highcharts.min.js')
+  script(type='text/javascript', src='/vendor/highcharts/exporting.min.js')
+  script(type='text/javascript', src='/scripts/highcharts-init.min.js')
+  script(type='text/javascript', src='/scripts/chart.min.js')
+  script(type='text/javascript', src='/scripts/range.min.js')
+  script.
+    var link = '/projects/#{project.id}/data.json';
+    window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}', #{project.zoneOffset});
+    chartRange2(jQuery, moment, '.range-selector', '#{user.settings.dateFormat}', '#chart', link, #{project.zoneOffset});
+    deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
     
   if user.settings.showTour
     script
       | tour(jQuery, hopscotch, range(28, 32));
+  if project.public
+    script(src='/bower_components/RRSSB/js/rrssb.min.js')
