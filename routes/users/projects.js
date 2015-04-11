@@ -441,6 +441,16 @@ router.get('/:id', sendflash, function (req, res, next) {
         model: models.Target,
         as: 'targets',
         order: [['name', 'ASC']]
+      },
+      {
+        model: models.User,
+        as: 'owner',
+        required: true,
+        include: [{
+          model: models.Settings,
+          as: 'settings',
+          required: true
+        }]
       }
     ]
   }).then(function (project) {
@@ -451,7 +461,7 @@ router.get('/:id', sendflash, function (req, res, next) {
     if (!project.public && project.ownerId !== req.user.id) {
       return isactivated(req, res, next);
     }
-    
+
     res.render('user/projects/single', {
       title: project.name + ' project',
       section: 'projectsingle',

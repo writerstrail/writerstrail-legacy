@@ -40,7 +40,8 @@ block content
                       = project.currentWordcount
                       |  written words.
                   else
-                    +progressbar(project.currentWordcount, project.targetwc, project.percentage)
+                    +progressbar(project.currentWordcount, project.targetwc, project.percentage,
+                      user.settings.lothreshold, user.settings.hithreshold)
                 .col-md-2
                   a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
           li.list-group-item.text-center

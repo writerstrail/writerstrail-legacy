@@ -466,7 +466,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
         edit: true,
         target: {
           name: req.body.name,
-          description:req.body.description,
+          description:  req.body.description,
           notes: req.body.notes,
           count: req.body.count || null,
           unit: req.body.unit,
@@ -493,26 +493,38 @@ router.get('/:id', sendflash, function (req, res, next) {
     where: {
       id: req.params.id
     },
-    include: [{
-      model: models.Project,
-      as: 'projects',
-      order: [['name', 'ASC']],
-      include: [{
-        model: models.Session,
-        as: 'sessions',
-        required: false,
-        where: {
-          start: {
-            between: [
-             models.Sequelize.literal('`Target`.`start`'),
-             models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
-            ]
+    include: [
+      {
+        model: models.Project,
+        as: 'projects',
+        order: [['name', 'ASC']],
+        include: [{
+          model: models.Session,
+          as: 'sessions',
+          required: false,
+          where: {
+            start: {
+              between: [
+                models.Sequelize.literal('`Target`.`start`'),
+                models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
+              ]
+            },
+            deletedAt: null
           },
-          deletedAt: null
-        },
-        order: [['start', 'DESC']]
-      }]
-    }]
+          order: [['start', 'DESC']]
+        }]
+      },
+      {
+        model: models.User,
+        as: 'owner',
+        required: true,
+        include: [{
+          model: models.Settings,
+          as: 'settings',
+          required: true
+        }]
+      }
+    ]
   }).then(function (target) {
     if (!target) {
       return isactivated(req, res, next);
