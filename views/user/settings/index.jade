@@ -25,16 +25,18 @@ block content
               = moment.utc().format(format)
               | )
         span#datehelp.help-block Your preferred time format for sessions.
-    .form-group
+    - var lotErr = _.find(validate, function(err) { return err.path === 'lothreshold' }) || ''
+    .form-group(class=lotErr ? 'has-error' : '')
       label.col-md-2.control-label(for='lothreshold') Low progress threshold
       .col-md-10
         input#lothreshold.form-control(type='number' name='lothreshold' min='0' max='99' aria-describedby='lotshelp' value=settings.lothreshold)
-        span#lotshelp.help-block Percentage when the progress bar stops being red and starts being yellow.
-    .form-group
+        span#lotshelp.help-block= lotErr ? lotErr.message : 'Percentage when the progress bar stops being red and starts being yellow.'
+    - var hitErr = _.find(validate, function(err) { return err.path === 'hithreshold' || err.path === 'lowThsdBelowHigh' }) || ''
+    .form-group(class=hitErr ? 'has-error' : '')
       label.col-md-2.control-label(for='hithreshold') High progress threshold
       .col-md-10
         input#hithreshold.form-control(type='number' name='hithreshold' min='1' max='100' aria-describedby='hitshelp' value=settings.hithreshold)
-        span#hitshelp.help-block Percentage when the progress bar stops being yellow and starts being green.
+        span#hitshelp.help-block= hitErr ? hitErr.message : 'Percentage when the progress bar stops being yellow and starts being green.'
     .form-group
       label.col-md-2.control-label(for='charttype') Preferred target chart type
       .col-md-10

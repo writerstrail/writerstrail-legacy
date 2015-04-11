@@ -105,6 +105,13 @@ module.exports = function (sequelize, DataTypes) {
           onUpdate: 'CASCADE'
         });
       }
+    },
+    validate: {
+      lowThsdBelowHigh: function () {
+        if (this.lothreshold >= this.hithreshold) {
+          throw new Error('The high threshold must be greater than the low threshold.');
+        }
+      }
     }
   });
   
