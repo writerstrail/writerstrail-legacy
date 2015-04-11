@@ -27,7 +27,9 @@ router.post('/', isverified, function (req, res, next) {
     timeFormat = req.body.timeformat,
     chartType = req.body.charttype,
     defaultTimer = req.body.defaultTimer = durationparser(req.body.defaultTimer),
-    performanceMetric = req.body.performanceMetric;
+    performanceMetric = req.body.performanceMetric,
+    lothreshold = parseInt(req.body.lothreshold, 10),
+    hithreshold = parseInt(req.body.hithreshold, 10);
   if (_.contains(dateFormats.data, dateFormat)) {
     settings.dateFormat = dateFormat;
   }
@@ -37,17 +39,21 @@ router.post('/', isverified, function (req, res, next) {
   if (_.contains(chartTypes, chartType)) {
     settings.chartType = chartType;
   }
+  if (!isNaN(lothreshold)) {
+    settings.lothreshold = lothreshold;
+  }
+  if (!isNaN(hithreshold)) {
+    settings.hithreshold = hithreshold;
+  }
   settings.showRemaining = !!req.body.showRemaining;
   settings.showAdjusted = !!req.body.showAdjusted;
   settings.showTour = !!req.body.showTour;
   settings.defaultTimer = defaultTimer;
   settings.performanceMetric = performanceMetric;
-  console.log('-----val', defaultTimer);
   req.user.settings.save().then(function () {
     req.flash('success', 'Your settings were successfully saved');
     res.redirect('back');
   }).catch(function (err) {
-    console.log('----er', err);
     if (err.name === 'SequelizeValidationError') {
       req.flash('error', 'There are invalid values');
       req.flash('valerror', err.errors);

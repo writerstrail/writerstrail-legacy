@@ -26,14 +26,14 @@ block content
               | )
         span#datehelp.help-block Your preferred time format for sessions.
     .form-group
-      label.col-md-2.control-label(for='lowthreshold') Low progress threshold
+      label.col-md-2.control-label(for='lothreshold') Low progress threshold
       .col-md-10
-        input.form-control(type='number' min='0' max='99' aria-describedby='lotshelp')
+        input#lothreshold.form-control(type='number' name='lothreshold' min='0' max='99' aria-describedby='lotshelp' value=settings.lothreshold)
         span#lotshelp.help-block Percentage when the progress bar stops being red and starts being yellow.
     .form-group
       label.col-md-2.control-label(for='hithreshold') High progress threshold
       .col-md-10
-        input.form-control(type='number' min='1' max='100' aria-describedby='hitshelp')
+        input#hithreshold.form-control(type='number' name='hithreshold' min='1' max='100' aria-describedby='hitshelp' value=settings.hithreshold)
         span#hitshelp.help-block Percentage when the progress bar stops being yellow and starts being green.
     .form-group
       label.col-md-2.control-label(for='charttype') Preferred target chart type
