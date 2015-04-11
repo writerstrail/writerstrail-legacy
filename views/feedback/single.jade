@@ -62,7 +62,7 @@ block content
               if i > 0
                 br
               = line
-  if user && (user.id == feedback.authorId) 
+  if user && (user.id == feedback.authorId || user.role === 'superadmin')
     unless feedback.deletedAt
       a.btn.btn-danger(href='/feedback/' + feedback.id + '/delete' title='Delete this feedback')
         span.fa.fa-trash
@@ -71,3 +71,8 @@ block content
       a.btn.btn-primary(href='/feedback/' + feedback.id + '/delete/undo' title='Restore this feedback')
         span.fa.fa-undo
         |  Restore
+  if user && user.role === 'superadmin'
+    | &#x0020;
+    a.btn.btn-success(href='/admin/feedback/' + feedback.id title='Reply to this feedback')
+      span.fa.fa-reply
+      |  Reply
