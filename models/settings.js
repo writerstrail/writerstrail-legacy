@@ -22,6 +22,36 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: timeFormats.data[0],
       allowNull: false
     },
+    lothreshold: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 33,
+      validate: {
+        min: {
+          args: 0,
+          msg: 'The threshold must be equal or greater than zero.'
+        },
+        max: {
+          args: 100,
+          msg: 'The threshold must be equal or lesser than 100.'
+        }
+      }
+    },
+    hithreshold: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 66,
+      validate: {
+        min: {
+          args: 0,
+          msg: 'The threshold must be equal or greater than zero.'
+        },
+        max: {
+          args: 100,
+          msg: 'The threshold must be equal or lesser than 100.'
+        }
+      }
+    },
     showRemaining: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -74,6 +104,13 @@ module.exports = function (sequelize, DataTypes) {
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
+      }
+    },
+    validate: {
+      lowThsdBelowHigh: function () {
+        if (this.lothreshold >= this.hithreshold) {
+          throw new Error('The high threshold must be greater than the low threshold.');
+        }
       }
     }
   });

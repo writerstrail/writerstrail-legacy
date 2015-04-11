@@ -4,7 +4,8 @@ block content
   include ../../mixins/progressbar
   include ../../mixins/embedtag
   include ../../mixins/socialbuttons
-  - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + user.settings.dateFormat}})
+  - var settings = target.owner.settings
+  - moment.locale('en', {calendar: {sameDay : '[today]',nextDay : '[tomorrow]',lastWeek : '[last] dddd',nextWeek : 'dddd',sameElse : '[at] ' + settings.dateFormat}})
   - var now = moment.utc().add(target.zoneOffset, 'minutes')
   - var hasStarted = now.isAfter(target.start) || now.isSame(target.start)
   - var totalDays = Math.floor(moment.utc(target.end).diff(moment.utc(target.start), 'days', true)) + 1
@@ -13,7 +14,7 @@ block content
   - var allSessions = []
   - var totalCount = 0
   - _.forEach(target.projects, function(proj) { allSessions = allSessions.concat(proj.sessions) })
-  for sessions, day in _.groupBy(allSessions, function(sess) { return moment.utc(sess.dataValues.start).format(user.settings.dateFormat) })
+  for sessions, day in _.groupBy(allSessions, function(sess) { return moment.utc(sess.dataValues.start).format(settings.dateFormat) })
     - totalCount += _.reduce(sessions, function(wc, sess) { return wc + sess.dataValues[target.unit + 'count'] }, 0)
   - var remainingCount = Math.max(0, target.count - totalCount)
   - var unit = target.unit === 'word' ? 'words' : 'characters'
@@ -42,7 +43,8 @@ block content
     .row
       .col-md-12
         - var percentage = Math.min(100, Math.max(0, Math.floor((totalCount / target.count) * 100)))
-        +progressbar(totalCount, target.count, percentage)
+        +progressbar(totalCount, target.count, percentage,
+          settings.lothreshold, settings.hithreshold)
 
   if target.public
 
@@ -121,9 +123,9 @@ block content
         .col-md-2
           strong Period:
         .col-md-10
-          = moment.utc(target.start).format(user.settings.dateFormat)
+          = moment.utc(target.start).format(settings.dateFormat)
           |  &mdash; 
-          = moment.utc(target.end).format(user.settings.dateFormat)
+          = moment.utc(target.end).format(settings.dateFormat)
     li.list-group-item
       .row
         .col-md-2: strong Total days:
@@ -224,7 +226,7 @@ block content
               if totalCount === 0
                 | Never
               else
-                = now.add(Math.ceil((remainingCount) / (totalCount / (daysPast + 1))), 'days').format(user.settings.dateFormat)
+                = now.add(Math.ceil((remainingCount) / (totalCount / (daysPast + 1))), 'days').format(settings.dateFormat)
         li.list-group-item
           .row
             .col-md-2: strong Daily target to finish on time:
@@ -240,8 +242,8 @@ append scripts
   script(type='text/javascript', src='/scripts/chart.min.js')
   script(type='text/javascript').
     var link = '/targets/#{target.id}/data.json';
-    window.linkChart(link, jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
-            !{user.settings.showAdjusted}, '#{target.unit}', '#{target.name}', #{target.zoneOffset || 0});
+    window.linkChart(link, jQuery, Highcharts, '!{settings.chartType}', !{settings.showRemaining},
+            !{settings.showAdjusted}, '#{target.unit}', '#{target.name}', #{target.zoneOffset || 0});
     deleteImageSetup(jQuery, '/targets/#{target.id}/deleteImage');
   if user.settings.showTour
     script

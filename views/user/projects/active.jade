@@ -32,7 +32,8 @@ block content
                 span.fa.fa-edit
             .col-md-7
               if project.targetwc > 0
-                +progressbar(project.currentWordcount, project.targetwc, project.percentage)
+                +progressbar(project.currentWordcount, project.targetwc, project.percentage,
+                  user.settings.lothreshold, user.settings.hithreshold)
               else
                 | No target defined.&nbsp;
                 = project.currentWordcount
