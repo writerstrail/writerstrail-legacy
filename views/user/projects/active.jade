@@ -32,11 +32,11 @@ block content
                 span.fa.fa-edit
             .col-md-7
               if project.targetwc > 0
-                +progressbar(project.currentWordcount, project.targetwc, project.percentage,
+                +progressbar(project.currentWordcount + project.correctwc, project.targetwc, project.percentage,
                   user.settings.lothreshold, user.settings.hithreshold)
               else
                 | No target defined.&nbsp;
-                = project.currentWordcount
+                = project.currentWordcount + project.correctwc
                 | &nbsp;written words.
             .col-md-2
               a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session

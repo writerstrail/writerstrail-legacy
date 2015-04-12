@@ -37,10 +37,10 @@ block content
                 .col-md-7
                   if project.targetwc === 0
                     p No target defined. 
-                      = project.currentWordcount
+                      = project.currentWordcount + project.correctwc
                       |  written words.
                   else
-                    +progressbar(project.currentWordcount, project.targetwc, project.percentage,
+                    +progressbar(project.currentWordcount + project.correctwc, project.targetwc, project.percentage,
                       user.settings.lothreshold, user.settings.hithreshold)
                 .col-md-2
                   a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
