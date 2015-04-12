@@ -131,7 +131,7 @@ block content
             if avgs.modeProject
               | You had more writing sessions for the&#x0020;
               a(href='/projects/' + avgs.modeProject['project.id']): strong= avgs.modeProject['project.name']
-              |  project, with a count of &#x0020;
+              |  project, with a total of &#x0020;
               strong= avgs.modeProject.totalSessions
               if avgs.modeProject.totalSessions === 1
                 |  session.
