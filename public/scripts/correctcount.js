@@ -1,14 +1,5 @@
 /* globals $, projectId, csrf, document */
 $(function () {
-  function sendAlert(type, message) {
-    var $alert = '<div class="alert alert-' + type + '">' +
-      '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-      '<span aria-hidden="true">&times;</span>' +
-      '</button>' +
-      message + '</div>';
-
-    $('#alerts').append($alert);
-  }
 
   function correctSend(type, value) {
     return function () {
@@ -42,7 +33,7 @@ $(function () {
   $('#correctwcsave').on('click', correctSend('wc', function () {
     return $('#correctwc').val();
   }));
-
+  
   $('#correctwcreset').on('click', correctSend('wc', 'reset'));
 
   $('#correctcclink').on('click', function (e) {
@@ -54,7 +45,9 @@ $(function () {
     $('#correctccblock').hide();
   });
 
-  $('#correctccsave').on('click', function () {
-    $('#correctccloading').show();
-  });
+  $('#correctccsave').on('click', correctSend('cc', function () {
+    return $('#correctcc').val();
+  }));
+
+  $('#correctccreset').on('click', correctSend('cc', 'reset'));
 });

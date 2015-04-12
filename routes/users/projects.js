@@ -522,8 +522,45 @@ router.post('/:id/correctwc', isactivated, function (req, res) {
     return project.save();
   }).then(function () {
     return res.status(200).json({
-      message: 'Wordcount updated',
-      currentwc: parseInt(req.body.correctwc, 10)
+      message: 'Wordcount updated'
+    });
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Database error'
+    });
+  });
+});
+
+router.post('/:id/correctcc', isactivated, function (req, res) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    }
+  }).then(function (project) {
+    if (!project) {
+      return res.status(404).json({error: 'Not found'});
+    }
+
+    var newCc = req.body.correctcc;
+
+    if (newCc !== 'reset') {
+      newCc = parseInt(newCc, 10);
+
+      if (isNaN(newCc) || newCc < 0) {
+        return res.status(400).json({
+          error: 'The corrected character count must be a non-negative integer'
+        });
+      }
+    }
+
+    project.correctcc = newCc === 'reset' ? 0 : newCc - project.currentCharcount;
+
+    return project.save();
+  }).then(function () {
+    return res.status(200).json({
+      message: 'Character count updated'
     });
   }).catch(function (err) {
     console.log(err);

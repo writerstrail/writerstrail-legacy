@@ -7,6 +7,7 @@ block content
   - var isOwner = project.ownerId === user.id
   - var settings = project.owner.settings
   - var currentWordcount = project.currentWordcount + project.correctwc
+  - var currentCharcount = project.currentCharcount + project.correctcc
   if project.public && isOwner
     .alert.alert-warning
       | This project is <strong>public</strong>, which means anyone with the link is able to see it.
@@ -117,9 +118,9 @@ block content
             strong Character count:
         .col-sm-10
           if project.targetcc > 0
-            = project.currentCharcount + '/' + project.targetcc
+            = currentCharcount + '/' + project.targetcc
           else
-            = project.currentCharcount
+            = currentCharcount
           if isOwner
             small
               |  (
@@ -128,11 +129,13 @@ block content
             .row#correctccblock
               label.col-md-2.control-label(for='correctcc') Current character count
               .col-md-10
-                input#correctcc.form-control(type='number' min='0' value=project.currentCharcount)
+                input#correctcc.form-control(type='number' min='0' value=currentCharcount)
                 p
                 button#correctccsave.btn.btn-primary(type='button') Save
                 | &#x0020;
                 button#correctcccancel.btn.btn-danger(type='button') Cancel
+                | &#x0020;
+                button#correctccreset.btn.btn-info(type='button' title='Remove custom corretion') Reset
                 | &#x0020;
                 span#correctccloading.fa.fa-spin.fa-circle-o-notch
     li.list-group-item
