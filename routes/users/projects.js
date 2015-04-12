@@ -494,4 +494,39 @@ router.get('/:id/data.json', function (req, res) {
   });
 });
 
+router.post('/:id/correctwc', isactivated, function (req, res) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    }
+  }).then(function (project) {
+    if (!project) {
+      return res.status(404).json({error: 'Not found'});
+    }
+
+    var newWc = parseInt(req.body.correctwc, 10);
+
+    if (isNaN(newWc) || newWc < 0) {
+      return res.status(400).json({
+        error: 'The corrected wordcount must be a non-negative integer'
+      });
+    }
+
+    project.correctwc = newWc - project.currentWordcount;
+
+    return project.save();
+  }).then(function () {
+    return res.status(200).json({
+      message: 'Wordcount updated',
+      currentwc: parseInt(req.body.correctwc, 10)
+    });
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Database error'
+    });
+  });
+});
+
 module.exports = router;
