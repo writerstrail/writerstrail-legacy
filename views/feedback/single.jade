@@ -25,6 +25,16 @@ block content
   .list-group
     .row.list-group-item
       .col-md-2
+        strong Created at
+      .col-md-10
+        = moment.utc(feedback.createdAt).format('YYYY-MM-DD HH:mm:ss Z')
+    .row.list-group-item
+      .col-md-2
+        strong Last update
+      .col-md-10
+        = moment.utc(feedback.updatedAt).format('YYYY-MM-DD HH:mm:ss Z')
+    .row.list-group-item
+      .col-md-2
         strong Vote score
       .col-md-10
         span.badge= feedback.totalVotes || 0
