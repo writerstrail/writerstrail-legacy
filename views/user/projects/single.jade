@@ -89,6 +89,12 @@ block content
             = project.currentWordcount + '/' + project.targetwc
           else  
             = project.currentWordcount
+          if isOwner
+            small
+              |  (
+              a(href='#') Correct wordcount
+              | )
+
     li.list-group-item
       .row
         .col-sm-2.text-right
@@ -101,6 +107,11 @@ block content
             = project.currentCharcount + '/' + project.targetcc
           else
             = project.currentCharcount
+          if isOwner
+            small
+              |  (
+              a(href='#') Correct character count
+              | )
     li.list-group-item
       .row
         .col-sm-2.text-right
