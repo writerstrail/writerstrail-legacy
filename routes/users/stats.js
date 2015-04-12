@@ -113,6 +113,9 @@ router.get('/stats', isactivated, sendflash, function (req, res, next) {
         ],
         group: [
           models.Sequelize.literal('`project`.`id`')
+        ],
+        order: [
+          models.Sequelize.literal('`totalSessions` DESC')
         ]
       }, {
         raw: true

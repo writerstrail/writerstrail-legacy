@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## 0.8.1
+
+* Fix a bug that show incorrect project with most sessions in stats page.
+
 ## 0.8.0
 
 * Add public option to projects and targets.
