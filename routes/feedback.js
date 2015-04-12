@@ -196,6 +196,8 @@ router.get('/:id', sendflash, function (req, res, next) {
         'deletedAt',
         'status',
         'response',
+        'createdAt',
+        'updatedAt',
         models.Sequelize.literal('SUM(`votes`.`vote`) AS totalVotes')
       ],
       paranoid: false
