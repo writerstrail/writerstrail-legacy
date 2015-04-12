@@ -21,6 +21,12 @@ $(function () {
     };
   }
 
+  $('#correctwc').on('keypress', function (e) {
+    if (e.which === 13) {
+      $('#correctwcsave').trigger('click');
+    }
+  });
+
   $('#correctwclink').on('click', function (e) {
     e.preventDefault();
     $('#correctwcblock').toggle();
@@ -35,6 +41,12 @@ $(function () {
   }));
   
   $('#correctwcreset').on('click', correctSend('wc', 'reset'));
+
+  $('#correctcc').on('keypress', function (e) {
+    if (e.which === 13) {
+      $('#correctccsave').trigger('click');
+    }
+  });
 
   $('#correctcclink').on('click', function (e) {
     e.preventDefault();
