@@ -505,15 +505,19 @@ router.post('/:id/correctwc', isactivated, function (req, res) {
       return res.status(404).json({error: 'Not found'});
     }
 
-    var newWc = parseInt(req.body.correctwc, 10);
+    var newWc = req.body.correctwc;
 
-    if (isNaN(newWc) || newWc < 0) {
-      return res.status(400).json({
-        error: 'The corrected wordcount must be a non-negative integer'
-      });
+    if (newWc !== 'reset') {
+      newWc = parseInt(newWc, 10);
+
+      if (isNaN(newWc) || newWc < 0) {
+        return res.status(400).json({
+          error: 'The corrected wordcount must be a non-negative integer'
+        });
+      }
     }
 
-    project.correctwc = newWc - project.currentWordcount;
+    project.correctwc = newWc === 'reset' ? 0 : newWc - project.currentWordcount;
 
     return project.save();
   }).then(function () {

@@ -10,6 +10,26 @@ $(function () {
     $('#alerts').append($alert);
   }
 
+  function correctSend(type, value) {
+    return function () {
+      var data = {
+        _csrf: csrf
+      };
+      data['correct' + type] = typeof value === 'function' ? value() : value;
+      $('#correct' + type + 'loading').show();
+      $.post('/projects/' + projectId + '/correct' + type, data)
+        .always(function () {
+        $('#correct' + type + 'loading').hide();
+      }).fail(function (response) {
+        $('#correct' + type + 'block').addClass('has-error');
+        $('#correct' + type + 'help').html(response.responseJSON.error);
+        $('#correct' + type ).focus();
+      }).done(function () {
+        document.location.reload();
+      });
+    };
+  }
+
   $('#correctwclink').on('click', function (e) {
     e.preventDefault();
     $('#correctwcblock').toggle();
@@ -19,21 +39,11 @@ $(function () {
     $('#correctwcblock').hide();
   });
 
-  $('#correctwcsave').on('click', function () {
-    $('#correctwcloading').show();
-    $.post('/projects/' + projectId + '/correctwc', {
-      _csrf: csrf,
-      correctwc: $('#correctwc').val()
-    }).always(function () {
-      $('#correctwcloading').hide();
-    }).fail(function (response) {
-      $('#correctwcblock').addClass('has-error');
-      $('#correctwchelp').html(response.responseJSON.error);
-      $('#correctwc').focus();
-    }).done(function (data) {
-      document.location.reload();
-    });
-  });
+  $('#correctwcsave').on('click', correctSend('wc', function () {
+    return $('#correctwc').val();
+  }));
+
+  $('#correctwcreset').on('click', correctSend('wc', 'reset'));
 
   $('#correctcclink').on('click', function (e) {
     e.preventDefault();

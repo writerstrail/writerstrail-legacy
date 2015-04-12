@@ -98,12 +98,14 @@ block content
             .form-group#correctwcblock
               label.col-md-2.control-label(for='correctwc') Current wordcount
               .col-md-10
-                input#correctwc.form-control(type='text' min='0' value=currentWordcount)
+                input#correctwc.form-control(type='number' min='0' value=currentWordcount)
                 span#correctwchelp.help-block
                 p
                 button#correctwcsave.btn.btn-primary(type='button') Save
                 | &#x0020;
                 button#correctwccancel.btn.btn-danger(type='button') Cancel
+                | &#x0020;
+                button#correctwcreset.btn.btn-info(type='button' title='Remove custom corretion') Reset
                 | &#x0020;
                 span#correctwcloading.fa.fa-spin.fa-circle-o-notch
     li.list-group-item
