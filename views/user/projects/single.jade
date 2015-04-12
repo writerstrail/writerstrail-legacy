@@ -6,6 +6,8 @@ block content
   include ../../mixins/socialbuttons
   - var isOwner = project.ownerId === user.id
   - var settings = project.owner.settings
+  - var currentWordcount = project.currentWordcount + project.correctwc
+  - var currentCharcount = project.currentCharcount + project.correctcc
   if project.public && isOwner
     .alert.alert-warning
       | This project is <strong>public</strong>, which means anyone with the link is able to see it.
@@ -23,8 +25,8 @@ block content
   if project.targetwc > 0
     .row
       .col-md-12
-        - var percentage = Math.min(100, Math.max(0, Math.floor((project.currentWordcount / project.targetwc) * 100)))
-        +progressbar(project.currentWordcount, project.targetwc, percentage,
+        - var percentage = Math.min(100, Math.max(0, Math.floor((currentWordcount / project.targetwc) * 100)))
+        +progressbar(currentWordcount, project.targetwc, percentage,
             settings.lothreshold, settings.hithreshold)
 
   if project.public
@@ -86,9 +88,27 @@ block content
             strong Wordcount:
         .col-md-10
           if project.targetwc > 0
-            = project.currentWordcount + '/' + project.targetwc
+            = currentWordcount + '/' + project.targetwc
           else  
-            = project.currentWordcount
+            = currentWordcount
+          if isOwner
+            small
+              |  (
+              a#correctwclink(href='#') Correct wordcount
+              | )
+            .form-group#correctwcblock
+              label.col-md-2.control-label(for='correctwc') Current wordcount
+              .col-md-10
+                input#correctwc.form-control(type='number' min='0' value=currentWordcount)
+                span#correctwchelp.help-block
+                p
+                button#correctwcsave.btn.btn-primary(type='button') Save
+                | &#x0020;
+                button#correctwccancel.btn.btn-danger(type='button') Cancel
+                | &#x0020;
+                button#correctwcreset.btn.btn-info(type='button' title='Remove custom corretion') Reset
+                | &#x0020;
+                span#correctwcloading.fa.fa-spin.fa-circle-o-notch
     li.list-group-item
       .row
         .col-sm-2.text-right
@@ -98,9 +118,26 @@ block content
             strong Character count:
         .col-sm-10
           if project.targetcc > 0
-            = project.currentCharcount + '/' + project.targetcc
+            = currentCharcount + '/' + project.targetcc
           else
-            = project.currentCharcount
+            = currentCharcount
+          if isOwner
+            small
+              |  (
+              a#correctcclink(href='#') Correct character count
+              | )
+            .row#correctccblock
+              label.col-md-2.control-label(for='correctcc') Current character count
+              .col-md-10
+                input#correctcc.form-control(type='number' min='0' value=currentCharcount)
+                p
+                button#correctccsave.btn.btn-primary(type='button') Save
+                | &#x0020;
+                button#correctcccancel.btn.btn-danger(type='button') Cancel
+                | &#x0020;
+                button#correctccreset.btn.btn-info(type='button' title='Remove custom corretion') Reset
+                | &#x0020;
+                span#correctccloading.fa.fa-spin.fa-circle-o-notch
     li.list-group-item
       .row
         .col-sm-2.text-right
@@ -154,6 +191,7 @@ append styles
   link(rel='stylesheet', href='/bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css')
   link(rel='stylesheet', href='/stylesheets/chart.css')
   link(rel='stylesheet', href='/stylesheets/range.css')
+  link(rel='stylesheet', href='/stylesheets/correctcount.css')
 
 append scripts
   script(type='text/javascript', src='/bower_components/moment/min/moment-with-locales.min.js')
@@ -165,6 +203,7 @@ append scripts
   script(type='text/javascript', src='/scripts/range.min.js')
   script.
     var link = '/projects/#{project.id}/data.json';
+    var projectId = #{project.id}, csrf = '#{csrf}';
     window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}', #{project.zoneOffset});
     chartRange2(jQuery, moment, '.range-selector', '#{settings.dateFormat}', '#chart', link, #{project.zoneOffset});
     deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
@@ -174,3 +213,5 @@ append scripts
       | tour(jQuery, hopscotch, range(28, 32));
   if project.public
     script(src='/bower_components/RRSSB/js/rrssb.min.js')
+  if isOwner
+    script(type='text/javascript', src='/scripts/correctcount.min.js' async=true)

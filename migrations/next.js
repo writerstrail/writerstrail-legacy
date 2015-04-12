@@ -14,10 +14,30 @@ module.exports = {
           defaultValue: 66
         });
       })
+      .then(function () {
+        return migration.addColumn('projects', 'correctwc', {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0
+        });
+      })
+      .then(function () {
+        return migration.addColumn('projects', 'correctcc', {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0
+        });
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
-    migration.removeColumn('settings', 'hithreshold')
+    migration.removeColumn('projects', 'correctcc')
+      .then(function () {
+        return migration.removeColumn('projects', 'correctwc');
+      })
+      .then(function () {
+        return migration.removeColumn('settings', 'hithreshold');
+      })
       .then(function () {
         return migration.removeColumn('settings', 'lothreshold');
       })

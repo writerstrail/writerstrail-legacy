@@ -104,6 +104,16 @@ module.exports = function (sequelize, DataTypes) {
         }
       }
     },
+    correctwc: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    correctcc: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

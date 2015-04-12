@@ -55,7 +55,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         attributes: [
           models.Sequelize.literal('*'),
           [models.Sequelize.literal(
-            'LEAST(100, GREATEST(0, FLOOR((`currentWordcount` / `targetwc`) * 100)))'
+            'LEAST(100, GREATEST(0, FLOOR(((`currentWordcount` + `correctwc` ) / `targetwc`) * 100)))'
           ), 'percentage']
         ],
         order: [['createdAt', 'DESC']],

@@ -395,7 +395,7 @@ router.get('/active', isactivated, sendflash, function (req, res, next) {
     attributes: [
       models.Sequelize.literal('*'),
       [models.Sequelize.literal(
-        'LEAST(100, GREATEST(0, FLOOR((`currentWordcount` / `targetwc`) * 100)))'
+        'LEAST(100, GREATEST(0, FLOOR(((`currentWordcount` + `correctwc`) / `targetwc`) * 100)))'
       ), 'percentage']
     ],
     limit: req.query.limit,
@@ -491,6 +491,82 @@ router.get('/:id/data.json', function (req, res) {
       res.status(err.code);
     }
     res.json(data).end();
+  });
+});
+
+router.post('/:id/correctwc', isactivated, function (req, res) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    }
+  }).then(function (project) {
+    if (!project) {
+      return res.status(404).json({error: 'Not found'});
+    }
+
+    var newWc = req.body.correctwc;
+
+    if (newWc !== 'reset') {
+      newWc = parseInt(newWc, 10);
+
+      if (isNaN(newWc) || newWc < 0) {
+        return res.status(400).json({
+          error: 'The corrected wordcount must be a non-negative integer'
+        });
+      }
+    }
+
+    project.correctwc = newWc === 'reset' ? 0 : newWc - project.currentWordcount;
+
+    return project.save();
+  }).then(function () {
+    return res.status(200).json({
+      message: 'Wordcount updated'
+    });
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Database error'
+    });
+  });
+});
+
+router.post('/:id/correctcc', isactivated, function (req, res) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    }
+  }).then(function (project) {
+    if (!project) {
+      return res.status(404).json({error: 'Not found'});
+    }
+
+    var newCc = req.body.correctcc;
+
+    if (newCc !== 'reset') {
+      newCc = parseInt(newCc, 10);
+
+      if (isNaN(newCc) || newCc < 0) {
+        return res.status(400).json({
+          error: 'The corrected character count must be a non-negative integer'
+        });
+      }
+    }
+
+    project.correctcc = newCc === 'reset' ? 0 : newCc - project.currentCharcount;
+
+    return project.save();
+  }).then(function () {
+    return res.status(200).json({
+      message: 'Character count updated'
+    });
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Database error'
+    });
   });
 });
 

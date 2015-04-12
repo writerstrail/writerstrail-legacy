@@ -11,6 +11,8 @@ describe('Project model', function () {
       charcount: 4000,
       targetwc: 1500,
       targetcc: 10000,
+      correctwc: -100,
+      correctcc: -3000,
       active: true,
       finished: false,
       public: true,
@@ -26,6 +28,8 @@ describe('Project model', function () {
         expect(project).to.have.property('charcount', 4000);
         expect(project).to.have.property('targetwc', 1500);
         expect(project).to.have.property('targetcc', 10000);
+        expect(project).to.have.property('correctwc', -100);
+        expect(project).to.have.property('correctcc', -3000);
         expect(project).to.have.property('active', true);
         expect(project).to.have.property('finished', false);
         expect(project).to.have.property('public', true);
