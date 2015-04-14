@@ -1,5 +1,4 @@
 mixin progressbar(current, target, percentage, low, hi)
-  - console.log('----tets', low, hi)
   .progress(title=current + '/' + target)
     - var barClass = percentage < (low || 33) ? 'danger' : (percentage < (hi || 66) ? 'warning' : (percentage < 100 ? 'success' : 'info'))
     .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
