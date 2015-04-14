@@ -1,5 +1,6 @@
 mixin progressbar(current, target, percentage, low, hi, unit)
-  .progress(title=current + '/' + target + (unit === 'char' ? ' characters' : ' words') )
+  - function formatNumber(number){var s=Math.floor(number).toString(),reg=/(\d+)(\d{3})/;while(reg.test(s))s=s.replace(reg, '$1,$2');return s;}
+  .progress(title=formatNumber(current) + '/' + formatNumber(target) + (unit === 'char' ? ' characters' : ' words') )
     - var barClass = percentage < (low || 33) ? 'danger' : (percentage < (hi || 66) ? 'warning' : (percentage < 100 ? 'success' : 'info'))
     .progress-bar(role='progressbar' aria-valuenow=percentage aria-valuemax='100' style='width: ' + percentage + '%; min-width: 2em;' class='progress-bar-' + barClass)
       = percentage + '%'
