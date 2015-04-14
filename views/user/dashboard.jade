@@ -40,7 +40,8 @@ block content
                   if (project.targetunit === 'word' && project.targetwc > 0) || (project.targetunit === 'char' && project.targetcc > 0)
                     +progressbar((project.targetunit === 'char') ? currentCharcount : currentWordcount,
                     (project.targetunit === 'char') ? project.targetcc : project.targetwc, project.percentage,
-                    settings.lothreshold, settings.hithreshold)
+                    settings.lothreshold, settings.hithreshold,
+                    project.targetunit)
                   else
                     | No target defined.&nbsp;
                     if project.targetunit === 'word'
