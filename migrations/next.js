@@ -28,10 +28,21 @@ module.exports = {
           defaultValue: 0
         });
       })
+      .then(function () {
+        return migration.addColumn('projects', 'targetunit', {
+          type: DataTypes.ENUM,
+          values: ['word', 'char'],
+          defaultValue: 'word',
+          allowNull: false
+        });
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
-    migration.removeColumn('projects', 'correctcc')
+    migration.removeColumn('projects', 'targetunit')
+      .then(function () {
+        return migration.removeColumn('projects', 'correctcc');
+      })
       .then(function () {
         return migration.removeColumn('projects', 'correctwc');
       })

@@ -25,9 +25,12 @@ block content
   if project.targetwc > 0
     .row
       .col-md-12
-        - var percentage = Math.min(100, Math.max(0, Math.floor((currentWordcount / project.targetwc) * 100)))
-        +progressbar(currentWordcount, project.targetwc, percentage,
-            settings.lothreshold, settings.hithreshold)
+        if (project.targetunit === 'word' && project.targetwc > 0) || (project.targetunit === 'char' && project.targetcc > 0)
+          - var percentage = Math.min(100, Math.max(0, Math.floor((((project.targetunit === 'char') ? currentCharcount / project.targetcc : currentWordcount / project.targetwc)) * 100)))
+          +progressbar((project.targetunit === 'char') ? currentCharcount : currentWordcount,
+              (project.targetunit === 'char') ? project.targetcc : project.targetwc, percentage,
+              settings.lothreshold, settings.hithreshold,
+              project.targetunit)
 
   if project.public
     .row: .col-md-12

@@ -163,6 +163,7 @@ router.get('/new', isactivated, sendflash, function (req, res) {
         charcount: 0,
         targetwc: 50000,
         targetcc: 0,
+        targetunit: 'word',
         genres: req.query.genreid ? [{id: req.query.genreid}] : []
       },
       genres: chunk(genres, 3)
@@ -179,6 +180,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
     targetwc: numerictrim(req.body.targetwc),
     charcount: numerictrim(req.body.charcount) || 0,
     targetcc: numerictrim(req.body.targetcc) || 0,
+    targetunit: req.body.targetunit,
     active: !!req.body.active,
     finished: !!req.body.finished,
     public: !!req.body.public,
@@ -221,6 +223,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
           targetwc: req.body.targetwc,
           charcount: req.body.charcount,
           targetcc: req.body.targetcc,
+          targetunit: req.body.targetunit,
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
@@ -321,6 +324,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
       project.set('targetwc', numerictrim(req.body.targetwc));
       project.set('charcount', numerictrim(req.body.charcount) || 0);
       project.set('targetcc', numerictrim(req.body.targetcc) || 0);
+      project.set('targetunit', req.body.targetunit);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
       project.set('zoneOffset', req.body.zoneOffset || 0);
@@ -370,6 +374,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
           targetwc: req.body.targetwc,
           charcount: req.body.charcount,
           targetcc: req.body.targetcc,
+          targetunit: req.body.targetunit,
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
@@ -395,7 +400,13 @@ router.get('/active', isactivated, sendflash, function (req, res, next) {
     attributes: [
       models.Sequelize.literal('*'),
       [models.Sequelize.literal(
-        'LEAST(100, GREATEST(0, FLOOR(((`currentWordcount` + `correctwc`) / `targetwc`) * 100)))'
+        'LEAST(100, GREATEST(0, FLOOR(' +
+        'CASE WHEN `targetunit` LIKE "word"  THEN ' +
+        '((`currentWordcount` + `correctwc`) / `targetwc`)' +
+        'ELSE ' +
+        '((`currentCharcount` + `correctcc`) / `targetcc`)' +
+        'END' +
+        ' * 100)))'
       ), 'percentage']
     ],
     limit: req.query.limit,
