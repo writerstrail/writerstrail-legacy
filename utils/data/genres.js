@@ -7,7 +7,7 @@ module.exports = [
   },
   {
     name: 'Science Fiction',
-    description: 'Trying to guess where the world (or the univers) will be in the future. Or how it should ahve been in the past.'
+    description: 'Trying to guess where the world (or the universe) will be in the future. Or how it should have been in the past.'
   },
   {
     name: 'Adventure',
@@ -31,7 +31,7 @@ module.exports = [
   },
   {
     name: 'Literary',
-    description: 'Profound stories that ilustrates and questions complex issues of our world.'
+    description: 'Profound stories that illustrates and questions complex issues of our world.'
   },
   {
     name: 'Realistic & Mainstream',
