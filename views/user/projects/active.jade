@@ -31,13 +31,20 @@ block content
               a(href='/projects/' + project.id + '/edit' title='Edit')
                 span.fa.fa-edit
             .col-md-7
-              if project.targetwc > 0
-                +progressbar(project.currentWordcount + project.correctwc, project.targetwc, project.percentage,
-                  user.settings.lothreshold, user.settings.hithreshold)
+              - var currentWordcount = project.currentWordcount + project.correctwc
+              - var currentCharcount = project.currentCharcount + project.correctcc
+              if (project.targetunit === 'word' && project.targetwc > 0) || (project.targetunit === 'char' && project.targetcc > 0)
+                +progressbar((project.targetunit === 'char') ? currentCharcount : currentWordcount,
+                  (project.targetunit === 'char') ? project.targetcc : project.targetwc, project.percentage,
+                  settings.lothreshold, settings.hithreshold)
               else
                 | No target defined.&nbsp;
-                = project.currentWordcount + project.correctwc
-                | &nbsp;written words.
+                if project.targetunit === 'word'
+                  = currentWordcount
+                  | &nbsp;written words.
+                else
+                  = currentCharcount
+                  | &nbsp;typed characters.
             .col-md-2
               a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
               
