@@ -13,6 +13,7 @@ describe('Project model', function () {
       targetcc: 10000,
       correctwc: -100,
       correctcc: -3000,
+      targetunit: 'char',
       active: true,
       finished: false,
       public: true,
@@ -30,6 +31,7 @@ describe('Project model', function () {
         expect(project).to.have.property('targetcc', 10000);
         expect(project).to.have.property('correctwc', -100);
         expect(project).to.have.property('correctcc', -3000);
+        expect(project).to.have.property('targetunit', 'char');
         expect(project).to.have.property('active', true);
         expect(project).to.have.property('finished', false);
         expect(project).to.have.property('public', true);
@@ -937,6 +939,66 @@ describe('Project model', function () {
       }
     }).catch(function (err) {
       done(err);
+    });
+  });
+
+  it('should not allow null target unit', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test null target unit',
+      description: 'Description',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1,
+      targetunit: null
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetunit');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should not allow strange target unit', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test strange target unit',
+      description: 'Description',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1,
+      targetunit: 'strange'
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'targetunit');
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 

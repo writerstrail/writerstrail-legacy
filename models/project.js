@@ -114,6 +114,12 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0
     },
+    targetunit: {
+      type: DataTypes.ENUM,
+      values: ['word', 'char'],
+      defaultValue: 'word',
+      allowNull: false
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
