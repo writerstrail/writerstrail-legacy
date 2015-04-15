@@ -38,7 +38,7 @@ module.exports = {
       })
       .then(function () {
         return migration.addColumn('targets', 'chartOptionsBlob', {
-          type: DataTypes.BLOB,
+          type: DataTypes.TEXT,
           allowNull: true
         });
       })

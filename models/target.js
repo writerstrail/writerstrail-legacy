@@ -110,7 +110,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
     chartOptionsBlob: {
-      type: DataTypes.BLOB,
+      type: DataTypes.TEXT,
       allowNull: true
     }
   }, {
