@@ -274,7 +274,7 @@ WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjus
 };
 
 WTChart.chart = function (link, series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
-  var now, today, options, userOffset, plotOptions;
+  var now, today, options, userOffset, plotOptions, csrfvalue = window.csrfvalue || null;
   userOffset = (new Date()).getTimezoneOffset();
   now = new Date(+(new Date()) + (userOffset * 6e4) + (zoneOffset * 6e4));
   today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
