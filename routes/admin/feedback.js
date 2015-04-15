@@ -31,16 +31,21 @@ router.get('/', sendflash, function (req, res, next) {
     };
   if (_.includes(stati.concat(['All']), req.query.status)) {
     if (req.query.status !== 'All') {
-      filters.push('Only feedback with status "' + req.query.status + '" are shown.');
+      var statusSearch = req.query.status;
+      filters.push('Only feedback with status "' + statusSearch + '" are shown.');
       config.where.push ({
-        status: req.query.status
+        status: statusSearch
       });
     }
-  } else if (!req.query.all) {
-    filters.push('Only new feedback are shown.');
-    config.where.push ({
-      status: 'New'
+  }
+  if (!req.query.status) {
+    filters.push('Only feedback not completed nor dismissed are shown.');
+    var orFilter = [];
+
+    _.forEach(['New', 'Reviewing', 'Accepted', 'Developing'], function (s) {
+      orFilter.push({ status: s });
     });
+    config.where.push(models.Sequelize.or.apply(global, orFilter));
   }
   if (req.query.deleted) {
     filters.push('Including deleted feedback.');
