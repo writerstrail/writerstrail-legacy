@@ -1,4 +1,4 @@
-/* globals exports, window */
+/* globals exports, window, csrfvalue */
 
 var WTChart;
 
@@ -291,16 +291,34 @@ WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjus
   link = link + '?zoneOffset=' + (-zoneOffset);
   $.getJSON(link, function (data) {
     var series = WTChart.buildMeta(data, isAcc, showRem, showAdjusted, unit);
-    WTChart.chart(series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset);
+    WTChart.chart(link, series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset);
   });
 };
 
-WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
-  var now, today, options, userOffset;
+WTChart.chart = function (link, series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
+  var now, today, options, userOffset, plotOptions;
   userOffset = (new Date()).getTimezoneOffset();
   now = new Date(+(new Date()) + (userOffset * 6e4) + (zoneOffset * 6e4));
   today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
   options = WTChart.chartOptions(series, chartType, showRem, showAdjusted, unit, title, today);
+
+  function legendSave(event) {
+    $.post(link, {
+      item: event.target.userOptions.id,
+      visibility: !event.target.visible,
+      _csrf: csrfvalue
+    });
+  }
+
+  plotOptions = {
+    events: {
+      legendItemClick: legendSave
+    }
+  };
+
+  options.plotOptions.line = plotOptions;
+  options.plotOptions.column.events = plotOptions.events;
+
   new Highcharts.Chart(options, function () {
     WTChart.bindButton($, chartType);
   });
@@ -326,3 +344,4 @@ WTChart.deleteImageSetup = function ($, link) {
       });
   });
 };
+

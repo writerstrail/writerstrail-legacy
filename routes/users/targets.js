@@ -565,4 +565,51 @@ router.get('/:id/data.json', function (req, res) {
   });
 });
 
+router.post('/:id/data.json', isactivated, function (req, res) {
+  var item, visibility, validItems = [];
+  [
+    'target',
+    'dailytarget',
+    'adjusteddailytarget',
+    'remaining',
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      validItems.push('word' + item);
+      validItems.push('char' + item);
+    });
+
+  item = req.body.item;
+
+  if (validItems.indexOf(item) < 0) {
+    return res.status(400).end();
+  }
+
+  visibility = req.body.visibility !== 'false';
+
+
+
+  models.sequelize.transaction(function () {
+    return models.Target.findOne({
+      where: {
+        id: req.params.id,
+        ownerId: req.user.id
+      }
+    }).then(function (target) {
+      if (!target) {
+        return res.status(404).end();
+      }
+      var options = target.chartOptions;
+      options[item] = visibility;
+      target.chartOptions = options;
+      return target.save();
+    });
+  }).then(function () {
+    return res.status(204).end();
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).end();
+  });
+});
+
 module.exports = router;

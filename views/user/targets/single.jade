@@ -241,7 +241,8 @@ append scripts
   script(type='text/javascript', src='/scripts/highcharts-init.min.js')
   script(type='text/javascript', src='/scripts/chart.min.js')
   script(type='text/javascript').
-    var link = '/targets/#{target.id}/data.json';
+    var link = '/targets/#{target.id}/data.json',
+            csrfvalue = '!{csrf}';
     window.linkChart(link, jQuery, Highcharts, '!{settings.chartType}', !{settings.showRemaining},
             !{settings.showAdjusted}, '#{target.unit}', '#{target.name}', #{target.zoneOffset || 0});
     deleteImageSetup(jQuery, '/targets/#{target.id}/deleteImage');
