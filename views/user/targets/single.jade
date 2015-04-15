@@ -241,8 +241,7 @@ append scripts
   script(type='text/javascript').
     var link = '/targets/#{target.id}/data.json',
             csrfvalue = '!{csrf}';
-    window.linkChart(link, jQuery, Highcharts, '!{settings.chartType}', !{settings.showRemaining},
-            !{settings.showAdjusted}, '#{target.unit}', '#{target.name}', #{target.zoneOffset || 0});
+    window.linkChart(link, jQuery, Highcharts, '#{target.unit}', '#{target.name}', #{target.zoneOffset || 0});
     deleteImageSetup(jQuery, '/targets/#{target.id}/deleteImage');
   if user.settings.showTour
     script

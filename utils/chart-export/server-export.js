@@ -16,7 +16,6 @@ var http = require('http'),
   config = require('../../config/config')[env],
   models = require('../../models'),
   mkdirp = require('../functions/mkdirp'),
-  anon = require('../data/anonuser'),
   chart = require('../../public/scripts/chart'),
   options = require('../../public/scripts/highcharts-init').options;
 
@@ -62,13 +61,11 @@ function generateImage(file, data, callback) {
   }));
 }
 
-function buildChart(object, unit, settings, data) {
-  var isAcc = settings.chartType === 'cumulative',
-    series = chart.buildMeta(data, isAcc, settings.showRemaining, settings.showAdjusted, unit, true);
+function buildChart(object, unit, data) {
+  var series = chart.buildMeta(data, unit, true);
 
   return _.defaults({},
-    chart.chartOptions(series, settings.chartType, settings.showRemaining,
-      settings.showAdjusted, unit, object.name, moment.utc().add(object.zoneOffset || 0, 'minutes').startOf('day').toDate()),
+    chart.chartOptions(series, unit, object.name, moment.utc().add(object.zoneOffset || 0, 'minutes').startOf('day').toDate()),
     options
   );
 }
@@ -130,8 +127,7 @@ function middleware(model, chartData) {
         return res.status(500).end();
       }
 
-      var settings = _.defaults({}, anon.settings),
-        chart = buildChart(object, object.unit, settings, data);
+      var chart = buildChart(object, object.unit, data);
 
       if (isSame(file, chart)) {
         return res.sendFile(file);

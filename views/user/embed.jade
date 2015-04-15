@@ -18,6 +18,5 @@ html
     script.
       var link = '!{datalink}',
               csrfvalue = '!{csrf}';
-      window.linkChart(link, jQuery, Highcharts, '!{options.chartType}', !{options.showRemaining},
-              !{options.showAdjusted}, #{object.unit ? "'" + object.unit + "'" : 'null'},
+      window.linkChart(link, jQuery, Highcharts, #{object.unit ? "'" + object.unit + "'" : 'null'},
               '<a href="#{objectlink}" target="_blank">#{object.name}</a>', #{object.zoneOffset || 0});

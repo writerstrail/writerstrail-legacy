@@ -160,8 +160,8 @@ append scripts
       unless example
         if target
           | var csrfvalue = '!{csrf}';
-          | linkChart('/targets/#{target.id}/data.json', jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
-          |     !{user.settings.showAdjusted}, '#{target.unit}', '<a href="/targets/#{target.id}">#{target.name}</a>', #{target.zoneOffset});
+          | linkChart('/targets/#{target.id}/data.json', jQuery, Highcharts,
+          |     '#{target.unit}', '<a href="/targets/#{target.id}">#{target.name}</a>', #{target.zoneOffset});
       else
         | chart2('/example/targetdata.json', jQuery, Highcharts, 'cumulative', false, false, 'word', '#{target.name}');
   script

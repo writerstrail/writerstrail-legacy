@@ -42,7 +42,7 @@ WTChart.joinMeta = function (data, meta, showLegend) {
   return series;
 };
 
-WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
+WTChart.buildMeta = function (data, unit, isExport) {
   var start = WTChart.startFromDate(data.date[0]),
       showLegend = !isExport,
       meta = {
@@ -160,7 +160,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
   return WTChart.joinMeta(data, meta, showLegend);
 };
 
-WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, unit, title, today) {
+WTChart.chartOptions = function chart(series, unit, title, today) {
   return {
     chart: {
       renderTo: 'chart',
@@ -224,8 +224,8 @@ WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, 
   };
 };
 
-WTChart.bindButton = function ($, chartType) {
-  var isAcc = chartType === 'cumulative';
+WTChart.bindButton = function ($) {
+  var isAcc = true;
 
   $('#target-change')
     .data('acc', isAcc)
@@ -264,21 +264,20 @@ WTChart.bindButton = function ($, chartType) {
     });
 };
 
-WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
-  var isAcc = chartType === 'cumulative';
+WTChart.linkChart = function (link, $, Highcharts, unit, title, zoneOffset) {
   link = link + '?zoneOffset=' + (-zoneOffset);
   $.getJSON(link, function (data) {
-    var series = WTChart.buildMeta(data, isAcc, showRem, showAdjusted, unit);
-    WTChart.chart(link, series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset);
+    var series = WTChart.buildMeta(data, unit);
+    WTChart.chart(link, series, $, Highcharts, unit, title, zoneOffset);
   });
 };
 
-WTChart.chart = function (link, series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
+WTChart.chart = function (link, series, $, Highcharts, unit, title, zoneOffset) {
   var now, today, options, userOffset, plotOptions, csrfvalue = window.csrfvalue || null;
   userOffset = (new Date()).getTimezoneOffset();
   now = new Date(+(new Date()) + (userOffset * 6e4) + (zoneOffset * 6e4));
   today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-  options = WTChart.chartOptions(series, chartType, showRem, showAdjusted, unit, title, today);
+  options = WTChart.chartOptions(series, unit, title, today);
 
   function legendSave(event) {
     $.post(link, {
@@ -299,7 +298,7 @@ WTChart.chart = function (link, series, $, Highcharts, chartType, showRem, showA
   options.plotOptions.column.events = plotOptions.events;
 
   new Highcharts.Chart(options, function () {
-    WTChart.bindButton($, chartType);
+    WTChart.bindButton($);
   });
 };
 

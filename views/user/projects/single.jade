@@ -206,7 +206,7 @@ append scripts
     var link = '/projects/#{project.id}/data.json',
             csrfvalue = '!{csrf}';
     var projectId = #{project.id}, csrf = '#{csrf}';
-    window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}', #{project.zoneOffset});
+    window.linkChart(link, jQuery, Highcharts, null, '#{project.name}', #{project.zoneOffset});
     chartRange2(jQuery, moment, '.range-selector', '#{settings.dateFormat}', '#chart', link, #{project.zoneOffset});
     deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
     
