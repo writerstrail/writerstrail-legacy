@@ -16,7 +16,8 @@ html
     script(type='text/javascript', src='/scripts/highcharts-init.min.js')
     script(type='text/javascript', src='/scripts/chart.min.js')
     script.
-      var link = '!{datalink}';
+      var link = '!{datalink}',
+              csrfvalue = '!{csrf}';
       window.linkChart(link, jQuery, Highcharts, '!{options.chartType}', !{options.showRemaining},
               !{options.showAdjusted}, #{object.unit ? "'" + object.unit + "'" : 'null'},
               '<a href="#{objectlink}" target="_blank">#{object.name}</a>', #{object.zoneOffset || 0});
