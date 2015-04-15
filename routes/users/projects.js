@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  qs = require('querystring'),
   _ = require('lodash'),
   moment = require('moment'),
   models = require('../../models'),
@@ -10,6 +11,21 @@ var router = require('express').Router(),
   filterIds = require('../../utils/functions/filterids'),
   serverExport = require('../../utils/chart-export/server-export'),
   anon = require('../../utils/data/anonuser');
+
+function filterQuery(query) {
+  var result = {};
+  [
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      ['word', 'char'].forEach(function (unit) {
+        if (query[unit + item]) {
+          result[unit + item] = query[unit + item] === 'true';
+        }
+      });
+    });
+  return result;
+}
 
 function chartData(req, callback) {
   var user = req.user || anon;
@@ -99,7 +115,7 @@ function chartData(req, callback) {
       chardaily: dailyChar
     };
 
-    var chartOptions, visibility = {};
+    var chartOptions, visibility = {}, query = filterQuery(req.query);
 
     visibility.wordcount = visibility.charcount = false;
     visibility.worddaily = visibility.chardaily = true;
@@ -110,7 +126,7 @@ function chartData(req, callback) {
 
     chartOptions = chartOptions ? JSON.parse(chartOptions) : {};
 
-    result.visibility = _.defaults(chartOptions, visibility);
+    result.visibility = _.defaults(query, chartOptions, visibility);
 
     callback(null, result);
   }).catch(function (err) {
@@ -268,13 +284,9 @@ router.get('/embed/:id', function (req, res, next) {
     res.render('user/embed', {
       title: 'Project ' + project.name,
       object: project,
-      options: {
-        chartType: 'daily',
-        showRemaining: false,
-        showAdjusted: false
-      },
       datalink: '/projects/' + project.id + '/data.json',
-      objectlink: '/projects/' + project.id
+      objectlink: '/projects/' + project.id,
+      query: qs.stringify(filterQuery(req.query))
     });
   }).catch(function (err) {
     next(err);

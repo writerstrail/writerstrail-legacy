@@ -266,6 +266,9 @@ WTChart.bindButton = function ($) {
 
 WTChart.linkChart = function (link, $, Highcharts, unit, title, zoneOffset) {
   link = link + '?zoneOffset=' + (-zoneOffset);
+  if (window.query) {
+    link += '&' + window.query;
+  }
   $.getJSON(link, function (data) {
     var series = WTChart.buildMeta(data, unit);
     WTChart.chart(link, series, $, Highcharts, unit, title, zoneOffset);

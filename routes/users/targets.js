@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  qs = require('querystring'),
   _ = require('lodash'),
   moment = require('moment'),
   promise = require('sequelize').Promise,
@@ -15,6 +16,25 @@ var router = require('express').Router(),
     char: 'characters'
   },
   anon = require('../../utils/data/anonuser');
+
+function filterQuery(query) {
+  var result = {};
+  [
+    'target',
+    'dailytarget',
+    'adjusteddailytarget',
+    'remaining',
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      ['word', 'char'].forEach(function (unit) {
+        if (query[unit + item]) {
+          result[unit + item] = query[unit + item] === 'true';
+        }
+      });
+    });
+  return result;
+}
 
 function chartData(req, callback) {
   var user = req.user || anon;
@@ -130,13 +150,13 @@ function chartData(req, callback) {
       result[target.unit + 'remaining'] = remaining;
     }
 
-    var visibility = {}, settings = target.owner.settings;
+    var query = filterQuery(req.query), visibility = {}, settings = target.owner.settings;
     visibility.wordcount = visibility.charcount = visibility.wordtarget = visibility.chartarget = settings.chartType === 'cumulative';
     visibility.worddaily = visibility.chardaily = visibility.worddailytarget = visibility.chardailytarget = !visibility.wordcount;
     visibility.wordadjusteddailytarget = visibility.charadjusteddailytarget = settings.showAdjusted;
     visibility.wordremaining = visibility.charremaining = settings.showRemaining;
 
-    result.visibility = _.defaults(target.chartOptions, visibility);
+    result.visibility = _.defaults(query, target.chartOptions, visibility);
 
     callback(null, result);
   }).catch(function (err) {
@@ -320,36 +340,19 @@ router.get('/embed/:id', function (req, res, next) {
     where: {
       id: req.params.id,
       "public": true
-    },
-    include: [
-      {
-        model: models.User,
-        as: 'owner',
-        required: true,
-        include: [
-          {
-            model: models.Settings,
-            as: 'settings',
-            required: true
-          }
-        ]
-      }
-    ]
+    }
   }).then(function (target) {
     if (!target) {
       return next();
     }
-    var settings = target.owner.settings;
+    var query = filterQuery(req.query);
+
     res.render('user/embed', {
       title: 'Target ' + target.name,
       object: target,
-      options: {
-        chartType: settings.chartType,
-        showRemaining: settings.showRemaining,
-        showAdjusted: settings.showAdjusted
-      },
       datalink: '/targets/' + target.id + '/data.json',
-      objectlink: '/targets/' + target.id
+      objectlink: '/targets/' + target.id,
+      query: qs.stringify(query)
     });
   }).catch(function (err) {
     next(err);
