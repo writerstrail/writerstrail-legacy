@@ -565,7 +565,10 @@ router.get('/:id/data.json', function (req, res) {
   });
 });
 
-router.post('/:id/data.json', isactivated, function (req, res) {
+router.post('/:id/data.json', function (req, res) {
+  if (!req.user) {
+    return res.status(401).end();
+  }
   var item, visibility, validItems = [];
   [
     'target',
