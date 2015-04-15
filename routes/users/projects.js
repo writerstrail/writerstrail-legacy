@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  _ = require('lodash'),
   moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
@@ -97,6 +98,20 @@ function chartData(req, callback) {
       worddaily: daily,
       chardaily: dailyChar
     };
+
+    var chartOptions, visibility = {};
+
+    visibility.wordcount = visibility.charcount = false;
+    visibility.worddaily = visibility.chardaily = true;
+
+    if (sessions[0]) {
+      chartOptions = sessions[0].chartOptionsBlob;
+    }
+
+    chartOptions = chartOptions ? JSON.parse(chartOptions) : {};
+
+    result.visibility = _.defaults(chartOptions, visibility);
+
     callback(null, result);
   }).catch(function (err) {
     err.code = 500;
@@ -502,6 +517,50 @@ router.get('/:id/data.json', function (req, res) {
       res.status(err.code);
     }
     res.json(data).end();
+  });
+});
+
+router.post('/:id/data.json', function (req, res) {
+  if (!req.user) {
+    return res.status(401).end();
+  }
+  var item, visibility, validItems = [];
+  [
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      validItems.push('word' + item);
+      validItems.push('char' + item);
+    });
+
+  item = req.body.item;
+
+  if (validItems.indexOf(item) < 0) {
+    return res.status(400).end();
+  }
+
+  visibility = req.body.visibility !== 'false';
+
+  models.sequelize.transaction(function () {
+    return models.Project.findOne({
+      where: {
+        id: req.params.id,
+        ownerId: req.user.id
+      }
+    }).then(function (project) {
+      if (!project) {
+        return res.status(404).end();
+      }
+      var options = project.chartOptions;
+      options[item] = visibility;
+      project.chartOptions = options;
+      return project.save();
+    });
+  }).then(function () {
+    return res.status(204).end();
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).end();
   });
 });
 

@@ -1,4 +1,4 @@
-/* globals exports, window, csrfvalue */
+/* globals exports, window */
 
 var WTChart;
 
