@@ -60,12 +60,10 @@ block content
           button#embedbutton.btn.btn-default(type='button' data-toggle='button' aria-pressed='false' autocomplete='off')
             | Embed chart
           | &#x0020;
-          a.btn.btn-default(href='/projects/' + project.id + '/daily.png' target='_blank') Daily writing image
-          | &#x0020;
-          a.btn.btn-default(href='/projects/' + project.id + '/cumulative.png' target='_blank') Cumulative writing image
+          a.btn.btn-default(href='/projects/' + project.id + '/chart.png' target='_blank') Open generated image
           if isOwner
             | &#x0020;
-            button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
+            button#deleteimages.btn.btn-danger(title='Remove generated image from cache') Delete cached image
           +embedtag('projects', project.id)
 
   ul.list-group
@@ -205,9 +203,10 @@ append scripts
   script(type='text/javascript', src='/scripts/chart.min.js')
   script(type='text/javascript', src='/scripts/range.min.js')
   script.
-    var link = '/projects/#{project.id}/data.json';
-    var projectId = #{project.id}, csrf = '#{csrf}';
-    window.linkChart(link, jQuery, Highcharts, 'daily', false, false, null, '#{project.name}', #{project.zoneOffset});
+    var link = '/projects/#{project.id}/data.json',
+            csrfvalue = '!{csrf}',
+            projectId = #{project.id};
+    window.linkChart(link, jQuery, Highcharts, null, '#{project.name}', #{project.zoneOffset});
     chartRange2(jQuery, moment, '.range-selector', '#{settings.dateFormat}', '#chart', link, #{project.zoneOffset});
     deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
     

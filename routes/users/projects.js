@@ -1,4 +1,6 @@
 var router = require('express').Router(),
+  qs = require('querystring'),
+  _ = require('lodash'),
   moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
@@ -9,6 +11,21 @@ var router = require('express').Router(),
   filterIds = require('../../utils/functions/filterids'),
   serverExport = require('../../utils/chart-export/server-export'),
   anon = require('../../utils/data/anonuser');
+
+function filterQuery(query) {
+  var result = {};
+  [
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      ['word', 'char'].forEach(function (unit) {
+        if (query[unit + item]) {
+          result[unit + item] = query[unit + item] === 'true';
+        }
+      });
+    });
+  return result;
+}
 
 function chartData(req, callback) {
   var user = req.user || anon;
@@ -97,6 +114,20 @@ function chartData(req, callback) {
       worddaily: daily,
       chardaily: dailyChar
     };
+
+    var chartOptions, visibility = {}, query = filterQuery(req.query);
+
+    visibility.wordcount = visibility.charcount = false;
+    visibility.worddaily = visibility.chardaily = true;
+
+    if (sessions[0]) {
+      chartOptions = sessions[0].chartOptionsBlob;
+    }
+
+    chartOptions = chartOptions ? JSON.parse(chartOptions) : {};
+
+    result.visibility = _.defaults(query, chartOptions, visibility);
+
     callback(null, result);
   }).catch(function (err) {
     err.code = 500;
@@ -253,13 +284,9 @@ router.get('/embed/:id', function (req, res, next) {
     res.render('user/embed', {
       title: 'Project ' + project.name,
       object: project,
-      options: {
-        chartType: 'daily',
-        showRemaining: false,
-        showAdjusted: false
-      },
       datalink: '/projects/' + project.id + '/data.json',
-      objectlink: '/projects/' + project.id
+      objectlink: '/projects/' + project.id,
+      query: qs.stringify(filterQuery(req.query))
     });
   }).catch(function (err) {
     next(err);
@@ -502,6 +529,50 @@ router.get('/:id/data.json', function (req, res) {
       res.status(err.code);
     }
     res.json(data).end();
+  });
+});
+
+router.post('/:id/data.json', function (req, res) {
+  if (!req.user) {
+    return res.status(401).end();
+  }
+  var item, visibility, validItems = [];
+  [
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      validItems.push('word' + item);
+      validItems.push('char' + item);
+    });
+
+  item = req.body.item;
+
+  if (validItems.indexOf(item) < 0) {
+    return res.status(400).end();
+  }
+
+  visibility = req.body.visibility !== 'false';
+
+  models.sequelize.transaction(function () {
+    return models.Project.findOne({
+      where: {
+        id: req.params.id,
+        ownerId: req.user.id
+      }
+    }).then(function (project) {
+      if (!project) {
+        return res.status(404).end();
+      }
+      var options = project.chartOptions;
+      options[item] = visibility;
+      project.chartOptions = options;
+      return project.save();
+    });
+  }).then(function () {
+    return res.status(204).end();
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).end();
   });
 });
 

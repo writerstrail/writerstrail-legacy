@@ -36,10 +36,28 @@ module.exports = {
           allowNull: false
         });
       })
+      .then(function () {
+        return migration.addColumn('targets', 'chartOptionsBlob', {
+          type: DataTypes.TEXT,
+          allowNull: true
+        });
+      })
+      .then(function () {
+        return migration.addColumn('projects', 'chartOptionsBlob', {
+          type: DataTypes.TEXT,
+          allowNull: true
+        });
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
-    migration.removeColumn('projects', 'targetunit')
+    migration.removeColumn('projects', 'chartOptionsBlob')
+      .then(function () {
+        return migration.removeColumn('targets', 'chartOptionsBlob')
+      })
+      .then(function () {
+        return migration.removeColumn('projects', 'targetunit');
+      })
       .then(function () {
         return migration.removeColumn('projects', 'correctcc');
       })

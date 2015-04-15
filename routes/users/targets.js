@@ -1,4 +1,5 @@
 var router = require('express').Router(),
+  qs = require('querystring'),
   _ = require('lodash'),
   moment = require('moment'),
   promise = require('sequelize').Promise,
@@ -16,6 +17,25 @@ var router = require('express').Router(),
   },
   anon = require('../../utils/data/anonuser');
 
+function filterQuery(query) {
+  var result = {};
+  [
+    'target',
+    'dailytarget',
+    'adjusteddailytarget',
+    'remaining',
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      ['word', 'char'].forEach(function (unit) {
+        if (query[unit + item]) {
+          result[unit + item] = query[unit + item] === 'true';
+        }
+      });
+    });
+  return result;
+}
+
 function chartData(req, callback) {
   var user = req.user || anon;
 
@@ -23,26 +43,38 @@ function chartData(req, callback) {
     where: {
       id: req.params.id
     },
-    include: [{
-      model: models.Project,
-      as: 'projects',
-      order: [['name', 'ASC']],
-      include: [{
-        model: models.Session,
-        as: 'sessions',
-        required: false,
-        where: {
-          start: {
-            between: [
-              models.Sequelize.literal('`Target`.`start`'),
-              models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
-            ]
+    include: [
+      {
+        model: models.Project,
+        as: 'projects',
+        order: [['name', 'ASC']],
+        include: [{
+          model: models.Session,
+          as: 'sessions',
+          required: false,
+          where: {
+            start: {
+              between: [
+                models.Sequelize.literal('`Target`.`start`'),
+                models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
+              ]
+            },
+            deletedAt: null
           },
-          deletedAt: null
-        },
-        order: [['start', 'DESC']]
-      }]
-    }]
+          order: [['start', 'DESC']]
+        }]
+      },
+      {
+        model: models.User,
+        as: 'owner',
+        required: true,
+        include: [{
+          model: models.Settings,
+          as: 'settings',
+          required: true
+        }]
+      }
+    ]
   }).then(function (target) {
     var accessible = false;
 
@@ -117,6 +149,15 @@ function chartData(req, callback) {
       result[target.unit + 'adjusteddailytarget'] = pondDailyTarget;
       result[target.unit + 'remaining'] = remaining;
     }
+
+    var query = filterQuery(req.query), visibility = {}, settings = target.owner.settings;
+    visibility.wordcount = visibility.charcount = visibility.wordtarget = visibility.chartarget = settings.chartType === 'cumulative';
+    visibility.worddaily = visibility.chardaily = visibility.worddailytarget = visibility.chardailytarget = !visibility.wordcount;
+    visibility.wordadjusteddailytarget = visibility.charadjusteddailytarget = settings.showAdjusted;
+    visibility.wordremaining = visibility.charremaining = settings.showRemaining;
+
+    result.visibility = _.defaults(query, target.chartOptions, visibility);
+
     callback(null, result);
   }).catch(function (err) {
     err.code = 500;
@@ -299,36 +340,19 @@ router.get('/embed/:id', function (req, res, next) {
     where: {
       id: req.params.id,
       "public": true
-    },
-    include: [
-      {
-        model: models.User,
-        as: 'owner',
-        required: true,
-        include: [
-          {
-            model: models.Settings,
-            as: 'settings',
-            required: true
-          }
-        ]
-      }
-    ]
+    }
   }).then(function (target) {
     if (!target) {
       return next();
     }
-    var settings = target.owner.settings;
+    var query = filterQuery(req.query);
+
     res.render('user/embed', {
       title: 'Target ' + target.name,
       object: target,
-      options: {
-        chartType: settings.chartType,
-        showRemaining: settings.showRemaining,
-        showAdjusted: settings.showAdjusted
-      },
       datalink: '/targets/' + target.id + '/data.json',
-      objectlink: '/targets/' + target.id
+      objectlink: '/targets/' + target.id,
+      query: qs.stringify(query)
     });
   }).catch(function (err) {
     next(err);
@@ -541,7 +565,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       socialMeta: {
         title: target.name,
         description: target.description || 'A writing target in Writer\'s Trail.',
-        image: '/targets/' + target.id + '/cumulative.png',
+        image: '/targets/' + target.id + '/chart.png',
         type: 'target',
         url: '/targets/' + target.id
       }
@@ -551,7 +575,7 @@ router.get('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/:type.png', serverExport.middleware('Target', chartData));
+router.get('/:id/chart.png', serverExport.middleware('Target', chartData));
 
 router.get('/:id/deleteImage', isactivated, serverExport.deleteImageMiddleware('Target'));
 
@@ -562,6 +586,56 @@ router.get('/:id/data.json', function (req, res) {
       res.status(err.code);
     }
     res.json(data).end();
+  });
+});
+
+router.post('/:id/data.json', function (req, res) {
+  if (!req.user) {
+    return res.status(401).end();
+  }
+  var item, visibility, validItems = [];
+  [
+    'target',
+    'dailytarget',
+    'adjusteddailytarget',
+    'remaining',
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      validItems.push('word' + item);
+      validItems.push('char' + item);
+    });
+
+  item = req.body.item;
+
+  if (validItems.indexOf(item) < 0) {
+    return res.status(400).end();
+  }
+
+  visibility = req.body.visibility !== 'false';
+
+
+
+  models.sequelize.transaction(function () {
+    return models.Target.findOne({
+      where: {
+        id: req.params.id,
+        ownerId: req.user.id
+      }
+    }).then(function (target) {
+      if (!target) {
+        return res.status(404).end();
+      }
+      var options = target.chartOptions;
+      options[item] = visibility;
+      target.chartOptions = options;
+      return target.save();
+    });
+  }).then(function () {
+    return res.status(204).end();
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).end();
   });
 });
 

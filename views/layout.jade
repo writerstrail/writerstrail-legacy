@@ -8,6 +8,7 @@ html
     include includes/meta
     link(rel="icon" type="image/png" href="/favicon.png")
     link(rel="shortcut icon" type="image/png" href="/favicon.png")
+    script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
     block styles
       link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
       link(rel='stylesheet', href='/bower_components/font-awesome/css/font-awesome.min.css')
@@ -51,12 +52,11 @@ html
           a.btn.btn-lg.btn-danger(href='/feedback/new') Found a bug!
         
     block scripts
-        script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
         script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
         script(type='text/javascript', src='/bower_components/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js')
         if user && user.settings && user.settings.showTour
           script(type='text/javascript', src='/bower_components/hopscotch/dist/js/hopscotch.min.js')
-          script(type='text/javascript', src='/scripts/tour.js')
+          script(type='text/javascript', src='/scripts/tour.min.js')
         script(type='text/javascript').
           $(function () {
             $('.btn-group .btn').tooltip({

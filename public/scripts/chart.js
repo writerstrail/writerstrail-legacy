@@ -17,7 +17,7 @@ WTChart.startFromDate = function (date) {
   return result;
 };
 
-WTChart.joinMeta = function (data, meta) {
+WTChart.joinMeta = function (data, meta, showLegend) {
   var series = [];
   for (var key in data) {
     if (!data.hasOwnProperty(key)) {
@@ -25,7 +25,9 @@ WTChart.joinMeta = function (data, meta) {
     }
     var serie = {
       data: data[key],
-      id: key
+      id: key,
+      visible: data.visibility[key],
+      showInLegend: data.visibility[key] || showLegend
     };
 
     if (meta[key]) {
@@ -40,15 +42,13 @@ WTChart.joinMeta = function (data, meta) {
   return series;
 };
 
-WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
+WTChart.buildMeta = function (data, unit, isExport) {
   var start = WTChart.startFromDate(data.date[0]),
       showLegend = !isExport,
       meta = {
         wordcount: {
           name: 'Word count',
           color: '#674732',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -56,8 +56,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
         charcount: {
           name: 'Character count',
           color: unit ? '#674732' : '#1F77B4',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -68,8 +66,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
         worddaily: {
           name: 'Daily writing',
           color: '#FF9E49',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -77,8 +73,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
         chardaily: {
           name: 'Daily characters',
           color:  unit ? '#FF9E49' : '#2CA02C',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -90,8 +84,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Target',
           type: 'line',
           color: '#9e9e9e',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -100,8 +92,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Target',
           type: 'line',
           color: '#9e9e9e',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -113,8 +103,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Daily target',
           type: 'line',
           color: '#2ca02c',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -123,8 +111,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Daily target',
           type: 'line',
           color: '#2ca02c',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -136,8 +122,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Adjusted daily target',
           type: 'line',
           color: '#9467bd',
-          visible: showAdj,
-          showInLegend: showAdj || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -146,8 +130,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Adjusted daily target',
           type: 'line',
           color: '#9467bd',
-          visible: showAdj,
-          showInLegend: showAdj || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -159,8 +141,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Remaining word count',
           type: 'line',
           color: '#D62728',
-          visible: showRem,
-          showInLegend: showRem || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -169,8 +149,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Remaining character count',
           type: 'line',
           color: '#D62728',
-          visible: showRem,
-          showInLegend: showRem || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -179,10 +157,10 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           pointInterval: 24 * 3600000
         }
       };
-  return WTChart.joinMeta(data, meta);
+  return WTChart.joinMeta(data, meta, showLegend);
 };
 
-WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, unit, title, today) {
+WTChart.chartOptions = function chart(series, unit, title, today) {
   return {
     chart: {
       renderTo: 'chart',
@@ -246,8 +224,8 @@ WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, 
   };
 };
 
-WTChart.bindButton = function ($, chartType) {
-  var isAcc = chartType === 'cumulative';
+WTChart.bindButton = function ($) {
+  var isAcc = true;
 
   $('#target-change')
     .data('acc', isAcc)
@@ -286,23 +264,44 @@ WTChart.bindButton = function ($, chartType) {
     });
 };
 
-WTChart.linkChart = function (link, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
-  var isAcc = chartType === 'cumulative';
+WTChart.linkChart = function (link, $, Highcharts, unit, title, zoneOffset) {
   link = link + '?zoneOffset=' + (-zoneOffset);
+  if (window.query) {
+    link += '&' + window.query;
+  }
   $.getJSON(link, function (data) {
-    var series = WTChart.buildMeta(data, isAcc, showRem, showAdjusted, unit);
-    WTChart.chart(series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset);
+    var series = WTChart.buildMeta(data, unit);
+    WTChart.chart(link, series, $, Highcharts, unit, title, zoneOffset);
   });
 };
 
-WTChart.chart = function (series, $, Highcharts, chartType, showRem, showAdjusted, unit, title, zoneOffset) {
-  var now, today, options, userOffset;
+WTChart.chart = function (link, series, $, Highcharts, unit, title, zoneOffset) {
+  var now, today, options, userOffset, plotOptions, csrfvalue = window.csrfvalue || null;
   userOffset = (new Date()).getTimezoneOffset();
   now = new Date(+(new Date()) + (userOffset * 6e4) + (zoneOffset * 6e4));
   today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-  options = WTChart.chartOptions(series, chartType, showRem, showAdjusted, unit, title, today);
+  options = WTChart.chartOptions(series, unit, title, today);
+
+  function legendSave(event) {
+    $.post(link, {
+      item: event.target.userOptions.id,
+      visibility: event.target.visible,
+      _csrf: csrfvalue
+    });
+  }
+
+  plotOptions = {
+    events: {
+      hide: legendSave,
+      show: legendSave
+    }
+  };
+
+  options.plotOptions.line = plotOptions;
+  options.plotOptions.column.events = plotOptions.events;
+
   new Highcharts.Chart(options, function () {
-    WTChart.bindButton($, chartType);
+    WTChart.bindButton($);
   });
 };
 
@@ -326,3 +325,4 @@ WTChart.deleteImageSetup = function ($, link) {
       });
   });
 };
+

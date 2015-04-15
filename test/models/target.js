@@ -37,7 +37,10 @@ describe('Target model', function () {
       unit: 'word',
       notes: 'test notes',
       public: true,
-      ownerId: 1
+      ownerId: 1,
+      chartOptions: {
+        wordcount: true
+      }
     }).then(function () {
       return Target.findOne(id);
     }).then(function (target) {
@@ -66,6 +69,8 @@ describe('Target model', function () {
         expect(target).to.have.property('unit', 'word');
         expect(target).to.have.property('notes', 'test notes');
         expect(target).to.have.property('public', true);
+        expect(target).to.have.property('chartOptions')
+          .that.is.an('object').that.have.property('wordcount', true);
         done();
       } catch (err) {
         done(err);
@@ -815,6 +820,72 @@ describe('Target model', function () {
       junk.push(target);
       try {
         expect(target).to.have.property('public', false);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(done);
+  });
+
+  it('should not allow no object in chart options', function (done) {
+    var target, err;
+
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test no object chart options',
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'word',
+      notes: 'test notes',
+      ownerId: 1,
+      chartOptions: 'not an object'
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (t) {
+      junk.push(t);
+      target = t;
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(target).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('errors').that.have.length.of.at.least(1);
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'chartOptions');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should allow null chartOptions', function (done) {
+    id += 1;
+
+    Target.create({
+      id: id,
+      name: 'Test null chartOptions',
+      description: null,
+      start: start.toDate(),
+      end: end.toDate(),
+      zoneOffset: -120,
+      count: 50000,
+      unit: 'word',
+      notes: 'test notes',
+      public: false,
+      ownerId: 1,
+      chartOptions: null
+    }).then(function () {
+      return Target.findOne(id);
+    }).then(function (target) {
+      junk.push(target);
+      try {
+        expect(target).to.have.property('chartOptions')
+          .that.is.an('object').that.is.empty;
         done();
       } catch (err) {
         done(err);

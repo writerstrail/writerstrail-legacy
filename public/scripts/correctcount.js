@@ -1,10 +1,10 @@
-/* globals $, projectId, csrf, document */
+/* globals $, projectId, csrfvalue, document */
 $(function () {
 
   function correctSend(type, value) {
     return function () {
       var data = {
-        _csrf: csrf
+        _csrf: csrfvalue
       };
       data['correct' + type] = typeof value === 'function' ? value() : value;
       $('#correct' + type + 'loading').show();
