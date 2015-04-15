@@ -204,8 +204,8 @@ append scripts
   script(type='text/javascript', src='/scripts/range.min.js')
   script.
     var link = '/projects/#{project.id}/data.json',
-            csrfvalue = '!{csrf}';
-    var projectId = #{project.id}, csrf = '#{csrf}';
+            csrfvalue = '!{csrf}',
+            projectId = #{project.id};
     window.linkChart(link, jQuery, Highcharts, null, '#{project.name}', #{project.zoneOffset});
     chartRange2(jQuery, moment, '.range-selector', '#{settings.dateFormat}', '#chart', link, #{project.zoneOffset});
     deleteImageSetup(jQuery, '/projects/#{project.id}/deleteImage');
