@@ -887,7 +887,8 @@ describe('Target model', function () {
     }).then(function (target) {
       junk.push(target);
       try {
-        expect(target).to.have.property('chartOptions', null);
+        expect(target).to.have.property('chartOptions')
+          .that.is.an('object').that.is.empty;
         done();
       } catch (err) {
         done(err);

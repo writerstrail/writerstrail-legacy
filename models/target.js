@@ -97,7 +97,7 @@ module.exports = function (sequelize, DataTypes) {
       get: function () {
         var data = this.getDataValue('chartOptionsBlob');
         if (!data) {
-          return null;
+          return {};
         }
         return JSON.parse(data);
       },
