@@ -81,6 +81,37 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    chartOptions: {
+      type: DataTypes.VIRTUAL,
+      allowNull: true,
+      set: function (value) {
+        if (!value) {
+          this.setDataValue('chartOptions', null);
+          this.setDataValue('chartOptionsBlob', null);
+        } else {
+          this.setDataValue('chartOptions', value);
+          this.setDataValue('chartOptionsBlob', JSON.stringify(value));
+        }
+      },
+      get: function () {
+        var data = this.getDataValue('chartOptionsBlob');
+        if (!data) {
+          return null;
+        }
+        return JSON.parse(data);
+      },
+      validate: {
+        isObject: function (value) {
+          if (value && typeof value !== 'object') {
+            throw new Error('The options must be an object');
+          }
+        }
+      }
+    },
+    chartOptionsBlob: {
+      type: DataTypes.BLOB,
+      allowNull: true
     }
   }, {
     tableName: 'targets',
