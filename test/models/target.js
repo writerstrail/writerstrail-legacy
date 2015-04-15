@@ -75,10 +75,7 @@ describe('Target model', function () {
       } catch (err) {
         done(err);
       }
-    }).catch(function (err) {
-      console.log(err);
-      done(err);
-    });
+    }).catch(done);
   });
   
   it('should not allow no name', function (done) {

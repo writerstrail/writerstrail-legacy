@@ -42,10 +42,19 @@ module.exports = {
           allowNull: true
         });
       })
+      .then(function () {
+        return migration.addColumn('projects', 'chartOptionsBlob', {
+          type: DataTypes.TEXT,
+          allowNull: true
+        });
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
-    migration.removeColumn('targets', 'chartOptionsBlob')
+    migration.removeColumn('projects', 'chartOptionsBlob')
+      .then(function () {
+        return migration.removeColumn('targets', 'chartOptionsBlob')
+      })
       .then(function () {
         return migration.removeColumn('projects', 'targetunit');
       })

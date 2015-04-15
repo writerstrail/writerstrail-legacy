@@ -18,7 +18,10 @@ describe('Project model', function () {
       finished: false,
       public: true,
       zoneOffset: -180,
-      ownerId: 1
+      ownerId: 1,
+      chartOptions: {
+        wordcount: true
+      }
     }).then(function (project) {
       junk.push(project);
       try {
@@ -36,6 +39,8 @@ describe('Project model', function () {
         expect(project).to.have.property('finished', false);
         expect(project).to.have.property('public', true);
         expect(project).to.have.property('zoneOffset', -180);
+        expect(project).to.have.property('chartOptions')
+          .that.is.an('object').that.have.property('wordcount', true);
         done();
       } catch (err) {
         done(err);
@@ -1174,6 +1179,68 @@ describe('Project model', function () {
       try {
         expect(project).to.exist;
         expect(project).to.have.property('zoneOffset', 0);
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
+  it('should not allow no object chartOptions', function (done) {
+    var project, err;
+
+    Project.create({
+      name: 'Test no object chart options',
+      description: 'Description',
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1,
+      chartOptions: 'not an object'
+    }).then(function (p) {
+      project = p;
+      junk.push(project);
+    }).catch(function (e) {
+      err = e;
+    }).finally(function () {
+      try {
+        expect(project).to.not.exist;
+        expect(err).to.exist;
+        expect(err).to.have.property('message', 'Validation error');
+        expect(err).to.have.property('errors').that.contain.an.item.with.property('path', 'chartOptions');
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should allow null chart options', function (done) {
+    Project.create({
+      name: 'Test null chart options',
+      description: null,
+      wordcount: 500,
+      targetwc: 1500,
+      active: true,
+      finished: false,
+      ownerId: 1,
+      chartOptions: null
+    }).then(function () {
+      return Project.findOne({
+        where: {
+          ownerId: 1,
+          name: 'Test null chart options'
+        }
+      });
+    }).then(function (project) {
+      junk.push(project);
+      try {
+        expect(project).to.exist;
+        expect(project).to.have.property('chartOptions')
+          .that.is.an('object').that.is.empty;
         done();
       } catch (err) {
         done(err);
