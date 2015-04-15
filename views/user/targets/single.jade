@@ -110,12 +110,10 @@ block content
             button#embedbutton.btn.btn-default(type='button' data-toggle='button' aria-pressed='false' autocomplete='off')
               | Embed chart
             | &#x0020;
-            a.btn.btn-default(href='/targets/' + target.id + '/daily.png' target='_blank') Daily writing image
-            | &#x0020;
-            a.btn.btn-default(href='/targets/' + target.id + '/cumulative.png' target='_blank') Cumulative writing image
+            a.btn.btn-default(href='/targets/' + target.id + '/chart.png' target='_blank') Open generated image
             if isOwner
               | &#x0020;
-              button#deleteimages.btn.btn-danger(title='Remove generated images from cache') Delete cached images
+              button#deleteimages.btn.btn-danger(title='Remove generated image from cache') Delete cached image
             +embedtag('targets', target.id)
   ul.list-group
     li.list-group-item

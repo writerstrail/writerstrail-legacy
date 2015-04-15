@@ -562,7 +562,7 @@ router.get('/:id', sendflash, function (req, res, next) {
       socialMeta: {
         title: target.name,
         description: target.description || 'A writing target in Writer\'s Trail.',
-        image: '/targets/' + target.id + '/cumulative.png',
+        image: '/targets/' + target.id + '/chart.png',
         type: 'target',
         url: '/targets/' + target.id
       }
@@ -572,7 +572,7 @@ router.get('/:id', sendflash, function (req, res, next) {
   });
 });
 
-router.get('/:id/:type.png', serverExport.middleware('Target', chartData));
+router.get('/:id/chart.png', serverExport.middleware('Target', chartData));
 
 router.get('/:id/deleteImage', isactivated, serverExport.deleteImageMiddleware('Target'));
 
