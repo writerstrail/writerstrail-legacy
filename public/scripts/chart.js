@@ -17,7 +17,7 @@ WTChart.startFromDate = function (date) {
   return result;
 };
 
-WTChart.joinMeta = function (data, meta) {
+WTChart.joinMeta = function (data, meta, showLegend) {
   var series = [];
   for (var key in data) {
     if (!data.hasOwnProperty(key)) {
@@ -25,7 +25,9 @@ WTChart.joinMeta = function (data, meta) {
     }
     var serie = {
       data: data[key],
-      id: key
+      id: key,
+      visible: data.visibility[key],
+      showInLegend: data.visibility[key] || showLegend
     };
 
     if (meta[key]) {
@@ -47,8 +49,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
         wordcount: {
           name: 'Word count',
           color: '#674732',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -56,8 +56,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
         charcount: {
           name: 'Character count',
           color: unit ? '#674732' : '#1F77B4',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -68,8 +66,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
         worddaily: {
           name: 'Daily writing',
           color: '#FF9E49',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -77,8 +73,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
         chardaily: {
           name: 'Daily characters',
           color:  unit ? '#FF9E49' : '#2CA02C',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -90,8 +84,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Target',
           type: 'line',
           color: '#9e9e9e',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -100,8 +92,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Target',
           type: 'line',
           color: '#9e9e9e',
-          visible: !!isAcc,
-          showInLegend: isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -113,8 +103,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Daily target',
           type: 'line',
           color: '#2ca02c',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -123,8 +111,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Daily target',
           type: 'line',
           color: '#2ca02c',
-          visible: !isAcc,
-          showInLegend: !isAcc || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -136,8 +122,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Adjusted daily target',
           type: 'line',
           color: '#9467bd',
-          visible: showAdj,
-          showInLegend: showAdj || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -146,8 +130,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Adjusted daily target',
           type: 'line',
           color: '#9467bd',
-          visible: showAdj,
-          showInLegend: showAdj || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -159,8 +141,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Remaining word count',
           type: 'line',
           color: '#D62728',
-          visible: showRem,
-          showInLegend: showRem || showLegend,
           yAxis: 0,
           pointStart: start,
           pointInterval: 24 * 3600000
@@ -169,8 +149,6 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           name: 'Remaining character count',
           type: 'line',
           color: '#D62728',
-          visible: showRem,
-          showInLegend: showRem || showLegend,
           yAxis: 1,
           tooltip: {
             valueSuffix: ' characters'
@@ -179,7 +157,7 @@ WTChart.buildMeta = function (data, isAcc, showRem, showAdj, unit, isExport) {
           pointInterval: 24 * 3600000
         }
       };
-  return WTChart.joinMeta(data, meta);
+  return WTChart.joinMeta(data, meta, showLegend);
 };
 
 WTChart.chartOptions = function chart(series, chartType, showRem, showAdjusted, unit, title, today) {

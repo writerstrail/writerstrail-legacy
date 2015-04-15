@@ -23,26 +23,38 @@ function chartData(req, callback) {
     where: {
       id: req.params.id
     },
-    include: [{
-      model: models.Project,
-      as: 'projects',
-      order: [['name', 'ASC']],
-      include: [{
-        model: models.Session,
-        as: 'sessions',
-        required: false,
-        where: {
-          start: {
-            between: [
-              models.Sequelize.literal('`Target`.`start`'),
-              models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
-            ]
+    include: [
+      {
+        model: models.Project,
+        as: 'projects',
+        order: [['name', 'ASC']],
+        include: [{
+          model: models.Session,
+          as: 'sessions',
+          required: false,
+          where: {
+            start: {
+              between: [
+                models.Sequelize.literal('`Target`.`start`'),
+                models.Sequelize.literal('`Target`.`end` + INTERVAL 1 DAY - INTERVAL 1 SECOND')
+              ]
+            },
+            deletedAt: null
           },
-          deletedAt: null
-        },
-        order: [['start', 'DESC']]
-      }]
-    }]
+          order: [['start', 'DESC']]
+        }]
+      },
+      {
+        model: models.User,
+        as: 'owner',
+        required: true,
+        include: [{
+          model: models.Settings,
+          as: 'settings',
+          required: true
+        }]
+      }
+    ]
   }).then(function (target) {
     var accessible = false;
 
@@ -117,6 +129,15 @@ function chartData(req, callback) {
       result[target.unit + 'adjusteddailytarget'] = pondDailyTarget;
       result[target.unit + 'remaining'] = remaining;
     }
+
+    var visibility = {}, settings = target.owner.settings;
+    visibility.wordcount = visibility.charcount = visibility.wordtarget = visibility.chartarget = settings.chartType === 'cumulative';
+    visibility.worddaily = visibility.chardaily = visibility.worddailytarget = visibility.chardailytarget = !visibility.wordcount;
+    visibility.wordadjusteddailytarget = visibility.charadjusteddailytarget = settings.showAdjusted;
+    visibility.wordremaining = visibility.charremaining = settings.showRemaining;
+
+    result.visibility = _.defaults(target.chartOptions, visibility);
+
     callback(null, result);
   }).catch(function (err) {
     err.code = 500;
