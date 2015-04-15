@@ -305,14 +305,15 @@ WTChart.chart = function (link, series, $, Highcharts, chartType, showRem, showA
   function legendSave(event) {
     $.post(link, {
       item: event.target.userOptions.id,
-      visibility: !event.target.visible,
+      visibility: event.target.visible,
       _csrf: csrfvalue
     });
   }
 
   plotOptions = {
     events: {
-      legendItemClick: legendSave
+      hide: legendSave,
+      show: legendSave
     }
   };
 
