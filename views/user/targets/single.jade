@@ -44,7 +44,7 @@ block content
       .col-md-12
         - var percentage = Math.min(100, Math.max(0, Math.floor((totalCount / target.count) * 100)))
         +progressbar(totalCount, target.count, percentage,
-          settings.lothreshold, settings.hithreshold)
+          settings.lothreshold, settings.hithreshold, target.unit)
 
   if target.public
 
