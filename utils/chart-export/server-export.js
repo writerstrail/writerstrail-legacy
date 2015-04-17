@@ -15,7 +15,7 @@ var http = require('http'),
   env = process.env.NODE_ENV || 'development',
   config = require('../../config/config')[env],
   models = require('../../models'),
-  mkdirp = require('../functions/mkdirp'),
+  mkdirp = require('mkdirp'),
   chart = require('../../public/scripts/chart'),
   options = require('../../public/scripts/highcharts-init').options;
 

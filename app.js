@@ -14,14 +14,14 @@ var express = require('express'),
   paginate = require('express-paginate'),
   moment = require('moment'),
   _ = require('lodash'),
-  mkdirp = require('./utils/functions/mkdirp');
+  mkdirp = require('mkdirp');
 
 var app = express();
 
 var env = process.env.NODE_ENV || "development";
 var config = require('./config/config.js')[env];
 
-mkdirp(config.imagesdir);
+mkdirp.sync(config.imagesdir);
 
 // create session store
 var sessionStore = new MysqlStore({
