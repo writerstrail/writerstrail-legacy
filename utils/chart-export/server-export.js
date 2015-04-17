@@ -15,8 +15,7 @@ var http = require('http'),
   env = process.env.NODE_ENV || 'development',
   config = require('../../config/config')[env],
   models = require('../../models'),
-  mkdirp = require('../functions/mkdirp'),
-  anon = require('../data/anonuser'),
+  mkdirp = require('mkdirp'),
   chart = require('../../public/scripts/chart'),
   options = require('../../public/scripts/highcharts-init').options;
 
@@ -62,13 +61,11 @@ function generateImage(file, data, callback) {
   }));
 }
 
-function buildChart(object, unit, settings, data) {
-  var isAcc = settings.chartType === 'cumulative',
-    series = chart.buildMeta(data, isAcc, settings.showRemaining, settings.showAdjusted, unit, true);
+function buildChart(object, unit, data) {
+  var series = chart.buildMeta(data, unit, true);
 
   return _.defaults({},
-    chart.chartOptions(series, settings.chartType, settings.showRemaining,
-      settings.showAdjusted, unit, object.name, moment.utc().add(object.zoneOffset || 0, 'minutes').startOf('day').toDate()),
+    chart.chartOptions(series, unit, object.name, moment.utc().add(object.zoneOffset || 0, 'minutes').startOf('day').toDate()),
     options
   );
 }
@@ -114,12 +111,7 @@ function middleware(model, chartData) {
 
   return function (req, res) {
     res.type('image/png');
-    var types = ['cumulative', 'daily'],
-      file,
-      object;
-    if (_.indexOf(types, req.params.type) < 0) {
-      return res.status(404).end();
-    }
+    var file, object;
 
     function serveImage(err, image) {
       if (err) {
@@ -135,10 +127,7 @@ function middleware(model, chartData) {
         return res.status(500).end();
       }
 
-      var settings = _.defaults({}, {
-          chartType: req.params.type
-        }, anon.settings),
-        chart = buildChart(object, object.unit, settings, data);
+      var chart = buildChart(object, object.unit, data);
 
       if (isSame(file, chart)) {
         return res.sendFile(file);
@@ -153,8 +142,7 @@ function middleware(model, chartData) {
     models[model].findOne({
       where: {
         id: req.params.id
-      },
-      attributes: ['id', 'name', 'public']
+      }
     }).then(function (o) {
       if (!o || !o.public) {
         return res.status(404).end();
@@ -162,7 +150,7 @@ function middleware(model, chartData) {
 
       object = o;
 
-      file = path.join(config.imagesdir, 'charts', dir, req.params.id + '_' + req.params.type + '.png');
+      file = path.join(config.imagesdir, 'charts', dir, req.params.id + '_chart.png');
 
       if (isFresh(file)) {
         return res.sendFile(file, {
@@ -179,36 +167,26 @@ function middleware(model, chartData) {
 function deleteImage(model, id, callback) {
   var dir = model.toLowerCase() + 's',
     fileBase = path.join(config.imagesdir, 'charts', dir, id + '_'),
-    daily = fileBase + 'daily.png',
-    acc = fileBase + 'cumulative.png',
+    chart = fileBase + 'chart.png',
     errs = [];
 
-  function unlinkDaily(callback) {
-    fs.unlink(daily, function (err) {
+  function unlinkChart(callback) {
+    fs.unlink(chart, function (err) {
       if (err && err.errno !== 34) {
         errs.push(err);
       }
-      fs.unlink(daily + '.json', callback);
-    });
-  }
-
-  function unlinkAcc(callback) {
-    fs.unlink(acc, function (err) {
-      if (err && err.errno !== 34) {
-        errs.push(err);
-      }
-      fs.unlink(acc + '.json', callback);
+      fs.unlink(chart + '.json', callback);
     });
 
   }
 
-  unlinkDaily(unlinkAcc.bind(null, function () {
+  unlinkChart(function () {
     if (errs.length) {
       callback(errs);
     } else {
       callback();
     }
-  }));
+  });
 }
 
 function deleteImageMiddleware(model) {
@@ -223,7 +201,7 @@ function deleteImageMiddleware(model) {
         deleteImage(model, req.params.id, function (err) {
           if (err) {
             res.status(500).json({
-              error: 'Couldn\'t delete ' + err.length + ' of 2 images.'
+              error: 'Couldn\'t delete image.'
             });
           } else {
             res.status(200).json({

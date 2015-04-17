@@ -35,12 +35,21 @@ block content
                   a(href='/projects/' + project.id + '/edit' title='Edit')
                     span.fa.fa-edit
                 .col-md-7
-                  if project.targetwc === 0
-                    p No target defined. 
-                      = project.currentWordcount
-                      |  written words.
+                  - var currentWordcount = project.currentWordcount + project.correctwc
+                  - var currentCharcount = project.currentCharcount + project.correctcc
+                  if (project.targetunit === 'word' && project.targetwc > 0) || (project.targetunit === 'char' && project.targetcc > 0)
+                    +progressbar((project.targetunit === 'char') ? currentCharcount : currentWordcount,
+                    (project.targetunit === 'char') ? project.targetcc : project.targetwc, project.percentage,
+                    settings.lothreshold, settings.hithreshold,
+                    project.targetunit)
                   else
-                    +progressbar(project.currentWordcount, project.targetwc, project.percentage)
+                    | No target defined.&nbsp;
+                    if project.targetunit === 'word'
+                      = currentWordcount
+                      | &nbsp;written words.
+                    else
+                      = currentCharcount
+                      | &nbsp;typed characters.
                 .col-md-2
                   a.btn.btn-primary(href='/sessions/new?projectid=' + project.id title='New session for project ' + project.name) New session
           li.list-group-item.text-center
@@ -150,8 +159,9 @@ append scripts
     script(type='text/javascript')
       unless example
         if target
-          | linkChart('/targets/#{target.id}/data.json', jQuery, Highcharts, '!{user.settings.chartType}', !{user.settings.showRemaining},
-          |     !{user.settings.showAdjusted}, '#{target.unit}', '<a href="/targets/#{target.id}">#{target.name}</a>', #{target.zoneOffset});
+          | var csrfvalue = '!{csrf}';
+          | linkChart('/targets/#{target.id}/data.json', jQuery, Highcharts,
+          |     '#{target.unit}', '<a href="/targets/#{target.id}">#{target.name}</a>', #{target.zoneOffset});
       else
         | chart2('/example/targetdata.json', jQuery, Highcharts, 'cumulative', false, false, 'word', '#{target.name}');
   script

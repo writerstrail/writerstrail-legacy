@@ -59,7 +59,7 @@ router.get('/', sendflash, function (req, res, next) {
       filters.push('Only feedback not completed nor dismissed are shown.');
       var orFilter = [];
       
-      _.forEach(['New', 'Reviewing', 'On hold', 'Accepted', 'Developing'], function (s) {
+      _.forEach(['New', 'Reviewing', 'Accepted', 'Developing'], function (s) {
         orFilter.push({ status: s });
       });
       config.where.push(models.Sequelize.or.apply(global, orFilter));

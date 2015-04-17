@@ -1,4 +1,6 @@
 var router = require('express').Router(),
+  qs = require('querystring'),
+  _ = require('lodash'),
   moment = require('moment'),
   models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
@@ -9,6 +11,21 @@ var router = require('express').Router(),
   filterIds = require('../../utils/functions/filterids'),
   serverExport = require('../../utils/chart-export/server-export'),
   anon = require('../../utils/data/anonuser');
+
+function filterQuery(query) {
+  var result = {};
+  [
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      ['word', 'char'].forEach(function (unit) {
+        if (query[unit + item]) {
+          result[unit + item] = query[unit + item] === 'true';
+        }
+      });
+    });
+  return result;
+}
 
 function chartData(req, callback) {
   var user = req.user || anon;
@@ -97,6 +114,20 @@ function chartData(req, callback) {
       worddaily: daily,
       chardaily: dailyChar
     };
+
+    var chartOptions, visibility = {}, query = filterQuery(req.query);
+
+    visibility.wordcount = visibility.charcount = false;
+    visibility.worddaily = visibility.chardaily = true;
+
+    if (sessions[0]) {
+      chartOptions = sessions[0].chartOptionsBlob;
+    }
+
+    chartOptions = chartOptions ? JSON.parse(chartOptions) : {};
+
+    result.visibility = _.defaults(query, chartOptions, visibility);
+
     callback(null, result);
   }).catch(function (err) {
     err.code = 500;
@@ -163,6 +194,7 @@ router.get('/new', isactivated, sendflash, function (req, res) {
         charcount: 0,
         targetwc: 50000,
         targetcc: 0,
+        targetunit: 'word',
         genres: req.query.genreid ? [{id: req.query.genreid}] : []
       },
       genres: chunk(genres, 3)
@@ -179,6 +211,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
     targetwc: numerictrim(req.body.targetwc),
     charcount: numerictrim(req.body.charcount) || 0,
     targetcc: numerictrim(req.body.targetcc) || 0,
+    targetunit: req.body.targetunit,
     active: !!req.body.active,
     finished: !!req.body.finished,
     public: !!req.body.public,
@@ -221,6 +254,7 @@ router.post('/new', isactivated, isverified, function (req, res, next) {
           targetwc: req.body.targetwc,
           charcount: req.body.charcount,
           targetcc: req.body.targetcc,
+          targetunit: req.body.targetunit,
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
@@ -250,13 +284,9 @@ router.get('/embed/:id', function (req, res, next) {
     res.render('user/embed', {
       title: 'Project ' + project.name,
       object: project,
-      options: {
-        chartType: 'daily',
-        showRemaining: false,
-        showAdjusted: false
-      },
       datalink: '/projects/' + project.id + '/data.json',
-      objectlink: '/projects/' + project.id
+      objectlink: '/projects/' + project.id,
+      query: qs.stringify(filterQuery(req.query))
     });
   }).catch(function (err) {
     next(err);
@@ -321,6 +351,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
       project.set('targetwc', numerictrim(req.body.targetwc));
       project.set('charcount', numerictrim(req.body.charcount) || 0);
       project.set('targetcc', numerictrim(req.body.targetcc) || 0);
+      project.set('targetunit', req.body.targetunit);
       project.set('active', !!req.body.active);
       project.set('finished', !!req.body.finished);
       project.set('zoneOffset', req.body.zoneOffset || 0);
@@ -370,6 +401,7 @@ router.post('/:id/edit', isactivated, isverified, function (req, res, next) {
           targetwc: req.body.targetwc,
           charcount: req.body.charcount,
           targetcc: req.body.targetcc,
+          targetunit: req.body.targetunit,
           active: !!req.body.active,
           finished: !!req.body.finished,
           public: !!req.body.public,
@@ -395,7 +427,13 @@ router.get('/active', isactivated, sendflash, function (req, res, next) {
     attributes: [
       models.Sequelize.literal('*'),
       [models.Sequelize.literal(
-        'LEAST(100, GREATEST(0, FLOOR((`currentWordcount` / `targetwc`) * 100)))'
+        'LEAST(100, GREATEST(0, FLOOR(' +
+        'CASE WHEN `targetunit` LIKE "word"  THEN ' +
+        '((`currentWordcount` + `correctwc`) / `targetwc`)' +
+        'ELSE ' +
+        '((`currentCharcount` + `correctcc`) / `targetcc`)' +
+        'END' +
+        ' * 100)))'
       ), 'percentage']
     ],
     limit: req.query.limit,
@@ -441,6 +479,16 @@ router.get('/:id', sendflash, function (req, res, next) {
         model: models.Target,
         as: 'targets',
         order: [['name', 'ASC']]
+      },
+      {
+        model: models.User,
+        as: 'owner',
+        required: true,
+        include: [{
+          model: models.Settings,
+          as: 'settings',
+          required: true
+        }]
       }
     ]
   }).then(function (project) {
@@ -451,7 +499,7 @@ router.get('/:id', sendflash, function (req, res, next) {
     if (!project.public && project.ownerId !== req.user.id) {
       return isactivated(req, res, next);
     }
-    
+
     res.render('user/projects/single', {
       title: project.name + ' project',
       section: 'projectsingle',
@@ -481,6 +529,126 @@ router.get('/:id/data.json', function (req, res) {
       res.status(err.code);
     }
     res.json(data).end();
+  });
+});
+
+router.post('/:id/data.json', function (req, res) {
+  if (!req.user) {
+    return res.status(401).end();
+  }
+  var item, visibility, validItems = [];
+  [
+    'count',
+    'daily'
+  ].forEach(function (item) {
+      validItems.push('word' + item);
+      validItems.push('char' + item);
+    });
+
+  item = req.body.item;
+
+  if (validItems.indexOf(item) < 0) {
+    return res.status(400).end();
+  }
+
+  visibility = req.body.visibility !== 'false';
+
+  models.sequelize.transaction(function () {
+    return models.Project.findOne({
+      where: {
+        id: req.params.id,
+        ownerId: req.user.id
+      }
+    }).then(function (project) {
+      if (!project) {
+        return res.status(404).end();
+      }
+      var options = project.chartOptions;
+      options[item] = visibility;
+      project.chartOptions = options;
+      return project.save();
+    });
+  }).then(function () {
+    return res.status(204).end();
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).end();
+  });
+});
+
+router.post('/:id/correctwc', isactivated, function (req, res) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    }
+  }).then(function (project) {
+    if (!project) {
+      return res.status(404).json({error: 'Not found'});
+    }
+
+    var newWc = req.body.correctwc;
+
+    if (newWc !== 'reset') {
+      newWc = parseInt(newWc, 10);
+
+      if (isNaN(newWc) || newWc < 0) {
+        return res.status(400).json({
+          error: 'The corrected wordcount must be a non-negative integer'
+        });
+      }
+    }
+
+    project.correctwc = newWc === 'reset' ? 0 : newWc - project.currentWordcount;
+
+    return project.save();
+  }).then(function () {
+    return res.status(200).json({
+      message: 'Wordcount updated'
+    });
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Database error'
+    });
+  });
+});
+
+router.post('/:id/correctcc', isactivated, function (req, res) {
+  models.Project.findOne({
+    where: {
+      id: req.params.id,
+      ownerId: req.user.id
+    }
+  }).then(function (project) {
+    if (!project) {
+      return res.status(404).json({error: 'Not found'});
+    }
+
+    var newCc = req.body.correctcc;
+
+    if (newCc !== 'reset') {
+      newCc = parseInt(newCc, 10);
+
+      if (isNaN(newCc) || newCc < 0) {
+        return res.status(400).json({
+          error: 'The corrected character count must be a non-negative integer'
+        });
+      }
+    }
+
+    project.correctcc = newCc === 'reset' ? 0 : newCc - project.currentCharcount;
+
+    return project.save();
+  }).then(function () {
+    return res.status(200).json({
+      message: 'Character count updated'
+    });
+  }).catch(function (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Database error'
+    });
   });
 });
 

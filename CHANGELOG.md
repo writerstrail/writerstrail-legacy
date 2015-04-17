@@ -1,5 +1,13 @@
 # Writer's Trail change log
 
+## 0.9.0
+
+* Custom threshold for progress bars colors.
+* Project progress bars show words or characters
+* Allow writers to adjust project word/character count.
+* Persist visible/hidden chart data for projects and targets.
+* Some layout and text adjustments.
+
 ## 0.8.1
 
 * Fix a bug that show incorrect project with most sessions in stats page.
