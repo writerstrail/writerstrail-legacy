@@ -142,8 +142,7 @@ function middleware(model, chartData) {
     models[model].findOne({
       where: {
         id: req.params.id
-      },
-      attributes: ['id', 'name', 'public']
+      }
     }).then(function (o) {
       if (!o || !o.public) {
         return res.status(404).end();
