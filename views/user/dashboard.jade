@@ -163,7 +163,7 @@ append scripts
           | linkChart('/targets/#{target.id}/data.json', jQuery, Highcharts,
           |     '#{target.unit}', '<a href="/targets/#{target.id}">#{target.name}</a>', #{target.zoneOffset});
       else
-        | chart2('/example/targetdata.json', jQuery, Highcharts, 'cumulative', false, false, 'word', '#{target.name}');
+        | linkChart('/example/targetdata.json', jQuery, Highcharts, 'word', '#{target.name}');
   script
     unless example
       if user.settings.showTour

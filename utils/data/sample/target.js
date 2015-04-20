@@ -5,5 +5,10 @@ module.exports = {
   name: 'My Memoirs',
   count: 24000,
   unit: 'word',
-  projects: projects
+  projects: projects,
+  zoneOffset: 0,
+  chartOptions: {
+    wordcount: true,
+    wordtarget: true
+  }
 };
