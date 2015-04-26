@@ -3,7 +3,8 @@ var router = require('express').Router(),
   models = require('../models'),
   _ = require('lodash'),
   feedbackRoutes = require('./admin/feedback'),
-  mailRoutes = require('./admin/mail');
+  mailRoutes = require('./admin/mail'),
+  periodRoutes = require('./admin/periods');
 
 function isAdmin(req, res, next) {
   if (req.user && req.user.role === 'superadmin') {
@@ -417,5 +418,6 @@ router.use('/login/:id', function (req, res, next) {
 
 router.use('/feedback', feedbackRoutes);
 router.use('/mail', mailRoutes);
+router.use('/periods', periodRoutes);
 
 module.exports = router;
