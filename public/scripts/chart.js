@@ -26,8 +26,8 @@ WTChart.joinMeta = function (data, meta, showLegend) {
     var serie = {
       data: data[key],
       id: key,
-      visible: data.visibility[key],
-      showInLegend: data.visibility[key] || showLegend
+      visible: data.visibility && data.visibility[key],
+      showInLegend: (data.visibility && data.visibility[key]) || showLegend
     };
 
     if (meta[key]) {
