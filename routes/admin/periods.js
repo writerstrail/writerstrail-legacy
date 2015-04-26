@@ -79,8 +79,7 @@ router.post('/', function (req, res) {
     type: models.Sequelize.QueryTypes.INSERT,
     raw: true
   })
-    .then(function (result) {
-      console.log('ins res', result);
+    .then(function () {
       req.flash('success', 'Period added');
     })
     .catch(function (err) {
@@ -90,6 +89,23 @@ router.post('/', function (req, res) {
         start: req.body.start,
         end: req.body.end
       });
+    })
+    .finally(function () {
+      res.redirect('/admin/periods');
+    });
+});
+
+router.get('/delete/:name', function (req, res) {
+  models.sequelize.query('DELETE FROM `periods` WHERE name=' +
+    models.sequelize.escape(req.params.name), null, {
+    type: models.Sequelize.QueryTypes.DELETE,
+    raw: true
+  })
+    .then(function () {
+      req.flash('success', 'Period deleted');
+    })
+    .catch(function (err) {
+      req.flash('error', 'Database error: ' + err.message);
     })
     .finally(function () {
       res.redirect('/admin/periods');
