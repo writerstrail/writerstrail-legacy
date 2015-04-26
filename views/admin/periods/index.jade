@@ -2,3 +2,18 @@ extends ../../layout
 
 block content
   h1 Periods
+
+  .row: .col-md-12
+    .list-group
+      for period in periods
+        .list-group-item
+          .row
+            .col-md-2
+              a.btn.btn-danger(title="Remove")
+                span.fa.fa-remove
+              | &#x0020;
+              strong= period.name
+            .col-md-10
+              span.periodstart= period.start
+              | &ndash;
+              span.periodend= period.end
