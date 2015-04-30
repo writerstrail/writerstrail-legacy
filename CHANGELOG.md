@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## 0.9.1
+
+* Fix a bug that prevented some statistics charts from being shown.
+
 ## 0.9.0
 
 * Custom threshold for progress bars colors.
