@@ -12,8 +12,11 @@ module.exports =
     "baseurl": "http://localhost:8080",
     "pool": {
       max: 15,
-      min: 0,
-      idle: 10000
+      maxConnections: 15,
+      min: 1,
+      minConnections: 15,
+      idle: 36e5,
+      maxIdleTime: 36e5
     },
     "imagesdir": path.join(process.cwd(), "generated", "images"),
     "facebook": {
@@ -52,8 +55,11 @@ module.exports =
     "baseurl": "http://localhost:8080",
     "pool": {
       max: 15,
-      min: 0,
-      idle: 10000
+      maxConnections: 15,
+      min: 1,
+      minConnections: 15,
+      idle: 36e5,
+      maxIdleTime: 36e5
     },
     "logging": null,
     "imagesdir": path.join(process.cwd(), "generated", "images"),
@@ -94,8 +100,11 @@ module.exports =
     "baseurl": process.env.WRITERSTRAIL_BASE_URL,
     "pool": {
       max: 15,
-      min: 0,
-      idle: 30000
+      maxConnections: 15,
+      min: 1,
+      minConnections: 15,
+      idle: 36e5,
+      maxIdleTime: 36e5
     },
     "imagesdir": path.join(process.env.OPENSHIFT_DATA_DIR || process.cwd(), "images"),
     "facebook": {

@@ -48,12 +48,18 @@ module.exports = {
           allowNull: true
         });
       })
+      .then(function () {
+        return migration.sequelize.query("UPDATE `SequelizeMeta` SET `name`='0.9.0.js' WHERE `name`='next.js'");
+      })
       .then(done);
   },
   down: function (migration, DataTypes, done) {
-    migration.removeColumn('projects', 'chartOptionsBlob')
+    migration.sequelize.query("UPDATE `SequelizeMeta` SET `name`='next.js' WHERE `name`='0.9.0.js'")
       .then(function () {
-        return migration.removeColumn('targets', 'chartOptionsBlob')
+        return migration.removeColumn('projects', 'chartOptionsBlob');
+      })
+      .then(function () {
+        return migration.removeColumn('targets', 'chartOptionsBlob');
       })
       .then(function () {
         return migration.removeColumn('projects', 'targetunit');
