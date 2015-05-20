@@ -71,12 +71,19 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
       });
     },
     getTarget = function () {
+      var where = [
+        { ownerId: req.user.id }
+      ];
+
+      if (req.user.settings.targetId) {
+        where.push({ id: req.user.settings.targetId });
+      } else {
+        where.push(models.Sequelize.literal(
+            '`Target`.`end` >= DATE_ADD(CURDATE(), INTERVAL `Target`.`zoneOffset` MINUTE)'));
+      }
+
       return models.Target.findOne({
-        where: [
-          { ownerId: req.user.id },
-          models.Sequelize.literal(
-              '`Target`.`end` >= DATE_ADD(CURDATE(), INTERVAL `Target`.`zoneOffset` MINUTE)')
-        ],
+        where: where,
         order: [['end', 'ASC']]
       }, {
         raw: true

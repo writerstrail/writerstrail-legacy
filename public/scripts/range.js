@@ -12,8 +12,7 @@ window.chartRange2 = function chartRange2($, moment, selector, format, chartSele
       high.showLoading();
       $.getJSON(newLink, function (data) {
         var start = window.startFromDate(data.date[0]),
-            end = window.startFromDate(data.date[data.date.length - 1]),
-            isAcc = $('#target-change').data('acc');
+            end = window.startFromDate(data.date[data.date.length - 1]);
 
         var x = high.xAxis[0];
         x.options.startOnTick = false;
@@ -23,7 +22,7 @@ window.chartRange2 = function chartRange2($, moment, selector, format, chartSele
         var toDelete = high.series.map(function (ser) {
           return ser;
         });
-        var series = window.buildMeta(data, isAcc);
+        var series = window.buildMeta(data);
         series.forEach(function (ser) {
           high.addSeries(ser, false);
         });

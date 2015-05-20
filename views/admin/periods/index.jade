@@ -1,0 +1,40 @@
+extends ../../layout
+
+block content
+  h1 Periods
+
+  .row: .col-md-12
+    .list-group
+      for period in periods
+        .list-group-item
+          .row
+            .col-md-2
+              a.btn.btn-danger(href='/admin/periods/delete/' + period.name title="Remove")
+                span.fa.fa-remove
+              | &#x0020;
+              strong= period.name
+            .col-md-10
+              span.periodstart= period.start
+              | &ndash;
+              span.periodend= period.end
+      .list-group-item
+        .row
+          .col-md-2
+            strong Add period
+          .col-md-10
+            form.form-inline(method="post")
+              input(type="hidden" value=csrf name="_csrf")
+              - var valField = valerror && valerror.field
+              .form-group(class=valField === 'name' && 'has-error')
+                input.form-control(name='name' value=data.name placeholder="Name")
+              | &#x0020;
+              .form-group(class=valField === 'start' && 'has-error')
+                input.form-control(name='start' value=data.start placeholder="Start")
+              | &#x0020;
+              .form-group(class=valField === 'end' && 'has-error')
+                input.form-control(name='end' value=data.end placeholder="End")
+              | &#x0020;
+              button.btn.btn-success(type="submit") Add
+              .clearfix
+              .form-group.has-error
+                span.help-block= valerror ? valerror.msg : ''

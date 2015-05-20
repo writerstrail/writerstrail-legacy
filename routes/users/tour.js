@@ -70,7 +70,15 @@ router.get('/example/targetdata.json', isactivated, function (req, res) {
     worddaily: daily,
     worddailytarget: dailytarget,
     wordadjusteddailytarget: pondDailyTarget,
-    wordremaining: remaining
+    wordremaining: remaining,
+    visibility: {
+      wordcount: true,
+      wordtarget: true,
+      worddaily: false,
+      worddailytarget: false,
+      wordadjusteddailytarget: false,
+      wordremaining: false
+    }
   };
   res.json(result).end();
 });

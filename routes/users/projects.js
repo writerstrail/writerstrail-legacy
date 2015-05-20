@@ -34,6 +34,8 @@ function chartData(req, callback) {
   var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
   var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
 
+  var before, isPublic, chartOptions, ownerId;
+
   if (!start.isValid() || start.isAfter(end)) {
     start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
   }
@@ -52,38 +54,73 @@ function chartData(req, callback) {
         as: 'sessions',
         where: {
           start: {
-            gte: start.toDate(),
-            lte: end.toDate()
+            lt: start.toDate()
           }
         },
         attributes: [
-          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'),
-          models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`'),
-          models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `dailyCharCount`')
+          models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `beforeWordcount`'),
+          models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `beforeCharcount`')
         ],
         required: true
       }
-    ],
-    order: [models.Sequelize.literal('`date` ASC')],
-    group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
+    ]
   }, {
     raw: true
+  }).then(function (beforeSum) {
+    if (beforeSum && beforeSum[0]) {
+      before = beforeSum[0];
+      chartOptions = beforeSum[0].chartOptionsBlob;
+      chartOptions = chartOptions ? JSON.parse(chartOptions) : null;
+      isPublic = beforeSum[0].public;
+      ownerId = beforeSum[0].ownerId;
+    }
+    console.log('---before', before);
+
+    return models.Project.findAll({
+      where: {
+        id: req.params.id
+      },
+      include: [
+        {
+          model: models.Session,
+          as: 'sessions',
+          where: {
+            start: {
+              gte: start.toDate(),
+              lte: end.toDate()
+            }
+          },
+          attributes: [
+            'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'),
+            models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`'),
+            models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `dailyCharCount`')
+          ],
+          required: true
+        }
+      ],
+      order: [models.Sequelize.literal('`date` ASC')],
+      group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
+    }, {
+      raw: true
+    });
   }).then(function (sessions) {
 
     var accessible = false;
 
-    if (sessions.length > 0 && (sessions[0].public > 0 || sessions[0].ownerId === user.id)) {
+    if (before && (isPublic || ownerId === user.id)) {
       accessible = true;
     }
 
     if (!accessible) {
-      sessions = [];
+      var err = new Error('Not Found');
+      err.code = 404;
+      return callback(err, {error: err.message});
     }
 
     var daysRange = [];
     var daily = [], dailyChar = [];
-    var wordcount = [], accWc = 0;
-    var charcount = [], accCc = 0;
+    var wordcount = [], accWc = (before) ? (before.beforeWordcount || 0) : 0;
+    var charcount = [], accCc = (before) ? (before.beforeCharcount || 0) : 0;
 
     var j = 0;
 
@@ -115,18 +152,18 @@ function chartData(req, callback) {
       chardaily: dailyChar
     };
 
-    var chartOptions, visibility = {}, query = filterQuery(req.query);
+    var visibility = {}, query = filterQuery(req.query);
 
     visibility.wordcount = visibility.charcount = false;
     visibility.worddaily = visibility.chardaily = true;
 
-    if (sessions[0]) {
-      chartOptions = sessions[0].chartOptionsBlob;
-    }
+    console.log('------sesss', sessions, sessions[0]);
 
-    chartOptions = chartOptions ? JSON.parse(chartOptions) : {};
+    chartOptions = chartOptions || {};
 
     result.visibility = _.defaults(query, chartOptions, visibility);
+
+    console.log('-----visi', chartOptions);
 
     callback(null, result);
   }).catch(function (err) {

@@ -1,5 +1,11 @@
 # Writer's Trail change log
 
+## 0.10.0
+
+* Add a setting to select the target shown in the dashboard.
+* Now project cumulative chart consider all the words, not only the selected period.
+* Add an admin page to edit periods of the day.
+
 ## 0.9.1
 
 * Fix a bug that prevented some statistics charts from being shown.
