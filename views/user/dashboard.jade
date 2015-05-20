@@ -61,7 +61,10 @@ block content
         .panel-heading
           h3.panel-title
             span.fa.fa-line-chart
-            |  Nearest target
+            if user.settings.targetId
+              |  Primary target
+            else
+              |  Nearest target
         .panel-body
           if target
             #chart
