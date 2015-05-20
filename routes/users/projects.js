@@ -34,6 +34,8 @@ function chartData(req, callback) {
   var start = moment.utc(req.query.start, 'YYYY-MM-DD').startOf('day');
   var end = moment.utc(req.query.end, 'YYYY-MM-DD').endOf('day');
 
+  var before;
+
   if (!start.isValid() || start.isAfter(end)) {
     start = moment.utc().subtract(daysToLook - 1, 'days').subtract(req.query.zoneOffset || 0, 'minutes').startOf('day');
   }
@@ -52,22 +54,48 @@ function chartData(req, callback) {
         as: 'sessions',
         where: {
           start: {
-            gte: start.toDate(),
-            lte: end.toDate()
+            lt: start.toDate()
           }
         },
         attributes: [
-          'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'),
-          models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`'),
-          models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `dailyCharCount`')
+          models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `beforeWordcount`'),
+          models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `beforeCharcount`')
         ],
         required: true
       }
-    ],
-    order: [models.Sequelize.literal('`date` ASC')],
-    group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
+    ]
   }, {
     raw: true
+  }).then(function (beforeSum) {
+    before = beforeSum;
+
+    return models.Project.findAll({
+      where: {
+        id: req.params.id
+      },
+      include: [
+        {
+          model: models.Session,
+          as: 'sessions',
+          where: {
+            start: {
+              gte: start.toDate(),
+              lte: end.toDate()
+            }
+          },
+          attributes: [
+            'start', models.Sequelize.literal('DATE(`sessions`.`start`) AS `date`'),
+            models.Sequelize.literal('SUM(`sessions`.`wordcount`) AS `dailyCount`'),
+            models.Sequelize.literal('SUM(`sessions`.`charcount`) AS `dailyCharCount`')
+          ],
+          required: true
+        }
+      ],
+      order: [models.Sequelize.literal('`date` ASC')],
+      group: [models.Sequelize.literal('DATE(`sessions`.`start`)')]
+    }, {
+      raw: true
+    });
   }).then(function (sessions) {
 
     var accessible = false;
@@ -82,8 +110,8 @@ function chartData(req, callback) {
 
     var daysRange = [];
     var daily = [], dailyChar = [];
-    var wordcount = [], accWc = 0;
-    var charcount = [], accCc = 0;
+    var wordcount = [], accWc = (before && before[0]) ? (before[0].beforeWordcount || 0) : 0;
+    var charcount = [], accCc = (before && before[0]) ? (before[0].beforeCharcount || 0) : 0;
 
     var j = 0;
 
