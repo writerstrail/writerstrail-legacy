@@ -104,6 +104,12 @@ module.exports = function (sequelize, DataTypes) {
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
+        Settings.belongsTo(models.Target, {
+          'as': 'target',
+          foreignKey: { name: 'targetId', allowNull: true },
+          onDelete: 'SET NULL',
+          onUpdate: 'CASCADE'
+        });
       }
     },
     validate: {

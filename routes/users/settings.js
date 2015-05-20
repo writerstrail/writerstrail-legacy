@@ -1,5 +1,6 @@
 var router = require('express').Router(),
   _ = require('lodash'),
+  models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
   durationparser = require('../../utils/functions/durationparser'),
@@ -10,14 +11,26 @@ var router = require('express').Router(),
 
 router.get('/', sendflash, function (req, res) {
   var settings = req.flash('values');
-  res.render('user/settings/index', {
-    title: 'Settings',
-    section: 'settings',
-    dateFormats: dateFormats,
-    timeFormats: timeFormats,
-    settings: settings[0] || req.user.settings,
-    validate: req.flash('valerror'),
-    durationformatter: durationformatter
+  models.Target.findAll({
+    where: [
+      { ownerId: req.user.id },
+      models.sequelize.or(
+        { id: req.user.settings.targetId},
+        models.Sequelize.literal('`Target`.`end` >= (NOW() - INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)')
+      )
+    ],
+    order: [['name', 'ASC']]
+  }).then(function (targets) {
+    res.render('user/settings/index', {
+      title: 'Settings',
+      section: 'settings',
+      dateFormats: dateFormats,
+      timeFormats: timeFormats,
+      settings: settings[0] || req.user.settings,
+      validate: req.flash('valerror'),
+      durationformatter: durationformatter,
+      dashtargets: targets
+    });
   });
 });
 
@@ -50,6 +63,7 @@ router.post('/', isverified, function (req, res, next) {
   settings.showTour = !!req.body.showTour;
   settings.defaultTimer = defaultTimer;
   settings.performanceMetric = performanceMetric;
+  settings.targetId = req.body.dashtarget === 'none' ? null : req.body.dashtarget;
   req.user.settings.save().then(function () {
     req.flash('success', 'Your settings were successfully saved');
     res.redirect('back');
