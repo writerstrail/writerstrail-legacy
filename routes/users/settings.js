@@ -14,7 +14,10 @@ router.get('/', sendflash, function (req, res) {
   models.Target.findAll({
     where: [
       { ownerId: req.user.id },
-      models.Sequelize.literal('`Target`.`end` >= (NOW() - INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)')
+      models.sequelize.or(
+        { id: req.user.settings.targetId},
+        models.Sequelize.literal('`Target`.`end` >= (NOW() - INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)')
+      )
     ],
     order: [['name', 'ASC']]
   }).then(function (targets) {
