@@ -74,6 +74,14 @@ block content
           | Words per minute only in the time writing
         span#performanceMetrichelp.help-block Show best performance based on whole session or exclude the time not writing.
     .form-group
+      label.col-md-2.control-label(for='dashtarget') Dashboard target
+      .col-md-10
+        select#dashtarget.form-control(name='dashtarget' aria-describedby='dashtargethelp')
+          option(value=0 selected=(!settings.targetId)) Default (current target)
+          for target in dashtargets
+            option(value=target.id selected=(target.id == settings.targetId) )= target.name
+        span#dashtargethelp.help-block Which target to show in the dashboard.
+    .form-group
       label.col-md-2.control-label Show tour
       .col-md-10
         .checkbox

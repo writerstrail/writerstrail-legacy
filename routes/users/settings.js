@@ -1,5 +1,6 @@
 var router = require('express').Router(),
   _ = require('lodash'),
+  models = require('../../models'),
   sendflash = require('../../utils/middlewares/sendflash'),
   isverified = require('../../utils/middlewares/isverified'),
   durationparser = require('../../utils/functions/durationparser'),
@@ -10,14 +11,23 @@ var router = require('express').Router(),
 
 router.get('/', sendflash, function (req, res) {
   var settings = req.flash('values');
-  res.render('user/settings/index', {
-    title: 'Settings',
-    section: 'settings',
-    dateFormats: dateFormats,
-    timeFormats: timeFormats,
-    settings: settings[0] || req.user.settings,
-    validate: req.flash('valerror'),
-    durationformatter: durationformatter
+  models.Target.findAll({
+    where: [
+      { ownerId: req.user.id },
+      models.Sequelize.literal('`Target`.`end` >= (NOW() - INTERVAL 1 DAY + INTERVAL `Target`.`zoneOffset` MINUTE)')
+    ],
+    order: [['name', 'ASC']]
+  }).then(function (targets) {
+    res.render('user/settings/index', {
+      title: 'Settings',
+      section: 'settings',
+      dateFormats: dateFormats,
+      timeFormats: timeFormats,
+      settings: settings[0] || req.user.settings,
+      validate: req.flash('valerror'),
+      durationformatter: durationformatter,
+      dashtargets: targets
+    });
   });
 });
 
