@@ -60,6 +60,7 @@ router.post('/', isverified, function (req, res, next) {
   settings.showTour = !!req.body.showTour;
   settings.defaultTimer = defaultTimer;
   settings.performanceMetric = performanceMetric;
+  settings.targetId = req.body.dashtarget === 'none' ? null : req.body.dashtarget;
   req.user.settings.save().then(function () {
     req.flash('success', 'Your settings were successfully saved');
     res.redirect('back');
