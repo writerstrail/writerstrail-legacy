@@ -10,7 +10,14 @@ module.exports =
     "dialect": "mysql",
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
-    "pool": false,
+    "pool": {
+      max: 256,
+      maxConnections: 256,
+      min: 0,
+      minConnections: 0,
+      idle: 20000,
+      maxIdleTime: 20000
+    },
     "imagesdir": path.join(process.cwd(), "generated", "images"),
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
@@ -46,7 +53,14 @@ module.exports =
     "dialect": "mysql",
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
-    "pool": false,
+    "pool": {
+      max: 256,
+      maxConnections: 256,
+      min: 0,
+      minConnections: 0,
+      idle: 20000,
+      maxIdleTime: 20000
+    },
     "logging": null,
     "imagesdir": path.join(process.cwd(), "generated", "images"),
     "facebook": {
@@ -84,7 +98,14 @@ module.exports =
     "dialect": "mysql",
     "timezone": "+00:00",
     "baseurl": process.env.WRITERSTRAIL_BASE_URL,
-    "pool": false,
+    "pool": {
+      max: 256,
+      maxConnections: 256,
+      min: 0,
+      minConnections: 0,
+      idle: 20000,
+      maxIdleTime: 20000
+    },
     "imagesdir": path.join(process.env.OPENSHIFT_DATA_DIR || process.cwd(), "images"),
     "facebook": {
       "appid": process.env.WRITERSTRAIL_FACEBOOK_ID,
