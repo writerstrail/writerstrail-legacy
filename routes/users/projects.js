@@ -74,7 +74,6 @@ function chartData(req, callback) {
       isPublic = beforeSum[0].public;
       ownerId = beforeSum[0].ownerId;
     }
-    console.log('---before', before);
 
     return models.Project.findAll({
       where: {
@@ -157,13 +156,9 @@ function chartData(req, callback) {
     visibility.wordcount = visibility.charcount = false;
     visibility.worddaily = visibility.chardaily = true;
 
-    console.log('------sesss', sessions, sessions[0]);
-
     chartOptions = chartOptions || {};
 
     result.visibility = _.defaults(query, chartOptions, visibility);
-
-    console.log('-----visi', chartOptions);
 
     callback(null, result);
   }).catch(function (err) {
