@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## 0.10.1
+
+* Fix some configuration and stray debug lines.
+
 ## 0.10.0
 
 * Add a setting to select the target shown in the dashboard.
