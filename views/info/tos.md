@@ -30,4 +30,4 @@ Writer's Trail provides a service for writers. Such service is meant to be used 
 
 ### <a name="codecopy"></a>Copy of code
 
-The Writer's Trail website is meant to be open sourced. However, we do not endorse any similar service based on our code nor any other website that claims to operate under our permission. If you are a developer, consider making a pull request to our repository (which will soon be publicly available at [GitHub](https://github.com/flikore/writerstrail/)).
+The Writer's Trail website is open source. However, we do not endorse any similar service based on our code nor any other website that claims to operate under our permission. If you are a developer, consider making a pull request to our repository (which is publicly available at [GitHub](https://github.com/flikore/writerstrail/)).
