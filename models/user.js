@@ -54,7 +54,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     activated: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true,
       allowNull: false
     },
     verified: {
@@ -77,7 +77,8 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       validate: {
         min: 1
-      }
+      },
+      defaultValue: "OPEN-BETA"
     },
     facebookId: {
       type: DataTypes.STRING

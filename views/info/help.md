@@ -1,6 +1,7 @@
 <div class="jumbotron">
 <h1>Help</h1>
-<p>We are currently under closed beta test and the main reason for it is because the user interface is not tweaked and some people might have trouble figuring it out. That's why we're ostensibly asking for [feedback](/feedback).</p>
+<p>We are currently under open beta test and the main reason for it is because the user interface is not tweaked and some people might have trouble figuring it out. 
+There are also some features we still are going to implement. That's why we're ostensibly asking for [feedback](/feedback).</p>
 <p>In order to provide help for the current users, we made this page to sum up the help for such users.</p>
 </div>
 
