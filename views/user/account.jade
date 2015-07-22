@@ -2,30 +2,7 @@ extends ../layout
 
 block content
     h1 Account settings for #{user.name}.
-    - if (!user.activated)
-        .row
-            .col-md-12
-                .well.well-sm
-                    h3 Activate account
-                    p. 
-                        To be able to use this beta application, you need to wait
-                        until it's publicly available. If you have an invitation code
-                        to the beta test, use it below to activate your account.
-                    form.form-horizontal(method="post" action="/account/activate")
-                        input(type="hidden" name="_csrf" value=csrf)
-                        .form-group
-                            label.col-md-2.control-label(for="code")= __('Invitation code')
-                            .col-md-10
-                                input#code.form-control(name="code" placeholder="Code" autofocus=true)
-                        .form-group
-                            .col-md-10.col-md-offset-2
-                                button.btn.btn-success(type="submit") Activate
-    - else
-        .row
-            .col-md-12
-                .well.well-sm
-                    h3= __('Activate account')
-                    p= __('Your account is already activated.')
+
     .row
         .col-md-12
             .well.well-sm
