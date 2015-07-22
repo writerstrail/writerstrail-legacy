@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## 0.11.0
+
+* Open beta.
+
 ## 0.10.1
 
 * Fix some configuration and stray debug lines.
