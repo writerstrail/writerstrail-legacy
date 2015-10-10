@@ -11,8 +11,8 @@ module.exports =
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
     "pool": {
-      max: 256,
-      maxConnections: 256,
+      max: 25,
+      maxConnections: 25,
       min: 0,
       minConnections: 0,
       idle: 20000,
@@ -54,8 +54,8 @@ module.exports =
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
     "pool": {
-      max: 256,
-      maxConnections: 256,
+      max: 25,
+      maxConnections: 25,
       min: 0,
       minConnections: 0,
       idle: 20000,
@@ -99,8 +99,8 @@ module.exports =
     "timezone": "+00:00",
     "baseurl": process.env.WRITERSTRAIL_BASE_URL,
     "pool": {
-      max: 256,
-      maxConnections: 256,
+      max: 25,
+      maxConnections: 25,
       min: 0,
       minConnections: 0,
       idle: 20000,
