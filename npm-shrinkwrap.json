@@ -2,15 +2,10 @@
   "name": "writerstrail",
   "version": "0.11.0",
   "dependencies": {
-    "bcrypt": {
-      "version": "0.8.7",
-      "from": "bcrypt@0.8.7",
-      "resolved": "https://registry.npmjs.org/bcrypt/-/bcrypt-0.8.7.tgz"
-    },
-    "bindings": {
-      "version": "1.2.1",
-      "from": "bindings@1.2.1",
-      "resolved": "https://registry.npmjs.org/bindings/-/bindings-1.2.1.tgz"
+    "bcryptjs": {
+      "version": "2.4.3",
+      "from": "bcryptjs@latest",
+      "resolved": "https://registry.npmjs.org/bcryptjs/-/bcryptjs-2.4.3.tgz"
     },
     "bluebird": {
       "version": "2.9.14",
@@ -940,11 +935,6 @@
           "resolved": "https://registry.npmjs.org/require-all/-/require-all-0.0.8.tgz"
         }
       }
-    },
-    "nan": {
-      "version": "2.3.5",
-      "from": "nan@2.3.5",
-      "resolved": "https://registry.npmjs.org/nan/-/nan-2.3.5.tgz"
     },
     "passport": {
       "version": "0.2.1",

@@ -1,6 +1,6 @@
 "use strict";
 
-var bcrypt = require('bcrypt'),
+var bcrypt = require('bcryptjs'),
   _ = require('lodash'),
   genres = require('../utils/data/genres');
 
@@ -162,7 +162,7 @@ module.exports = function (sequelize, DataTypes) {
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
-        
+
         var passHook = function (user, options, done) {
           if (!user.password || !user.changed('password')) {
             return done(null, user);
@@ -174,7 +174,7 @@ module.exports = function (sequelize, DataTypes) {
             done(null, user);
           });
         };
-        
+
         User.hook('beforeUpdate', passHook);
         User.hook('beforeCreate', passHook);
         User.hook('beforeBulkCreate', function (users, options, done) {
@@ -204,7 +204,7 @@ module.exports = function (sequelize, DataTypes) {
           }
         });
         User.hook('afterCreate', function (user, options, done) {
-          var userGenres = _.map(genres, function (g) { 
+          var userGenres = _.map(genres, function (g) {
             g.ownerId = user.id;
             return g;
           });
