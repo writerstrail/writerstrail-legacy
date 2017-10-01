@@ -14,7 +14,8 @@ var express = require('express'),
   paginate = require('express-paginate'),
   moment = require('moment'),
   _ = require('lodash'),
-  mkdirp = require('mkdirp');
+  mkdirp = require('mkdirp'),
+  tosecure = require('./utils/middlewares/tosecure');
 
 var app = express();
 
@@ -41,6 +42,11 @@ app.use(function (req, res, next) {
   }
   next();
 });
+
+// Trusting Openshift proxy
+app.enable('trust proxy');
+// Redirecting from HTTP to HTTPS
+app.use(tosecure);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

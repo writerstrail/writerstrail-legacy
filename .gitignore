@@ -12,6 +12,7 @@ public/stylesheets/*.css
 # IDE Files
 .brackets.json
 .idea
+.vscode
 
 # Locales tranlations
 locales

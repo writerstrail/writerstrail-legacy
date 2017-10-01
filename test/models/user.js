@@ -1,19 +1,19 @@
 var User = models.User;
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 describe('User model', function () {
   var junk = [];
   var id, now;
-  
+
   before(function (done) {
     id = 1000;
     now = moment(now).set('milliseconds', 0).toDate();
     done();
   });
-  
+
   it('should correctly save a user', function (done) {
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test ok',
@@ -45,7 +45,7 @@ describe('User model', function () {
       return User.findOne(id);
     }).then(function (user) {
       junk.push(user);
-      
+
       try {
         expect(user).to.have.property('name', 'Test ok');
         expect(user).to.have.property('email', 'ok@example.com');
@@ -89,7 +89,7 @@ describe('User model', function () {
       });
     }).then(function (genres) {
       try {
-        
+
         expect(genres).to.be.an('array');
         expect(genres).to.have.length.of.at.least(1);
         done();
@@ -98,12 +98,12 @@ describe('User model', function () {
       }
     }).catch(done);
   });
-  
+
   it('should not allow no name', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       email: 'testnoname@example.com',
@@ -131,12 +131,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not allow null name', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: null,
@@ -165,12 +165,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not allow empty name', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: '',
@@ -199,13 +199,13 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should truncate name with more than 255 characters', function (done) {
     var user, err;
     var name = genString(256);
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: name,
@@ -232,12 +232,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not allow invalid email', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test invalid email',
@@ -266,12 +266,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not allow no email', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'test no email',
@@ -299,12 +299,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not allow null email', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test null email',
@@ -333,12 +333,12 @@ describe('User model', function () {
       }
     });
   });
-    
+
   it('should set "user" if no role is provided', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test no role',
@@ -364,12 +364,12 @@ describe('User model', function () {
       }
     });
   });
-    
+
   it('should not allow empty role', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test empty role',
@@ -398,12 +398,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not allow empty password', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test empty pass',
@@ -432,12 +432,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not allow password with less than 8 characters', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test short pass',
@@ -466,12 +466,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should hash password on bulk create with individual hooks', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.bulkCreate([{
       id: id,
       name: 'Test bulk create hash ind hooks',
@@ -500,12 +500,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should hash password on bulk create', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.bulkCreate([{
       id: id,
       name: 'Test bulk create hash',
@@ -532,12 +532,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not hash password if null on bulk create', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.bulkCreate([{
       id: id,
       name: 'Test bulk create hash',
@@ -563,12 +563,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should hash password on update', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test update hash',
@@ -582,7 +582,7 @@ describe('User model', function () {
     }).then(function (u) {
       junk.push(u);
       user = u;
-      
+
       user.password = 'newpassword';
       return user.save();
     }).catch(function (e) {
@@ -598,12 +598,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should hash password on bulk update', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test bulk update hash',
@@ -616,7 +616,7 @@ describe('User model', function () {
       return User.findOne(id);
     }).then(function (u) {
       junk.push(u);
-      
+
       return User.update({
         password: 'newpassword'
       }, {
@@ -641,12 +641,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should hash password on bulk update with individual hooks', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test bulk update hash ind hooks',
@@ -659,7 +659,7 @@ describe('User model', function () {
       return User.findOne(id);
     }).then(function (u) {
       junk.push(u);
-      
+
       return User.update({
         password: 'newpassword'
       }, {
@@ -685,12 +685,12 @@ describe('User model', function () {
       }
     });
   });
-    
+
   it('should not re-hash the password if not updated', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test update rehash',
@@ -704,7 +704,7 @@ describe('User model', function () {
     }).then(function (u) {
       junk.push(u);
       user = u;
-      
+
       user.name = 'Test update rehash name change';
       return user.save();
     }).catch(function (e) {
@@ -720,12 +720,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should not re-hash the password if not updated on bulk', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test bulk update re-hash',
@@ -738,7 +738,7 @@ describe('User model', function () {
       return User.findOne(id);
     }).then(function (u) {
       junk.push(u);
-      
+
       return User.update({
         name: 'Test bulk update re-hash name change'
       }, {
@@ -763,19 +763,19 @@ describe('User model', function () {
       }
     });
   });
-  
+
   //projects, genres, targets, settings, tokens
   it('should associate with related models', function (done) {
     var hasMany = sinon.stub(User, 'hasMany'),
       hasOne = sinon.stub(User, 'hasOne'),
       hook = sinon.stub(User, 'hook');
-    
+
     User.associate(models);
-    
+
     hasMany.restore();
     hasOne.restore();
     hook.restore();
-    
+
     try {
       expect(hasOne).to.have.been.calledOnce;
       expect(hasOne).to.have.been.calledWith(models.Settings);
@@ -789,12 +789,12 @@ describe('User model', function () {
       done(e);
     }
   });
-  
+
   it('should accept a valid password', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test valid password',
@@ -821,12 +821,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should reject an invalid password', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test invalid password',
@@ -853,12 +853,12 @@ describe('User model', function () {
       }
     });
   });
-  
+
   it('should reject null password', function (done) {
     var user, err;
-    
+
     id += 1;
-    
+
     User.create({
       id: id,
       name: 'Test valid password',
@@ -885,6 +885,6 @@ describe('User model', function () {
       }
     });
   });
-  
+
   cleanJunk(junk, after);
 });

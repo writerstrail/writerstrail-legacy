@@ -3,16 +3,16 @@ var path = require('path');
 module.exports =
 {
   "development": {
-    "username": "nwt",
-    "password": "123123",
-    "database": "nwt",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
+    "username": process.env.OPENSHIFT_MYSQL_DB_USERNAME,
+    "password": process.env.OPENSHIFT_MYSQL_DB_PASSWORD,
+    "database": process.env.OPENSHIFT_MYSQL_DB_DATABASENAME,
+    "port": process.env.OPENSHIFT_MYSQL_DB_PORT,
+    "host": process.env.OPENSHIFT_MYSQL_DB_HOST,
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
     "pool": {
-      max: 256,
-      maxConnections: 256,
+      max: 25,
+      maxConnections: 25,
       min: 0,
       minConnections: 0,
       idle: 20000,
@@ -54,8 +54,8 @@ module.exports =
     "timezone": "+00:00",
     "baseurl": "http://localhost:8080",
     "pool": {
-      max: 256,
-      maxConnections: 256,
+      max: 25,
+      maxConnections: 25,
       min: 0,
       minConnections: 0,
       idle: 20000,
@@ -99,8 +99,8 @@ module.exports =
     "timezone": "+00:00",
     "baseurl": process.env.WRITERSTRAIL_BASE_URL,
     "pool": {
-      max: 256,
-      maxConnections: 256,
+      max: 25,
+      maxConnections: 25,
       min: 0,
       minConnections: 0,
       idle: 20000,

@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## 0.11.1
+
+Updated to work with Openshit v3.
+
 ## 0.11.0
 
 * Open beta.
