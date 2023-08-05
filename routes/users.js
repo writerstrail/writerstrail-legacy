@@ -7,6 +7,7 @@ var router = require('express').Router(),
   settings = require('./users/settings'),
   tour = require('./users/tour'),
   stats = require('./users/stats'),
+  exportdata = require('./users/export'),
   isactivated = require('../utils/middlewares/isactivated'),
   models = require('../models'),
   sendflash = require('../utils/middlewares/sendflash'),
@@ -16,8 +17,8 @@ var router = require('express').Router(),
 function durationFormatterAlt(dur) {
   var min = Math.floor(dur / 60),
     sec = dur - min * 60;
-  
-  return (min.toString() +  'm' + (sec < 10 ? '0' + sec : sec)) + 's';
+
+  return (min.toString() + 'm' + (sec < 10 ? '0' + sec : sec)) + 's';
 }
 
 router.use(function (req, res, next) {
@@ -41,12 +42,13 @@ router.use('/projects', projects);
 router.use('/targets', targets);
 router.use('/sessions', isactivated, sessions);
 router.use('/settings', isactivated, settings);
+router.use('/export', isactivated, exportdata);
 router.use('/', tour);
 router.use('/', stats);
 
 router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
   var performanceOrder = (req.user.settings.performanceMetric === 'real' ? 'realP' : 'p') + 'erformance',
-    getProjects = function () {  
+    getProjects = function () {
       return models.Project.findAll({
         where: {
           ownerId: req.user.id,
@@ -79,7 +81,7 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
         where.push({ id: req.user.settings.targetId });
       } else {
         where.push(models.Sequelize.literal(
-            '`Target`.`end` >= DATE_ADD(CURDATE(), INTERVAL `Target`.`zoneOffset` MINUTE)'));
+          '`Target`.`end` >= DATE_ADD(CURDATE(), INTERVAL `Target`.`zoneOffset` MINUTE)'));
       }
 
       return models.Target.findOne({
@@ -159,9 +161,9 @@ router.get('/dashboard', isactivated, sendflash, function (req, res, next) {
       });
     };
   promise.join(getProjects(), getTarget(), getTotalWordcount(), getDailyAverage(), getWpm(), getPerformancePeriod(), getPerformanceSession(), getLargestProject(), getHighestWpm(), renderer)
-  .catch(function (err) {
-    next(err);
-  });
+    .catch(function (err) {
+      next(err);
+    });
 });
 
 router.get('/timer', isactivated, sendflash, function (req, res, next) {

@@ -8,11 +8,11 @@ module.exports = function (req) {
     ]
   };
   if (req.user) {
-    navlist .right.push(
+    navlist.right.push(
       { 'href': '/dashboard', 'key': 'dashboard', 'label': req.__('Dashboard'), 'title': req.__('The summary page'), icon: 'dashboard' },
       { 'href': '/timer', 'key': 'timer', 'label': 'Timer', 'title': 'Track your writing sessions', icon: 'coffee' },
       {
-        'dropdown': true, 'label': req.user.name, key: 'user', icon: 'user',  'list': [
+        'dropdown': true, 'label': req.user.name, key: 'user', icon: 'user', 'list': [
           { 'href': '/stats', 'key': 'stats', 'label': 'Statistics', 'title': 'Some information about your writing habits', icon: 'calculator' },
           { 'key': 'divider' },
           { 'href': '/projects/active', 'key': 'projects', 'label': req.__('Projects'), 'title': req.__('Your active writing projects'), icon: 'fire' },
@@ -22,9 +22,10 @@ module.exports = function (req) {
           { 'key': 'divider' },
           { 'href': '/settings', 'key': 'settings', 'label': 'Settings', 'title': 'Your personal settings', icon: 'gears' },
           { 'href': '/account', 'key': 'account', 'label': 'Account', 'title': 'Your account data', icon: 'user' },
+          { 'href': '/export', 'key': 'export', 'label': 'Export', 'title': 'Export all your data to a file', icon: 'save' },
           { 'href': '/signout', 'key': 'signout', 'label': 'Sign out', 'title': 'Sign out from Writer\'s Trail', icon: 'sign-out' },
           { 'key': 'divider' },
-          { 'href': '/help', 'key': 'help', 'label': 'Help', 'title': "Help about Writer's Trail" , icon: "question-circle"}
+          { 'href': '/help', 'key': 'help', 'label': 'Help', 'title': "Help about Writer's Trail", icon: "question-circle" }
         ]
       }
     );
