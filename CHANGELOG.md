@@ -1,5 +1,9 @@
 # Writer's Trail change log
 
+## 0.11.2
+
+Add functionality to export all user data.
+
 ## 0.11.1
 
 Updated to work with Openshit v3.
